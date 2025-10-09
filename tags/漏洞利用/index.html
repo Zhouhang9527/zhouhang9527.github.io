@@ -19,17 +19,8 @@
 
 <link rel="stylesheet" href="/css/ginka_style.css">
 
-# Baidu Analytics
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?2f8738c3a09f9883ce4d440f2e3a145e";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
-
+<!-- NexT Configuration -->
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhouhang9527.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"night"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"twikoo","storage":true,"lazyload":false,"nav":{"twikoo":{"text":"💬 优质评论","order":-1}},"activeClass":"twikoo"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
     <meta property="og:type" content="website">
 <meta property="og:title" content="GINKA">
 <meta property="og:url" content="https://zhouhang9527.github.io/tags/%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8/index.html">
@@ -393,6 +384,202 @@ var _hmt = _hmt || [];
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
+# Twikoo Comment System - Enhanced Version
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.17/dist/twikoo.all.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 检查是否有评论容器
+    var container = document.querySelector('.twikoo-container');
+    if (container) {
+      // 显示加载提示
+      container.innerHTML = '<div class="tk-loading">评论系统加载中...</div>';
+
+      twikoo.init({
+        envId: 'https://my-twikoo-backend.vercel.app',
+        el: '.twikoo-container',
+        // 启用表情包功能
+        emoji: {
+          enable: true,
+          list: [
+            { name: 'smile', url: 'https://cdn.jsdelivr.net/npm/twikoo@1.6.17/dist/emoji/smile.png' },
+            { name: 'laugh', url: 'https://cdn.jsdelivr.net/npm/twikoo@1.6.17/dist/emoji/laugh.png' },
+            { name: 'wink', url: 'https://cdn.jsdelivr.net/npm/twikoo@1.6.17/dist/emoji/wink.png' },
+            { name: 'blush', url: 'https://cdn.jsdelivr.net/npm/twikoo@1.6.17/dist/emoji/blush.png' }
+          ]
+        },
+        // 图片上传功能（已禁用）
+        upload: {
+          enable: false
+        },
+        // 评论排序
+        orderBy: 'time',
+        // 评论分页
+        pageSize: 10,
+        // 实时评论推送
+        realtime: true,
+        // 错误重试机制
+        retry: 3,
+        // 超时设置
+        timeout: 10000
+      }).catch(error => {
+        console.error('Twikoo评论系统初始化失败:', error);
+        container.innerHTML = `
+          <div class="tk-error">
+            <div class="error-icon">💬</div>
+            <p class="error-text">评论系统暂时不可用</p>
+            <p class="error-subtext">请稍后刷新页面重试</p>
+            <button class="tk-retry-btn" onclick="location.reload()">刷新页面</button>
+          </div>
+        `;
+      });
+    }
+  });
+
+  // 评论系统重试函数
+  window.retryCommentSystem = function() {
+    const container = document.querySelector('.twikoo-container');
+    if (container) {
+      container.innerHTML = '<div class="tk-loading">重新加载评论系统...</div>';
+      location.reload();
+    }
+  };
+</script>
+
+<style>
+.twikoo-container {
+  background: rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 25px;
+  border-radius: 16px;
+  margin-top: 40px;
+}
+
+/* 评论框样式优化 */
+.tk-input {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 8px !important;
+}
+
+.tk-input:focus {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: #5b99e5 !important;
+}
+
+/* 评论内容样式 */
+.tk-content {
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* 评论头像样式 */
+.tk-avatar {
+  border-radius: 50% !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 评论时间样式 */
+.tk-time {
+  color: #999 !important;
+  font-size: 12px;
+}
+
+/* 表情包按钮样式 */
+.tk-emoji-btn {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease;
+}
+
+.tk-emoji-btn:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+  transform: scale(1.1);
+}
+
+/* 图片上传按钮样式已禁用 */
+.tk-upload-btn {
+  display: none !important;
+}
+
+/* 评论操作按钮样式 */
+.tk-action-btn {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease;
+}
+
+.tk-action-btn:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* 分页按钮样式 */
+.tk-pagination {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease;
+}
+
+.tk-pagination:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* 加载动画样式 */
+.tk-loading {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 8px !important;
+}
+.tk-error {
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.tk-error .error-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+  opacity: 0.7;
+}
+
+.tk-error .error-text {
+  font-family: 'LXGW WenKai', cursive;
+  font-size: 18px;
+  color: #666;
+  margin: 10px 0 5px 0;
+  font-weight: 500;
+}
+
+.tk-error .error-subtext {
+  font-size: 14px;
+  color: #999;
+  margin: 5px 0 20px 0;
+}
+
+.tk-retry-btn {
+  background: linear-gradient(135deg, #5b99e5, #4a8ae8);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: 'LXGW WenKai', cursive;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(91, 153, 229, 0.3);
+}
+
+.tk-retry-btn:hover {
+  background: linear-gradient(135deg, #4a8ae8, #3a7ae0);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(91, 153, 229, 0.4);
+}
+</style>
 
 
   <!-- GINKA Performance Optimizer -->
@@ -725,326 +912,6 @@ ginkaStyle.textContent = `
 `;
 document.head.appendChild(ginkaStyle);
 </script>
-
-
-  <!-- GINKA Music Player -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
-<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
-
-<div id="music-player" class="music-player">
-  <div class="music-player-toggle">
-    <i class="fa fa-music"></i>
-  </div>
-  <div class="music-player-container">
-    <div class="music-player-header">
-      <span class="music-title">音乐播放器</span>
-      <button class="music-close">
-        <i class="fa fa-times"></i>
-      </button>
-    </div>
-    <div id="aplayer-container"></div>
-  </div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // 音乐播放器拖拽功能
-  const player = document.getElementById('music-player');
-  const toggle = document.querySelector('.music-player-toggle');
-  const container = document.querySelector('.music-player-container');
-  const closeBtn = document.querySelector('.music-close');
-
-  let isDragging = false;
-  let offsetX, offsetY;
-
-  // 显示/隐藏播放器
-  toggle.addEventListener('click', function() {
-    container.style.display = container.style.display === 'none' ? 'block' : 'none';
-  });
-
-  // 关闭播放器
-  closeBtn.addEventListener('click', function() {
-    container.style.display = 'none';
-  });
-
-  // 拖拽功能
-  player.addEventListener('mousedown', function(e) {
-    if (e.target === toggle || e.target.closest('.music-player-toggle')) return;
-
-    isDragging = true;
-    offsetX = e.clientX - player.offsetLeft;
-    offsetY = e.clientY - player.offsetTop;
-    player.style.cursor = 'grabbing';
-  });
-
-  document.addEventListener('mousemove', function(e) {
-    if (isDragging) {
-      player.style.left = (e.clientX - offsetX) + 'px';
-      player.style.top = (e.clientY - offsetY) + 'px';
-    }
-  });
-
-  document.addEventListener('mouseup', function() {
-    if (isDragging) {
-      isDragging = false;
-      player.style.cursor = 'grab';
-    }
-  });
-
-  // 初始化APlayer
-  if (typeof APlayer !== 'undefined') {
-    fetch('/music.json')
-      .then(response => response.json())
-      .then(data => {
-        const ap = new APlayer({
-          container: document.getElementById('aplayer-container'),
-          audio: data.audio,
-          autoplay: false,
-          loop: 'none',
-          volume: 0.7,
-          listFolded: false,
-          listMaxHeight: 200,
-          lrcType: 3,
-          mutex: true,
-          theme: '#5b99e5',
-          preload: 'metadata'
-        });
-
-        // 为播放器添加GINKA风格特效
-        addGinkaEffects(ap);
-      })
-      .catch(error => {
-        console.log('音乐播放器初始化失败:', error);
-        showMusicError();
-      });
-  } else {
-    // 如果CDN加载失败，尝试备用方案
-    loadAPlayerFallback();
-  }
-
-  // APlayer备用加载方案
-  function loadAPlayerFallback() {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css';
-    document.head.appendChild(link);
-
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js';
-    script.onload = function() {
-      // CDN加载成功，重新初始化播放器
-      if (typeof APlayer !== 'undefined') {
-        fetch('/music.json')
-          .then(response => response.json())
-          .then(data => {
-            const ap = new APlayer({
-              container: document.getElementById('aplayer-container'),
-              audio: data.audio,
-              autoplay: false,
-              loop: 'none',
-              volume: 0.7,
-              listFolded: false,
-              listMaxHeight: 200,
-              lrcType: 3,
-              mutex: true,
-              theme: '#5b99e5',
-              preload: 'metadata'
-            });
-            addGinkaEffects(ap);
-          })
-          .catch(error => {
-            console.log('音乐播放器备用初始化失败:', error);
-            showMusicError();
-          });
-      }
-    };
-    script.onerror = function() {
-      showMusicError();
-    };
-    document.head.appendChild(script);
-  }
-
-  // 显示音乐加载错误提示
-  function showMusicError() {
-    const container = document.getElementById('aplayer-container');
-    container.innerHTML = `
-      <div class="music-error">
-        <div class="error-icon">♪</div>
-        <p class="error-text">哎呀，音乐播放器出错了呢~</p>
-        <p class="error-subtext">刷新试试看哦~</p>
-      </div>
-    `;
-  }
-
-  // 为播放器添加GINKA风格特效
-  function addGinkaEffects(player) {
-    // 播放按钮点击效果
-    const playBtn = document.querySelector('.aplayer-play');
-    if (playBtn) {
-      playBtn.addEventListener('click', function() {
-        this.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-          this.style.transform = 'scale(1)';
-        }, 150);
-      });
-    }
-
-    // 音量按钮悬停效果
-    const volumeBtn = document.querySelector('.aplayer-volume');
-    if (volumeBtn) {
-      volumeBtn.addEventListener('mouseenter', function() {
-        this.style.background = 'rgba(91, 153, 229, 0.1)';
-        this.style.borderRadius = '50%';
-      });
-      volumeBtn.addEventListener('mouseleave', function() {
-        this.style.background = 'none';
-      });
-    }
-
-    // 歌曲列表项悬停效果
-    const listItems = document.querySelectorAll('.aplayer-list li');
-    listItems.forEach(item => {
-      item.addEventListener('mouseenter', function() {
-        this.style.background = 'rgba(91, 153, 229, 0.05)';
-      });
-      item.addEventListener('mouseleave', function() {
-        this.style.background = 'none';
-      });
-    });
-  }
-});
-</script>
-
-<style>
-.music-player {
-  position: fixed;
-  top: 100px;
-  right: 20px;
-  z-index: 9999;
-  font-family: 'LXGW WenKai', cursive;
-}
-
-.music-player-toggle {
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.music-player-toggle:hover {
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
-}
-
-.music-player-toggle i {
-  font-size: 18px;
-  color: #5b99e5;
-}
-
-.music-player-container {
-  position: absolute;
-  top: 60px;
-  right: 0;
-  width: 350px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  display: none;
-}
-
-.music-player-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.music-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-}
-
-.music-close {
-  background: none;
-  border: none;
-  font-size: 14px;
-  color: #666;
-  cursor: pointer;
-  padding: 5px;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-}
-
-.music-close:hover {
-  background: rgba(0, 0, 0, 0.1);
-  color: #333;
-}
-
-/* 音乐播放器错误提示样式 */
-.music-error {
-  text-align: center;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.error-icon {
-  font-size: 48px;
-  color: #ffa8a8;
-  margin-bottom: 10px;
-  animation: errorFloat 2s ease-in-out infinite;
-}
-
-@keyframes errorFloat {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-}
-
-.error-text {
-  font-family: 'LXGW WenKai', cursive;
-  font-size: 16px;
-  color: #666;
-  margin: 5px 0;
-}
-
-.error-subtext {
-  font-size: 12px;
-  color: #999;
-  margin: 0;
-}
-
-/* 移动端适配 */
-@media (max-width: 768px) {
-  .music-player {
-    top: 80px;
-    right: 10px;
-  }
-
-  .music-player-container {
-    width: calc(100vw - 20px);
-    max-width: 350px;
-    right: -10px;
-  }
-}
-</style>
 
 
   <!-- GINKA Video Background -->
