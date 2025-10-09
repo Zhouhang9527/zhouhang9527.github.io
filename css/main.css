@@ -1266,7 +1266,7 @@ pre code {
   vertical-align: middle;
 }
 .links-of-author a::before {
-  background: #cd8318;
+  background: #0df5ff;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
@@ -2756,7 +2756,7 @@ header.header {
    body { font-family: 'OppoSans', sans-serif; }
    
    .main-inner, .sidebar-inner, .header-inner, .footer-inner, .sidebar, .content-wrap, .header, .footer, .post-block { background: none !important; box-shadow: none !important; border: none !important; }
-   .post-block, .sidebar-inner { background: rgba(255, 255, 255, 0.75) !important; backdrop-filter: blur(20px) saturate(1.8); -webkit-backdrop-filter: blur(20px) saturate(1.8); border-radius: 16px; padding: 35px !important; margin-bottom: 40px; border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.4s ease; animation: fadeIn 0.8s ease-out forwards; }
+   .post-block, .sidebar-inner { background: rgba(255, 255, 255, 0.3) !important; backdrop-filter: blur(20px) saturate(1.8); -webkit-backdrop-filter: blur(20px) saturate(1.8); border-radius: 16px; padding: 35px !important; margin-bottom: 40px; border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.4s ease; animation: fadeIn 0.8s ease-out forwards; }
    .post-block:hover, .sidebar-inner:hover { box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2); transform: translateY(-5px); }
    .header-inner { background: rgba(255, 255, 255, 0.3) !important; backdrop-filter: blur(10px); border-radius: 16px !important; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; padding: 10px 20px !important; }
    .menu-item-link-text, .menu-item .fa, .menu-item .far, .menu-item .fas { color: #fff !important; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5); }
@@ -2791,7 +2791,7 @@ header.header {
    .ginka-player-controls button { background: none; border: none; font-size: 24px; cursor: pointer; color: #555; transition: all 0.2s ease; padding: 5px 15px; }
    .ginka-player-controls button:hover { color: #5b99e5; transform: scale(1.15); }
    
-   #twikoo { background: rgba(255, 255, 255, 0.5) !important; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 25px; border-radius: 16px; margin-top: 40px; }
+   #twikoo { background: rgba(255, 255, 255, 0.3) !important; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 25px; border-radius: 16px; margin-top: 40px; }
    .tk-meta-input .tk-input { background: rgba(255, 255, 255, 0.5) !important; border: 1px solid rgba(0, 0, 0, 0.1) !important; color: #333 !important; }
    .tk-submit .tk-button { background: #5b99e5 !important; color: white !important; transition: all 0.3s ease; }
    .tk-submit .tk-button:hover { background: #2a6db5 !important; }

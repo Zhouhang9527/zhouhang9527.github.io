@@ -52,21 +52,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Pwn 分类占位文章</title>
-    <url>/2025/10/07/pwn-placeholder/</url>
-    <content><![CDATA[<p>这是一篇占位文章，用于生成 Pwn 分类页面。</p>
-<p>后续可以在这里发布 Pwn 相关的技术文章和题解。</p>
-]]></content>
-      <categories>
-        <category>pwn</category>
-      </categories>
-      <tags>
-        <tag>pwn</tag>
-        <tag>漏洞利用</tag>
-        <tag>二进制分析</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Reverse 分类占位文章</title>
     <url>/2025/10/07/reverse-placeholder/</url>
     <content><![CDATA[<p>这是一篇占位文章，用于生成 Reverse 分类页面。</p>
@@ -77,8 +62,23 @@
       </categories>
       <tags>
         <tag>reverse</tag>
-        <tag>二进制分析</tag>
         <tag>逆向工程</tag>
+        <tag>二进制分析</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Pwn 分类占位文章</title>
+    <url>/2025/10/07/pwn-placeholder/</url>
+    <content><![CDATA[<p>这是一篇占位文章，用于生成 Pwn 分类页面。</p>
+<p>后续可以在这里发布 Pwn 相关的技术文章和题解。</p>
+]]></content>
+      <categories>
+        <category>pwn</category>
+      </categories>
+      <tags>
+        <tag>二进制分析</tag>
+        <tag>pwn</tag>
+        <tag>漏洞利用</tag>
       </tags>
   </entry>
 </search>

@@ -355,7 +355,7 @@
 
 <style>
 .twikoo-container {
-  background: rgba(255, 255, 255, 0.5) !important;
+  background: rgba(255, 255, 255, 0.3) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: 25px;
@@ -453,7 +453,8 @@
 
 
   <!-- GINKA Performance Optimizer -->
-  // 界面流畅度优化和移动端修复
+  <script>
+// 界面流畅度优化和移动端修复
 document.addEventListener('DOMContentLoaded', function() {
 
   // 修复移动端侧边栏触摸事件
@@ -511,119 +512,121 @@ document.addEventListener('DOMContentLoaded', function() {
       if (isScrolling === null) {
         isScrolling = Math.abs(deltaY) > Math.abs(deltaX);
       }
-
       if (!isScrolling) {
         e.preventDefault();
       }
     });
 
-    sidebar.addEventListener('touchend', function() {
-      startX = startY = null;
-      isScrolling = false;
+   // 添加GINKA风格的优雅特效
+document.addEventListener('DOMContentLoaded', function() {
+  addGinkaVisualEffects();
+});
+
+// GINKA视觉特效系统
+function addGinkaVisualEffects() {
+  // 为按钮添加优雅的点击涟漪效果
+  function addRippleEffect() {
+    const buttons = document.querySelectorAll('button, .btn, .menu-item-link');
+    buttons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(91, 153, 229, 0.3);
+          transform: scale(0);
+          animation: ginkaRipple 0.6s ease-out;
+          width: ${size}px;
+          height: ${size}px;
+          left: ${x}px;
+          top: ${y}px;
+          pointer-events: none;
+          z-index: 1;
+        `;
+
+        this.style.position = 'relative';
+        this.style.overflow = 'hidden';
+        this.appendChild(ripple);
+
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      });
     });
   }
 
-  // 优化图片懒加载
-  function optimizeImages() {
-    const images = document.querySelectorAll('img[data-src]');
-
-    if ('IntersectionObserver' in window) {
-      const imageObserver = new IntersectionObserver(function(entries, observer) {
-        entries.forEach(function(entry) {
-          if (entry.isIntersecting) {
-            const img = entry.target;
-            img.src = img.dataset.src;
-            img.classList.remove('lazy');
-            observer.unobserve(img);
-          }
-        });
+  // 为卡片添加优雅的悬停发光效果
+  function addCardGlowEffect() {
+    const cards = document.querySelectorAll('.post-block, .link-card, .sidebar-inner');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.boxShadow = '0 12px 40px rgba(91, 153, 229, 0.15), 0 0 20px rgba(91, 153, 229, 0.1)';
       });
-
-      images.forEach(function(img) {
-        imageObserver.observe(img);
+      card.addEventListener('mouseleave', function() {
+        this.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
       });
-    } else {
-      // 降级处理
-      images.forEach(function(img) {
-        img.src = img.dataset.src;
-      });
-    }
+    });
   }
 
-  // 优化滚动性能
-  function optimizeScroll() {
-    let ticking = false;
+  // 为标题添加优雅的闪烁装饰效果
+  function addTitleDecorations() {
+    const titles = document.querySelectorAll('h1, h2, .post-title-link');
+    titles.forEach(title => {
+      // 只为主要标题添加装饰
+      if (title.closest('.post-header') || title.closest('.tag-title') || title.closest('.category-title')) {
+        const decoration = document.createElement('span');
+        decoration.innerHTML = '✨';
+        decoration.className = 'ginka-decoration';
+        decoration.style.cssText = `
+          position: absolute;
+          font-size: 0.8em;
+          opacity: 0.6;
+          animation: ginkaSparkle 3s ease-in-out infinite;
+          pointer-events: none;
+        `;
 
-    function updateScrollEffects() {
-      const scrollTop = window.pageYOffset;
-      const header = document.querySelector('.header');
-
-      // 导航栏透明度变化
-      if (header) {
-        const opacity = Math.min(scrollTop / 100, 1);
-        header.style.background = `rgba(255, 255, 255, ${0.95 + opacity * 0.05})`;
-      }
-
-      ticking = false;
-    }
-
-    window.addEventListener('scroll', function() {
-      if (!ticking) {
-        requestAnimationFrame(updateScrollEffects);
-        ticking = true;
+        title.style.position = 'relative';
+        title.appendChild(decoration);
       }
     });
   }
 
-  // 优化链接预加载
-  function optimizeLinks() {
+  // 为链接添加优雅的悬停效果
+  function addLinkEffects() {
     const links = document.querySelectorAll('a[href^="/"]');
-
-    links.forEach(function(link) {
+    links.forEach(link => {
       link.addEventListener('mouseenter', function() {
-        // 鼠标悬停时预加载页面
-        const href = this.href;
-        if (href && href.indexOf(window.location.origin) === 0) {
-          const linkElement = document.createElement('link');
-          linkElement.rel = 'prefetch';
-          linkElement.href = href;
-          document.head.appendChild(linkElement);
-        }
+        this.style.transform = 'translateY(-1px)';
+        this.style.textShadow = '0 2px 8px rgba(91, 153, 229, 0.3)';
+      });
+      link.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.textShadow = 'none';
       });
     });
   }
 
-  // 移动端适配优化
-  function mobileOptimizations() {
-    // 修复iOS Safari的视口问题
-    function fixIOSViewport() {
-      let viewport = document.querySelector('meta[name="viewport"]');
-      if (!viewport) {
-        viewport = document.createElement('meta');
-        viewport.name = 'viewport';
-        viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
-        document.head.appendChild(viewport);
-      }
-    }
+  // 执行所有特效
+  addRippleEffect();
+  addCardGlowEffect();
+  addTitleDecorations();
+  addLinkEffects();
 
-    // 修复移动端点击延迟
-    function fixTapDelay() {
-      if ('ontouchstart' in window) {
-        document.body.classList.add('touch-device');
-      }
-    }
+  // 添加页面加载完成动画
+  document.body.style.opacity = '0';
+  document.body.style.transform = 'translateY(10px)';
 
-    // 优化移动端字体大小
-    function optimizeMobileFonts() {
-      if (window.innerWidth <= 768) {
-        document.documentElement.style.fontSize = '14px';
-      }
-    }
-
-    fixIOSViewport();
-    fixTapDelay();
-    optimizeMobileFonts();
-  }
+  setTimeout(() => {
+    document.body.style.transition = 'all 0.8s ease-out';
+    document.body.style.opacity = '1';
+    document.body.style.transform = 'translateY(0)';
+  }, 100);
+}
 
   // 执行所有优化
   fixMobileSidebar();
@@ -661,9 +664,131 @@ window.addEventListener('load', function() {
   });
 });
 
+// GINKA视觉特效系统
+function addGinkaVisualEffects() {
+  // 为按钮添加优雅的点击涟漪效果
+  function addRippleEffect() {
+    const buttons = document.querySelectorAll('button, .btn, .menu-item-link');
+    buttons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(91, 153, 229, 0.3);
+          transform: scale(0);
+          animation: ginkaRipple 0.6s ease-out;
+          width: ${size}px;
+          height: ${size}px;
+          left: ${x}px;
+          top: ${y}px;
+          pointer-events: none;
+          z-index: 1;
+        `;
+
+        this.style.position = 'relative';
+        this.style.overflow = 'hidden';
+        this.appendChild(ripple);
+
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      });
+    });
+  }
+
+  // 为卡片添加优雅的悬停发光效果
+  function addCardGlowEffect() {
+    const cards = document.querySelectorAll('.post-block, .link-card, .sidebar-inner');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.boxShadow = '0 12px 40px rgba(91, 153, 229, 0.15), 0 0 20px rgba(91, 153, 229, 0.1)';
+      });
+      card.addEventListener('mouseleave', function() {
+        this.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+      });
+    });
+  }
+
+  // 为标题添加优雅的闪烁装饰效果
+  function addTitleDecorations() {
+    const titles = document.querySelectorAll('h1, h2, .post-title-link');
+    titles.forEach(title => {
+      // 只为主要标题添加装饰
+      if (title.closest('.post-header') || title.closest('.tag-title') || title.closest('.category-title')) {
+        const decoration = document.createElement('span');
+        decoration.innerHTML = '✨';
+        decoration.className = 'ginka-decoration';
+        decoration.style.cssText = `
+          position: absolute;
+          font-size: 0.8em;
+          opacity: 0.6;
+          animation: ginkaSparkle 3s ease-in-out infinite;
+          pointer-events: none;
+        `;
+
+        title.style.position = 'relative';
+        title.appendChild(decoration);
+      }
+    });
+  }
+
+  // 为链接添加优雅的悬停效果
+  function addLinkEffects() {
+    const links = document.querySelectorAll('a[href^="/"]');
+    links.forEach(link => {
+      link.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-1px)';
+        this.style.textShadow = '0 2px 8px rgba(91, 153, 229, 0.3)';
+      });
+      link.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.textShadow = 'none';
+      });
+    });
+  }
+
+  // 执行所有特效
+  addRippleEffect();
+  addCardGlowEffect();
+  addTitleDecorations();
+  addLinkEffects();
+}
+
+// 添加涟漪动画样式
+const ginkaStyle = document.createElement('style');
+ginkaStyle.textContent = `
+@keyframes ginkaRipple {
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes ginkaSparkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.2); }
+}
+
+.ginka-decoration {
+  margin-left: 8px;
+  color: #5b99e5;
+}
+`;
+document.head.appendChild(ginkaStyle);
+</script>
+
 
   <!-- GINKA Music Player -->
-  <div id="music-player" class="music-player">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+
+<div id="music-player" class="music-player">
   <div class="music-player-toggle">
     <i class="fa fa-music"></i>
   </div>
@@ -741,10 +866,65 @@ document.addEventListener('DOMContentLoaded', function() {
           theme: '#5b99e5',
           preload: 'metadata'
         });
+
+        // 为播放器添加GINKA风格特效
+        addGinkaEffects(ap);
       })
       .catch(error => {
         console.log('音乐播放器初始化失败:', error);
+        showMusicError();
       });
+  } else {
+    showMusicError();
+  }
+
+  // 显示音乐加载错误提示
+  function showMusicError() {
+    const container = document.getElementById('aplayer-container');
+    container.innerHTML = `
+      <div class="music-error">
+        <div class="error-icon">♪</div>
+        <p class="error-text">哎呀，音乐播放器出错了呢~</p>
+        <p class="error-subtext">刷新试试看哦~</p>
+      </div>
+    `;
+  }
+
+  // 为播放器添加GINKA风格特效
+  function addGinkaEffects(player) {
+    // 播放按钮点击效果
+    const playBtn = document.querySelector('.aplayer-play');
+    if (playBtn) {
+      playBtn.addEventListener('click', function() {
+        this.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+          this.style.transform = 'scale(1)';
+        }, 150);
+      });
+    }
+
+    // 音量按钮悬停效果
+    const volumeBtn = document.querySelector('.aplayer-volume');
+    if (volumeBtn) {
+      volumeBtn.addEventListener('mouseenter', function() {
+        this.style.background = 'rgba(91, 153, 229, 0.1)';
+        this.style.borderRadius = '50%';
+      });
+      volumeBtn.addEventListener('mouseleave', function() {
+        this.style.background = 'none';
+      });
+    }
+
+    // 歌曲列表项悬停效果
+    const listItems = document.querySelectorAll('.aplayer-list li');
+    listItems.forEach(item => {
+      item.addEventListener('mouseenter', function() {
+        this.style.background = 'rgba(91, 153, 229, 0.05)';
+      });
+      item.addEventListener('mouseleave', function() {
+        this.style.background = 'none';
+      });
+    });
   }
 });
 </script>
@@ -829,6 +1009,40 @@ document.addEventListener('DOMContentLoaded', function() {
 .music-close:hover {
   background: rgba(0, 0, 0, 0.1);
   color: #333;
+}
+
+/* 音乐播放器错误提示样式 */
+.music-error {
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.error-icon {
+  font-size: 48px;
+  color: #ffa8a8;
+  margin-bottom: 10px;
+  animation: errorFloat 2s ease-in-out infinite;
+}
+
+@keyframes errorFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+.error-text {
+  font-family: 'LXGW WenKai', cursive;
+  font-size: 16px;
+  color: #666;
+  margin: 5px 0;
+}
+
+.error-subtext {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
 }
 
 /* 移动端适配 */
