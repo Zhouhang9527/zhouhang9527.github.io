@@ -251,11 +251,11 @@ var _hmt = _hmt || [];
               
               
             
-            <a href="/tags/CTF/"
+            <a href="/tags/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/"
                class="tag-cloud-item"
                style="font-size: 16px; opacity: 0.7;"
-               title="CTF (1 篇文章)">
-              CTF
+               title="逆向工程 (1 篇文章)">
+              逆向工程
             </a>
           
             
@@ -263,11 +263,11 @@ var _hmt = _hmt || [];
               
               
             
-            <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%80%86%E5%90%91/"
+            <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%88%86%E6%9E%90/"
                class="tag-cloud-item"
                style="font-size: 16px; opacity: 0.7;"
-               title="二进制逆向 (1 篇文章)">
-              二进制逆向
+               title="二进制分析 (2 篇文章)">
+              二进制分析
             </a>
           
             
@@ -299,11 +299,11 @@ var _hmt = _hmt || [];
               
               
             
-            <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%88%86%E6%9E%90/"
+            <a href="/tags/CTF/"
                class="tag-cloud-item"
                style="font-size: 16px; opacity: 0.7;"
-               title="二进制分析 (2 篇文章)">
-              二进制分析
+               title="CTF (1 篇文章)">
+              CTF
             </a>
           
             
@@ -311,11 +311,11 @@ var _hmt = _hmt || [];
               
               
             
-            <a href="/tags/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/"
+            <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%80%86%E5%90%91/"
                class="tag-cloud-item"
                style="font-size: 16px; opacity: 0.7;"
-               title="逆向工程 (1 篇文章)">
-              逆向工程
+               title="二进制逆向 (1 篇文章)">
+              二进制逆向
             </a>
           
         </div>
@@ -838,7 +838,50 @@ document.addEventListener('DOMContentLoaded', function() {
         showMusicError();
       });
   } else {
-    showMusicError();
+    // 如果CDN加载失败，尝试备用方案
+    loadAPlayerFallback();
+  }
+
+  // APlayer备用加载方案
+  function loadAPlayerFallback() {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css';
+    document.head.appendChild(link);
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js';
+    script.onload = function() {
+      // CDN加载成功，重新初始化播放器
+      if (typeof APlayer !== 'undefined') {
+        fetch('/music.json')
+          .then(response => response.json())
+          .then(data => {
+            const ap = new APlayer({
+              container: document.getElementById('aplayer-container'),
+              audio: data.audio,
+              autoplay: false,
+              loop: 'none',
+              volume: 0.7,
+              listFolded: false,
+              listMaxHeight: 200,
+              lrcType: 3,
+              mutex: true,
+              theme: '#5b99e5',
+              preload: 'metadata'
+            });
+            addGinkaEffects(ap);
+          })
+          .catch(error => {
+            console.log('音乐播放器备用初始化失败:', error);
+            showMusicError();
+          });
+      }
+    };
+    script.onerror = function() {
+      showMusicError();
+    };
+    document.head.appendChild(script);
   }
 
   // 显示音乐加载错误提示

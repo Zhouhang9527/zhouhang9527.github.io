@@ -751,7 +751,50 @@ document.addEventListener('DOMContentLoaded', function() {
         showMusicError();
       });
   } else {
-    showMusicError();
+    // 如果CDN加载失败，尝试备用方案
+    loadAPlayerFallback();
+  }
+
+  // APlayer备用加载方案
+  function loadAPlayerFallback() {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css';
+    document.head.appendChild(link);
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js';
+    script.onload = function() {
+      // CDN加载成功，重新初始化播放器
+      if (typeof APlayer !== 'undefined') {
+        fetch('/music.json')
+          .then(response => response.json())
+          .then(data => {
+            const ap = new APlayer({
+              container: document.getElementById('aplayer-container'),
+              audio: data.audio,
+              autoplay: false,
+              loop: 'none',
+              volume: 0.7,
+              listFolded: false,
+              listMaxHeight: 200,
+              lrcType: 3,
+              mutex: true,
+              theme: '#5b99e5',
+              preload: 'metadata'
+            });
+            addGinkaEffects(ap);
+          })
+          .catch(error => {
+            console.log('音乐播放器备用初始化失败:', error);
+            showMusicError();
+          });
+      }
+    };
+    script.onerror = function() {
+      showMusicError();
+    };
+    document.head.appendChild(script);
   }
 
   // 显示音乐加载错误提示
