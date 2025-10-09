@@ -244,8 +244,7 @@
 
 
     <div class="comments twikoo-container"></div>
-<!-- Twikoo Comments for Comments Page -->
-    </div>
+</div>
   </main>
 
   <footer class="footer">
@@ -278,14 +277,30 @@
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
 # Twikoo Comment System
-<div id="twikoo-container"></div>
 <script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.17/dist/twikoo.all.min.js"></script>
 <script>
-  twikoo.init({
-    envId: 'https://my-twikoo-backend.vercel.app',
-    el: '#twikoo-container',
+  document.addEventListener('DOMContentLoaded', function() {
+    // 检查是否有评论容器
+    var container = document.querySelector('.twikoo-container');
+    if (container) {
+      twikoo.init({
+        envId: 'https://my-twikoo-backend.vercel.app',
+        el: '.twikoo-container',
+      });
+    }
   });
 </script>
+
+<style>
+.twikoo-container {
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 25px;
+  border-radius: 16px;
+  margin-top: 40px;
+}
+</style>
 
 
   <!-- GINKA Video Background -->
