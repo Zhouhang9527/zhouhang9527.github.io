@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hello World</title>
+    <url>/2025/10/09/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>My-First-Reverse-Analysis</title>
+    <url>/2025/10/07/My-First-Reverse-Analysis/</url>
+    <content><![CDATA[<p>题目名：[LitCTF 2023] 世界上最棒的程序员</p>
+<p>本文为该题的解题报告（Writeup），对可执行程序进行静态&#x2F;动态分析并给出复现过程与结论。</p>
+<h2 id="环境与运行"><a href="#环境与运行" class="headerlink" title="环境与运行"></a>环境与运行</h2><p>双击打开程序后，控制台会输出如下提示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Hello CTFer~!</span><br><span class="line">I am Re_sign.</span><br><span class="line">Input 2 numbers which are the C0RE of the computer</span><br></pre></td></tr></table></figure>
+
+<p>接着程序会进入分析阶段（可以用 IDA 打开并按 F5 查看伪代码）。下面是 <code>main</code> 的伪代码片段：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  __main();</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Hello CTFer~!\n&quot;</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;I am Re_sign.\n&quot;</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Input 2 numbers which are the C0RE of the computer\n&quot;</span>);</span><br><span class="line">  start();</span><br><span class="line">  Sleep(<span class="number">0x7D0</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>start()</code> 函数负责读取输入并判断是否满足条件，下面是其伪代码：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">start</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> Num_2;</span><br><span class="line">  <span class="type">int</span> Num_1[<span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, Num_1);</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>, &amp;Num_2);</span><br><span class="line">  <span class="keyword">if</span> ( Num_1[<span class="number">0</span>] + Num_2 == <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Flag: LitCTF&#123;I_am_the_best_programmer_ever&#125;\n&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Wrong!Try again!\n&quot;</span>);</span><br><span class="line">    start();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="分析与思路"><a href="#分析与思路" class="headerlink" title="分析与思路"></a>分析与思路</h2><p>从 <code>start()</code> 可以看到，程序通过两次 <code>scanf(&quot;%d&quot;, ...)</code> 读取两个整数，分别存入 <code>Num_1[0]</code>（数组第一个元素）和 <code>Num_2</code>。随后判断条件为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Num_1[0] + Num_2 == 1</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，只要两次输入的整数之和等于 1，程序就会打印 flag。最简单满足该条件的组合是 <code>0</code> 和 <code>1</code>（或 <code>1</code> 和 <code>0</code>）。</p>
+<p>另外注意：flag 是直接硬编码在程序输出里的，不需要绕过任何加密或复杂的校验逻辑。</p>
+<h2 id="复现步骤"><a href="#复现步骤" class="headerlink" title="复现步骤"></a>复现步骤</h2><ol>
+<li>运行程序。</li>
+<li>按提示输入两个数字，使它们相加等于 1，例如：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入1: 0</span><br><span class="line">输入2: 1</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>程序会输出 flag。</li>
+</ol>
+<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>程序输出的 flag 为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Flag: LitCTF&#123;I_am_the_best_programmer_ever&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本题为入门级逆向题，核心在于查看程序的输入与对输入的简单校验逻辑，flag 被明文写在程序中，直接触发输出即可。对于类似题目，先查看字符串、输入逻辑和条件判断通常能快速定位解法。</p>
+<hr>
+<h2 id="为什么-0-和-1-是计算的“核心”"><a href="#为什么-0-和-1-是计算的“核心”" class="headerlink" title="为什么 0 和 1 是计算的“核心”"></a>为什么 0 和 1 是计算的“核心”</h2><p>0 和 1 构成了二进制体系——这是最简单、却也是完备的信息表示方法。下面简要说明它们的起源与重要性：</p>
+<ul>
+<li>起源：1 作为计数单位由来已久；0 早期作为占位符出现于美索不达米亚，作为独立数的概念与算法在印度数学中完善，后来传入欧洲，成为现代十进制和算术的基础。</li>
+<li>二进制与逻辑：莱布尼茨在 17 世纪提出二进制，并受到《易经》阴阳思想启发。19 世纪布尔形式化逻辑（布尔代数），为用代数表示逻辑判断提供理论基础。</li>
+<li>物理实现：电子器件天然存在两种稳定状态（通&#x2F;断、低&#x2F;高电压），用 0&#x2F;1 表示既直观又可靠；香农将布尔代数用于电路设计，证明用开关电路即可实现任意逻辑功能。</li>
+<li>工程价值：比特（bit）是信息的最小单位，任意数据都可被编码为比特序列；布尔门（AND&#x2F;OR&#x2F;NOT&#x2F;NAND&#x2F;NOR）能构成任意计算逻辑，支持图灵完备的实现。</li>
+</ul>
+<p>在本题中，作者用“输入两个数字的和等于 1”这一简单条件恰好利用了 0 与 1 的二值特性：最小、直接且易于触发。flag 被写入程序内部，直接输入 0 和 1 即可得到结果，既体现了二值逻辑的直观性，也适合作为入门级逆向题的设计思路。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>reverse</tag>
+        <tag>CTF</tag>
+        <tag>二进制逆向</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Reverse 分类占位文章</title>
+    <url>/2025/10/07/reverse-placeholder/</url>
+    <content><![CDATA[<p>这是一篇占位文章，用于生成 Reverse 分类页面。</p>
+<p>后续可以在这里发布 Reverse 相关的技术文章和题解。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>reverse</tag>
+        <tag>逆向工程</tag>
+        <tag>二进制分析</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Pwn 分类占位文章</title>
+    <url>/2025/10/07/pwn-placeholder/</url>
+    <content><![CDATA[<p>这是一篇占位文章，用于生成 Pwn 分类页面。</p>
+<p>后续可以在这里发布 Pwn 相关的技术文章和题解。</p>
+]]></content>
+      <categories>
+        <category>pwn</category>
+      </categories>
+      <tags>
+        <tag>二进制分析</tag>
+        <tag>pwn</tag>
+        <tag>漏洞利用</tag>
+      </tags>
+  </entry>
+</search>

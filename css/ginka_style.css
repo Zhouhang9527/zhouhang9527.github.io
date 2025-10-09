@@ -1,0 +1,59 @@
+/* ======================================================
+   GINKA Style v8.0 - Final for NexT Mist (Complete)
+   ====================================================== */
+
+   @font-face { font-family: 'OppoSans'; src: url('/fonts/OppoSans.ttf') format('truetype'); font-weight: normal; font-display: swap; }
+   @font-face { font-family: 'OppoSans'; src: url('/fonts/OppoSans-Bold.ttf') format('truetype'); font-weight: bold; font-display: swap; }
+   @font-face { font-family: 'LXGW WenKai'; src: url('/fonts/LxgwWenKai.ttf') format('truetype'); font-weight: normal; font-display: swap; }
+   
+   #video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -999; }
+   #video-background video { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+   body { font-family: 'OppoSans', sans-serif; }
+   
+   .main-inner, .sidebar-inner, .header-inner, .footer-inner, .sidebar, .content-wrap, .header, .footer, .post-block { background: none !important; box-shadow: none !important; border: none !important; }
+   .post-block, .sidebar-inner { background: rgba(255, 255, 255, 0.75) !important; backdrop-filter: blur(20px) saturate(1.8); -webkit-backdrop-filter: blur(20px) saturate(1.8); border-radius: 16px; padding: 35px !important; margin-bottom: 40px; border: 1px solid rgba(255, 255, 255, 0.2); transition: all 0.4s ease; animation: fadeIn 0.8s ease-out forwards; }
+   .post-block:hover, .sidebar-inner:hover { box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2); transform: translateY(-5px); }
+   .header-inner { background: rgba(255, 255, 255, 0.3) !important; backdrop-filter: blur(10px); border-radius: 16px !important; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; padding: 10px 20px !important; }
+   .menu-item-link-text, .menu-item .fa, .menu-item .far, .menu-item .fas { color: #fff !important; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5); }
+   .menu .menu-item-active > a, .menu .menu-item > a:hover { background: rgba(255, 255, 255, 0.2) !important; border-radius: 8px; }
+   .site-title { display: none !important; }
+   h1, h2, h3, .post-title-link, .site-author-name { font-family: 'LXGW WenKai', cursive; color: #333 !important; }
+   .site-subtitle, .site-state-item-count, .site-state-item-name { color: #555 !important; }
+   .social-link { color: #555 !important; font-size: 20px; }
+   .social-link:hover { color: #2a6db5 !important; }
+   .site-state { display: flex; justify-content: center; gap: 20px; }
+   .site-state-item { display: flex; flex-direction: column; text-align: center; }
+   .social { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+   @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+   hr { border: none; height: 1px; background: linear-gradient(90deg, transparent, rgba(91, 153, 229, 0.5), transparent); animation: breath 3s ease-in-out infinite; }
+   @keyframes breath { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+   
+   #ginka-music-player { position: fixed; right: 30px; bottom: 40px; z-index: 999; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px) saturate(1.8); -webkit-backdrop-filter: blur(20px) saturate(1.8); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2); cursor: grab; transition: all 0.4s ease-in-out; overflow: hidden; }
+   #ginka-music-player.expanded { width: 300px; height: 140px; padding: 15px; border-radius: 16px; }
+   #ginka-music-player.minimized { width: 60px; height: 60px; padding: 0; border-radius: 50%; }
+   .expanded .ginka-player-body { opacity: 1; transition: opacity 0.3s 0.1s; }
+   .minimized .ginka-player-body { opacity: 0; pointer-events: none; }
+   #ginka-minimize-btn { position: absolute; background: rgba(0, 0, 0, 0.1); border: none; border-radius: 50%; color: white; cursor: pointer; transition: all 0.3s; }
+   .expanded #ginka-minimize-btn { top: 8px; right: 8px; width: 24px; height: 24px; }
+   .minimized #ginka-minimize-btn { top: 0; left: 0; width: 100%; height: 100%; font-size: 24px; background: rgba(91, 153, 229, 0.5); }
+   #ginka-minimize-btn:hover { background: rgba(0, 0, 0, 0.3); }
+   .minimized #ginka-minimize-btn:hover { background: rgba(42, 109, 181, 0.7); }
+   .ginka-player-info { display: flex; align-items: center; padding-bottom: 10px; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+   .ginka-player-cover { width: 60px; height: 60px; border-radius: 12px; margin-right: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+   .ginka-player-meta .title { font-weight: bold; font-family: 'LXGW WenKai', cursive; font-size: 18px; color: #1a1a1a; }
+   .ginka-player-meta .artist { font-size: 14px; opacity: 0.7; color: #333; }
+   .ginka-player-controls { display: flex; justify-content: space-around; align-items: center; margin-top: 10px; }
+   .ginka-player-controls button { background: none; border: none; font-size: 24px; cursor: pointer; color: #555; transition: all 0.2s ease; padding: 5px 15px; }
+   .ginka-player-controls button:hover { color: #5b99e5; transform: scale(1.15); }
+   
+   #twikoo { background: rgba(255, 255, 255, 0.5) !important; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 25px; border-radius: 16px; margin-top: 40px; }
+   .tk-meta-input .tk-input { background: rgba(255, 255, 255, 0.5) !important; border: 1px solid rgba(0, 0, 0, 0.1) !important; color: #333 !important; }
+   .tk-submit .tk-button { background: #5b99e5 !important; color: white !important; transition: all 0.3s ease; }
+   .tk-submit .tk-button:hover { background: #2a6db5 !important; }
+   
+   @media (max-width: 991px) {
+       .main-inner, .sidebar-inner, .post-block, #page-header, #footer, .header, .footer { background: #FFFFFF !important; backdrop-filter: none; -webkit-backdrop-filter: none; }
+       body { background: #f5f5f5; }
+       #video-background { display: none; }
+       .sidebar { display: none; }
+   }
