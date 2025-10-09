@@ -276,6 +276,29 @@
       twikoo.init({
         envId: 'https://my-twikoo-backend.vercel.app',
         el: '.twikoo-container',
+        // 启用表情包功能
+        emoji: {
+          enable: true,
+          list: [
+            { name: 'smile', url: 'https://cdn.jsdelivr.net/npm/twikoo@1.6.17/dist/emoji/smile.png' },
+            { name: 'laugh', url: 'https://cdn.jsdelivr.net/npm/twikoo@1.6.17/dist/emoji/laugh.png' },
+            { name: 'wink', url: 'https://cdn.jsdelivr.net/npm/twikoo@1.6.17/dist/emoji/wink.png' },
+            { name: 'blush', url: 'https://cdn.jsdelivr.net/npm/twikoo@1.6.17/dist/emoji/blush.png' }
+          ]
+        },
+        // 启用图片上传功能
+        upload: {
+          enable: true,
+          type: 'markdown',
+          maxSize: 5 * 1024 * 1024, // 5MB
+          acceptedTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+        },
+        // 评论排序
+        orderBy: 'time',
+        // 评论分页
+        pageSize: 10,
+        // 实时评论推送
+        realtime: true
       });
     }
   });
@@ -289,6 +312,488 @@
   padding: 25px;
   border-radius: 16px;
   margin-top: 40px;
+}
+
+/* 评论框样式优化 */
+.tk-input {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 8px !important;
+}
+
+.tk-input:focus {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: #5b99e5 !important;
+}
+
+/* 评论内容样式 */
+.tk-content {
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* 评论头像样式 */
+.tk-avatar {
+  border-radius: 50% !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 评论时间样式 */
+.tk-time {
+  color: #999 !important;
+  font-size: 12px;
+}
+
+/* 表情包按钮样式 */
+.tk-emoji-btn {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease;
+}
+
+.tk-emoji-btn:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+  transform: scale(1.1);
+}
+
+/* 图片上传按钮样式 */
+.tk-upload-btn {
+  background: rgba(91, 153, 229, 0.1) !important;
+  border: 1px solid #5b99e5 !important;
+  color: #5b99e5 !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease;
+}
+
+.tk-upload-btn:hover {
+  background: rgba(91, 153, 229, 0.2) !important;
+}
+
+/* 评论操作按钮样式 */
+.tk-action-btn {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease;
+}
+
+.tk-action-btn:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* 分页按钮样式 */
+.tk-pagination {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease;
+}
+
+.tk-pagination:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* 加载动画样式 */
+.tk-loading {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 8px !important;
+}
+</style>
+
+
+  <!-- GINKA Performance Optimizer -->
+  // 界面流畅度优化和移动端修复
+document.addEventListener('DOMContentLoaded', function() {
+
+  // 修复移动端侧边栏触摸事件
+  function fixMobileSidebar() {
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarDimmmer = document.querySelector('.sidebar-dimmer');
+
+    if (!sidebarToggle || !sidebar) return;
+
+    // 确保侧边栏在移动端可以正确显示/隐藏
+    sidebarToggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const isHidden = sidebar.classList.contains('sidebar-active');
+
+      if (isHidden) {
+        // 显示侧边栏
+        sidebar.classList.add('sidebar-active');
+        if (sidebarDimmmer) sidebarDimmmer.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      } else {
+        // 隐藏侧边栏
+        sidebar.classList.remove('sidebar-active');
+        if (sidebarDimmmer) sidebarDimmmer.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // 点击遮罩层关闭侧边栏
+    if (sidebarDimmmer) {
+      sidebarDimmmer.addEventListener('click', function() {
+        sidebar.classList.remove('sidebar-active');
+        sidebarDimmmer.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    }
+
+    // 修复移动端触摸滑动
+    let startX, startY, isScrolling = false;
+
+    sidebar.addEventListener('touchstart', function(e) {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      isScrolling = null;
+    });
+
+    sidebar.addEventListener('touchmove', function(e) {
+      if (!startX || !startY) return;
+
+      const deltaX = e.touches[0].clientX - startX;
+      const deltaY = e.touches[0].clientY - startY;
+
+      if (isScrolling === null) {
+        isScrolling = Math.abs(deltaY) > Math.abs(deltaX);
+      }
+
+      if (!isScrolling) {
+        e.preventDefault();
+      }
+    });
+
+    sidebar.addEventListener('touchend', function() {
+      startX = startY = null;
+      isScrolling = false;
+    });
+  }
+
+  // 优化图片懒加载
+  function optimizeImages() {
+    const images = document.querySelectorAll('img[data-src]');
+
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src;
+            img.classList.remove('lazy');
+            observer.unobserve(img);
+          }
+        });
+      });
+
+      images.forEach(function(img) {
+        imageObserver.observe(img);
+      });
+    } else {
+      // 降级处理
+      images.forEach(function(img) {
+        img.src = img.dataset.src;
+      });
+    }
+  }
+
+  // 优化滚动性能
+  function optimizeScroll() {
+    let ticking = false;
+
+    function updateScrollEffects() {
+      const scrollTop = window.pageYOffset;
+      const header = document.querySelector('.header');
+
+      // 导航栏透明度变化
+      if (header) {
+        const opacity = Math.min(scrollTop / 100, 1);
+        header.style.background = `rgba(255, 255, 255, ${0.95 + opacity * 0.05})`;
+      }
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(updateScrollEffects);
+        ticking = true;
+      }
+    });
+  }
+
+  // 优化链接预加载
+  function optimizeLinks() {
+    const links = document.querySelectorAll('a[href^="/"]');
+
+    links.forEach(function(link) {
+      link.addEventListener('mouseenter', function() {
+        // 鼠标悬停时预加载页面
+        const href = this.href;
+        if (href && href.indexOf(window.location.origin) === 0) {
+          const linkElement = document.createElement('link');
+          linkElement.rel = 'prefetch';
+          linkElement.href = href;
+          document.head.appendChild(linkElement);
+        }
+      });
+    });
+  }
+
+  // 移动端适配优化
+  function mobileOptimizations() {
+    // 修复iOS Safari的视口问题
+    function fixIOSViewport() {
+      let viewport = document.querySelector('meta[name="viewport"]');
+      if (!viewport) {
+        viewport = document.createElement('meta');
+        viewport.name = 'viewport';
+        viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+        document.head.appendChild(viewport);
+      }
+    }
+
+    // 修复移动端点击延迟
+    function fixTapDelay() {
+      if ('ontouchstart' in window) {
+        document.body.classList.add('touch-device');
+      }
+    }
+
+    // 优化移动端字体大小
+    function optimizeMobileFonts() {
+      if (window.innerWidth <= 768) {
+        document.documentElement.style.fontSize = '14px';
+      }
+    }
+
+    fixIOSViewport();
+    fixTapDelay();
+    optimizeMobileFonts();
+  }
+
+  // 执行所有优化
+  fixMobileSidebar();
+  optimizeImages();
+  optimizeScroll();
+  optimizeLinks();
+  mobileOptimizations();
+
+  // 监听窗口大小变化
+  window.addEventListener('resize', function() {
+    // 重新应用移动端优化
+    if (window.innerWidth <= 768) {
+      document.documentElement.style.fontSize = '14px';
+    } else {
+      document.documentElement.style.fontSize = '';
+    }
+  });
+
+  // 添加加载完成标识
+  document.body.classList.add('js-loaded');
+});
+
+// 添加性能监控
+window.addEventListener('load', function() {
+  // 监控页面加载时间
+  if (window.performance && window.performance.timing) {
+    const timing = window.performance.timing;
+    const loadTime = timing.loadEventEnd - timing.navigationStart;
+    console.log('页面加载时间:', loadTime + 'ms');
+  }
+
+  // 监控资源加载错误
+  window.addEventListener('error', function(e) {
+    console.warn('资源加载失败:', e.target.src || e.target.href || '未知资源');
+  });
+});
+
+
+  <!-- GINKA Music Player -->
+  <div id="music-player" class="music-player">
+  <div class="music-player-toggle">
+    <i class="fa fa-music"></i>
+  </div>
+  <div class="music-player-container">
+    <div class="music-player-header">
+      <span class="music-title">音乐播放器</span>
+      <button class="music-close">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+    <div id="aplayer-container"></div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 音乐播放器拖拽功能
+  const player = document.getElementById('music-player');
+  const toggle = document.querySelector('.music-player-toggle');
+  const container = document.querySelector('.music-player-container');
+  const closeBtn = document.querySelector('.music-close');
+
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  // 显示/隐藏播放器
+  toggle.addEventListener('click', function() {
+    container.style.display = container.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // 关闭播放器
+  closeBtn.addEventListener('click', function() {
+    container.style.display = 'none';
+  });
+
+  // 拖拽功能
+  player.addEventListener('mousedown', function(e) {
+    if (e.target === toggle || e.target.closest('.music-player-toggle')) return;
+
+    isDragging = true;
+    offsetX = e.clientX - player.offsetLeft;
+    offsetY = e.clientY - player.offsetTop;
+    player.style.cursor = 'grabbing';
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (isDragging) {
+      player.style.left = (e.clientX - offsetX) + 'px';
+      player.style.top = (e.clientY - offsetY) + 'px';
+    }
+  });
+
+  document.addEventListener('mouseup', function() {
+    if (isDragging) {
+      isDragging = false;
+      player.style.cursor = 'grab';
+    }
+  });
+
+  // 初始化APlayer
+  if (typeof APlayer !== 'undefined') {
+    fetch('/music.json')
+      .then(response => response.json())
+      .then(data => {
+        const ap = new APlayer({
+          container: document.getElementById('aplayer-container'),
+          audio: data.audio,
+          autoplay: false,
+          loop: 'none',
+          volume: 0.7,
+          listFolded: false,
+          listMaxHeight: 200,
+          lrcType: 3,
+          mutex: true,
+          theme: '#5b99e5',
+          preload: 'metadata'
+        });
+      })
+      .catch(error => {
+        console.log('音乐播放器初始化失败:', error);
+      });
+  }
+});
+</script>
+
+<style>
+.music-player {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 9999;
+  font-family: 'LXGW WenKai', cursive;
+}
+
+.music-player-toggle {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.music-player-toggle:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.music-player-toggle i {
+  font-size: 18px;
+  color: #5b99e5;
+}
+
+.music-player-container {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 350px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  display: none;
+}
+
+.music-player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.music-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.music-close {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.music-close:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .music-player {
+    top: 80px;
+    right: 10px;
+  }
+
+  .music-player-container {
+    width: calc(100vw - 20px);
+    max-width: 350px;
+    right: -10px;
+  }
 }
 </style>
 
