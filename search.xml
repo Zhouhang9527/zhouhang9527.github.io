@@ -81,4 +81,67 @@
         <tag>逆向工程</tag>
       </tags>
   </entry>
+  <entry>
+    <title>[HUBUCTF 2022 新生赛] simple_RE 题解</title>
+    <url>/2024/10/10/%5BHUBUCTF%202022%20%E6%96%B0%E7%94%9F%E8%B5%9B%5Dsimple_RE/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [HUBUCTF 2022 新生赛] simple_RE<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 简单</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：文件分析"><a href="#第一步：文件分析" class="headerlink" title="第一步：文件分析"></a>第一步：文件分析</h3><p>拖入 die 进行查壳分析，发现程序是 64 位、小端序、无壳的可执行文件。</p>
+<p><img src="/images/image.png" alt="程序基本信息"></p>
+<h3 id="第二步：逆向分析"><a href="#第二步：逆向分析" class="headerlink" title="第二步：逆向分析"></a>第二步：逆向分析</h3><p>用 IDA 打开，F5 查看伪代码。主函数如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __fastcall <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv, <span class="type">const</span> <span class="type">char</span> **envp)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> p_Size; <span class="comment">// [rsp+24h] [rbp-44h] BYREF</span></span><br><span class="line">  <span class="type">void</span> *Buf1; <span class="comment">// [rsp+28h] [rbp-40h] BYREF</span></span><br><span class="line">  <span class="type">char</span> v6[<span class="number">56</span>]; <span class="comment">// [rsp+30h] [rbp-38h] BYREF</span></span><br><span class="line"></span><br><span class="line">  sub_401770(argc: argc, argv: argv, envp: envp);</span><br><span class="line">  <span class="built_in">printf</span>(Format: <span class="string">&quot;please input the flag:&quot;</span>);</span><br><span class="line">  <span class="built_in">scanf</span>(Format: <span class="string">&quot;%s&quot;</span>, v6);</span><br><span class="line">  Buf1 = <span class="number">0</span>;</span><br><span class="line">  sub_401570(a1: v6, p_Buf1: &amp;Buf1, p_Size: &amp;p_Size);</span><br><span class="line">  <span class="keyword">if</span> ( !<span class="built_in">memcmp</span>(</span><br><span class="line">          Buf1: Buf1,</span><br><span class="line">          Buf2: a5mc58bphliax7j,                      <span class="comment">// &quot;5Mc58bPHLiAx7J8ocJIlaVUxaJvMcoYMaoPMaOfg15c475tscHfM/8==&quot;</span></span><br><span class="line">          Size: p_Size) )</span><br><span class="line">    <span class="built_in">printf</span>(Format: <span class="string">&quot;\nsuccess!&quot;</span>);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">printf</span>(Format: <span class="string">&quot;\nfailed!&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( Buf1 )</span><br><span class="line">    <span class="built_in">free</span>(Buf1: Buf1);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序逻辑很简单：输入 flag，调用处理函数，然后比较结果。</p>
+<h3 id="第三步：深入分析编码函数"><a href="#第三步：深入分析编码函数" class="headerlink" title="第三步：深入分析编码函数"></a>第三步：深入分析编码函数</h3><p>双击进入 <code>sub_401570</code> 函数内部（已有部分注释）：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__int64 __fastcall <span class="title function_">sub_401570</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *a1, <span class="type">void</span> **p_Buf1, <span class="type">int</span> *p_Size)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> lenth; <span class="comment">// r15d</span></span><br><span class="line">  <span class="type">int</span> n2; <span class="comment">// r12d</span></span><br><span class="line">  <span class="type">int</span> _______; <span class="comment">// r13d</span></span><br><span class="line">  __int64 ________1; <span class="comment">// r14</span></span><br><span class="line">  _BYTE *v10; <span class="comment">// rax</span></span><br><span class="line">  _BYTE *v11; <span class="comment">// r9</span></span><br><span class="line">  __int64 three_i; <span class="comment">// r8</span></span><br><span class="line">  <span class="type">char</span> v13; <span class="comment">// cl</span></span><br><span class="line">  <span class="type">char</span> v14; <span class="comment">// r11</span></span><br><span class="line">  <span class="type">char</span> v15; <span class="comment">// r10</span></span><br><span class="line"></span><br><span class="line">  lenth = <span class="built_in">strlen</span>(Str: a1);</span><br><span class="line">  n2 = lenth % <span class="number">3</span>;</span><br><span class="line">  <span class="keyword">if</span> ( lenth % <span class="number">3</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    _______ = <span class="number">4</span> * (lenth / <span class="number">3</span>) + <span class="number">4</span>;</span><br><span class="line">    ________1 = _______;</span><br><span class="line">    v10 = <span class="built_in">malloc</span>(Size: _______ + <span class="number">1LL</span>);</span><br><span class="line">    v10[_______] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> ( lenth &lt;= <span class="number">0</span> )</span><br><span class="line">      <span class="keyword">goto</span> LABEL_5;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    _______ = <span class="number">4</span> * (lenth / <span class="number">3</span>);</span><br><span class="line">    ________1 = _______;</span><br><span class="line">    v10 = <span class="built_in">malloc</span>(Size: _______ + <span class="number">1LL</span>);</span><br><span class="line">    v10[_______] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> ( lenth &lt;= <span class="number">0</span> )</span><br><span class="line">      <span class="keyword">goto</span> LABEL_8;</span><br><span class="line">  &#125;</span><br><span class="line">  v11 = v10;</span><br><span class="line">  three_i = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    v11 += <span class="number">4</span>;</span><br><span class="line">    v13 = a1[three_i];</span><br><span class="line">    *(v11 - <span class="number">4</span>) = aQvejafhmuyjbac[v13 &gt;&gt; <span class="number">2</span>];     <span class="comment">// 00AAAAAA</span></span><br><span class="line">    v14 = a1[three_i + <span class="number">1</span>];</span><br><span class="line">    *(v11 - <span class="number">3</span>) = aQvejafhmuyjbac[(v14 &gt;&gt; <span class="number">4</span>) | (<span class="number">16</span> * v13) &amp; <span class="number">48</span>]; <span class="comment">// 0000BBBB + 00AA0000 = 00AABBBB</span></span><br><span class="line">    v15 = a1[three_i + <span class="number">2</span>];</span><br><span class="line">    three_i += <span class="number">3</span>;</span><br><span class="line">    *(v11 - <span class="number">2</span>) = aQvejafhmuyjbac[(v15 &gt;&gt; <span class="number">6</span>) | (<span class="number">4</span> * v14) &amp; <span class="number">60</span>];  <span class="comment">// 000000CC + 00BBBB00 = 00BBBBCC</span></span><br><span class="line">    *(v11 - <span class="number">1</span>) = aQvejafhmuyjbac[v15 &amp; <span class="number">0x3F</span>];   <span class="comment">// 00CCCCCC</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( lenth &gt; (<span class="type">int</span>)three_i );</span><br><span class="line"></span><br><span class="line">LABEL_5:</span><br><span class="line">  <span class="keyword">if</span> ( n2 == <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v10[________1 - <span class="number">2</span>] = <span class="number">61</span>;</span><br><span class="line">    v10[________1 - <span class="number">1</span>] = <span class="number">61</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> ( n2 == <span class="number">2</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v10[________1 - <span class="number">1</span>] = <span class="number">61</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">LABEL_8:</span><br><span class="line">  *p_Buf1 = v10;</span><br><span class="line">  *p_Size = _______;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="第四步：识别编码模式"><a href="#第四步：识别编码模式" class="headerlink" title="第四步：识别编码模式"></a>第四步：识别编码模式</h3><p>通过分析可以看出，这是一个使用自定义字符集的 Base64 编码实现。虽然可以使用在线解码工具快速得到结果，但为了更好地理解编码过程，我们来手动编写解码脚本。</p>
+<p>首先，在 main 函数中找到硬编码的密文：<code>5Mc58bPHLiAx7J8ocJIlaVUxaJvMcoYMaoPMaOfg15c475tscHfM/8==</code></p>
+<p>然后在 <code>sub_401570</code> 函数中找到 Base64 字符映射表：<code>qvEJAfHmUYjBac+u8Ph5n9Od17FrICL/X0gVtM4Qk6T2z3wNSsyoebilxWKGZpRD</code></p>
+<p>理解编码逻辑后，手动实现对应的解码脚本：</p>
+<pre><code class="language-python">enc=(&#39;5Mc58bPHLiAx7J8ocJIlaVUxaJvMcoYMaoPMaOfg15c475tscHfM/8==&#39;)
+enc_=[]
+for a in enc:
+    enc_.append(ord(a))
+key = [0x71, 0x76, 0x45, 0x4a, 0x41, 0x66, 0x48, 0x6d, 0x55, 0x59, 0x6a, 0x42, 0x61, 0x63, 0x2b, 0x75, 0x38, 0x50, 0x68, 0x35, 0x6e, 0x39, 0x4f, 0x64, 0x31, 0x37, 0x46, 0x72, 0x49, 0x43, 0x4c, 0x2f, 0x58, 0x30, 0x67, 0x56, 0x74, 0x4d, 0x34, 0x51, 0x6b, 0x36, 0x54, 0x32, 0x7a, 0x33, 0x77, 0x4e, 0x53, 0x73, 0x79, 0x6f, 0x65, 0x62, 0x69, 0x6c, 0x78, 0x57, 0x4b, 0x47, 0x5a, 0x70, 0x52, 0x44, 0x0]
+i=0
+while i&lt;len(enc_):
+    i+=4
+    v1=key.index(enc_[i-4])
+    v2=key.index(enc_[i-3])
+    v13=(v2&amp;0b00110000)&gt;&gt;4|(v1&amp;0b00111111)&lt;&lt;2
+    if enc_[i-2]==ord(&#39;=&#39;):
+        print(chr(v13),end=&#39;&#39;)
+        break
+    v3=key.index(enc_[i-2])
+    v14=(v3&amp;0b00111100)&gt;&gt;2|(v2&amp;0b00001111)&lt;&lt;4
+    if enc_[i-1]==(&#39;=&#39;):
+        print(chr(v14),end=&#39;&#39;)
+        break
+    v4=key.index(enc_[i-1])
+    v15=v4|(v3&amp;0b000011)&lt;&lt;6
+    [print(chr(i),end=&#39;&#39;) for i in (v13,v14,v15)]
+第五步：解码验证
+运行脚本，成功得到 flag：NSSCTF{a8d4347722800e72e34e1aba3fe914ae}
+
+解题总结
+这是一道经典的逆向工程题目，主要考察以下能力点：
+
+静态分析能力：熟练使用 IDA Pro 进行反汇编和伪代码分析
+自定义编码识别：准确识别出 Base64 的变体实现
+编码逆向工程：深入理解编码逻辑并实现解码算法
+通过仔细分析程序的编码表和处理逻辑，手动构建了对应的解码器，最终成功破解了 flag。
+
+本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！
+</code></pre>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>Base64</tag>
+        <tag>IDA Pro</tag>
+      </tags>
+  </entry>
 </search>
