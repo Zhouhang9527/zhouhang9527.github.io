@@ -52,23 +52,8 @@
       </tags>
   </entry>
   <entry>
-    <title>Pwn 分类占位文章</title>
-    <url>/2025/10/07/pwn-placeholder/</url>
-    <content><![CDATA[<p>这是一篇占位文章，用于生成 Pwn 分类页面。</p>
-<p>后续可以在这里发布 Pwn 相关的技术文章和题解。</p>
-]]></content>
-      <categories>
-        <category>pwn</category>
-      </categories>
-      <tags>
-        <tag>pwn</tag>
-        <tag>漏洞利用</tag>
-        <tag>二进制分析</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>[HUBUCTF 2022 新生赛] simple_RE 题解</title>
-    <url>/2024/10/10/%5BHUBUCTF%202022%20%E6%96%B0%E7%94%9F%E8%B5%9B%5Dsimple_RE/</url>
+    <url>/2025/10/10/%5BHUBUCTF%202022%20%E6%96%B0%E7%94%9F%E8%B5%9B%5Dsimple_RE/</url>
     <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [HUBUCTF 2022 新生赛] simple_RE<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 简单</p>
 <h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：文件分析"><a href="#第一步：文件分析" class="headerlink" title="第一步：文件分析"></a>第一步：文件分析</h3><p>拖入 die 进行查壳分析，发现程序是 64 位、小端序、无壳的可执行文件。</p>
 <h3 id="第二步：逆向分析"><a href="#第二步：逆向分析" class="headerlink" title="第二步：逆向分析"></a>第二步：逆向分析</h3><p>用 IDA 打开，F5 查看伪代码。主函数如下：</p>
@@ -96,21 +81,6 @@
         <tag>Reverse</tag>
         <tag>Base64</tag>
         <tag>IDA Pro</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Reverse 分类占位文章</title>
-    <url>/2025/10/07/reverse-placeholder/</url>
-    <content><![CDATA[<p>这是一篇占位文章，用于生成 Reverse 分类页面。</p>
-<p>后续可以在这里发布 Reverse 相关的技术文章和题解。</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>reverse</tag>
-        <tag>二进制分析</tag>
-        <tag>逆向工程</tag>
       </tags>
   </entry>
 </search>

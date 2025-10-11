@@ -1,0 +1,33 @@
+<h1 id="本地-ATRI-模型配置说明"><a href="#本地-ATRI-模型配置说明" class="headerlink" title="本地 ATRI 模型配置说明"></a>本地 ATRI 模型配置说明</h1><h2 id="如何添加本地-ATRI-模型"><a href="#如何添加本地-ATRI-模型" class="headerlink" title="如何添加本地 ATRI 模型"></a>如何添加本地 ATRI 模型</h2><h3 id="步骤1-下载-ATRI-模型文件"><a href="#步骤1-下载-ATRI-模型文件" class="headerlink" title="步骤1: 下载 ATRI 模型文件"></a>步骤1: 下载 ATRI 模型文件</h3><ol>
+<li>访问: <a href="https://github.com/AgeTime/live2D_npm/tree/main/ATRI">https://github.com/AgeTime/live2D_npm/tree/main/ATRI</a></li>
+<li>点击 “Code” -&gt; “Download ZIP” 下载整个仓库</li>
+<li>或者使用 Git: <code>git clone https://github.com/AgeTime/live2D_npm.git</code></li>
+</ol>
+<h3 id="步骤2-复制文件到本地"><a href="#步骤2-复制文件到本地" class="headerlink" title="步骤2: 复制文件到本地"></a>步骤2: 复制文件到本地</h3><p>将下载的 ATRI 文件夹完整复制到: <code>themes/next/source/live2d/ATRI/</code></p>
+<h3 id="步骤3-修改配置"><a href="#步骤3-修改配置" class="headerlink" title="步骤3: 修改配置"></a>步骤3: 修改配置</h3><p>在 <code>_config.yml</code> 中修改 live2d 配置：</p>
+<pre><code class="language-yaml">live2d:
+  enable: true
+  scriptFrom: jsdelivr
+  model:
+    # 使用本地模型路径，注意这是 Live2D 3.0 格式
+    jsonPath: /live2d/ATRI/ATRI.model3.json
+  display:
+    position: right
+    width: 150
+    height: 300
+  mobile:
+    show: false
+</code></pre>
+<h2 id="ATRI-模型文件结构"><a href="#ATRI-模型文件结构" class="headerlink" title="ATRI 模型文件结构"></a>ATRI 模型文件结构</h2><p>从 GitHub 可以看到 ATRI 包含：</p>
+<ul>
+<li><code>ATRI.model3.json</code> - 主模型文件 (Live2D 3.0 格式)</li>
+<li><code>ATRI.moc3</code> - 模型数据</li>
+<li><code>ATRI.4096/</code> - 高分辨率纹理文件夹</li>
+<li><code>ATRI.physics3.json</code> - 物理效果</li>
+<li>其他配置文件</li>
+</ul>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ul>
+<li>ATRI 使用的是 Live2D 3.0 格式 (.model3.json)</li>
+<li>确保下载完整的文件夹，包括所有纹理文件</li>
+<li>路径必须是 <code>/live2d/ATRI/ATRI.model3.json</code></li>
+</ul>

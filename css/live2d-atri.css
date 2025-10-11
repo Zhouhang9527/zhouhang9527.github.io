@@ -1,0 +1,84 @@
+/* ATRI Live2D 模型样式优化 */
+#live2dcanvas {
+  position: fixed !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+}
+
+/* 确保 Live2D 容器正确显示 */
+.live2d-widget-container {
+  position: fixed !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}
+
+/* Live2D 工具栏样式 */
+.live2d-widget-tools {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10000;
+}
+
+.live2d-widget-tools span {
+  display: block;
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  margin-bottom: 5px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 30px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.live2d-widget-tools span:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+/* ATRI 特定样式 */
+.live2d-widget-container[data-model="ATRI"] {
+  width: 180px !important;
+  height: 320px !important;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  #live2dcanvas {
+    width: 120px !important;
+    height: 200px !important;
+  }
+  
+  .live2d-widget-container {
+    width: 120px !important;
+    height: 200px !important;
+  }
+}
+
+/* 音乐播放器和 Live2D 的层级管理 */
+.music-player {
+  z-index: 10000 !important;
+}
+
+#live2dcanvas {
+  z-index: 9999 !important;
+}
+
+/* 防止遮挡 */
+.music-player-container {
+  margin-right: 200px;
+}
+
+@media (max-width: 768px) {
+  .music-player-container {
+    margin-right: 140px;
+  }
+}

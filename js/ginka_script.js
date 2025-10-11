@@ -1,148 +1,121 @@
 // ======================================================
-// GINKA Style Script v10.1 - Final Complete Version
+// GINKA Utility Script - 核心功能
 // ======================================================
 
-console.log("[GINKA] Script v10.1 loaded. Starting to wait for APlayer...");
+document.addEventListener('DOMContentLoaded', function() {
+  autoAssignTaxonomies();
+});
 
-let aplayerCheckRetries = 0;
-const aplayerCheckMaxRetries = 50; // Wait for 5 seconds max
+// Auto-detect tags and categories based on article keywords
+function autoAssignTaxonomies() {
+  const postBody = document.querySelector('.post-body');
+  if (!postBody) return;
 
-const aplayerCheckInterval = setInterval(() => {
-    aplayerCheckRetries++;
-    
-    if (typeof APlayer !== 'undefined') {
-        clearInterval(aplayerCheckInterval);
-        console.log(`[GINKA] APlayer is available after ${aplayerCheckRetries * 100}ms! Initializing modules...`);
-        runGinkaModules();
-    } else {
-        console.log("[GINKA] Waiting for APlayer library to be defined...");
-        if (aplayerCheckRetries >= aplayerCheckMaxRetries) {
-            clearInterval(aplayerCheckInterval);
-            console.error("[GINKA] FATAL: APlayer library not found after 5 seconds. Aborting.");
-        }
+  const articleText = postBody.textContent.toLowerCase();
+  const rules = [
+    { keywords: ['pwn', 'heap', 'exploit', '漏洞利用'], tags: ['pwn', '漏洞利用'], categories: ['pwn'] },
+    { keywords: ['reverse', '逆向', 'ida', '反编译'], tags: ['reverse', '逆向工程'], categories: ['reverse'] },
+    { keywords: ['web', 'csrf', 'sql', 'xss', 'http'], tags: ['Web'], categories: ['web'] },
+    { keywords: ['binary', 'shellcode', '汇编', '寄存器'], tags: ['二进制分析'], categories: ['binary'] }
+  ];
+
+  const existingTagTexts = new Set(
+    Array.from(document.querySelectorAll('.post-tags a[rel="tag"]')).map(tag => tag.textContent.replace('#', '').trim().toLowerCase())
+  );
+
+  const categoryMetaItem = findCategoryMetaItem();
+  const existingCategoryTexts = new Set();
+  if (categoryMetaItem) {
+    categoryMetaItem.querySelectorAll('span[itemprop="name"]').forEach(span => {
+      existingCategoryTexts.add(span.textContent.trim().toLowerCase());
+    });
+  }
+
+  const tagsToAdd = new Set();
+  const categoriesToAdd = new Set();
+
+  rules.forEach(rule => {
+    if (!rule.keywords.some(keyword => articleText.includes(keyword.toLowerCase()))) return;
+    (rule.tags || []).forEach(tag => {
+      if (!existingTagTexts.has(tag.toLowerCase())) {
+        tagsToAdd.add(tag);
+      }
+    });
+    (rule.categories || []).forEach(category => {
+      if (!existingCategoryTexts.has(category.toLowerCase())) {
+        categoriesToAdd.add(category);
+      }
+    });
+  });
+
+  if (tagsToAdd.size) {
+    let tagContainer = document.querySelector('.post-footer .post-tags');
+    if (!tagContainer) {
+      const footer = document.querySelector('.post-footer');
+      if (footer) {
+        tagContainer = document.createElement('div');
+        tagContainer.className = 'post-tags';
+        footer.insertBefore(tagContainer, footer.firstChild);
+      }
     }
-}, 100);
+    if (tagContainer) {
+      tagsToAdd.forEach(tag => {
+        const link = document.createElement('a');
+        link.href = `/tags/${slugify(tag)}/`;
+        link.rel = 'tag';
+        link.textContent = `# ${tag}`;
+        tagContainer.appendChild(link);
+      });
+    }
+  }
 
-function runGinkaModules() {
-    executeOnce('ginka-player', () => {
-        const playerUI = document.createElement('div');
-        playerUI.id = 'ginka-music-player';
-        playerUI.classList.add('expanded');
-        playerUI.innerHTML = `
-            <div class="ginka-player-body">
-              <div class="ginka-player-info">
-                  <img class="ginka-player-cover" src="">
-                  <div class="ginka-player-meta">
-                      <div class="title">Loading...</div>
-                      <div class="artist">Ginka</div>
-                  </div>
-              </div>
-              <div class="ginka-player-controls">
-                  <button id="ginka-prev-btn" title="上一首"><i class="fas fa-step-backward"></i></button>
-                  <button id="ginka-toggle-btn" title="播放/暂停"><i class="fas fa-play"></i></button>
-                  <button id="ginka-next-btn" title="下一首"><i class="fas fa-step-forward"></i></button>
-              </div>
-            </div>
-            <button id="ginka-minimize-btn" title="最小化">
-              <i class="fas fa-compress-alt"></i>
-            </button>
-        `;
-        document.body.appendChild(playerUI);
+  if (categoriesToAdd.size) {
+    let categoryMeta = findCategoryMetaItem();
+    if (!categoryMeta) {
+      const postMeta = document.querySelector('.post-meta');
+      if (postMeta) {
+        categoryMeta = document.createElement('span');
+        categoryMeta.className = 'post-meta-item';
+        categoryMeta.innerHTML = '<span class="post-meta-item-icon"><i class="far fa-folder"></i></span><span class="post-meta-item-text">分类于</span>';
+        postMeta.appendChild(categoryMeta);
+      }
+    }
+    if (categoryMeta) {
+      categoriesToAdd.forEach(category => {
+        categoryMeta.appendChild(document.createTextNode(' '));
+        const wrapper = document.createElement('span');
+        wrapper.setAttribute('itemprop', 'about');
+        wrapper.setAttribute('itemscope', '');
+        wrapper.setAttribute('itemtype', 'http://schema.org/Thing');
 
-        const aplayerInstance = new APlayer({
-            container: document.createElement('div'),
-            audio: [
-                { name: '梦浮桥', artist: 'GINKA', url: 'https://music.163.com/song/media/outer/url?id=2120740212.mp3', cover: 'https://p2.music.126.net/L-l_i5lO-0U2_2UuE-2U2A==/109951169228809861.jpg' },
-                { name: '夏天的风', artist: '温岚', url: 'https://music.163.com/song/media/outer/url?id=28812555.mp3', cover: 'https://p2.music.126.net/Y_x-sYc9-g-Uv_d_y-eY-w==/109951163412709669.jpg' }
-            ],
-            loop: 'all', order: 'random', preload: 'auto', volume: 0.7,
-        });
+        const link = document.createElement('a');
+        link.href = `/categories/${slugify(category)}/`;
+        link.setAttribute('itemprop', 'url');
+        link.rel = 'index';
 
-        const toggleBtnIcon = document.querySelector('#ginka-toggle-btn i');
-        const minimizeBtn = document.getElementById('ginka-minimize-btn');
+        const nameSpan = document.createElement('span');
+        nameSpan.setAttribute('itemprop', 'name');
+        nameSpan.textContent = category;
 
-        document.getElementById('ginka-toggle-btn').onclick = () => aplayerInstance.toggle();
-        document.getElementById('ginka-next-btn').onclick = () => aplayerInstance.skipForward();
-        document.getElementById('ginka-prev-btn').onclick = () => aplayerInstance.skipBack();
-        
-        minimizeBtn.onclick = () => {
-            playerUI.classList.toggle('minimized');
-            const isMinimized = playerUI.classList.contains('minimized');
-            minimizeBtn.querySelector('i').className = isMinimized ? 'fas fa-expand-alt' : 'fas fa-compress-alt';
-            minimizeBtn.title = isMinimized ? '展开' : '最小化';
-        };
-
-        const updateUI = () => {
-            if (!aplayerInstance.list.audios[aplayerInstance.list.index]) return;
-            const song = aplayerInstance.list.audios[aplayerInstance.list.index];
-            playerUI.querySelector('.ginka-player-cover').src = song.cover;
-            playerUI.querySelector('.title').textContent = song.name;
-            playerUI.querySelector('.artist').textContent = song.artist;
-            toggleBtnIcon.className = aplayerInstance.audio.paused ? 'fas fa-play' : 'fas fa-pause';
-        };
-
-        aplayerInstance.on('play', updateUI);
-        aplayerInstance.on('pause', updateUI);
-        aplayerInstance.on('listswitch', updateUI);
-        aplayerInstance.on('loadstart', updateUI);
-        
-        makeDraggable(playerUI);
-        console.log("[GINKA] Module [Draggable Player] initialized successfully.");
-    });
-    
-    executeOnce('ginka-actions', () => {
-        if (document.documentElement.classList.contains('post-page')) {
-            let retries = 0;
-            const maxRetries = 15;
-            const interval = setInterval(() => {
-                const article = document.getElementById("post-content");
-                if (article) {
-                    clearInterval(interval);
-                    if (!article.querySelector(".article-actions")) {
-                        const actionsDiv = document.createElement("div");
-                        actionsDiv.className = "article-actions";
-                        actionsDiv.innerHTML = '<button class="ginka-btn like-btn">👍 点赞支持</button><button class="ginka-btn dislike-btn">💕 喜欢就好</button>';
-                        actionsDiv.querySelector('.like-btn').addEventListener('click', () => alert("感谢点赞！💕"));
-                        actionsDiv.querySelector('.dislike-btn').addEventListener('click', () => alert("不允许点踩哦～😊"));
-                        article.appendChild(actionsDiv);
-                        console.log("[GINKA] Module [Article Actions] initialized.");
-                    }
-                } else {
-                    retries++;
-                    if (retries >= maxRetries) {
-                        clearInterval(interval);
-                        console.error("[GINKA] Could not find post content area for actions.");
-                    }
-                }
-            }, 200);
-        }
-    });
+        link.appendChild(nameSpan);
+        wrapper.appendChild(link);
+        categoryMeta.appendChild(wrapper);
+      });
+    }
+  }
 }
 
-const initRegistry = new Set();
-function executeOnce(id, func) {
-    if (!initRegistry.has(id)) {
-        initRegistry.add(id);
-        try { func(); } catch (e) { console.error(`[GINKA] Error initializing module [${id}]:`, e); }
+function findCategoryMetaItem() {
+  const items = document.querySelectorAll('.post-meta .post-meta-item');
+  for (const item of items) {
+    const icon = item.querySelector('.post-meta-item-icon i');
+    if (icon && icon.classList.contains('fa-folder')) {
+      return item;
     }
+  }
+  return null;
 }
 
-function makeDraggable(element) {
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    element.onmousedown = dragMouseDown;
-    function dragMouseDown(e) {
-        e = e || window.event;
-        if (e.target.tagName === 'BUTTON' || e.target.parentElement.tagName === 'BUTTON') return;
-        e.preventDefault();
-        pos3 = e.clientX; pos4 = e.clientY;
-        document.onmouseup = closeDragElement; document.onmousemove = elementDrag;
-    }
-    function elementDrag(e) {
-        e = e || window.event; e.preventDefault();
-        pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
-        pos3 = e.clientX; pos4 = e.clientY;
-        element.style.top = (element.offsetTop - pos2) + "px";
-        element.style.left = (element.offsetLeft - pos1) + "px";
-    }
-    function closeDragElement() { document.onmouseup = null; document.onmousemove = null; }
+function slugify(label) {
+  return encodeURIComponent(label.trim());
 }
