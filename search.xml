@@ -121,29 +121,26 @@
       </tags>
   </entry>
   <entry>
-    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] ez_tea<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：反调试绕过"><a href="#第一步：反调试绕过" class="headerlink" title="第一步：反调试绕过"></a>第一步：反调试绕过</h3><p>程序有反调试保护，每次检测到调试器会弹出对话框后终止程序。</p>
-<h3 id="第二步：定位反调试函数"><a href="#第二步：定位反调试函数" class="headerlink" title="第二步：定位反调试函数"></a>第二步：定位反调试函数</h3><p>通过查找系统 API 或 MessageBox 引用来定位反调试函数。常见的反调试 API 包括：</p>
-<ul>
-<li>IsDebuggerPresent</li>
-<li>CheckRemoteDebuggerPresent</li>
-<li>MessageBox（用于显示检测到调试器的提示）</li>
-</ul>
-<h3 id="第三步：patch-绕过"><a href="#第三步：patch-绕过" class="headerlink" title="第三步：patch 绕过"></a>第三步：patch 绕过</h3><p>找到反调试函数后，将其第一条指令 patch 为 <code>ret</code>，使其直接返回而不执行检测。</p>
-<h3 id="第四步：动态调试"><a href="#第四步：动态调试" class="headerlink" title="第四步：动态调试"></a>第四步：动态调试</h3><p>绕过反调试后，可以正常进行动态调试。发现输入的 flag 被混淆，TEA 加密的 key 也被替换。</p>
-<h3 id="第五步：TEA-解密实现"><a href="#第五步：TEA-解密实现" class="headerlink" title="第五步：TEA 解密实现"></a>第五步：TEA 解密实现</h3><p>分析 TEA 加密逻辑，编写解密脚本：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> c_uint32</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从调试中提取的密文和 key</span></span><br><span class="line">enc = [<span class="number">0xddeb1ce8</span>, <span class="number">0x46696691</span>, <span class="number">0x47baf5fd</span>, <span class="number">0x73b625ed</span>,</span><br><span class="line">       <span class="number">0xfd3dc499</span>, <span class="number">0x19e7efb</span>, <span class="number">0x9bf87340</span>, <span class="number">0xf28b48b4</span>,</span><br><span class="line">       <span class="number">0xc07fbe5a</span>, <span class="number">0xd240be6e</span>, <span class="number">0xb091ff6b</span>, <span class="number">0x7d0f0bf8</span>]</span><br><span class="line"></span><br><span class="line">key = [<span class="number">0x36433331</span>, <span class="number">0x45344537</span>, <span class="number">0x33314534</span>, <span class="number">0x32373137</span>]</span><br><span class="line"></span><br><span class="line">delta = <span class="number">218105633</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tea_decrypt_block</span>(<span class="params">v0, v1, key</span>):</span><br><span class="line">    sum_val = c_uint32(delta * <span class="number">32</span>)</span><br><span class="line">    a1 = c_uint32(v0)</span><br><span class="line">    a2 = c_uint32(v1)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line">        a2.value -= (a1.value &gt;&gt; <span class="number">5</span>) ^ (key[((sum_val.value &gt;&gt; <span class="number">11</span>) ^ <span class="number">1</span>) &amp; <span class="number">3</span>] + <span class="number">16</span> * a1.value)</span><br><span class="line">        a1.value -= (a2.value &gt;&gt; <span class="number">5</span>) ^ (key[(sum_val.value &gt;&gt; <span class="number">11</span>) &amp; <span class="number">3</span>] + <span class="number">16</span> * a2.value)</span><br><span class="line">        sum_val.value -= delta</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> a1.value, a2.value</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解密所有块</span></span><br><span class="line">flag_values = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(enc), <span class="number">2</span>):</span><br><span class="line">    v0, v1 = tea_decrypt_block(enc[i], enc[i+<span class="number">1</span>], key)</span><br><span class="line">    flag_values.extend([v0, v1])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为字节串</span></span><br><span class="line">flag_bytes = <span class="string">b&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> val <span class="keyword">in</span> flag_values:</span><br><span class="line">    flag_bytes += struct.pack(<span class="string">&#x27;&lt;I&#x27;</span>, val)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 逆向混淆操作</span></span><br><span class="line">flag_chars = <span class="built_in">list</span>(flag_bytes.decode(<span class="string">&#x27;ascii&#x27;</span>, errors=<span class="string">&#x27;ignore&#x27;</span>))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(flag_chars)):</span><br><span class="line">    flag_chars[i] = <span class="built_in">chr</span>(<span class="built_in">ord</span>(flag_chars[i]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 逆向混淆运算</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">22</span>):</span><br><span class="line">    flag_chars[<span class="number">2</span>*j+<span class="number">1</span>] ^= <span class="number">2</span></span><br><span class="line">    flag_chars[<span class="number">2</span>*j] ^= <span class="number">0x72</span></span><br><span class="line">    flag_chars[<span class="number">2</span>*j+<span class="number">1</span>] -= <span class="number">2</span></span><br><span class="line">    flag_chars[<span class="number">2</span>*j] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">flag = <span class="string">&#x27;&#x27;</span>.join(flag_chars)</span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
+    <title>[NSSCTF 2025 秋招赛] Ultimate Packer for eXecutables</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DUltimate%20Packer%20for%20eXecutables/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] Ultimate Packer for eXecutables<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：文件分析"><a href="#第一步：文件分析" class="headerlink" title="第一步：文件分析"></a>第一步：文件分析</h3><p>用 DIE 查壳，发现是 UPX 压缩，但是文件头被修改了。</p>
+<h3 id="第二步：UPX-头修复"><a href="#第二步：UPX-头修复" class="headerlink" title="第二步：UPX 头修复"></a>第二步：UPX 头修复</h3><p>直接用 UPX 工具无法脱壳，需要手动修复文件头。用 010 Editor 打开文件，找到被修改的 UPX 头，将其改回正确的格式。</p>
+<h3 id="第三步：脱壳"><a href="#第三步：脱壳" class="headerlink" title="第三步：脱壳"></a>第三步：脱壳</h3><p>修复文件头后，用 <code>upx -d</code> 命令成功脱壳。</p>
+<h3 id="第四步：逆向分析"><a href="#第四步：逆向分析" class="headerlink" title="第四步：逆向分析"></a>第四步：逆向分析</h3><p>脱壳后拖进 IDA 进行静态分析，找到加密逻辑。</p>
+<h3 id="第五步：解密脚本"><a href="#第五步：解密脚本" class="headerlink" title="第五步：解密脚本"></a>第五步：解密脚本</h3><p>分析加密算法（注意处理整数溢出），编写解密脚本：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 处理溢出的解密脚本</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt</span>(<span class="params">value</span>):</span><br><span class="line">    <span class="comment"># 由于 input * 122 会导致溢出</span></span><br><span class="line">    <span class="comment"># 需要遍历可打印字符范围</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>, <span class="number">127</span>):  <span class="comment"># 可打印 ASCII 范围</span></span><br><span class="line">        <span class="keyword">if</span> (char * <span class="number">122</span>) % <span class="number">256</span> == value:</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">chr</span>(char)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;?&#x27;</span></span><br><span class="line"></span><br><span class="line">ciphertext = [<span class="number">0x12</span>, <span class="number">0x34</span>, <span class="number">0x56</span>, <span class="number">0x78</span>]  <span class="comment"># 示例密文</span></span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> byte <span class="keyword">in</span> ciphertext:</span><br><span class="line">    flag += decrypt(byte)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
 
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道反反调试与 TEA 加密的综合题目，主要考察以下能力点：</p>
+<p>注意这里直接按照加密逻辑倒着写是得不到 flag 的，因为 input×122，会导致数值大于一个 2 的八次方（一个字节占八位，2**8&#x3D;256），会导致溢出，简单的写法就是遍历可打印字符的 ASCII 码范围：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 实际的解密脚本</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt</span>(<span class="params">ciphertext</span>):</span><br><span class="line">    flag = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> byte <span class="keyword">in</span> ciphertext:</span><br><span class="line">        <span class="keyword">for</span> char <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>, <span class="number">127</span>):  <span class="comment"># ASCII 可打印字符范围</span></span><br><span class="line">            <span class="keyword">if</span> (char * <span class="number">122</span>) % <span class="number">256</span> == byte:</span><br><span class="line">                flag += <span class="built_in">chr</span>(char)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">return</span> flag</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从逆向分析中提取的密文</span></span><br><span class="line">ciphertext = [<span class="number">0x8E</span>, <span class="number">0x6A</span>, <span class="number">0x46</span>, <span class="number">0x22</span>, <span class="number">0xFE</span>, <span class="number">0xDA</span>, <span class="number">0xB6</span>, <span class="number">0x92</span>, <span class="number">0x6E</span>, <span class="number">0x4A</span>, <span class="number">0x26</span>, <span class="number">0x02</span>, <span class="number">0xDE</span>, <span class="number">0xBA</span>, <span class="number">0x96</span>, <span class="number">0x72</span>, <span class="number">0x4E</span>, <span class="number">0x2A</span>, <span class="number">0x06</span>, <span class="number">0xE2</span>, <span class="number">0xBE</span>, <span class="number">0x9A</span>, <span class="number">0x76</span>, <span class="number">0x52</span>, <span class="number">0x2E</span>, <span class="number">0x0A</span>, <span class="number">0xE6</span>, <span class="number">0xC2</span>, <span class="number">0x9E</span>, <span class="number">0x7A</span>, <span class="number">0x56</span>, <span class="number">0x32</span>, <span class="number">0x0E</span>, <span class="number">0xEA</span>, <span class="number">0xC6</span>, <span class="number">0xA2</span>, <span class="number">0x7E</span>, <span class="number">0x5A</span>, <span class="number">0x36</span>, <span class="number">0x12</span>, <span class="number">0xEE</span>, <span class="number">0xCA</span>, <span class="number">0xA6</span>, <span class="number">0x82</span>, <span class="number">0x5E</span>, <span class="number">0x3A</span>, <span class="number">0x16</span>, <span class="number">0xF2</span>, <span class="number">0xCE</span>, <span class="number">0xAA</span>, <span class="number">0x86</span>, <span class="number">0x62</span>, <span class="number">0x3E</span>, <span class="number">0x1A</span>, <span class="number">0xF6</span>, <span class="number">0xD2</span>, <span class="number">0xAE</span>, <span class="number">0x8A</span>, <span class="number">0x66</span>, <span class="number">0x42</span>, <span class="number">0x1E</span>, <span class="number">0xFA</span>, <span class="number">0xD6</span>, <span class="number">0xB2</span>, <span class="number">0x8E</span>, <span class="number">0x6A</span>, <span class="number">0x46</span>, <span class="number">0x22</span>, <span class="number">0xFE</span>, <span class="number">0xDA</span>, <span class="number">0xB6</span>, <span class="number">0x92</span>, <span class="number">0x6E</span>, <span class="number">0x4A</span>, <span class="number">0x26</span>, <span class="number">0x02</span>, <span class="number">0xDE</span>, <span class="number">0xBA</span>, <span class="number">0x96</span>, <span class="number">0x72</span>, <span class="number">0x4E</span>, <span class="number">0x2A</span>, <span class="number">0x06</span>, <span class="number">0xE2</span>, <span class="number">0xBE</span>, <span class="number">0x9A</span>, <span class="number">0x76</span>, <span class="number">0x52</span>, <span class="number">0x2E</span>, <span class="number">0x0A</span>, <span class="number">0xE6</span>, <span class="number">0xC2</span>, <span class="number">0x9E</span>, <span class="number">0x7A</span>, <span class="number">0x56</span>, <span class="number">0x32</span>, <span class="number">0x0E</span>, <span class="number">0xEA</span>, <span class="number">0xC6</span>, <span class="number">0xA2</span>, <span class="number">0x7E</span>, <span class="number">0x5A</span>, <span class="number">0x36</span>, <span class="number">0x12</span>, <span class="number">0xEE</span>, <span class="number">0xCA</span>, <span class="number">0xA6</span>, <span class="number">0x82</span>, <span class="number">0x5E</span>, <span class="number">0x3A</span>, <span class="number">0x16</span>, <span class="number">0xF2</span>, <span class="number">0xCE</span>, <span class="number">0xAA</span>, <span class="number">0x86</span>, <span class="number">0x62</span>, <span class="number">0x3E</span>, <span class="number">0x1A</span>, <span class="number">0xF6</span>, <span class="number">0xD2</span>, <span class="number">0xAE</span>, <span class="number">0x8A</span>, <span class="number">0x66</span>, <span class="number">0x42</span>, <span class="number">0x1E</span>, <span class="number">0xFA</span>, <span class="number">0xD6</span>, <span class="number">0xB2</span>]</span><br><span class="line"></span><br><span class="line">flag = decrypt(ciphertext)</span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道 UPX 脱壳题目，主要考察以下能力点：</p>
 <ul>
-<li>反调试技术的识别和绕过</li>
-<li>程序 patch 技术</li>
-<li>TEA 加密算法的逆向实现</li>
-<li>动态调试技巧</li>
+<li>压缩壳的识别和脱壳</li>
+<li>文件头修复技术</li>
+<li>逆向分析中的溢出处理</li>
 </ul>
-<p>通过成功绕过反调试保护并正确实现 TEA 解密，最终成功获取了 flag。</p>
+<p>通过修复文件头并正确处理整数溢出，最终成功破解了 flag。</p>
 <p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
 ]]></content>
       <categories>
@@ -152,9 +149,9 @@
       <tags>
         <tag>CTF</tag>
         <tag>Reverse</tag>
-        <tag>动态调试</tag>
-        <tag>反反调试</tag>
-        <tag>TEA</tag>
+        <tag>IDA Pro</tag>
+        <tag>UPX</tag>
+        <tag>脱壳</tag>
       </tags>
   </entry>
   <entry>
@@ -200,29 +197,76 @@
       </tags>
   </entry>
   <entry>
+    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] ez_tea<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：反调试绕过"><a href="#第一步：反调试绕过" class="headerlink" title="第一步：反调试绕过"></a>第一步：反调试绕过</h3><p>程序有反调试保护，每次检测到调试器会弹出对话框后终止程序。</p>
+<h3 id="第二步：定位反调试函数"><a href="#第二步：定位反调试函数" class="headerlink" title="第二步：定位反调试函数"></a>第二步：定位反调试函数</h3><p>通过查找系统 API 或 MessageBox 引用来定位反调试函数。常见的反调试 API 包括：</p>
+<ul>
+<li>IsDebuggerPresent</li>
+<li>CheckRemoteDebuggerPresent</li>
+<li>MessageBox（用于显示检测到调试器的提示）</li>
+</ul>
+<h3 id="第三步：patch-绕过"><a href="#第三步：patch-绕过" class="headerlink" title="第三步：patch 绕过"></a>第三步：patch 绕过</h3><p>找到反调试函数后，将其第一条指令 patch 为 <code>ret</code>，使其直接返回而不执行检测。</p>
+<h3 id="第四步：动态调试"><a href="#第四步：动态调试" class="headerlink" title="第四步：动态调试"></a>第四步：动态调试</h3><p>绕过反调试后，可以正常进行动态调试。发现输入的 flag 被混淆，TEA 加密的 key 也被替换。</p>
+<h3 id="第五步：TEA-解密实现"><a href="#第五步：TEA-解密实现" class="headerlink" title="第五步：TEA 解密实现"></a>第五步：TEA 解密实现</h3><p>分析 TEA 加密逻辑，编写解密脚本：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> c_uint32</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从调试中提取的密文和 key</span></span><br><span class="line">enc = [<span class="number">0xddeb1ce8</span>, <span class="number">0x46696691</span>, <span class="number">0x47baf5fd</span>, <span class="number">0x73b625ed</span>,</span><br><span class="line">       <span class="number">0xfd3dc499</span>, <span class="number">0x19e7efb</span>, <span class="number">0x9bf87340</span>, <span class="number">0xf28b48b4</span>,</span><br><span class="line">       <span class="number">0xc07fbe5a</span>, <span class="number">0xd240be6e</span>, <span class="number">0xb091ff6b</span>, <span class="number">0x7d0f0bf8</span>]</span><br><span class="line"></span><br><span class="line">key = [<span class="number">0x36433331</span>, <span class="number">0x45344537</span>, <span class="number">0x33314534</span>, <span class="number">0x32373137</span>]</span><br><span class="line"></span><br><span class="line">delta = <span class="number">218105633</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tea_decrypt_block</span>(<span class="params">v0, v1, key</span>):</span><br><span class="line">    sum_val = c_uint32(delta * <span class="number">32</span>)</span><br><span class="line">    a1 = c_uint32(v0)</span><br><span class="line">    a2 = c_uint32(v1)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line">        a2.value -= (a1.value &gt;&gt; <span class="number">5</span>) ^ (key[((sum_val.value &gt;&gt; <span class="number">11</span>) ^ <span class="number">1</span>) &amp; <span class="number">3</span>] + <span class="number">16</span> * a1.value)</span><br><span class="line">        a1.value -= (a2.value &gt;&gt; <span class="number">5</span>) ^ (key[(sum_val.value &gt;&gt; <span class="number">11</span>) &amp; <span class="number">3</span>] + <span class="number">16</span> * a2.value)</span><br><span class="line">        sum_val.value -= delta</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> a1.value, a2.value</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解密所有块</span></span><br><span class="line">flag_values = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(enc), <span class="number">2</span>):</span><br><span class="line">    v0, v1 = tea_decrypt_block(enc[i], enc[i+<span class="number">1</span>], key)</span><br><span class="line">    flag_values.extend([v0, v1])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换为字节串</span></span><br><span class="line">flag_bytes = <span class="string">b&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> val <span class="keyword">in</span> flag_values:</span><br><span class="line">    flag_bytes += struct.pack(<span class="string">&#x27;&lt;I&#x27;</span>, val)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 逆向混淆操作</span></span><br><span class="line">flag_chars = <span class="built_in">list</span>(flag_bytes.decode(<span class="string">&#x27;ascii&#x27;</span>, errors=<span class="string">&#x27;ignore&#x27;</span>))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(flag_chars)):</span><br><span class="line">    flag_chars[i] = <span class="built_in">chr</span>(<span class="built_in">ord</span>(flag_chars[i]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 逆向混淆运算</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">22</span>):</span><br><span class="line">    flag_chars[<span class="number">2</span>*j+<span class="number">1</span>] ^= <span class="number">2</span></span><br><span class="line">    flag_chars[<span class="number">2</span>*j] ^= <span class="number">0x72</span></span><br><span class="line">    flag_chars[<span class="number">2</span>*j+<span class="number">1</span>] -= <span class="number">2</span></span><br><span class="line">    flag_chars[<span class="number">2</span>*j] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">flag = <span class="string">&#x27;&#x27;</span>.join(flag_chars)</span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道反反调试与 TEA 加密的综合题目，主要考察以下能力点：</p>
+<ul>
+<li>反调试技术的识别和绕过</li>
+<li>程序 patch 技术</li>
+<li>TEA 加密算法的逆向实现</li>
+<li>动态调试技巧</li>
+</ul>
+<p>通过成功绕过反调试保护并正确实现 TEA 解密，最终成功获取了 flag。</p>
+<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>动态调试</tag>
+        <tag>反反调试</tag>
+        <tag>TEA</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[NSSCTF 2025 秋招赛] fl-ow-er</title>
     <url>//2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dfl-ow-er/</url>
     <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] fl-ow-er<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>依旧ida,因为有花指令f5不了了,找一下有哪些花指令</p>
-<p>（花指令1：jz + jnz 组合）</p>
-<p>（花指令2：异或相同寄存器接jz）</p>
-<p>两种比较常见的花指令,基本按一下u就知道怎么改了,直接把被跳过的字节ctrl+n nop掉,再按c让剩下的变成代码,发现已经恢复正常了</p>
-<p>（恢复1：jz + jnz 修改后）</p>
-<p>（恢复2：异或花指令修改后）</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：识别花指令"><a href="#第一步：识别花指令" class="headerlink" title="第一步：识别花指令"></a>第一步：识别花指令</h3><p>依旧ida,因为有花指令f5不了了,找一下有哪些花指令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">jz + jnz 组合花指令</span><br><span class="line">xor eax, eax; jz loc; jnz loc; 必定跳转</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">异或相同寄存器接jz花指令</span><br><span class="line">xor eax, eax; jz loc; 必定跳转</span><br></pre></td></tr></table></figure>
+
+<h3 id="第二步：去除花指令"><a href="#第二步：去除花指令" class="headerlink" title="第二步：去除花指令"></a>第二步：去除花指令</h3><p>两种比较常见的花指令,基本按一下u就知道怎么改了,直接把被跳过的字节ctrl+n nop掉,再按c让剩下的变成代码,发现已经恢复正常了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">jz + jnz 修改后：</span><br><span class="line">jz loc -&gt; jmp loc</span><br><span class="line">jnz loc -&gt; nop</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">异或花指令修改后：</span><br><span class="line">xor eax, eax; jz loc -&gt; jmp loc</span><br><span class="line">nop掉多余字节</span><br></pre></td></tr></table></figure>
+
 <p>jz+jnz同理,必定会跳转就把一个改成jmp再nop掉另一个</p>
-<p>（jz jnz 修改）</p>
-<p>（修改后）</p>
-<p>这个时候发现还是不能f5,发现有一个比较隐蔽的花指令,异或两个相同的寄存器,接一个jz,也是必定跳转,改成jmp,再nop多余字节</p>
-<p>（隐蔽花指令）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">jz jnz 修改：</span><br><span class="line">jz loc -&gt; jmp loc</span><br><span class="line">jnz loc -&gt; nop</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">修改后</span><br></pre></td></tr></table></figure>
+
+<h3 id="第三步：处理隐蔽花指令"><a href="#第三步：处理隐蔽花指令" class="headerlink" title="第三步：处理隐蔽花指令"></a>第三步：处理隐蔽花指令</h3><p>这个时候发现还是不能f5,发现有一个比较隐蔽的花指令,异或两个相同的寄存器,接一个jz,也是必定跳转,改成jmp,再nop多余字节</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">隐蔽花指令：</span><br><span class="line">xor eax, eax; jz loc</span><br></pre></td></tr></table></figure>
+
 <p>改完这个,再对着main先按u取消定义再按p定义函数,发现可以正常f5了</p>
-<p>（f5成功）</p>
-<p>双击进入loc_401000函数内部,发现也有花指令和上面的一样,去掉花指令后f5看伪代码,发现只是一个异或</p>
-<p>（异或逻辑）</p>
-<p>再提取密文写一个简单异或脚本解出flag</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">f5成功</span><br></pre></td></tr></table></figure>
+
+<h3 id="第四步：分析加密逻辑"><a href="#第四步：分析加密逻辑" class="headerlink" title="第四步：分析加密逻辑"></a>第四步：分析加密逻辑</h3><p>双击进入loc_401000函数内部,发现也有花指令和上面的一样,去掉花指令后f5看伪代码,发现只是一个异或</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">异或逻辑：</span><br><span class="line">for(int i=0; i&lt;len; i++)</span><br><span class="line">    enc[i] = (enc[i] ^ 0xd) - 0x21 ^ key[i%7]</span><br></pre></td></tr></table></figure>
+
+<h3 id="第五步：编写解密脚本"><a href="#第五步：编写解密脚本" class="headerlink" title="第五步：编写解密脚本"></a>第五步：编写解密脚本</h3><p>再提取密文写一个简单异或脚本解出flag</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">enc = [<span class="number">0x43</span>, <span class="number">0x56</span>, <span class="number">0x5e</span>, <span class="number">0x5d</span>, <span class="number">0x54</span>, <span class="number">0x47</span>, <span class="number">0x2b</span>, <span class="number">0x2b</span>, <span class="number">0x2b</span>, <span class="number">0x22</span>, <span class="number">0x31</span>, <span class="number">0x27</span>, <span class="number">0x33</span>, <span class="number">0x4f</span>, <span class="number">0x26</span>, <span class="number">0x36</span>, <span class="number">0x52</span>, <span class="number">0x22</span>, <span class="number">0x27</span>, <span class="number">0x22</span>, <span class="number">0x21</span>, <span class="number">0x35</span>, <span class="number">0x2c</span>, <span class="number">0x25</span>, <span class="number">0x37</span>, <span class="number">0x2c</span>, <span class="number">0x3e</span>]</span><br><span class="line">key=[<span class="number">0x63</span>, <span class="number">0x69</span>, <span class="number">0x61</span>, <span class="number">0x6c</span>, <span class="number">0x6c</span>, <span class="number">0x6f</span>, <span class="number">0x7e</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">27</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">chr</span>(((enc[i]^<span class="number">0xd</span>)-<span class="number">33</span>)^key[i%<span class="number">7</span>]),end=<span class="string">&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure>
 
-<p>（脚本运行）</p>
-<p>（flag：NSSCTF{flower_is_beautiful}）</p>
+<h3 id="第六步：运行脚本获取flag"><a href="#第六步：运行脚本获取flag" class="headerlink" title="第六步：运行脚本获取flag"></a>第六步：运行脚本获取flag</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">脚本运行结果：</span><br><span class="line">NSSCTF&#123;flower_is_beautiful&#125;</span><br></pre></td></tr></table></figure>
+
+
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道经典的花指令题目，主要考察以下能力点：</p>
 <ul>
 <li>花指令的识别和去除</li>
@@ -300,40 +344,6 @@
       </tags>
   </entry>
   <entry>
-    <title>[NSSCTF 2025 秋招赛] Ultimate Packer for eXecutables</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DUltimate%20Packer%20for%20eXecutables/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] Ultimate Packer for eXecutables<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：文件分析"><a href="#第一步：文件分析" class="headerlink" title="第一步：文件分析"></a>第一步：文件分析</h3><p>用 DIE 查壳，发现是 UPX 压缩，但是文件头被修改了。</p>
-<h3 id="第二步：UPX-头修复"><a href="#第二步：UPX-头修复" class="headerlink" title="第二步：UPX 头修复"></a>第二步：UPX 头修复</h3><p>直接用 UPX 工具无法脱壳，需要手动修复文件头。用 010 Editor 打开文件，找到被修改的 UPX 头，将其改回正确的格式。</p>
-<h3 id="第三步：脱壳"><a href="#第三步：脱壳" class="headerlink" title="第三步：脱壳"></a>第三步：脱壳</h3><p>修复文件头后，用 <code>upx -d</code> 命令成功脱壳。</p>
-<h3 id="第四步：逆向分析"><a href="#第四步：逆向分析" class="headerlink" title="第四步：逆向分析"></a>第四步：逆向分析</h3><p>脱壳后拖进 IDA 进行静态分析，找到加密逻辑。</p>
-<h3 id="第五步：解密脚本"><a href="#第五步：解密脚本" class="headerlink" title="第五步：解密脚本"></a>第五步：解密脚本</h3><p>分析加密算法（注意处理整数溢出），编写解密脚本：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 处理溢出的解密脚本</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt</span>(<span class="params">value</span>):</span><br><span class="line">    <span class="comment"># 由于 input * 122 会导致溢出</span></span><br><span class="line">    <span class="comment"># 需要遍历可打印字符范围</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>, <span class="number">127</span>):  <span class="comment"># 可打印 ASCII 范围</span></span><br><span class="line">        <span class="keyword">if</span> (char * <span class="number">122</span>) % <span class="number">256</span> == value:</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">chr</span>(char)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;?&#x27;</span></span><br><span class="line"></span><br><span class="line">ciphertext = [<span class="number">0x12</span>, <span class="number">0x34</span>, <span class="number">0x56</span>, <span class="number">0x78</span>]  <span class="comment"># 示例密文</span></span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> byte <span class="keyword">in</span> ciphertext:</span><br><span class="line">    flag += decrypt(byte)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
-
-<p>注意这里直接按照加密逻辑倒着写是得不到 flag 的，因为 input×122，会导致数值大于一个 2 的八次方（一个字节占八位，2**8&#x3D;256），会导致溢出，简单的写法就是遍历可打印字符的 ASCII 码范围：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 实际的解密脚本</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt</span>(<span class="params">ciphertext</span>):</span><br><span class="line">    flag = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> byte <span class="keyword">in</span> ciphertext:</span><br><span class="line">        <span class="keyword">for</span> char <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>, <span class="number">127</span>):  <span class="comment"># ASCII 可打印字符范围</span></span><br><span class="line">            <span class="keyword">if</span> (char * <span class="number">122</span>) % <span class="number">256</span> == byte:</span><br><span class="line">                flag += <span class="built_in">chr</span>(char)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">return</span> flag</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从逆向分析中提取的密文</span></span><br><span class="line">ciphertext = [<span class="number">0x8E</span>, <span class="number">0x6A</span>, <span class="number">0x46</span>, <span class="number">0x22</span>, <span class="number">0xFE</span>, <span class="number">0xDA</span>, <span class="number">0xB6</span>, <span class="number">0x92</span>, <span class="number">0x6E</span>, <span class="number">0x4A</span>, <span class="number">0x26</span>, <span class="number">0x02</span>, <span class="number">0xDE</span>, <span class="number">0xBA</span>, <span class="number">0x96</span>, <span class="number">0x72</span>, <span class="number">0x4E</span>, <span class="number">0x2A</span>, <span class="number">0x06</span>, <span class="number">0xE2</span>, <span class="number">0xBE</span>, <span class="number">0x9A</span>, <span class="number">0x76</span>, <span class="number">0x52</span>, <span class="number">0x2E</span>, <span class="number">0x0A</span>, <span class="number">0xE6</span>, <span class="number">0xC2</span>, <span class="number">0x9E</span>, <span class="number">0x7A</span>, <span class="number">0x56</span>, <span class="number">0x32</span>, <span class="number">0x0E</span>, <span class="number">0xEA</span>, <span class="number">0xC6</span>, <span class="number">0xA2</span>, <span class="number">0x7E</span>, <span class="number">0x5A</span>, <span class="number">0x36</span>, <span class="number">0x12</span>, <span class="number">0xEE</span>, <span class="number">0xCA</span>, <span class="number">0xA6</span>, <span class="number">0x82</span>, <span class="number">0x5E</span>, <span class="number">0x3A</span>, <span class="number">0x16</span>, <span class="number">0xF2</span>, <span class="number">0xCE</span>, <span class="number">0xAA</span>, <span class="number">0x86</span>, <span class="number">0x62</span>, <span class="number">0x3E</span>, <span class="number">0x1A</span>, <span class="number">0xF6</span>, <span class="number">0xD2</span>, <span class="number">0xAE</span>, <span class="number">0x8A</span>, <span class="number">0x66</span>, <span class="number">0x42</span>, <span class="number">0x1E</span>, <span class="number">0xFA</span>, <span class="number">0xD6</span>, <span class="number">0xB2</span>, <span class="number">0x8E</span>, <span class="number">0x6A</span>, <span class="number">0x46</span>, <span class="number">0x22</span>, <span class="number">0xFE</span>, <span class="number">0xDA</span>, <span class="number">0xB6</span>, <span class="number">0x92</span>, <span class="number">0x6E</span>, <span class="number">0x4A</span>, <span class="number">0x26</span>, <span class="number">0x02</span>, <span class="number">0xDE</span>, <span class="number">0xBA</span>, <span class="number">0x96</span>, <span class="number">0x72</span>, <span class="number">0x4E</span>, <span class="number">0x2A</span>, <span class="number">0x06</span>, <span class="number">0xE2</span>, <span class="number">0xBE</span>, <span class="number">0x9A</span>, <span class="number">0x76</span>, <span class="number">0x52</span>, <span class="number">0x2E</span>, <span class="number">0x0A</span>, <span class="number">0xE6</span>, <span class="number">0xC2</span>, <span class="number">0x9E</span>, <span class="number">0x7A</span>, <span class="number">0x56</span>, <span class="number">0x32</span>, <span class="number">0x0E</span>, <span class="number">0xEA</span>, <span class="number">0xC6</span>, <span class="number">0xA2</span>, <span class="number">0x7E</span>, <span class="number">0x5A</span>, <span class="number">0x36</span>, <span class="number">0x12</span>, <span class="number">0xEE</span>, <span class="number">0xCA</span>, <span class="number">0xA6</span>, <span class="number">0x82</span>, <span class="number">0x5E</span>, <span class="number">0x3A</span>, <span class="number">0x16</span>, <span class="number">0xF2</span>, <span class="number">0xCE</span>, <span class="number">0xAA</span>, <span class="number">0x86</span>, <span class="number">0x62</span>, <span class="number">0x3E</span>, <span class="number">0x1A</span>, <span class="number">0xF6</span>, <span class="number">0xD2</span>, <span class="number">0xAE</span>, <span class="number">0x8A</span>, <span class="number">0x66</span>, <span class="number">0x42</span>, <span class="number">0x1E</span>, <span class="number">0xFA</span>, <span class="number">0xD6</span>, <span class="number">0xB2</span>]</span><br><span class="line"></span><br><span class="line">flag = decrypt(ciphertext)</span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道 UPX 脱壳题目，主要考察以下能力点：</p>
-<ul>
-<li>压缩壳的识别和脱壳</li>
-<li>文件头修复技术</li>
-<li>逆向分析中的溢出处理</li>
-</ul>
-<p>通过修复文件头并正确处理整数溢出，最终成功破解了 flag。</p>
-<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>IDA Pro</tag>
-        <tag>UPX</tag>
-        <tag>脱壳</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>[NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！</title>
     <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E6%9D%A5%E4%BA%86%E5%97%B7%EF%BC%8C%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9%EF%BC%81/</url>
     <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
@@ -374,6 +384,45 @@
         <tag>加密算法</tag>
         <tag>RC4</tag>
         <tag>XTEA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 入门题目] 花指令</title>
+    <url>/2025/10/19/NSSCTF2025%E5%85%A5%E9%97%A8%E9%A2%98%E7%9B%AE-%E8%8A%B1%E6%8C%87%E4%BB%A4/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 入门题目] 花指令</p>
+<p><strong>类型</strong>: Reverse Engineering</p>
+<p><strong>难度</strong>: 入门</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：文件分析"><a href="#第一步：文件分析" class="headerlink" title="第一步：文件分析"></a>第一步：文件分析</h3><p>先用 DIE 检测，程序是 32 位无壳 PE，可直接丢进 IDA 分析。</p>
+<h3 id="第二步：分析主流程"><a href="#第二步：分析主流程" class="headerlink" title="第二步：分析主流程"></a>第二步：分析主流程</h3><p>F5 后可以看到程序把输入均分成三段，再分别送进三个校验函数：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">	<span class="type">char</span> input[<span class="number">100</span>];</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%99s&quot;</span>, input);</span><br><span class="line">	<span class="type">size_t</span> len = <span class="built_in">strlen</span>(input);</span><br><span class="line">	<span class="type">size_t</span> len1 = len / <span class="number">3</span>;</span><br><span class="line">	<span class="type">size_t</span> len2 = len / <span class="number">3</span>;</span><br><span class="line">	<span class="type">size_t</span> len3 = len - len1 - len2;</span><br><span class="line">	<span class="built_in">strncpy</span>(part1, input, len1);</span><br><span class="line">	<span class="built_in">strncpy</span>(part2, input + len1, len2);</span><br><span class="line">	<span class="built_in">strncpy</span>(part3, input + len1 + len2, len3);</span><br><span class="line">	<span class="keyword">if</span> (flower_1(part1) &amp;&amp; flower_2(part2) &amp;&amp; flower_3(part3))</span><br><span class="line">		<span class="built_in">puts</span>(<span class="string">&quot;Congratulations!&quot;</span>);</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="built_in">puts</span>(<span class="string">&quot;GG&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="第三步：去除花指令"><a href="#第三步：去除花指令" class="headerlink" title="第三步：去除花指令"></a>第三步：去除花指令</h3><p>三个 <code>flower_x</code> 函数都插入了典型的花指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">jz short loc</span><br><span class="line">jnz short loc</span><br></pre></td></tr></table></figure>
+
+<p>以及 <code>xor eax, eax</code> 后立刻跟 <code>jz</code> 的必跳结构。按 <code>U</code> 取消反汇编，再 <code>NOP</code> 掉无用跳转，最后 <code>C</code> 转成代码即可恢复流程。</p>
+<h3 id="第四步：还原异或逻辑"><a href="#第四步：还原异或逻辑" class="headerlink" title="第四步：还原异或逻辑"></a>第四步：还原异或逻辑</h3><p>去除花指令后，每个函数都在用同一密钥做异或比较：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">flower_2</span><span class="params">(<span class="type">char</span> *a)</span> &#123;</span><br><span class="line">	<span class="type">const</span> <span class="type">char</span> key[] = <span class="string">&quot;Ciallo&quot;</span>;</span><br><span class="line">	<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span> answer2[] = &#123;<span class="number">0x26</span>,<span class="number">0x44</span>,<span class="number">0x07</span>,<span class="number">0x5e</span>,<span class="number">0x5c</span>,<span class="number">0x5f</span>,<span class="number">0x6e</span>,<span class="number">0x5d</span>,<span class="number">0x02</span>,<span class="number">0x5d</span>,<span class="number">0x55</span>,<span class="number">0x42</span>,<span class="number">0x22</span>,<span class="number">0x50</span>&#125;;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; <span class="built_in">strlen</span>(a); ++i)</span><br><span class="line">		<span class="keyword">if</span> ((key[i % <span class="number">6</span>] ^ a[i]) != answer2[i])</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>flower_1</code> 与 <code>flower_3</code> 的核心逻辑完全一致，只是常量数组不同。</p>
+<h3 id="第五步：编写解密脚本"><a href="#第五步：编写解密脚本" class="headerlink" title="第五步：编写解密脚本"></a>第五步：编写解密脚本</h3><p>把三个数组都抠出来，写脚本逆运算即可。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">answer1 = [<span class="number">0x0d</span>, <span class="number">0x3a</span>, <span class="number">0x32</span>, <span class="number">0x2f</span>, <span class="number">0x38</span>, <span class="number">0x29</span>, <span class="number">0x38</span>, <span class="number">0x5d</span>, <span class="number">0x56</span>, <span class="number">0x58</span>, <span class="number">0x5e</span>, <span class="number">0x09</span>, <span class="number">0x21</span>, <span class="number">0x0d</span>]</span><br><span class="line">answer2 = [<span class="number">0x26</span>, <span class="number">0x44</span>, <span class="number">0x07</span>, <span class="number">0x5e</span>, <span class="number">0x5c</span>, <span class="number">0x5f</span>, <span class="number">0x6e</span>, <span class="number">0x5d</span>, <span class="number">0x02</span>, <span class="number">0x5d</span>, <span class="number">0x55</span>, <span class="number">0x42</span>, <span class="number">0x22</span>, <span class="number">0x50</span>]</span><br><span class="line">answer3 = [<span class="number">0x27</span>, <span class="number">0x5c</span>, <span class="number">0x4c</span>, <span class="number">0x54</span>, <span class="number">0x08</span>, <span class="number">0x56</span>, <span class="number">0x72</span>, <span class="number">0x5f</span>, <span class="number">0x50</span>, <span class="number">0x5f</span>, <span class="number">0x5c</span>, <span class="number">0x0b</span>, <span class="number">0x76</span>, <span class="number">0x08</span>, <span class="number">0x53</span>, <span class="number">0x11</span>]</span><br><span class="line">key = [<span class="number">0x43</span>, <span class="number">0x69</span>, <span class="number">0x61</span>, <span class="number">0x6c</span>, <span class="number">0x6c</span>, <span class="number">0x6f</span>]</span><br><span class="line"></span><br><span class="line">flag_bytes = []</span><br><span class="line"><span class="keyword">for</span> idx, val <span class="keyword">in</span> <span class="built_in">enumerate</span>(answer1 + answer2 + answer3):</span><br><span class="line">	flag_bytes.append(val ^ key[idx % <span class="built_in">len</span>(key)])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>.join(<span class="built_in">chr</span>(b) <span class="keyword">for</span> b <span class="keyword">in</span> flag_bytes))</span><br></pre></td></tr></table></figure>
+
+<h3 id="第六步：运行脚本"><a href="#第六步：运行脚本" class="headerlink" title="第六步：运行脚本"></a>第六步：运行脚本</h3><p>脚本输出 <code>NSSCTF{4742fbde-f200-4c19-a9d5-8d916130d5a2}</code>，与官方 flag 一致。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>识别常见的 <code>jz</code>&#x2F;<code>jnz</code> 组合和 <code>xor reg, reg</code> + <code>jz</code> 等必跳花指令是关键。</li>
+<li>去花后只剩简单的异或校验，直接提常量即可逆向。</li>
+<li>编写脚本验证结论能快速拿到 flag，建议保持这类题目的脚本习惯。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>IDA Pro</tag>
+        <tag>花指令</tag>
+        <tag>异或解密</tag>
       </tags>
   </entry>
 </search>
