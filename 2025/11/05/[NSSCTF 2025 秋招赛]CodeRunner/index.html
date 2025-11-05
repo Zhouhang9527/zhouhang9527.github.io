@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+
+<link rel="stylesheet" href="/css/ginka_style.css">
+
+<!-- NexT Configuration -->
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhouhang9527.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"night"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"twikoo","storage":true,"lazyload":false,"nav":{"twikoo":{"text":"💬 优质评论","order":-1}}},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+    <meta name="description" content="NSSCTF 2025 秋招赛第六题 CodeRunner 的详细解题过程，Unity IL2CPP 逆向分析。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[NSSCTF 2025 秋招赛] CodeRunner">
+<meta property="og:url" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/index.html">
+<meta property="og:site_name" content="GINKA">
+<meta property="og:description" content="NSSCTF 2025 秋招赛第六题 CodeRunner 的详细解题过程，Unity IL2CPP 逆向分析。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-11-05T03:30:00.000Z">
+<meta property="article:modified_time" content="2025-11-05T12:29:17.587Z">
+<meta property="article:author" content="mm9527">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="IL2CPP">
+<meta property="article:tag" content="Reverse">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="动态调试">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/","path":"2025/11/05/[NSSCTF 2025 秋招赛]CodeRunner/","title":"[NSSCTF 2025 秋招赛] CodeRunner"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[NSSCTF 2025 秋招赛] CodeRunner | GINKA</title>
+  
+
+  <script src="/js/third-party/analytics/baidu-analytics.js" defer></script>
+  <script async src="https://hm.baidu.com/hm.js?[object Object]"></script>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+  <script src="/js/third-party/fancybox.js" defer></script>
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">GINKA</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>links</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E4%BF%A1%E6%81%AF"><span class="nav-number">1.</span> <span class="nav-text">题目信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">解题过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90"><span class="nav-number">2.1.</span> <span class="nav-text">第一步：文件分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AIL2CPP-%E5%8F%8D%E7%BC%96%E8%AF%91"><span class="nav-number">2.2.</span> <span class="nav-text">第二步：IL2CPP 反编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E8%84%B1%E5%A3%B3%E5%A4%84%E7%90%86"><span class="nav-number">2.3.</span> <span class="nav-text">第三步：脱壳处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E4%BB%A3%E7%A0%81%E5%8F%8D%E7%BC%96%E8%AF%91"><span class="nav-number">2.4.</span> <span class="nav-text">第四步：代码反编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9A%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0%E5%AE%9A%E4%BD%8D"><span class="nav-number">2.5.</span> <span class="nav-text">第五步：关键函数定位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E6%AD%A5%EF%BC%9A%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95"><span class="nav-number">2.6.</span> <span class="nav-text">第六步：动态调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E6%AD%A5%EF%BC%9A%E7%BB%95%E8%BF%87%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="nav-number">2.7.</span> <span class="nav-text">第七步：绕过反调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E6%AD%A5%EF%BC%9A%E8%8E%B7%E5%8F%96%E7%9F%A9%E9%98%B5%E6%95%B0%E6%8D%AE"><span class="nav-number">2.8.</span> <span class="nav-text">第八步：获取矩阵数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B9%9D%E6%AD%A5%EF%BC%9A%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81"><span class="nav-number">2.9.</span> <span class="nav-text">第九步：生成二维码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="mm9527"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">mm9527</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="mm9527">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GINKA">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[NSSCTF 2025 秋招赛] CodeRunner | GINKA">
+      <meta itemprop="description" content="NSSCTF 2025 秋招赛第六题 CodeRunner 的详细解题过程，Unity IL2CPP 逆向分析。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [NSSCTF 2025 秋招赛] CodeRunner
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-11-05 11:30:00 / 修改时间：20:29:17" itemprop="dateCreated datePublished" datetime="2025-11-05T11:30:00+08:00">2025-11-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/reverse/" itemprop="url" rel="index"><span itemprop="name">reverse</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">NSSCTF 2025 秋招赛第六题 CodeRunner 的详细解题过程，Unity IL2CPP 逆向分析。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] CodeRunner<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 困难</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：文件分析"><a href="#第一步：文件分析" class="headerlink" title="第一步：文件分析"></a>第一步：文件分析</h3><p>Unity3D 程序，解压后发现是 IL2CPP 后端（不是 Mono）。</p>
+<h3 id="第二步：IL2CPP-反编译"><a href="#第二步：IL2CPP-反编译" class="headerlink" title="第二步：IL2CPP 反编译"></a>第二步：IL2CPP 反编译</h3><p>使用 IL2cppDumper 从二进制文件中提取类型和方法信息。</p>
+<h3 id="第三步：脱壳处理"><a href="#第三步：脱壳处理" class="headerlink" title="第三步：脱壳处理"></a>第三步：脱壳处理</h3><p>发现 GameAssembly.dll 被 UPX 加壳且文件头被修改。用 010 Editor 修复文件头后脱壳。</p>
+<h3 id="第四步：代码反编译"><a href="#第四步：代码反编译" class="headerlink" title="第四步：代码反编译"></a>第四步：代码反编译</h3><p>使用 dnSpy 反编译 .NET 代码，使用 IDA 配合 IL2cppDumper 的脚本反编译 GameAssembly。</p>
+<h3 id="第五步：关键函数定位"><a href="#第五步：关键函数定位" class="headerlink" title="第五步：关键函数定位"></a>第五步：关键函数定位</h3><p>搜索 QRCodeBuilder 类，找到二维码生成相关的函数。</p>
+<h3 id="第六步：动态调试"><a href="#第六步：动态调试" class="headerlink" title="第六步：动态调试"></a>第六步：动态调试</h3><p>分析代码发现程序会根据 qrMatrix 动态生成二维码。需要动态调试获取矩阵数据。</p>
+<h3 id="第七步：绕过反调试"><a href="#第七步：绕过反调试" class="headerlink" title="第七步：绕过反调试"></a>第七步：绕过反调试</h3><p>程序有反调试保护，调用了 WinAPI_DetectDebugger。patch 该函数为直接返回，绕过检测。</p>
+<h3 id="第八步：获取矩阵数据"><a href="#第八步：获取矩阵数据" class="headerlink" title="第八步：获取矩阵数据"></a>第八步：获取矩阵数据</h3><p>在 Unity 程序中下断点，获取 this 指针，通过偏移量找到 qrMatrix 的地址，提取矩阵数据。</p>
+<h3 id="第九步：生成二维码"><a href="#第九步：生成二维码" class="headerlink" title="第九步：生成二维码"></a>第九步：生成二维码</h3><p>使用提取的矩阵数据，编写脚本生成二维码图片：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 二维码生成脚本</span></span><br><span class="line"><span class="keyword">import</span> qrcode</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从调试中提取的矩阵数据 (21x21 二进制矩阵)</span></span><br><span class="line">matrix = [</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将矩阵转换为字符串</span></span><br><span class="line">matrix_str = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> matrix:</span><br><span class="line">    <span class="keyword">for</span> bit <span class="keyword">in</span> row:</span><br><span class="line">        matrix_str += <span class="built_in">str</span>(bit)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成二维码</span></span><br><span class="line">qr = qrcode.QRCode(version=<span class="number">1</span>, box_size=<span class="number">10</span>, border=<span class="number">5</span>)</span><br><span class="line">qr.add_data(matrix_str)</span><br><span class="line">qr.make(fit=<span class="literal">True</span>)</span><br><span class="line">img = qr.make_image(fill=<span class="string">&#x27;black&#x27;</span>, back_color=<span class="string">&#x27;white&#x27;</span>)</span><br><span class="line">img.save(<span class="string">&#x27;flag_qr.png&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;二维码已生成，扫描获取flag&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道 Unity IL2CPP 逆向题目，主要考察以下能力点：</p>
+<ul>
+<li>Unity 游戏逆向基础</li>
+<li>IL2CPP 反编译技术</li>
+<li>程序脱壳和 patch</li>
+<li>动态调试高级技巧</li>
+<li>二维码识别和生成</li>
+</ul>
+<p>通过多步骤逆向分析，最终成功提取了 flag。</p>
+<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CTF/" rel="tag"># CTF</a>
+              <a href="/tags/Reverse/" rel="tag"># Reverse</a>
+              <a href="/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/tags/IL2CPP/" rel="tag"># IL2CPP</a>
+              <a href="/tags/%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/" rel="tag"># 动态调试</a>
+          </div>
+
+        
+
+          
+<div class="post-interaction-container">
+  <div class="post-interaction-buttons">
+    <button class="post-like-btn" data-post-path="2025/11/05/[NSSCTF 2025 秋招赛]CodeRunner/">
+      <i class="fa fa-heart"></i>
+      <span class="like-text">点赞</span>
+      <span class="like-count">(0)</span>
+    </button>
+
+    <button class="post-dislike-btn" data-post-path="2025/11/05/[NSSCTF 2025 秋招赛]CodeRunner/">
+      <i class="fa fa-thumbs-down"></i>
+      <span class="dislike-text">踩</span>
+      <span class="dislike-count">(0)</span>
+    </button>
+  </div>
+
+  <!-- 小GINKA不允许点踩的提示 -->
+  <div id="ginka-dislike-warning" class="ginka-dislike-warning" style="display: none;">
+    <div class="ginka-message">
+      <p class="ginka-text">欸嘿嘿~人家才不要被踩呢！</p>
+      <p class="ginka-subtext">要对小GINKA温柔一点哦~ ♪</p>
+    </div>
+    <button class="ginka-close" onclick="closeGinkaWarning()">✕</button>
+  </div>
+</div>
+
+<script>
+// 文章互动功能（点赞和踩）
+document.addEventListener('DOMContentLoaded', function() {
+  const likeBtns = document.querySelectorAll('.post-like-btn');
+  const dislikeBtns = document.querySelectorAll('.post-dislike-btn');
+
+  // 点赞功能
+  likeBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const postPath = this.dataset.postPath;
+      const heart = this.querySelector('.fa-heart');
+      const likeText = this.querySelector('.like-text');
+      const likeCount = this.querySelector('.like-count');
+
+      // 检查是否已点赞（这里简化处理，实际应该使用后端存储）
+      const isLiked = heart.classList.contains('liked');
+
+      if (isLiked) {
+        // 取消点赞
+        heart.classList.remove('liked');
+        likeText.textContent = '点赞';
+        const currentCount = parseInt(likeCount.textContent.match(/\d+/)[0]);
+        likeCount.textContent = `(${currentCount - 1})`;
+
+        // 这里应该调用取消点赞的API
+        console.log('取消点赞:', postPath);
+      } else {
+        // 添加点赞
+        heart.classList.add('liked');
+        likeText.textContent = '已点赞';
+        const currentCount = parseInt(likeCount.textContent.match(/\d+/)[0]);
+        likeCount.textContent = `(${currentCount + 1})`;
+
+        // 添加点赞动画效果
+        heart.style.transform = 'scale(1.3)';
+        setTimeout(() => {
+          heart.style.transform = 'scale(1)';
+        }, 300);
+
+        // 这里应该调用点赞API
+        console.log('点赞:', postPath);
+      }
+
+      // 保存点赞状态到本地存储（简化版）
+      const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '{}');
+      if (isLiked) {
+        delete likedPosts[postPath];
+      } else {
+        likedPosts[postPath] = true;
+      }
+      localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+    });
+
+    // 初始化点赞状态
+    const postPath = btn.dataset.postPath;
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '{}');
+    if (likedPosts[postPath]) {
+      const heart = btn.querySelector('.fa-heart');
+      const likeText = btn.querySelector('.like-text');
+      const likeCount = btn.querySelector('.like-count');
+
+      heart.classList.add('liked');
+      likeText.textContent = '已点赞';
+    }
+  });
+
+  // 踩按钮功能
+  dislikeBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      // 显示小GINKA的提示
+      showGinkaWarning();
+    });
+  });
+
+  // 显示小GINKA不允许点踩的提示
+  function showGinkaWarning() {
+    const warning = document.getElementById('ginka-dislike-warning');
+    warning.style.display = 'flex';
+
+    // 3秒后自动隐藏
+    setTimeout(() => {
+      warning.style.display = 'none';
+    }, 3000);
+  }
+});
+
+// 关闭小GINKA提示
+function closeGinkaWarning() {
+  const warning = document.getElementById('ginka-dislike-warning');
+  warning.style.display = 'none';
+}
+</script>
+
+<style>
+.post-interaction-container {
+  text-align: center;
+  margin: 30px 0;
+  position: relative;
+}
+
+.post-interaction-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.post-like-btn, .post-dislike-btn {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  padding: 12px 24px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.post-like-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.post-dislike-btn:hover {
+  background: rgba(255, 182, 182, 0.8);
+  border-color: rgba(255, 182, 182, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 182, 182, 0.3);
+}
+
+.post-like-btn .fa-heart {
+  font-size: 16px;
+  color: #ff6b6b;
+  transition: all 0.3s ease;
+}
+
+.post-like-btn .fa-heart.liked {
+  color: #ff4757;
+  animation: heartBeat 0.6s ease-in-out;
+}
+
+.post-dislike-btn .fa-thumbs-down {
+  font-size: 16px;
+  color: #ffa8a8;
+  transition: all 0.3s ease;
+}
+
+.post-dislike-btn:hover .fa-thumbs-down {
+  color: #ff7675;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3); }
+  50% { transform: scale(1.1); }
+  75% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.like-text, .dislike-text {
+  font-weight: 500;
+}
+
+.like-count, .dislike-count {
+  color: #999;
+  font-size: 12px;
+}
+
+/* 小GINKA不允许点踩的提示样式 */
+.ginka-dislike-warning {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 10px 40px rgba(91, 153, 229, 0.3);
+  z-index: 10000;
+  max-width: 350px;
+  animation: ginkaBounce 0.5s ease-out;
+}
+
+@keyframes ginkaBounce {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.ginka-message {
+  flex: 1;
+}
+
+.ginka-text {
+  font-family: 'LXGW WenKai', cursive;
+  font-size: 16px;
+  font-weight: 600;
+  color: #5b99e5;
+  margin: 0 0 5px 0;
+}
+
+.ginka-subtext {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+  font-style: italic;
+}
+
+.ginka-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.ginka-close:hover {
+  background: rgba(91, 153, 229, 0.1);
+  color: #5b99e5;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .post-interaction-container {
+    margin: 20px 0;
+  }
+
+  .post-interaction-buttons {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .post-like-btn, .post-dislike-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  .ginka-dislike-warning {
+    flex-direction: column;
+    text-align: center;
+    max-width: 280px;
+    padding: 20px;
+  }
+
+  .ginka-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+  }
+}
+</style>
+
+          
+<div class="post-views-container">
+  <div class="post-views">
+    <i class="fa fa-eye"></i>
+    <span class="views-text">阅读</span>
+    <span class="views-count" data-post-path="2025/11/05/[NSSCTF 2025 秋招赛]CodeRunner/">加载中...</span>
+  </div>
+</div>
+
+<script>
+// 文章查看次数统计
+document.addEventListener('DOMContentLoaded', function() {
+  const viewCounters = document.querySelectorAll('.views-count');
+
+  viewCounters.forEach(counter => {
+    const postPath = counter.dataset.postPath;
+
+    // 从本地存储获取缓存的查看次数
+    const cachedViews = localStorage.getItem('postViews_' + postPath);
+    if (cachedViews) {
+      counter.textContent = cachedViews;
+    }
+
+    // 模拟增加查看次数（实际应该调用后端API）
+    setTimeout(() => {
+      const currentViews = parseInt(localStorage.getItem('postViews_' + postPath) || '0');
+      const newViews = currentViews + 1;
+
+      // 更新显示
+      counter.textContent = newViews;
+
+      // 保存到本地存储
+      localStorage.setItem('postViews_' + postPath, newViews.toString());
+
+      // 添加查看动画效果
+      counter.style.transform = 'scale(1.1)';
+      counter.style.color = '#5b99e5';
+      setTimeout(() => {
+        counter.style.transform = 'scale(1)';
+        counter.style.color = '#666';
+      }, 300);
+
+      console.log('文章查看次数更新:', postPath, newViews);
+    }, 1000);
+  });
+});
+</script>
+
+<style>
+.post-views-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.post-views {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #666;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.post-views:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.post-views i {
+  color: #5b99e5;
+  font-size: 16px;
+}
+
+.views-text {
+  font-weight: 500;
+}
+
+.views-count {
+  font-weight: 600;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .post-views-container {
+    margin: 15px 0;
+  }
+
+  .post-views {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+</style>
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Ddebuggggg/" rel="prev" title="[NSSCTF 2025 秋招赛] debuggggg">
+                  <i class="fa fa-angle-left"></i> [NSSCTF 2025 秋招赛] debuggggg
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E6%9D%A5%E4%BA%86%E5%97%B7%EF%BC%8C%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9%EF%BC%81/" rel="next" title="[NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！">
+                  [NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！ <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">[object Object]</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  <!-- ATRI Live2D Model --><!-- ATRI Live2D 容器 -->
+<div id="atri-live2d-widget" style="position: fixed; right: 20px; bottom: 0; z-index: 999; pointer-events: none;">
+  <canvas id="atri-canvas" width="350" height="500"></canvas>
+</div>
+
+<!-- 加载 Live2D 库文件 - 按正确顺序加载 -->
+<!-- Cubism 2 运行时 (用于兼容性) -->
+<script src="/js/live2d-libs/live2d.min.js"></script>
+<!-- Cubism 4 核心 (用于 Cubism 3.0/4.0 模型) -->
+<script src="/js/live2d-libs/live2dcubismcore.min.js"></script>
+<!-- PixiJS 渲染引擎 -->
+<script src="/js/live2d-libs/pixi.min.js"></script>
+<!-- Live2D 显示插件 -->
+<script src="/js/live2d-libs/pixi-live2d-display.min.js"></script>
+
+<script>
+(async function() {
+  'use strict';
+  
+  // 等待库加载完成
+  let retryCount = 0;
+  const maxRetries = 20;
+  
+  function waitForLibraries() {
+    return new Promise((resolve, reject) => {
+      const checkInterval = setInterval(function() {
+        retryCount++;
+        
+        if (retryCount <= 3) {
+          console.log('[ATRI] 等待库加载... (' + retryCount + '/' + maxRetries + ')');
+        }
+        
+        if (window.PIXI && window.PIXI.live2d && window.PIXI.live2d.Live2DModel) {
+          clearInterval(checkInterval);
+          console.log('[ATRI] ✓ 所有库加载完成!');
+          resolve();
+        } else if (retryCount >= maxRetries) {
+          clearInterval(checkInterval);
+          console.error('[ATRI] ✗ 库加载超时');
+          console.error('[ATRI] 状态: PIXI=' + !!window.PIXI + ', PIXI.live2d=' + !!(window.PIXI && window.PIXI.live2d));
+          reject(new Error('Live2D 库加载超时'));
+        }
+      }, 300);
+    });
+  }
+  
+  try {
+    console.log('[ATRI] 等待库加载...');
+    await waitForLibraries();
+    console.log('[ATRI] 库加载完成,开始初始化模型');
+    
+    // 配置
+    const config = {
+      modelPath: '/live2d/ATRI/ATRI.model3.json',
+      canvasId: 'atri-canvas',
+      width: 350,
+      height: 500,
+      scale: 0.25,
+      mobileScale: 0.18
+    };
+
+    // 检测移动设备
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const scale = isMobile ? config.mobileScale : config.scale;
+
+    // 获取 canvas
+    const canvas = document.getElementById(config.canvasId);
+    if (!canvas) {
+      console.warn('[ATRI] Canvas 元素未找到');
+      return;
+    }
+
+    // 创建 PixiJS 应用
+    const app = new PIXI.Application({
+      view: canvas,
+      width: config.width,
+      height: config.height,
+      transparent: true,
+      backgroundAlpha: 0,
+      antialias: true,
+      resolution: window.devicePixelRatio || 1,
+      autoDensity: true
+    });
+
+    // 加载 ATRI 模型
+    console.log('[ATRI] 开始加载模型:', config.modelPath);
+    
+    const model = await window.PIXI.live2d.Live2DModel.from(config.modelPath, {
+      autoInteract: false,
+      autoUpdate: true
+    });
+
+    // 设置模型锚点为中心
+    model.anchor.set(0.5, 0.5);
+    
+    // 设置模型缩放和位置 (只显示上半身)
+    model.scale.set(scale);
+    model.position.set(config.width / 2, config.height * 0.85);
+    
+    console.log('[ATRI] 模型锚点:', model.anchor.x, model.anchor.y);
+    console.log('[ATRI] 模型位置:', model.position.x, model.position.y);
+    console.log('[ATRI] 模型缩放:', model.scale.x);
+    console.log('[ATRI] Canvas尺寸:', config.width, 'x', config.height);
+    console.log('[ATRI] 模型宽高:', model.width, 'x', model.height);
+
+    // 添加模型到舞台
+    app.stage.addChild(model);
+    console.log('[ATRI] 模型已添加到舞台,子元素数量:', app.stage.children.length);
+
+    // 设置交互模式 (PixiJS v7)
+    model.eventMode = 'static';
+    model.cursor = 'pointer';
+    
+    // 启用 canvas 交互
+    canvas.style.pointerEvents = 'auto';
+    
+    // 点击交互 - 使用 PixiJS v7 事件系统
+    model.on('pointertap', function() {
+      if (model.internalModel && model.internalModel.motionManager) {
+        const groups = ['tap_body', 'shake', 'idle'];
+        
+        for (let i = 0; i < groups.length; i++) {
+          const group = groups[i];
+          const motions = model.internalModel.motionManager.definitions[group];
+          if (motions && motions.length > 0) {
+            const randomMotion = Math.floor(Math.random() * motions.length);
+            model.motion(group, randomMotion);
+            console.log('[ATRI] 播放动作: ' + group + ' #' + randomMotion);
+            break;
+          }
+        }
+      }
+    });
+
+    // 启用鼠标跟踪
+    let mouseX = 0;
+    let mouseY = 0;
+    
+    document.addEventListener('mousemove', function(event) {
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+    });
+
+    // 更新模型朝向
+    app.ticker.add(function() {
+      if (model.internalModel && model.internalModel.coreModel) {
+        const centerX = window.innerWidth - config.width / 2 - 20;
+        const centerY = config.height / 2;
+        
+        const dx = (mouseX - centerX) / centerX;
+        const dy = (mouseY - centerY) / centerY;
+        
+        const maxMove = 0.5;
+        const finalDx = Math.max(-maxMove, Math.min(maxMove, dx));
+        const finalDy = Math.max(-maxMove, Math.min(maxMove, dy));
+        
+        model.internalModel.coreModel.setParameterValueById('ParamAngleX', finalDx * 30);
+        model.internalModel.coreModel.setParameterValueById('ParamAngleY', finalDy * 30);
+        model.internalModel.coreModel.setParameterValueById('ParamEyeBallX', finalDx);
+        model.internalModel.coreModel.setParameterValueById('ParamEyeBallY', finalDy);
+      }
+    });
+
+    // 定期播放闲置动画
+    setInterval(function() {
+      if (model.internalModel && model.internalModel.motionManager) {
+        const idleMotions = model.internalModel.motionManager.definitions['idle'] || 
+                           model.internalModel.motionManager.definitions['Idle'];
+        
+        if (idleMotions && idleMotions.length > 0) {
+          const randomIdle = Math.floor(Math.random() * idleMotions.length);
+          model.motion('idle', randomIdle);
+        }
+      }
+    }, 15000);
+
+    // 响应式调整
+    window.addEventListener('resize', function() {
+      const newScale = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+        ? config.mobileScale 
+        : config.scale;
+      model.scale.set(newScale);
+    });
+
+  } catch (error) {
+    console.error('[ATRI] 加载失败:', error);
+    console.error('[ATRI] 请确保模型文件位于: /live2d/ATRI/ATRI.model3.json');
+  }
+})();
+</script>
+
+<style>
+#atri-live2d-widget {
+  transition: opacity 0.3s ease;
+}
+
+#atri-canvas {
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
+/* 移动端调整 */
+@media (max-width: 768px) {
+  #atri-live2d-widget {
+    right: 5px;
+    bottom: 0;
+  }
+  
+  #atri-canvas {
+    width: 200px;
+    height: 300px;
+  }
+}
+
+/* 隐藏在超小屏幕 */
+@media (max-width: 480px) {
+  #atri-live2d-widget {
+    display: none;
+  }
+}
+</style>
+
+
+  <!-- GINKA Video Background -->
+  <div id="video-background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -999; overflow: hidden;">
+    <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+      <source src="/images/background.mp4" type="video/mp4">
+      您的浏览器不支持视频背景。
+    </video>
+  </div>
+
+</body>
+</html>
