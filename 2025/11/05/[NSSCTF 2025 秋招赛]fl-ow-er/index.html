@@ -30,7 +30,7 @@
 <meta property="og:description" content="NSSCTF 2025 秋招赛第二题 fl-ow-er 的详细解题过程，花指令去除与异或解密分析。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-11-05T01:30:00.000Z">
-<meta property="article:modified_time" content="2025-11-05T14:30:10.012Z">
+<meta property="article:modified_time" content="2025-11-05T14:34:28.744Z">
 <meta property="article:author" content="mm9527">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="IDA Pro">
@@ -168,7 +168,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E4%BF%A1%E6%81%AF"><span class="nav-number">1.</span> <span class="nav-text">题目信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">解题过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90"><span class="nav-number">2.1.</span> <span class="nav-text">第一步：文件分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E8%8A%B1%E6%8C%87%E4%BB%A4%E8%AF%86%E5%88%AB"><span class="nav-number">2.2.</span> <span class="nav-text">第二步：花指令识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E8%8A%B1%E6%8C%87%E4%BB%A4%E5%8E%BB%E9%99%A4"><span class="nav-number">2.3.</span> <span class="nav-text">第三步：花指令去除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E5%8F%8D%E7%BC%96%E8%AF%91%E5%88%86%E6%9E%90"><span class="nav-number">2.4.</span> <span class="nav-text">第四步：反编译分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9A%E8%A7%A3%E5%AF%86%E8%84%9A%E6%9C%AC"><span class="nav-number">2.5.</span> <span class="nav-text">第五步：解密脚本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E4%BF%A1%E6%81%AF"><span class="nav-number">1.</span> <span class="nav-text">题目信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">解题过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -183,7 +183,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -255,7 +255,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2025-11-05 09:30:00 / 修改时间：22:30:10" itemprop="dateCreated datePublished" datetime="2025-11-05T09:30:00+08:00">2025-11-05</time>
+      <time title="创建时间：2025-11-05 09:30:00 / 修改时间：22:34:28" itemprop="dateCreated datePublished" datetime="2025-11-05T09:30:00+08:00">2025-11-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -278,28 +278,26 @@
     
     
     <div class="post-body" itemprop="articleBody"><h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] fl-ow-er<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：文件分析"><a href="#第一步：文件分析" class="headerlink" title="第一步：文件分析"></a>第一步：文件分析</h3><p>用 DIE 查看，发现是无壳的 Windows 可执行文件。</p>
-<h3 id="第二步：花指令识别"><a href="#第二步：花指令识别" class="headerlink" title="第二步：花指令识别"></a>第二步：花指令识别</h3><p>拖进 IDA，因为存在花指令，按 F5 无法正常反编译。需要手动去除花指令。</p>
-<p>常见的花指令类型：</p>
-<ol>
-<li><code>jz + jnz</code> 组合（必定跳转）</li>
-<li>异或相同寄存器的操作接 <code>jz</code>（必定跳转）</li>
-</ol>
-<h3 id="第三步：花指令去除"><a href="#第三步：花指令去除" class="headerlink" title="第三步：花指令去除"></a>第三步：花指令去除</h3><p>对于 <code>jz + jnz</code> 组合：</p>
-<ul>
-<li>将其中一个改为 <code>jmp</code></li>
-<li>另一个 <code>nop</code> 掉</li>
-</ul>
-<p>对于异或相同寄存器的花指令：</p>
-<ul>
-<li>改为 <code>jmp</code></li>
-<li><code>nop</code> 掉多余字节</li>
-</ul>
-<h3 id="第四步：反编译分析"><a href="#第四步：反编译分析" class="headerlink" title="第四步：反编译分析"></a>第四步：反编译分析</h3><p>去除花指令后，重新定义函数，按 P 键可以正常反编译。发现主逻辑是一个简单的异或加密。</p>
-<h3 id="第五步：解密脚本"><a href="#第五步：解密脚本" class="headerlink" title="第五步：解密脚本"></a>第五步：解密脚本</h3><p>分析加密逻辑后，编写 Python 解密脚本：</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>依旧ida,因为有花指令f5不了了,找一下有哪些花指令</p>
+<p>（花指令1：jz + jnz 组合）</p>
+<p>（花指令2：异或相同寄存器接jz）</p>
+<p>两种比较常见的花指令,基本按一下u就知道怎么改了,直接把被跳过的字节ctrl+n nop掉,再按c让剩下的变成代码,发现已经恢复正常了</p>
+<p>（恢复1：jz + jnz 修改后）</p>
+<p>（恢复2：异或花指令修改后）</p>
+<p>jz+jnz同理,必定会跳转就把一个改成jmp再nop掉另一个</p>
+<p>（jz jnz 修改）</p>
+<p>（修改后）</p>
+<p>这个时候发现还是不能f5,发现有一个比较隐蔽的花指令,异或两个相同的寄存器,接一个jz,也是必定跳转,改成jmp,再nop多余字节</p>
+<p>（隐蔽花指令）</p>
+<p>改完这个,再对着main先按u取消定义再按p定义函数,发现可以正常f5了</p>
+<p>（f5成功）</p>
+<p>双击进入loc_401000函数内部,发现也有花指令和上面的一样,去掉花指令后f5看伪代码,发现只是一个异或</p>
+<p>（异或逻辑）</p>
+<p>再提取密文写一个简单异或脚本解出flag</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">enc = [<span class="number">0x43</span>, <span class="number">0x56</span>, <span class="number">0x5e</span>, <span class="number">0x5d</span>, <span class="number">0x54</span>, <span class="number">0x47</span>, <span class="number">0x2b</span>, <span class="number">0x2b</span>, <span class="number">0x2b</span>, <span class="number">0x22</span>, <span class="number">0x31</span>, <span class="number">0x27</span>, <span class="number">0x33</span>, <span class="number">0x4f</span>, <span class="number">0x26</span>, <span class="number">0x36</span>, <span class="number">0x52</span>, <span class="number">0x22</span>, <span class="number">0x27</span>, <span class="number">0x22</span>, <span class="number">0x21</span>, <span class="number">0x35</span>, <span class="number">0x2c</span>, <span class="number">0x25</span>, <span class="number">0x37</span>, <span class="number">0x2c</span>, <span class="number">0x3e</span>]</span><br><span class="line">key=[<span class="number">0x63</span>, <span class="number">0x69</span>, <span class="number">0x61</span>, <span class="number">0x6c</span>, <span class="number">0x6c</span>, <span class="number">0x6f</span>, <span class="number">0x7e</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">27</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">chr</span>(((enc[i]^<span class="number">0xd</span>)-<span class="number">33</span>)^key[i%<span class="number">7</span>]),end=<span class="string">&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure>
 
-<p>运行得到 flag：NSSCTF{flower_is_beautiful}</p>
+<p>（脚本运行）</p>
+<p>（flag：NSSCTF{flower_is_beautiful}）</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道经典的花指令题目，主要考察以下能力点：</p>
 <ul>
 <li>花指令的识别和去除</li>
