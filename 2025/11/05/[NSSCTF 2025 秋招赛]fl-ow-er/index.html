@@ -22,15 +22,15 @@
 
 <!-- NexT Configuration -->
 <script class="next-config" data-name="main" type="application/json">{"hostname":"zhouhang9527.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false,"highlight_theme":"night"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"twikoo","storage":true,"lazyload":false,"nav":{"twikoo":{"text":"💬 优质评论","order":-1}}},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
-    <meta name="description" content="NSSCTF 2025 秋招赛第二题 fl-ow-er 的详细解题过程，花指令去除与异或解密分析。">
+    <meta name="description" content="NSSCTF 2025 秋招赛第二题 fl-ow-er 的记录。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[NSSCTF 2025 秋招赛] fl-ow-er">
 <meta property="og:url" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]fl-ow-er/index.html">
 <meta property="og:site_name" content="GINKA">
-<meta property="og:description" content="NSSCTF 2025 秋招赛第二题 fl-ow-er 的详细解题过程，花指令去除与异或解密分析。">
+<meta property="og:description" content="NSSCTF 2025 秋招赛第二题 fl-ow-er 的记录。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-11-05T01:30:00.000Z">
-<meta property="article:modified_time" content="2025-11-05T14:40:50.504Z">
+<meta property="article:modified_time" content="2025-11-06T08:09:55.243Z">
 <meta property="article:author" content="mm9527">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="IDA Pro">
@@ -168,7 +168,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E4%BF%A1%E6%81%AF"><span class="nav-number">1.</span> <span class="nav-text">题目信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">解题过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E8%AF%86%E5%88%AB%E8%8A%B1%E6%8C%87%E4%BB%A4"><span class="nav-number">2.1.</span> <span class="nav-text">第一步：识别花指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E5%8E%BB%E9%99%A4%E8%8A%B1%E6%8C%87%E4%BB%A4"><span class="nav-number">2.2.</span> <span class="nav-text">第二步：去除花指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E5%A4%84%E7%90%86%E9%9A%90%E8%94%BD%E8%8A%B1%E6%8C%87%E4%BB%A4"><span class="nav-number">2.3.</span> <span class="nav-text">第三步：处理隐蔽花指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E5%88%86%E6%9E%90%E5%8A%A0%E5%AF%86%E9%80%BB%E8%BE%91"><span class="nav-number">2.4.</span> <span class="nav-text">第四步：分析加密逻辑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9A%E7%BC%96%E5%86%99%E8%A7%A3%E5%AF%86%E8%84%9A%E6%9C%AC"><span class="nav-number">2.5.</span> <span class="nav-text">第五步：编写解密脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E6%AD%A5%EF%BC%9A%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC%E8%8E%B7%E5%8F%96flag"><span class="nav-number">2.6.</span> <span class="nav-text">第六步：运行脚本获取flag</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E4%BA%8C-flower"><span class="nav-number">1.</span> <span class="nav-text">题目二:flower~</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -194,7 +194,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -239,7 +239,7 @@
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
       <meta itemprop="name" content="[NSSCTF 2025 秋招赛] fl-ow-er | GINKA">
-      <meta itemprop="description" content="NSSCTF 2025 秋招赛第二题 fl-ow-er 的详细解题过程，花指令去除与异或解密分析。">
+      <meta itemprop="description" content="NSSCTF 2025 秋招赛第二题 fl-ow-er 的记录。">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -253,9 +253,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-11-05 09:30:00 / 修改时间：22:40:50" itemprop="dateCreated datePublished" datetime="2025-11-05T09:30:00+08:00">2025-11-05</time>
+      <time title="创建时间：2025-11-05 09:30:00" itemprop="dateCreated datePublished" datetime="2025-11-05T09:30:00+08:00">2025-11-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-11-06 16:09:55" itemprop="dateModified" datetime="2025-11-06T16:09:55+08:00">2025-11-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -270,52 +276,21 @@
   
 </div>
 
-            <div class="post-description">NSSCTF 2025 秋招赛第二题 fl-ow-er 的详细解题过程，花指令去除与异或解密分析。</div>
+            <div class="post-description">NSSCTF 2025 秋招赛第二题 fl-ow-er 的记录。</div>
         </div>
       </header>
 
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] fl-ow-er<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：识别花指令"><a href="#第一步：识别花指令" class="headerlink" title="第一步：识别花指令"></a>第一步：识别花指令</h3><p>依旧ida,因为有花指令f5不了了,找一下有哪些花指令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jz + jnz 组合花指令</span><br><span class="line">xor eax, eax; jz loc; jnz loc; 必定跳转</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">异或相同寄存器接jz花指令</span><br><span class="line">xor eax, eax; jz loc; 必定跳转</span><br></pre></td></tr></table></figure>
-
-<h3 id="第二步：去除花指令"><a href="#第二步：去除花指令" class="headerlink" title="第二步：去除花指令"></a>第二步：去除花指令</h3><p>两种比较常见的花指令,基本按一下u就知道怎么改了,直接把被跳过的字节ctrl+n nop掉,再按c让剩下的变成代码,发现已经恢复正常了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jz + jnz 修改后：</span><br><span class="line">jz loc -&gt; jmp loc</span><br><span class="line">jnz loc -&gt; nop</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">异或花指令修改后：</span><br><span class="line">xor eax, eax; jz loc -&gt; jmp loc</span><br><span class="line">nop掉多余字节</span><br></pre></td></tr></table></figure>
-
-<p>jz+jnz同理,必定会跳转就把一个改成jmp再nop掉另一个</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jz jnz 修改：</span><br><span class="line">jz loc -&gt; jmp loc</span><br><span class="line">jnz loc -&gt; nop</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">修改后</span><br></pre></td></tr></table></figure>
-
-<h3 id="第三步：处理隐蔽花指令"><a href="#第三步：处理隐蔽花指令" class="headerlink" title="第三步：处理隐蔽花指令"></a>第三步：处理隐蔽花指令</h3><p>这个时候发现还是不能f5,发现有一个比较隐蔽的花指令,异或两个相同的寄存器,接一个jz,也是必定跳转,改成jmp,再nop多余字节</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">隐蔽花指令：</span><br><span class="line">xor eax, eax; jz loc</span><br></pre></td></tr></table></figure>
-
-<p>改完这个,再对着main先按u取消定义再按p定义函数,发现可以正常f5了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f5成功</span><br></pre></td></tr></table></figure>
-
-<h3 id="第四步：分析加密逻辑"><a href="#第四步：分析加密逻辑" class="headerlink" title="第四步：分析加密逻辑"></a>第四步：分析加密逻辑</h3><p>双击进入loc_401000函数内部,发现也有花指令和上面的一样,去掉花指令后f5看伪代码,发现只是一个异或</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">异或逻辑：</span><br><span class="line">for(int i=0; i&lt;len; i++)</span><br><span class="line">    enc[i] = (enc[i] ^ 0xd) - 0x21 ^ key[i%7]</span><br></pre></td></tr></table></figure>
-
-<h3 id="第五步：编写解密脚本"><a href="#第五步：编写解密脚本" class="headerlink" title="第五步：编写解密脚本"></a>第五步：编写解密脚本</h3><p>再提取密文写一个简单异或脚本解出flag</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">enc = [<span class="number">0x43</span>, <span class="number">0x56</span>, <span class="number">0x5e</span>, <span class="number">0x5d</span>, <span class="number">0x54</span>, <span class="number">0x47</span>, <span class="number">0x2b</span>, <span class="number">0x2b</span>, <span class="number">0x2b</span>, <span class="number">0x22</span>, <span class="number">0x31</span>, <span class="number">0x27</span>, <span class="number">0x33</span>, <span class="number">0x4f</span>, <span class="number">0x26</span>, <span class="number">0x36</span>, <span class="number">0x52</span>, <span class="number">0x22</span>, <span class="number">0x27</span>, <span class="number">0x22</span>, <span class="number">0x21</span>, <span class="number">0x35</span>, <span class="number">0x2c</span>, <span class="number">0x25</span>, <span class="number">0x37</span>, <span class="number">0x2c</span>, <span class="number">0x3e</span>]</span><br><span class="line">key=[<span class="number">0x63</span>, <span class="number">0x69</span>, <span class="number">0x61</span>, <span class="number">0x6c</span>, <span class="number">0x6c</span>, <span class="number">0x6f</span>, <span class="number">0x7e</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">27</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">chr</span>(((enc[i]^<span class="number">0xd</span>)-<span class="number">33</span>)^key[i%<span class="number">7</span>]),end=<span class="string">&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="第六步：运行脚本获取flag"><a href="#第六步：运行脚本获取flag" class="headerlink" title="第六步：运行脚本获取flag"></a>第六步：运行脚本获取flag</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">脚本运行结果：</span><br><span class="line">NSSCTF&#123;flower_is_beautiful&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道经典的花指令题目，主要考察以下能力点：</p>
-<ul>
-<li>花指令的识别和去除</li>
-<li>IDA Pro 的基本操作</li>
-<li>简单的异或加密逆向</li>
-</ul>
-<p>通过仔细去除花指令，最终成功破解了 flag。</p>
-<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
+    <div class="post-body" itemprop="articleBody"><h3 id="题目二-flower"><a href="#题目二-flower" class="headerlink" title="题目二:flower~"></a>题目二:fl<del>ow</del>er~</h3><p>拖进 IDA 之后直接 <code>F5</code> 会提示存在跳转陷阱，一眼望去全是经典的花指令 —— 成对的 <code>jz/jnz</code> 以及对同一地址的重复跳转。</p>
+<p>![](Pasted image 20251103233312.png)</p>
+<p>处理思路也很固定：先按 <code>U</code> 取消反编译，再 <code>Ctrl+N</code> 把被花指令“包裹”的字节改成 <code>NOP</code>，最后 <code>C</code> 重新识别，流程就顺回来了。</p>
+<p>![](Pasted image 20251103233447.png)</p>
+<p>遇到必跳的 <code>jz</code>&#x2F;<code>jnz</code> 组合时，把其中一条改成 <code>jmp</code>，另一条直接填 <code>NOP</code>。接下来还有一处“<code>xor eax, eax</code> + <code>jz</code>”的隐藏花指令，同理改成 <code>jmp</code> 并清理冗余字节即可。</p>
+<p>![](Pasted image 20251103233645.png)</p>
+<p>![](Pasted image 20251103233707.png)</p>
+<p>花指令清完再 <code>F5</code>，<code>main</code> 的伪代码就能顺利出来。继续跟进 <code>loc_401000</code>，核心逻辑只是简单的异或循环。把数据段里的密文和密钥抠出来，写个脚本逐字节 <code>cipher[i] ^ key[i]</code>，就能把 flag 弄出来。</p>
 
     </div>
 
@@ -327,8 +302,8 @@
           <div class="post-tags">
               <a href="/tags/ctf/" rel="tag"># CTF</a>
               <a href="/tags/reverse/" rel="tag"># Reverse</a>
-              <a href="/tags/ida-pro/" rel="tag"># IDA Pro</a>
               <a href="/tags/%E8%8A%B1%E6%8C%87%E4%BB%A4/" rel="tag"># 花指令</a>
+              <a href="/tags/ida-pro/" rel="tag"># IDA Pro</a>
               <a href="/tags/%E5%BC%82%E6%88%96%E8%A7%A3%E5%AF%86/" rel="tag"># 异或解密</a>
           </div>
 
