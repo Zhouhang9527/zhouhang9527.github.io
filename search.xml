@@ -43,45 +43,6 @@
       </tags>
   </entry>
   <entry>
-    <title>[NSSCTF 2025 鍏ラ棬棰樼洰] 鑺辨寚浠?</title>
-    <url>/2025/10/19/NSSCTF2025%E5%85%A5%E9%97%A8%E9%A2%98%E7%9B%AE-%E8%8A%B1%E6%8C%87%E4%BB%A4/</url>
-    <content><![CDATA[<h2 id="棰樼洰淇℃伅"><a href="#棰樼洰淇℃伅" class="headerlink" title="棰樼洰淇℃伅"></a>棰樼洰淇℃伅</h2><p><strong>棰樼洰鍚嶇О</strong>: [NSSCTF 2025 鍏ラ棬棰樼洰] 鑺辨寚浠?</p>
-<p><strong>绫诲瀷</strong>: Reverse Engineering</p>
-<p><strong>闅惧害</strong>: 鍏ラ棬</p>
-<h2 id="瑙i杩囩▼"><a href="#瑙i杩囩▼" class="headerlink" title="瑙ｉ杩囩▼"></a>瑙ｉ杩囩▼</h2><h3 id="绗竴姝ワ細鏂囦欢鍒嗘瀽"><a href="#绗竴姝ワ細鏂囦欢鍒嗘瀽" class="headerlink" title="绗竴姝ワ細鏂囦欢鍒嗘瀽"></a>绗竴姝ワ細鏂囦欢鍒嗘瀽</h3><p>鍏堢敤 DIE 妫€娴嬶紝绋嬪簭鏄?32 浣嶆棤澹?PE锛屽彲鐩存帴涓㈣繘 IDA 鍒嗘瀽銆?</p>
-<h3 id="绗簩姝ワ細鍒嗘瀽涓绘祦绋"><a href="#绗簩姝ワ細鍒嗘瀽涓绘祦绋" class="headerlink" title="绗簩姝ワ細鍒嗘瀽涓绘祦绋?"></a>绗簩姝ワ細鍒嗘瀽涓绘祦绋?</h3><p>F5 鍚庡彲浠ョ湅鍒扮▼搴忔妸杈撳叆鍧囧垎鎴愪笁娈碉紝鍐嶅垎鍒€佽繘涓変釜鏍￠獙鍑芥暟锛?</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">	<span class="type">char</span> input[<span class="number">100</span>];</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%99s&quot;</span>, input);</span><br><span class="line">	<span class="type">size_t</span> len = <span class="built_in">strlen</span>(input);</span><br><span class="line">	<span class="type">size_t</span> len1 = len / <span class="number">3</span>;</span><br><span class="line">	<span class="type">size_t</span> len2 = len / <span class="number">3</span>;</span><br><span class="line">	<span class="type">size_t</span> len3 = len - len1 - len2;</span><br><span class="line">	<span class="built_in">strncpy</span>(part1, input, len1);</span><br><span class="line">	<span class="built_in">strncpy</span>(part2, input + len1, len2);</span><br><span class="line">	<span class="built_in">strncpy</span>(part3, input + len1 + len2, len3);</span><br><span class="line">	<span class="keyword">if</span> (flower_1(part1) &amp;&amp; flower_2(part2) &amp;&amp; flower_3(part3))</span><br><span class="line">		<span class="built_in">puts</span>(<span class="string">&quot;Congratulations!&quot;</span>);</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="built_in">puts</span>(<span class="string">&quot;GG&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="绗笁姝ワ細鍘婚櫎鑺辨寚浠"><a href="#绗笁姝ワ細鍘婚櫎鑺辨寚浠" class="headerlink" title="绗笁姝ワ細鍘婚櫎鑺辨寚浠?"></a>绗笁姝ワ細鍘婚櫎鑺辨寚浠?</h3><p>涓変釜 <code>flower_x</code> 鍑芥暟閮芥彃鍏ヤ簡鍏稿瀷鐨勮姳鎸囦护锛?</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">jz short loc</span><br><span class="line">jnz short loc</span><br></pre></td></tr></table></figure>
-
-<p>浠ュ強 <code>xor eax, eax</code> 鍚庣珛鍒昏窡 <code>jz</code> 鐨勫繀璺崇粨鏋勩€傛寜 <code>U</code> 鍙栨秷鍙嶆眹缂栵紝鍐?<code>NOP</code> 鎺夋棤鐢ㄨ烦杞紝鏈€鍚?<code>C</code> 杞垚浠ｇ爜鍗冲彲鎭㈠娴佺▼銆?</p>
-<h3 id="绗洓姝ワ細杩樺師寮傛垨閫昏緫"><a href="#绗洓姝ワ細杩樺師寮傛垨閫昏緫" class="headerlink" title="绗洓姝ワ細杩樺師寮傛垨閫昏緫"></a>绗洓姝ワ細杩樺師寮傛垨閫昏緫</h3><p>鍘婚櫎鑺辨寚浠ゅ悗锛屾瘡涓嚱鏁伴兘鍦ㄧ敤鍚屼竴瀵嗛挜鍋氬紓鎴栨瘮杈冿細</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">flower_2</span><span class="params">(<span class="type">char</span> *a)</span> &#123;</span><br><span class="line">	<span class="type">const</span> <span class="type">char</span> key[] = <span class="string">&quot;Ciallo&quot;</span>;</span><br><span class="line">	<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span> answer2[] = &#123;<span class="number">0x26</span>,<span class="number">0x44</span>,<span class="number">0x07</span>,<span class="number">0x5e</span>,<span class="number">0x5c</span>,<span class="number">0x5f</span>,<span class="number">0x6e</span>,<span class="number">0x5d</span>,<span class="number">0x02</span>,<span class="number">0x5d</span>,<span class="number">0x55</span>,<span class="number">0x42</span>,<span class="number">0x22</span>,<span class="number">0x50</span>&#125;;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; <span class="built_in">strlen</span>(a); ++i)</span><br><span class="line">		<span class="keyword">if</span> ((key[i % <span class="number">6</span>] ^ a[i]) != answer2[i])</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>flower_1</code> 涓?<code>flower_3</code> 鐨勬牳蹇冮€昏緫瀹屽叏涓€鑷达紝鍙槸甯搁噺鏁扮粍涓嶅悓銆?</p>
-<h3 id="绗簲姝ワ細缂栧啓瑙e瘑鑴氭湰"><a href="#绗簲姝ワ細缂栧啓瑙e瘑鑴氭湰" class="headerlink" title="绗簲姝ワ細缂栧啓瑙ｅ瘑鑴氭湰"></a>绗簲姝ワ細缂栧啓瑙ｅ瘑鑴氭湰</h3><p>鎶婁笁涓暟缁勯兘鎶犲嚭鏉ワ紝鍐欒剼鏈€嗚繍绠楀嵆鍙€?</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">answer1 = [<span class="number">0x0d</span>, <span class="number">0x3a</span>, <span class="number">0x32</span>, <span class="number">0x2f</span>, <span class="number">0x38</span>, <span class="number">0x29</span>, <span class="number">0x38</span>, <span class="number">0x5d</span>, <span class="number">0x56</span>, <span class="number">0x58</span>, <span class="number">0x5e</span>, <span class="number">0x09</span>, <span class="number">0x21</span>, <span class="number">0x0d</span>]</span><br><span class="line">answer2 = [<span class="number">0x26</span>, <span class="number">0x44</span>, <span class="number">0x07</span>, <span class="number">0x5e</span>, <span class="number">0x5c</span>, <span class="number">0x5f</span>, <span class="number">0x6e</span>, <span class="number">0x5d</span>, <span class="number">0x02</span>, <span class="number">0x5d</span>, <span class="number">0x55</span>, <span class="number">0x42</span>, <span class="number">0x22</span>, <span class="number">0x50</span>]</span><br><span class="line">answer3 = [<span class="number">0x27</span>, <span class="number">0x5c</span>, <span class="number">0x4c</span>, <span class="number">0x54</span>, <span class="number">0x08</span>, <span class="number">0x56</span>, <span class="number">0x72</span>, <span class="number">0x5f</span>, <span class="number">0x50</span>, <span class="number">0x5f</span>, <span class="number">0x5c</span>, <span class="number">0x0b</span>, <span class="number">0x76</span>, <span class="number">0x08</span>, <span class="number">0x53</span>, <span class="number">0x11</span>]</span><br><span class="line">key = [<span class="number">0x43</span>, <span class="number">0x69</span>, <span class="number">0x61</span>, <span class="number">0x6c</span>, <span class="number">0x6c</span>, <span class="number">0x6f</span>]</span><br><span class="line"></span><br><span class="line">flag_bytes = []</span><br><span class="line"><span class="keyword">for</span> idx, val <span class="keyword">in</span> <span class="built_in">enumerate</span>(answer1 + answer2 + answer3):</span><br><span class="line">	flag_bytes.append(val ^ key[idx % <span class="built_in">len</span>(key)])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>.join(<span class="built_in">chr</span>(b) <span class="keyword">for</span> b <span class="keyword">in</span> flag_bytes))</span><br></pre></td></tr></table></figure>
-
-<h3 id="绗叚姝ワ細杩愯鑴氭湰"><a href="#绗叚姝ワ細杩愯鑴氭湰" class="headerlink" title="绗叚姝ワ細杩愯鑴氭湰"></a>绗叚姝ワ細杩愯鑴氭湰</h3><p>鑴氭湰杈撳嚭 <code>NSSCTF{4742fbde-f200-4c19-a9d5-8d916130d5a2}</code>锛屼笌瀹樻柟 flag 涓€鑷淬€?</p>
-<h2 id="鎬荤粨"><a href="#鎬荤粨" class="headerlink" title="鎬荤粨"></a>鎬荤粨</h2><ul>
-<li>璇嗗埆甯歌鐨?<code>jz</code>&#x2F;<code>jnz</code> 缁勫悎鍜?<code>xor reg, reg</code> + <code>jz</code> 绛夊繀璺宠姳鎸囦护鏄叧閿€?</li>
-<li>鍘昏姳鍚庡彧鍓╃畝鍗曠殑寮傛垨鏍￠獙锛岀洿鎺ユ彁甯搁噺鍗冲彲閫嗗悜銆?</li>
-<li>缂栧啓鑴氭湰楠岃瘉缁撹鑳藉揩閫熸嬁鍒?flag锛屽缓璁繚鎸佽繖绫婚鐩殑鑴氭湰涔犳儻銆?</li>
-</ul>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>鑺辨寚浠?</tag>
-        <tag>IDA Pro</tag>
-        <tag>寮傛垨瑙ｅ瘑</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>[HUBUCTF 2022 新生赛] simple_RE 题解</title>
     <url>/2025/10/10/%5BHUBUCTF%202022%20%E6%96%B0%E7%94%9F%E8%B5%9B%5Dsimple_RE/</url>
     <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [HUBUCTF 2022 新生赛] simple_RE<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 简单</p>
@@ -109,8 +70,49 @@
       <tags>
         <tag>CTF</tag>
         <tag>Reverse</tag>
-        <tag>IDA Pro</tag>
         <tag>Base64</tag>
+        <tag>IDA Pro</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] 花指令</title>
+    <url>/2025/10/19/NSSCTF2025%E5%85%A5%E9%97%A8%E9%A2%98%E7%9B%AE-%E8%8A%B1%E6%8C%87%E4%BB%A4/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>：NSSCTF 2025 秋招赛 · 花指令</p>
+<p><strong>题目类型</strong>：Reverse Engineering</p>
+<p><strong>难度评估</strong>：入门</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：基础分析"><a href="#第一步：基础分析" class="headerlink" title="第一步：基础分析"></a>第一步：基础分析</h3><p>先用 DIE 看一下，样本是 32 位 PE，可确认未加壳，直接用 IDA 静态分析足够。</p>
+<h3 id="第二步：主流程梳理"><a href="#第二步：主流程梳理" class="headerlink" title="第二步：主流程梳理"></a>第二步：主流程梳理</h3><p>在 IDA 中按 <code>F5</code> 查看伪代码，可以看到 <code>main</code> 读取输入后把它平均切成三段，再分别传入 <code>flower_1</code>、<code>flower_2</code>、<code>flower_3</code> 做校验：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">	<span class="type">char</span> input[<span class="number">100</span>];</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;%99s&quot;</span>, input);</span><br><span class="line">	<span class="type">size_t</span> len = <span class="built_in">strlen</span>(input);</span><br><span class="line">	<span class="type">size_t</span> len1 = len / <span class="number">3</span>;</span><br><span class="line">	<span class="type">size_t</span> len2 = len / <span class="number">3</span>;</span><br><span class="line">	<span class="type">size_t</span> len3 = len - len1 - len2;</span><br><span class="line">	<span class="built_in">strncpy</span>(part1, input, len1);</span><br><span class="line">	<span class="built_in">strncpy</span>(part2, input + len1, len2);</span><br><span class="line">	<span class="built_in">strncpy</span>(part3, input + len1 + len2, len3);</span><br><span class="line">	<span class="keyword">if</span> (flower_1(part1) &amp;&amp; flower_2(part2) &amp;&amp; flower_3(part3))</span><br><span class="line">		<span class="built_in">puts</span>(<span class="string">&quot;Congratulations!&quot;</span>);</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="built_in">puts</span>(<span class="string">&quot;GG&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="第三步：清除花指令"><a href="#第三步：清除花指令" class="headerlink" title="第三步：清除花指令"></a>第三步：清除花指令</h3><p>进入 <code>flower_x</code> 系列函数可以发现大量成对出现的 <code>jz</code> &#x2F; <code>jnz</code>、<code>xor eax, eax</code> + <code>jz</code> 等典型花指令。方法很固定：</p>
+<ul>
+<li>在反汇编窗口按 <code>U</code> 取消伪代码还原；</li>
+<li>把干扰跳转改成 <code>NOP</code> 或直接改为 <code>jmp</code>；</li>
+<li>重新按 <code>C</code> 识别指令，流程就顺回来了。</li>
+</ul>
+<p>处理完花指令之后，三个函数的核心逻辑变得很清晰：都在使用同一个密钥对输入做异或校验。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">flower_2</span><span class="params">(<span class="type">char</span> *a)</span> &#123;</span><br><span class="line">	<span class="type">const</span> <span class="type">char</span> key[] = <span class="string">&quot;Ciallo&quot;</span>;</span><br><span class="line">	<span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span> answer2[] = &#123;<span class="number">0x26</span>,<span class="number">0x44</span>,<span class="number">0x07</span>,<span class="number">0x5e</span>,<span class="number">0x5c</span>,<span class="number">0x5f</span>,<span class="number">0x6e</span>,<span class="number">0x5d</span>,<span class="number">0x02</span>,<span class="number">0x5d</span>,<span class="number">0x55</span>,<span class="number">0x42</span>,<span class="number">0x22</span>,<span class="number">0x50</span>&#125;;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; <span class="built_in">strlen</span>(a); ++i)</span><br><span class="line">		<span class="keyword">if</span> ((key[i % <span class="number">6</span>] ^ a[i]) != answer2[i])</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>flower_1</code> 与 <code>flower_3</code> 的写法完全相同，只是常量数组不同。</p>
+<h3 id="第四步：脚本复现"><a href="#第四步：脚本复现" class="headerlink" title="第四步：脚本复现"></a>第四步：脚本复现</h3><p>把三个数组和密钥抄出来，写个脚本按位异或即可还原 flag：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">answer1 = [<span class="number">0x0d</span>, <span class="number">0x3a</span>, <span class="number">0x32</span>, <span class="number">0x2f</span>, <span class="number">0x38</span>, <span class="number">0x29</span>, <span class="number">0x38</span>, <span class="number">0x5d</span>, <span class="number">0x56</span>, <span class="number">0x58</span>, <span class="number">0x5e</span>, <span class="number">0x09</span>, <span class="number">0x21</span>, <span class="number">0x0d</span>]</span><br><span class="line">answer2 = [<span class="number">0x26</span>, <span class="number">0x44</span>, <span class="number">0x07</span>, <span class="number">0x5e</span>, <span class="number">0x5c</span>, <span class="number">0x5f</span>, <span class="number">0x6e</span>, <span class="number">0x5d</span>, <span class="number">0x02</span>, <span class="number">0x5d</span>, <span class="number">0x55</span>, <span class="number">0x42</span>, <span class="number">0x22</span>, <span class="number">0x50</span>]</span><br><span class="line">answer3 = [<span class="number">0x27</span>, <span class="number">0x5c</span>, <span class="number">0x4c</span>, <span class="number">0x54</span>, <span class="number">0x08</span>, <span class="number">0x56</span>, <span class="number">0x72</span>, <span class="number">0x5f</span>, <span class="number">0x50</span>, <span class="number">0x5f</span>, <span class="number">0x5c</span>, <span class="number">0x0b</span>, <span class="number">0x76</span>, <span class="number">0x08</span>, <span class="number">0x53</span>, <span class="number">0x11</span>]</span><br><span class="line">key = [<span class="number">0x43</span>, <span class="number">0x69</span>, <span class="number">0x61</span>, <span class="number">0x6c</span>, <span class="number">0x6c</span>, <span class="number">0x6f</span>]</span><br><span class="line"></span><br><span class="line">flag_bytes = []</span><br><span class="line"><span class="keyword">for</span> idx, val <span class="keyword">in</span> <span class="built_in">enumerate</span>(answer1 + answer2 + answer3):</span><br><span class="line">	flag_bytes.append(val ^ key[idx % <span class="built_in">len</span>(key)])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>.join(<span class="built_in">chr</span>(b) <span class="keyword">for</span> b <span class="keyword">in</span> flag_bytes))</span><br></pre></td></tr></table></figure>
+
+<h3 id="第五步：验证结果"><a href="#第五步：验证结果" class="headerlink" title="第五步：验证结果"></a>第五步：验证结果</h3><p>脚本输出的结果为 <code>NSSCTF{4742fbde-f200-4c19-a9d5-8d916130d5a2}</code>，与题目给出的 flag 完全一致。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>识别并清理 <code>jz</code> &#x2F; <code>jnz</code>、<code>xor reg, reg</code> + <code>jz</code> 这类花指令是关键；</li>
+<li>去除干扰后三个函数实质上是相同的异或校验；</li>
+<li>通过脚本复现校验过程可以快速确认 flag，后续遇到类似题型也可以参照此流程。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>IDA Pro</tag>
+        <tag>花指令</tag>
+        <tag>异或解密</tag>
       </tags>
   </entry>
   <entry>
@@ -184,10 +186,9 @@
       </tags>
   </entry>
   <entry>
-    <title></title>
+    <title>[NSSCTF 2025 秋招赛] debuggggg</title>
     <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Ddebuggggg/</url>
-    <content><![CDATA[<hr>
-<h3 id="题目五-debuggggg"><a href="#题目五-debuggggg" class="headerlink" title="题目五:debuggggg"></a>题目五:debuggggg</h3><p>样本是个 Linux 可执行文件，<code>main</code> 里读取输入后调用若干校验函数。</p>
+    <content><![CDATA[<h3 id="题目五-debuggggg"><a href="#题目五-debuggggg" class="headerlink" title="题目五: debuggggg"></a>题目五: debuggggg</h3><p>样本是个 Linux 可执行文件，<code>main</code> 里读取输入后调用若干校验函数。</p>
 <p><img src="/pasted-image-20251104221613.png"></p>
 <p>静态分析很快被 <code>rand()</code> 绕住，找不到 seed 就无法还原 <code>buf</code>。题目名字已经明示要“调试”，于是直接改用 WSL 远程调试。</p>
 <p><img src="/pasted-image-20251104221751.png"></p>
@@ -198,23 +199,29 @@
 <p>记得改完要重新加载 patched 版本（<code>copy new</code>），不然还是老代码。</p>
 <p><img src="/pasted-image-20251104224152.png"></p>
 <p><img src="/pasted-image-20251104224419.png"></p>
-<p>拿到 <code>rand()</code> 生成的数组之后，脚本只需要按模运算逆推即可。加密是 <code>C = (P + K) mod 256</code>，解密自然就是 <code>P = (C - K) mod 256</code>（为了保险可以先加 256 再取模）。遍历密文，逐个还原字符，flag 就出来了。<br>    flag +&#x3D; chr(p)</p>
-<p>print(“Flag:”, flag)</p>
-<pre><code>
-## 总结
+<p>拿到 <code>rand()</code> 生成的数组之后，脚本只需要按模运算逆推即可。加密是 <code>C = (P + K) mod 256</code>，解密自然就是 <code>P = (C - K) mod 256</code>（为了保险可以先加 256 再取模）。遍历密文，逐个还原字符，flag 就出来了。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">flag += <span class="built_in">chr</span>(p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Flag:&quot;</span>, flag)</span><br></pre></td></tr></table></figure>
 
-这是一道动态调试题目，主要考察以下能力点：
-
-- Linux 程序的动态调试
-- IDA 远程调试配置
-- 程序 patch 技术
-- 随机数相关加密的逆向
-
-通过动态调试获取关键数据，最终成功破解了 flag。
-
-本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！
-</code></pre>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道动态调试题目，主要考察以下能力点：</p>
+<ul>
+<li>Linux 程序的动态调试</li>
+<li>IDA 远程调试配置</li>
+<li>程序 patch 技术</li>
+<li>随机数相关加密的逆向</li>
+</ul>
+<p>通过动态调试获取关键数据，最终成功破解了 flag。</p>
+<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
 ]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>动态调试</tag>
+        <tag>Linux</tag>
+        <tag>反反调试</tag>
+      </tags>
   </entry>
   <entry>
     <title>[NSSCTF 2025 秋招赛] ez_tea</title>

@@ -184,7 +184,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -205,109 +205,6 @@
     </div>
 
     <div class="main-inner index posts-expand">
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]debuggggg/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="mm9527">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="GINKA">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | GINKA">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Ddebuggggg/" class="post-title-link" itemprop="url">未命名</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-11-05 20:22:21" itemprop="dateCreated datePublished" datetime="2025-11-05T20:22:21+08:00">2025-11-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-11-06 16:26:24" itemprop="dateModified" datetime="2025-11-06T16:26:24+08:00">2025-11-06</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <hr>
-<h3 id="题目五-debuggggg"><a href="#题目五-debuggggg" class="headerlink" title="题目五:debuggggg"></a>题目五:debuggggg</h3><p>样本是个 Linux 可执行文件，<code>main</code> 里读取输入后调用若干校验函数。</p>
-<p><img src="/pasted-image-20251104221613.png"></p>
-<p>静态分析很快被 <code>rand()</code> 绕住，找不到 seed 就无法还原 <code>buf</code>。题目名字已经明示要“调试”，于是直接改用 WSL 远程调试。</p>
-<p><img src="/pasted-image-20251104221751.png"></p>
-<p><img src="/pasted-image-20251104222157.png"></p>
-<p>进入调试后发现程序在关键逻辑之前还有一段输入长度检测，不达到要求就直接退出，断点根本跑不到。把这里的条件跳转 patch 掉，强制通过长度校验。</p>
-<p><img src="/pasted-image-20251104223356.png"></p>
-<p><img src="/pasted-image-20251104223512.png"></p>
-<p>记得改完要重新加载 patched 版本（<code>copy new</code>），不然还是老代码。</p>
-<p><img src="/pasted-image-20251104224152.png"></p>
-<p><img src="/pasted-image-20251104224419.png"></p>
-<p>拿到 <code>rand()</code> 生成的数组之后，脚本只需要按模运算逆推即可。加密是 <code>C = (P + K) mod 256</code>，解密自然就是 <code>P = (C - K) mod 256</code>（为了保险可以先加 256 再取模）。遍历密文，逐个还原字符，flag 就出来了。<br>    flag +&#x3D; chr(p)</p>
-<p>print(“Flag:”, flag)</p>
-<pre><code>
-## 总结
-
-这是一道动态调试题目，主要考察以下能力点：
-
-- Linux 程序的动态调试
-- IDA 远程调试配置
-- 程序 patch 技术
-- 随机数相关加密的逆向
-
-通过动态调试获取关键数据，最终成功破解了 flag。
-
-本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
 
     
 
@@ -563,6 +460,98 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DCodeRunner/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]debuggggg/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="mm9527">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GINKA">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | GINKA">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Ddebuggggg/" class="post-title-link" itemprop="url">[NSSCTF 2025 秋招赛] debuggggg</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-05 10:45:00" itemprop="dateCreated datePublished" datetime="2025-11-05T10:45:00+08:00">2025-11-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-11-06 16:35:34" itemprop="dateModified" datetime="2025-11-06T16:35:34+08:00">2025-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/reverse/" itemprop="url" rel="index"><span itemprop="name">reverse</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>NSSCTF 2025 秋招赛第五题 debuggggg 的详细解题过程，主要记录 WSL 远程调试和 patch 技巧。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Ddebuggggg/">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -979,7 +968,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/10/19/NSSCTF2025%E5%85%A5%E9%97%A8%E9%A2%98%E7%9B%AE-%E8%8A%B1%E6%8C%87%E4%BB%A4/" class="post-title-link" itemprop="url">[NSSCTF 2025 鍏ラ棬棰樼洰] 鑺辨寚浠?</a>
+          <a href="/2025/10/19/NSSCTF2025%E5%85%A5%E9%97%A8%E9%A2%98%E7%9B%AE-%E8%8A%B1%E6%8C%87%E4%BB%A4/" class="post-title-link" itemprop="url">[NSSCTF 2025 秋招赛] 花指令</a>
         </h2>
 
         <div class="post-meta-container">
@@ -997,7 +986,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-11-06 16:28:08" itemprop="dateModified" datetime="2025-11-06T16:28:08+08:00">2025-11-06</time>
+      <time title="修改时间：2025-11-06 16:42:15" itemprop="dateModified" datetime="2025-11-06T16:42:15+08:00">2025-11-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1019,7 +1008,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>NSSCTF 2025 鍏ラ棬棰樼洰鑺辨寚浠ょ殑璇︾粏瑙ｉ杩囩▼锛岃姳鎸囦护鍘婚櫎涓庡紓鎴栬В瀵嗗垎鏋愩€?</p>
+          <p>NSSCTF 2025 秋招赛入门题目《花指令》的详细解题步骤，覆盖花指令清理、逻辑还原与脚本复现。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2025/10/19/NSSCTF2025%E5%85%A5%E9%97%A8%E9%A2%98%E7%9B%AE-%E8%8A%B1%E6%8C%87%E4%BB%A4/">
