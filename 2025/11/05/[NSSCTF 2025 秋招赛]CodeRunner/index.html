@@ -32,12 +32,19 @@
 <meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105125646.png">
 <meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105125812.png">
 <meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105130503.png">
+<meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105131649.png">
 <meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105130714.png">
 <meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105132204.png">
+<meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105130959.png">
+<meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105132137.png">
+<meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105132156.png">
 <meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105132214.png">
+<meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105141018.png">
+<meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105141113.png">
+<meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105142303.png">
 <meta property="og:image" content="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/pasted-image-20251105134410.png">
 <meta property="article:published_time" content="2025-11-05T03:30:00.000Z">
-<meta property="article:modified_time" content="2025-11-06T09:10:24.851Z">
+<meta property="article:modified_time" content="2025-11-06T09:15:06.551Z">
 <meta property="article:author" content="mm9527">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="IL2CPP">
@@ -269,7 +276,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-11-06 17:10:24" itemprop="dateModified" datetime="2025-11-06T17:10:24+08:00">2025-11-06</time>
+      <time title="修改时间：2025-11-06 17:15:06" itemprop="dateModified" datetime="2025-11-06T17:15:06+08:00">2025-11-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -298,13 +305,20 @@
 <p><img src="pasted-image-20251105125812.png" alt="IL2cppDumper 导出"></p>
 <h3 id="第三步：脱壳处理"><a href="#第三步：脱壳处理" class="headerlink" title="第三步：脱壳处理"></a>第三步：脱壳处理</h3><p>发现 GameAssembly.dll 被 UPX 加壳且文件头被修改。用 010 Editor 修复文件头后脱壳。</p>
 <p><img src="pasted-image-20251105130503.png" alt="010 Editor 修头"></p>
+<p><img src="pasted-image-20251105131649.png" alt="010 Editor 更多细节"></p>
 <p><img src="pasted-image-20251105130714.png" alt="UPX 脱壳完成"></p>
 <h3 id="第四步：代码反编译"><a href="#第四步：代码反编译" class="headerlink" title="第四步：代码反编译"></a>第四步：代码反编译</h3><p>使用 dnSpy 反编译 .NET 代码。</p>
 <p><img src="pasted-image-20251105132204.png" alt="dnSpy 视图"></p>
+<p><img src="pasted-image-20251105130959.png" alt="dnSpy 关键位置"></p>
 <h3 id="第五步：关键函数定位"><a href="#第五步：关键函数定位" class="headerlink" title="第五步：关键函数定位"></a>第五步：关键函数定位</h3><p>借助 IDA 与 IL2cppDumper 脚本，定位 <code>QRCodeBuilder</code> 类找到二维码生成逻辑。</p>
+<p><img src="pasted-image-20251105132137.png" alt="IDA 载入脚本（1）"></p>
+<p><img src="pasted-image-20251105132156.png" alt="IDA 载入脚本（2）"></p>
 <p><img src="pasted-image-20251105132214.png" alt="IDA + 脚本就位"></p>
 <h3 id="第六步：动态调试"><a href="#第六步：动态调试" class="headerlink" title="第六步：动态调试"></a>第六步：动态调试</h3><p>分析代码发现程序会根据 qrMatrix 动态生成二维码。需要动态调试获取矩阵数据。</p>
+<p><img src="pasted-image-20251105141018.png" alt="Awake&#x2F;Construct 调用关系"></p>
+<p><img src="pasted-image-20251105141113.png" alt="qrMatrix 生成推断"></p>
 <h3 id="第七步：绕过反调试"><a href="#第七步：绕过反调试" class="headerlink" title="第七步：绕过反调试"></a>第七步：绕过反调试</h3><p>程序有反调试保护，调用了 WinAPI_DetectDebugger。patch 该函数为直接返回，绕过检测。</p>
+<p><img src="pasted-image-20251105142303.png" alt="附加进程与入口断点"></p>
 <h3 id="第八步：获取矩阵数据"><a href="#第八步：获取矩阵数据" class="headerlink" title="第八步：获取矩阵数据"></a>第八步：获取矩阵数据</h3><p>在 Unity 程序中下断点，获取 this 指针，通过偏移量找到 qrMatrix 的地址，提取矩阵数据。</p>
 <p><img src="pasted-image-20251105134410.png" alt="QRCodeBuilder 相关"></p>
 <h3 id="第九步：生成二维码"><a href="#第九步：生成二维码" class="headerlink" title="第九步：生成二维码"></a>第九步：生成二维码</h3><p>使用提取的矩阵数据，编写脚本生成二维码图片：</p>
@@ -317,11 +331,6 @@
 <li>脚本生成二维码，得到 flag。</li>
 </ul>
 <p>为避免重复展示，回顾部分不再嵌入截图；全部详细截图见上文“解题过程”。</p>
-<hr>
-<p>附：当前文章素材中缺失以下截图（如需展示，请将相应 PNG 放入同目录 <code>source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/</code> 后重新生成）：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">pasted-image-20251105130959.png</span><br><span class="line">pasted-image-20251105131649.png</span><br><span class="line">pasted-image-20251105132137.png</span><br><span class="line">pasted-image-20251105132156.png</span><br><span class="line">pasted-image-20251105141018.png</span><br><span class="line">pasted-image-20251105141113.png</span><br><span class="line">pasted-image-20251105142303.png</span><br></pre></td></tr></table></figure>
-
-<p>放置完成后，我会按原叙述位置补回这些截图并再次部署。</p>
 
     </div>
 
