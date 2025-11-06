@@ -29,8 +29,13 @@
 <meta property="og:site_name" content="GINKA">
 <meta property="og:description" content="NSSCTF 2025 秋招赛第三题哈基米的记录。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhouhang9527.github.io/pasted-image-20251104110246.png">
+<meta property="og:image" content="https://zhouhang9527.github.io/pasted-image-20251104110649.png">
+<meta property="og:image" content="https://zhouhang9527.github.io/pasted-image-20251104110755.png">
+<meta property="og:image" content="https://zhouhang9527.github.io/pasted-image-20251104113113.png">
+<meta property="og:image" content="https://zhouhang9527.github.io/pasted-image-20251104133841.png">
 <meta property="article:published_time" content="2025-11-05T02:00:00.000Z">
-<meta property="article:modified_time" content="2025-11-06T08:09:54.797Z">
+<meta property="article:modified_time" content="2025-11-06T08:24:54.752Z">
 <meta property="article:author" content="mm9527">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="PyInstaller">
@@ -38,6 +43,7 @@
 <meta property="article:tag" content="Reverse">
 <meta property="article:tag" content="pycdc">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhouhang9527.github.io/pasted-image-20251104110246.png">
 
 
 <link rel="canonical" href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]%E5%93%88%E5%9F%BA%E7%B1%B3/">
@@ -183,7 +189,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -261,7 +267,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-11-06 16:09:54" itemprop="dateModified" datetime="2025-11-06T16:09:54+08:00">2025-11-06</time>
+      <time title="修改时间：2025-11-06 16:24:54" itemprop="dateModified" datetime="2025-11-06T16:24:54+08:00">2025-11-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -284,15 +290,15 @@
     
     
     <div class="post-body" itemprop="articleBody"><h3 id="题目三-哈基米"><a href="#题目三-哈基米" class="headerlink" title="题目三:哈基米"></a>题目三:哈基米</h3><p>附件是一个 exe，拖进 DIE 一眼就能看出是 PyInstaller 打包。</p>
-<p>![](Pasted image 20251104110246.png)</p>
+<p><img src="/pasted-image-20251104110246.png"></p>
 <p>直接用 <code>pyinstxtractor</code> 解包，能拿到一堆 <code>pyc</code> 文件。</p>
-<p>![](Pasted image 20251104110649.png)</p>
+<p><img src="/pasted-image-20251104110649.png"></p>
 <p>在生成的 <code>pyi</code> 清单里能看到目标运行时是 Python 3.8。</p>
-<p>![](Pasted image 20251104110755.png)</p>
+<p><img src="/pasted-image-20251104110755.png"></p>
 <p>因此反编译时选 <code>uncompyle6</code>（或仓库里的 <code>Exe-decompiling</code>），优先把 <code>HJM.pyc</code> 还原。</p>
-<p>![](Pasted image 20251104113113.png)</p>
+<p><img src="/pasted-image-20251104113113.png"></p>
 <p>伪代码里引用了另一个模块里的 <code>CHARS1</code>。顺着路径继续反编译，就能得到生成表的逻辑。把那段代码抄进自己的脚本，按原算法恢复字母表，再和密文做一遍同样的处理即可拿到 flag。</p>
-<p>![](Pasted image 20251104133841.png)</p>
+<p><img src="/pasted-image-20251104133841.png"></p>
 
     </div>
 
