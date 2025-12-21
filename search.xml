@@ -266,6 +266,27 @@
       </tags>
   </entry>
   <entry>
+    <title>[NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E6%9D%A5%E4%BA%86%E5%97%B7%EF%BC%8C%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9%EF%BC%81/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
+<h3 id="题目七-来了嗷，常见加密大杂烩！"><a href="#题目七-来了嗷，常见加密大杂烩！" class="headerlink" title="题目七:来了嗷，常见加密大杂烩！"></a>题目七:来了嗷，常见加密大杂烩！</h3><p>IDA 里主函数直接把输入按块送进不同的加密分支，完全是考脚本能力。流程大概是：自定义字符集的 Base64 → RC4 → XTEA → TEA。</p>
+<p>按照代码把每一层写成独立函数，逐段还原即可。Base64 要注意使用程序里的字符集；RC4 走标准的 KSA&#x2F;PRGA；XTEA 和 TEA 直接按逆运算实现（循环 32 轮，每轮同步扣掉 delta）。最终四层都跑完，就能得到明文 flag。<br>通过逐个逆向各个加密环节，最终成功破解了 flag。</p>
+<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>Base64</tag>
+        <tag>TEA</tag>
+        <tag>加密算法</tag>
+        <tag>RC4</tag>
+        <tag>XTEA</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>🎀 ATRI Live2D 使用文档</title>
     <url>/2025/12/21/atri-live2d-showcase/</url>
     <content><![CDATA[<h1 id="🎀-ATRI-Live2D-v2-0-功能展示"><a href="#🎀-ATRI-Live2D-v2-0-功能展示" class="headerlink" title="🎀 ATRI Live2D v2.0 功能展示"></a>🎀 ATRI Live2D v2.0 功能展示</h1><p>欢迎来到 ATRI Live2D 看板娘的功能展示页面！这里将全面介绍新版本的所有特性和使用方法。</p>
@@ -548,27 +569,6 @@
         <tag>JavaScript</tag>
         <tag>PixiJS</tag>
         <tag>博客美化</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E6%9D%A5%E4%BA%86%E5%97%B7%EF%BC%8C%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9%EF%BC%81/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
-<h3 id="题目七-来了嗷，常见加密大杂烩！"><a href="#题目七-来了嗷，常见加密大杂烩！" class="headerlink" title="题目七:来了嗷，常见加密大杂烩！"></a>题目七:来了嗷，常见加密大杂烩！</h3><p>IDA 里主函数直接把输入按块送进不同的加密分支，完全是考脚本能力。流程大概是：自定义字符集的 Base64 → RC4 → XTEA → TEA。</p>
-<p>按照代码把每一层写成独立函数，逐段还原即可。Base64 要注意使用程序里的字符集；RC4 走标准的 KSA&#x2F;PRGA；XTEA 和 TEA 直接按逆运算实现（循环 32 轮，每轮同步扣掉 delta）。最终四层都跑完，就能得到明文 flag。<br>通过逐个逆向各个加密环节，最终成功破解了 flag。</p>
-<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>Base64</tag>
-        <tag>TEA</tag>
-        <tag>加密算法</tag>
-        <tag>RC4</tag>
-        <tag>XTEA</tag>
       </tags>
   </entry>
 </search>

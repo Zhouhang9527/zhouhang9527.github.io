@@ -1,0 +1,2703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.0.0">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="../../images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../images/favicon.png">
+  <link rel="mask-icon" href="../../images/favicon.png" color="#222">
+
+<link rel="stylesheet" href="../../css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.31/dist/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+
+<link rel="stylesheet" href="/css/ginka_style.css">
+
+<!-- NexT Configuration -->
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhouhang9527.github.io","root":"/","images":"../../images","scheme":"Mist","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12,"onmobile":false},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac","show_result":true},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"twikoo","storage":true,"lazyload":false,"nav":{"twikoo":{"text":"💬 优质评论","order":-1}}},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"../../search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="../../js/config.js" defer></script>
+    <meta name="description" content="专注于逆向工程和二进制安全研究">
+<meta property="og:type" content="website">
+<meta property="og:title" content="GINKA">
+<meta property="og:url" content="https://zhouhang9527.github.io/tags/%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/index.html">
+<meta property="og:site_name" content="GINKA">
+<meta property="og:description" content="专注于逆向工程和二进制安全研究">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="GINKA">
+<meta property="article:tag" content="Binary Security">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="IDA Pro">
+<meta property="article:tag" content="Pwn">
+<meta property="article:tag" content="Reverse Engineering">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://zhouhang9527.github.io/tags/%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"tags/动态调试/index.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>标签: 动态调试 | GINKA</title>
+  
+
+  <script src="../../js/third-party/analytics/baidu-analytics.js" defer></script>
+  <script async src="https://hm.baidu.com/hm.js?[object Object]"></script>
+
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.31/dist/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous" defer></script>
+<script src="../../js/utils.js" defer></script><script src="../../js/motion.js" defer></script><script src="../../js/sidebar.js" defer></script><script src="../../js/next-boot.js" defer></script><script src="../../js/bookmark.js" defer></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.5.0/dist/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="../../js/third-party/search/local-search.js" defer></script>
+
+
+
+
+  <script src="../../js/third-party/fancybox.js" defer></script>
+
+
+
+  
+
+
+
+
+
+
+<!-- SEO 和性能优化增强 -->
+
+<!-- 预加载关键资源 -->
+<link rel="preload" href="/css/main.css" as="style">
+<link rel="preload" href="/js/next-boot.js" as="script">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+<!-- DNS预解析 -->
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+
+<!-- Open Graph Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GINKA的博客">
+<meta property="og:title" content="GINKA - Pwn & Reverse Engineering">
+<meta property="og:description" content="专注于逆向工程和二进制安全研究">
+<meta property="og:url" content="https://zhouhang9527.github.io">
+<meta property="og:image" content="https://zhouhang9527.github.io/images/avatar.png">
+<meta property="og:locale" content="zh_CN">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GINKA的博客">
+<meta name="twitter:description" content="专注于逆向工程和二进制安全研究">
+<meta name="twitter:image" content="https://zhouhang9527.github.io/images/avatar.png">
+
+<!-- 搜索引擎优化 -->
+<meta name="robots" content="index, follow">
+<meta name="googlebot" content="index, follow">
+<meta name="baiduspider" content="index, follow">
+<meta name="author" content="GINKA">
+<meta name="copyright" content="GINKA">
+
+<!-- 移动端优化 -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GINKA">
+<meta name="format-detection" content="telephone=no">
+
+<!-- 主题色 -->
+<meta name="theme-color" content="#37c6c0">
+<meta name="msapplication-TileColor" content="#37c6c0">
+
+<!-- 结构化数据 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "GINKA的博客",
+  "description": "专注于逆向工程和二进制安全研究",
+  "url": "https://zhouhang9527.github.io",
+  "author": {
+    "@type": "Person",
+    "name": "GINKA",
+    "email": "3050055132@qq.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "GINKA",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://zhouhang9527.github.io/images/avatar.png"
+    }
+  },
+  "inLanguage": "zh-CN",
+  "keywords": ["CTF", "Reverse Engineering", "Pwn", "Binary Security", "IDA Pro"]
+}
+</script>
+
+<style>
+/* 性能优化：图片延迟加载占位 */
+img:not([src]) {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* 减少重绘 */
+.post-block,
+.sidebar {
+  contain: layout style paint;
+}
+
+/* 字体加载优化 */
+@font-face {
+  font-family: 'system';
+  font-style: normal;
+  font-weight: 300;
+  src: local('.');
+  unicode-range: U+000-5FF;
+  font-display: swap;
+}
+</style>
+
+<!-- 性能监控脚本 -->
+<script>
+(function() {
+  if ('performance' in window) {
+    window.addEventListener('load', () => {
+      const perfData = performance.getEntriesByType('navigation')[0];
+      if (perfData) {
+        console.log('[Performance] 页面加载:', Math.round(perfData.loadEventEnd - perfData.fetchStart), 'ms');
+        console.log('[Performance] DOM解析:', Math.round(perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart), 'ms');
+      }
+    });
+  }
+})();
+</script>
+
+  <noscript>
+    <link rel="stylesheet" href="../../css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">GINKA</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Pwn & Reverse Engineering</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="../../index.html" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="../../archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">11</span></a></li><li class="menu-item menu-item-tags"><a href="../../tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">25</span></a></li><li class="menu-item menu-item-categories"><a href="../../categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">2</span></a></li><li class="menu-item menu-item-links"><a href="../../links/" rel="section"><i class="fa fa-link fa-fw"></i>links</a></li><li class="menu-item menu-item-about"><a href="../../about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GINKA"
+      src="../../images/avatar.png">
+  <p class="site-author-name" itemprop="name">GINKA</p>
+  <div class="site-description" itemprop="description">专注于逆向工程和二进制安全研究</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="../../archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="../../categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="../../tags/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="../../mailto:3050055132@qq.com" title="E-Mail → mailto:3050055132@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner tag posts-collapse">
+
+
+  
+  
+  
+  <div class="post-block tag-page">
+    <div class="post-content">
+      <!-- 美观的标签云展示 -->
+      <div class="tag-cloud-section">
+        <div class="tag-cloud-header">
+          <h1 class="tag-title">
+            <i class="fa fa-tag"></i>
+            动态调试
+            <small class="tag-subtitle">标签</small>
+          </h1>
+          <div class="tag-stats">
+            <span class="tag-count">3 篇文章</span>
+          </div>
+        </div>
+
+        <!-- 美观的标签云 -->
+        <div class="beautiful-tag-cloud">
+          
+          
+            
+            
+              
+              
+            
+            <a href="../ctf/"
+               class="tag-cloud-item"
+               style="font-size: 24px; opacity: 1;"
+               title="CTF (10 篇文章)">
+              CTF
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../reverse/"
+               class="tag-cloud-item"
+               style="font-size: 24px; opacity: 1;"
+               title="Reverse (10 篇文章)">
+              Reverse
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../%E8%8A%B1%E6%8C%87%E4%BB%A4/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="花指令 (2 篇文章)">
+              花指令
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../ida-pro/"
+               class="tag-cloud-item"
+               style="font-size: 24px; opacity: 1;"
+               title="IDA Pro (5 篇文章)">
+              IDA Pro
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../%E5%BC%82%E6%88%96%E8%A7%A3%E5%AF%86/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="异或解密 (2 篇文章)">
+              异或解密
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../base64/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="Base64 (2 篇文章)">
+              Base64
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../unity/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="Unity (1 篇文章)">
+              Unity
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../il2cpp/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="IL2CPP (1 篇文章)">
+              IL2CPP
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href=""
+               class="tag-cloud-item"
+               style="font-size: 20px; opacity: 0.9;"
+               title="动态调试 (3 篇文章)">
+              动态调试
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../upx/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="UPX (1 篇文章)">
+              UPX
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../%E8%84%B1%E5%A3%B3/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="脱壳 (1 篇文章)">
+              脱壳
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../linux/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="Linux (1 篇文章)">
+              Linux
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../%E5%8F%8D%E5%8F%8D%E8%B0%83%E8%AF%95/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="反反调试 (2 篇文章)">
+              反反调试
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../tea/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="TEA (2 篇文章)">
+              TEA
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../%E7%AD%BE%E5%88%B0%E9%A2%98/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="签到题 (1 篇文章)">
+              签到题
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../pyinstaller/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="PyInstaller (1 篇文章)">
+              PyInstaller
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../python%E5%8F%8D%E7%BC%96%E8%AF%91/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="Python反编译 (1 篇文章)">
+              Python反编译
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../pycdc/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="pycdc (1 篇文章)">
+              pycdc
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="加密算法 (1 篇文章)">
+              加密算法
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../rc4/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="RC4 (1 篇文章)">
+              RC4
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../xtea/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="XTEA (1 篇文章)">
+              XTEA
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../live2d/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="Live2D (1 篇文章)">
+              Live2D
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../javascript/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="JavaScript (1 篇文章)">
+              JavaScript
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../pixijs/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="PixiJS (1 篇文章)">
+              PixiJS
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../%E5%8D%9A%E5%AE%A2%E7%BE%8E%E5%8C%96/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="博客美化 (1 篇文章)">
+              博客美化
+            </a>
+          
+        </div>
+      </div>
+
+      <!-- 标签文章列表 -->
+      
+      
+        <div class="tag-posts-section">
+          <h2 class="section-title">
+            <i class="fa fa-list"></i>
+            相关文章
+          </h2>
+          
+    <div class="collection-year">
+      <span class="collection-header">2025</span>
+    </div>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <div class="post-meta-container">
+        <time itemprop="dateCreated"
+              datetime="2025-11-05T12:30:00+08:00"
+              content="2025-11-05">
+          11-05
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="../../2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/" itemprop="url">
+            <span itemprop="name">[NSSCTF 2025 秋招赛] ez_tea</span>
+          </a>
+      </div>
+
+      
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <div class="post-meta-container">
+        <time itemprop="dateCreated"
+              datetime="2025-11-05T11:30:00+08:00"
+              content="2025-11-05">
+          11-05
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="../../2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DCodeRunner/" itemprop="url">
+            <span itemprop="name">[NSSCTF 2025 秋招赛] CodeRunner</span>
+          </a>
+      </div>
+
+      
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <div class="post-meta-container">
+        <time itemprop="dateCreated"
+              datetime="2025-11-05T10:45:00+08:00"
+              content="2025-11-05">
+          11-05
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="../../2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Ddebuggggg/" itemprop="url">
+            <span itemprop="name">[NSSCTF 2025 秋招赛] debuggggg</span>
+          </a>
+      </div>
+
+      
+    </header>
+  </article>
+
+        </div>
+      
+    </div>
+  </div>
+  
+  
+  
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">mm9527</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<!-- ATRI Live2D 增强版 - v2.0 -->
+<div id="atri-live2d-widget" style="position: fixed; right: 20px; bottom: 0; z-index: 999; pointer-events: none;">
+  <canvas id="atri-canvas" width="350" height="500"></canvas>
+  
+  <!-- ATRI 对话框 -->
+  <div id="atri-message-box" style="display: none;">
+    <div class="atri-message-content"></div>
+  </div>
+  
+  <!-- ATRI 控制面板 -->
+  <div id="atri-controls" style="display: none;">
+    <button class="atri-control-btn" id="atri-toggle" title="显示/隐藏 ATRI">
+      <i class="fa fa-eye"></i>
+    </button>
+    <button class="atri-control-btn" id="atri-photo" title="截图">
+      <i class="fa fa-camera"></i>
+    </button>
+    <button class="atri-control-btn" id="atri-drag" title="拖动模式">
+      <i class="fa fa-arrows"></i>
+    </button>
+    <button class="atri-control-btn" id="atri-home" title="回到原位">
+      <i class="fa fa-home"></i>
+    </button>
+  </div>
+</div>
+
+<!-- 加载 Live2D 库文件 - 按正确顺序加载 -->
+<!-- Cubism 2 运行时 (用于兼容性) -->
+<script src="/js/live2d-libs/live2d.min.js"></script>
+<!-- Cubism 4 核心 (用于 Cubism 3.0/4.0 模型) -->
+<script src="/js/live2d-libs/live2dcubismcore.min.js"></script>
+<!-- PixiJS 渲染引擎 -->
+<script src="/js/live2d-libs/pixi.min.js"></script>
+<!-- Live2D 显示插件 -->
+<script src="/js/live2d-libs/pixi-live2d-display.min.js"></script>
+
+<script>
+(async function() {
+  'use strict';
+  
+  // ===================================================
+  // ATRI Live2D 增强版 v2.0
+  // ===================================================
+  
+  // 配置对象
+  const CONFIG = {
+    modelPath: '/live2d/ATRI/ATRI.model3.json',
+    canvasId: 'atri-canvas',
+    width: 350,
+    height: 500,
+    scale: 0.25,
+    mobileScale: 0.18,
+    messages: {
+      welcome: ['你好呀！我是 ATRI~', '欢迎来到 GINKA 的博客！', '今天也要加油哦！'],
+      click: ['呀！不要戳我~', '嘿嘿~', '怎么了吗？', '在呢在呢~'],
+      hover: ['有什么需要帮助的吗？', '我在这里哦~'],
+      copy: ['复制成功啦！', '内容已经复制好了~'],
+      scroll: ['看到什么有趣的内容了吗？', '继续往下看吧~']
+    },
+    motionGroups: ['tap_body', 'shake', 'idle', 'flick_head'],
+    enableDrag: true,
+    enableMessage: true,
+    enableControls: true,
+    messageTimeout: 3000
+  };
+  
+  // ATRI 类
+  class ATRILive2D {
+    constructor(config) {
+      this.config = config;
+      this.app = null;
+      this.model = null;
+      this.widget = null;
+      this.canvas = null;
+      this.messageBox = null;
+      this.messageTimer = null;
+      this.isDragging = false;
+      this.dragOffset = { x: 0, y: 0 };
+      this.isVisible = true;
+      this.mouseX = 0;
+      this.mouseY = 0;
+    }
+    
+    async init() {
+      console.log('[ATRI] 初始化开始...');
+      
+      // 等待库加载
+      await this.waitForLibraries();
+      
+      // 初始化元素
+      this.initElements();
+      
+      // 创建应用
+      await this.createApp();
+      
+      // 加载模型
+      await this.loadModel();
+      
+      // 设置交互
+      this.setupInteractions();
+      
+      // 显示欢迎消息
+      this.showRandomMessage('welcome');
+      
+      console.log('[ATRI] ✓ 初始化完成！');
+    }
+    
+    waitForLibraries() {
+      return new Promise((resolve, reject) => {
+        let retryCount = 0;
+        const maxRetries = 20;
+        
+        const checkInterval = setInterval(() => {
+          retryCount++;
+          
+          if (window.PIXI && window.PIXI.live2d && window.PIXI.live2d.Live2DModel) {
+            clearInterval(checkInterval);
+            console.log('[ATRI] ✓ 库加载完成');
+            resolve();
+          } else if (retryCount >= maxRetries) {
+            clearInterval(checkInterval);
+            reject(new Error('库加载超时'));
+          }
+        }, 300);
+      });
+    }
+    
+    initElements() {
+      this.widget = document.getElementById('atri-live2d-widget');
+      this.canvas = document.getElementById(this.config.canvasId);
+      this.messageBox = document.getElementById('atri-message-box');
+      
+      if (!this.canvas) {
+        throw new Error('Canvas 元素未找到');
+      }
+      
+      // 显示控制面板
+      if (this.config.enableControls) {
+        document.getElementById('atri-controls').style.display = 'flex';
+      }
+    }
+    
+    async createApp() {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const scale = isMobile ? this.config.mobileScale : this.config.scale;
+      
+      this.app = new PIXI.Application({
+        view: this.canvas,
+        width: this.config.width,
+        height: this.config.height,
+        transparent: true,
+        backgroundAlpha: 0,
+        antialias: true,
+        resolution: window.devicePixelRatio || 1,
+        autoDensity: true
+      });
+      
+      console.log('[ATRI] PixiJS 应用创建成功');
+    }
+    
+    async loadModel() {
+      console.log('[ATRI] 开始加载模型:', this.config.modelPath);
+      
+      this.model = await window.PIXI.live2d.Live2DModel.from(this.config.modelPath, {
+        autoInteract: false,
+        autoUpdate: true
+      });
+      
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const scale = isMobile ? this.config.mobileScale : this.config.scale;
+      
+      this.model.anchor.set(0.5, 0.5);
+      this.model.scale.set(scale);
+      this.model.position.set(this.config.width / 2, this.config.height * 0.85);
+      
+      this.app.stage.addChild(this.model);
+      
+      console.log('[ATRI] ✓ 模型加载成功');
+    }
+    
+    setupInteractions() {
+      // 启用交互
+      this.model.eventMode = 'static';
+      this.model.cursor = 'pointer';
+      this.model.interactive = true;
+      this.canvas.style.pointerEvents = 'auto';
+      
+      // 点击交互
+      this.model.on('pointertap', () => this.onModelClick());
+      this.model.on('pointerdown', () => this.onModelClick());
+      
+      // 鼠标悬停
+      this.model.on('pointerover', () => this.onModelHover());
+      
+      // 鼠标跟踪
+      this.setupMouseTracking();
+      
+      // 拖拽功能
+      if (this.config.enableDrag) {
+        this.setupDragging();
+      }
+      
+      // 自动闲置动画
+      this.setupIdleAnimation();
+      
+      // 响应式调整
+      this.setupResponsive();
+      
+      // 控制按钮
+      if (this.config.enableControls) {
+        this.setupControls();
+      }
+      
+      // 页面事件
+      this.setupPageEvents();
+      this.setupAutoActions(); // 添加自动动作
+    }
+    
+    onModelClick() {
+      this.playRandomMotion();
+      this.showRandomMessage('click');
+    }
+    
+    onModelHover() {
+      if (this.config.enableMessage && Math.random() < 0.3) {
+        this.showRandomMessage('hover');
+      }
+    }
+    
+    playRandomMotion() {
+      if (!this.model.internalModel || !this.model.internalModel.motionManager) return;
+      
+      for (const group of this.config.motionGroups) {
+        const motions = this.model.internalModel.motionManager.definitions[group];
+        if (motions && motions.length > 0) {
+          const randomMotion = Math.floor(Math.random() * motions.length);
+          this.model.motion(group, randomMotion);
+          console.log('[ATRI] 播放动作:', group, '#' + randomMotion);
+          break;
+        }
+      }
+    }
+    
+    // 自动动作系统
+    setupAutoActions() {
+      // 定时播放闲置动作 (每30-60秒)
+      const playIdleMotion = () => {
+        if (this.isVisible && !this.isDragging) {
+          const idleMessages = [
+            '我在认真看着你哦~',
+            '今天过得怎么样？',
+            '要不要休息一下？',
+            '嗯...在想什么呢？',
+            '继续加油哦！'
+          ];
+          
+          this.playRandomMotion();
+          
+          if (Math.random() < 0.4) {
+            const msg = idleMessages[Math.floor(Math.random() * idleMessages.length)];
+            this.showMessage(msg, 4000);
+          }
+        }
+        
+        // 随机间隔 30-60 秒
+        const nextInterval = 30000 + Math.random() * 30000;
+        setTimeout(playIdleMotion, nextInterval);
+      };
+      
+      // 首次延迟 10 秒后开始
+      setTimeout(playIdleMotion, 10000);
+      
+      // 根据时间问候
+      const greetByTime = () => {
+        const hour = new Date().getHours();
+        let greeting = '';
+        
+        if (hour >= 5 && hour < 9) {
+          greeting = '早上好！新的一天开始啦~';
+        } else if (hour >= 9 && hour < 12) {
+          greeting = '上午好！工作顺利吗？';
+        } else if (hour >= 12 && hour < 14) {
+          greeting = '中午好！记得吃午饭哦~';
+        } else if (hour >= 14 && hour < 18) {
+          greeting = '下午好！继续加油！';
+        } else if (hour >= 18 && hour < 22) {
+          greeting = '晚上好！今天辛苦啦~';
+        } else {
+          greeting = '夜深了，早点休息哦~';
+        }
+        
+        this.showMessage(greeting, 5000);
+        this.playRandomMotion();
+      };
+      
+      // 页面加载 5 秒后显示时间问候
+      setTimeout(greetByTime, 5000);
+      
+      // 长时间未操作提醒 (3分钟)
+      let lastActivity = Date.now();
+      
+      const resetActivity = () => {
+        lastActivity = Date.now();
+      };
+      
+      document.addEventListener('mousemove', resetActivity);
+      document.addEventListener('keydown', resetActivity);
+      document.addEventListener('scroll', resetActivity);
+      
+      const checkInactivity = () => {
+        const inactive = Date.now() - lastActivity;
+        if (inactive > 180000 && this.isVisible) { // 3分钟
+          const inactiveMessages = [
+            '还在吗？要不要活动一下~',
+            '休息一下眼睛吧！',
+            '已经很久没动了哦...',
+            '要不要站起来走走？'
+          ];
+          const msg = inactiveMessages[Math.floor(Math.random() * inactiveMessages.length)];
+          this.showMessage(msg, 5000);
+          this.playRandomMotion();
+          lastActivity = Date.now(); // 重置避免重复提醒
+        }
+      };
+      
+      setInterval(checkInactivity, 60000); // 每分钟检查一次
+      
+      // 特殊节日问候
+      const checkHoliday = () => {
+        const today = new Date();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
+        
+        let holiday = '';
+        
+        if (month === 1 && day === 1) holiday = '新年快乐！🎉';
+        else if (month === 2 && day === 14) holiday = '情人节快乐！💕';
+        else if (month === 5 && day === 1) holiday = '劳动节快乐！';
+        else if (month === 6 && day === 1) holiday = '儿童节快乐！🎈';
+        else if (month === 9 && day === 10) holiday = '教师节快乐！';
+        else if (month === 10 && day === 1) holiday = '国庆节快乐！🇨🇳';
+        else if (month === 12 && day === 25) holiday = '圣诞快乐！🎄';
+        
+        if (holiday) {
+          this.showMessage(holiday, 6000);
+          this.playRandomMotion();
+        }
+      };
+      
+      checkHoliday();
+    }
+    
+    setupMouseTracking() {
+      document.addEventListener('mousemove', (event) => {
+        this.mouseX = event.clientX;
+        this.mouseY = event.clientY;
+      });
+      
+      this.app.ticker.add(() => {
+        if (!this.model.internalModel || !this.model.internalModel.coreModel) return;
+        
+        const centerX = window.innerWidth - this.config.width / 2 - 20;
+        const centerY = this.config.height / 2;
+        
+        const dx = (this.mouseX - centerX) / centerX;
+        const dy = (this.mouseY - centerY) / centerY;
+        
+        const maxMove = 0.5;
+        const finalDx = Math.max(-maxMove, Math.min(maxMove, dx));
+        const finalDy = Math.max(-maxMove, Math.min(maxMove, dy));
+        
+        this.model.internalModel.coreModel.setParameterValueById('ParamAngleX', finalDx * 30);
+        this.model.internalModel.coreModel.setParameterValueById('ParamAngleY', finalDy * 30);
+        this.model.internalModel.coreModel.setParameterValueById('ParamEyeBallX', finalDx);
+        this.model.internalModel.coreModel.setParameterValueById('ParamEyeBallY', finalDy);
+      });
+    }
+    
+    setupDragging() {
+      let isDragging = false;
+      let dragEnabled = false; // 拖动模式开关
+      let startX = 0;
+      let startY = 0;
+      
+      // 拖动按钮控制
+      const dragBtn = document.getElementById('atri-drag');
+      dragBtn.addEventListener('click', () => {
+        dragEnabled = !dragEnabled;
+        if (dragEnabled) {
+          dragBtn.classList.add('active');
+          dragBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+          this.showMessage('拖动模式已开启，可以拖动我啦~', 3000);
+        } else {
+          dragBtn.classList.remove('active');
+          dragBtn.style.background = '';
+          this.canvas.style.cursor = 'pointer';
+          this.showMessage('拖动模式已关闭', 3000);
+        }
+      });
+      
+      // 鼠标悬停显示可拖拽光标（仅在拖动模式下）
+      this.canvas.addEventListener('mouseenter', () => {
+        if (dragEnabled && !isDragging) {
+          this.canvas.style.cursor = 'move';
+        }
+      });
+      
+      this.canvas.addEventListener('mouseleave', () => {
+        if (!isDragging) {
+          this.canvas.style.cursor = 'pointer';
+        }
+      });
+      
+      this.canvas.addEventListener('mousedown', (e) => {
+        if (!dragEnabled) return; // 只在拖动模式下响应
+        
+        isDragging = true;
+        const rect = this.widget.getBoundingClientRect();
+        startX = e.clientX - rect.left;
+        startY = e.clientY - rect.top;
+        this.canvas.style.cursor = 'grabbing';
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging && dragEnabled) {
+          const newRight = window.innerWidth - e.clientX - (this.config.width - startX);
+          const newBottom = window.innerHeight - e.clientY - (this.config.height - startY);
+          
+          // 确保不超出屏幕边界
+          const boundedRight = Math.max(0, Math.min(window.innerWidth - this.config.width, newRight));
+          const boundedBottom = Math.max(0, Math.min(window.innerHeight - this.config.height, newBottom));
+          
+          this.widget.style.right = boundedRight + 'px';
+          this.widget.style.bottom = boundedBottom + 'px';
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          this.canvas.style.cursor = dragEnabled ? 'move' : 'pointer';
+          
+          // 保存位置到 localStorage
+          const position = {
+            right: this.widget.style.right,
+            bottom: this.widget.style.bottom
+          };
+          localStorage.setItem('atri_position', JSON.stringify(position));
+          console.log('[ATRI] 位置已保存');
+        }
+      });
+      
+      // 恢复上次保存的位置
+      const savedPosition = localStorage.getItem('atri_position');
+      if (savedPosition) {
+        try {
+          const position = JSON.parse(savedPosition);
+          this.widget.style.right = position.right;
+          this.widget.style.bottom = position.bottom;
+          console.log('[ATRI] 恢复上次位置');
+        } catch (e) {
+          console.warn('[ATRI] 无法恢复位置:', e);
+        }
+      }
+    }
+    
+    setupIdleAnimation() {
+      setInterval(() => {
+        if (!this.model.internalModel || !this.model.internalModel.motionManager) return;
+        
+        // 尝试多种可能的闲置动画名称
+        const possibleNames = ['Idle', 'idle', 'IDLE'];
+        let idleMotions = null;
+        let groupName = null;
+        
+        for (const name of possibleNames) {
+          if (this.model.internalModel.motionManager.definitions[name]) {
+            idleMotions = this.model.internalModel.motionManager.definitions[name];
+            groupName = name;
+            break;
+          }
+        }
+        
+        if (idleMotions && idleMotions.length > 0 && groupName) {
+          const randomIdle = Math.floor(Math.random() * idleMotions.length);
+          this.model.motion(groupName, randomIdle);
+          console.log('[ATRI] 自动播放闲置动画:', groupName, '#' + randomIdle);
+        }
+      }, 15000);
+    }
+    
+    setupResponsive() {
+      window.addEventListener('resize', () => {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const newScale = isMobile ? this.config.mobileScale : this.config.scale;
+        this.model.scale.set(newScale);
+      });
+    }
+    
+    setupControls() {
+      // 切换显示/隐藏
+      document.getElementById('atri-toggle').addEventListener('click', () => {
+        this.isVisible = !this.isVisible;
+        this.canvas.style.opacity = this.isVisible ? '1' : '0';
+        this.showMessage(this.isVisible ? '我回来啦~' : '我先藏起来了~');
+      });
+      
+      // 截图功能
+      document.getElementById('atri-photo').addEventListener('click', () => {
+        this.takeScreenshot();
+      });
+      
+      // 回到原位
+      document.getElementById('atri-home').addEventListener('click', () => {
+        this.widget.style.right = '20px';
+        this.widget.style.bottom = '0';
+        // 清除保存的位置
+        localStorage.removeItem('atri_position');
+        this.showMessage('好的，回到原来的位置了~');
+        console.log('[ATRI] 位置已重置');
+      });
+    }
+    
+    setupPageEvents() {
+      // 复制事件
+      document.addEventListener('copy', () => {
+        this.showRandomMessage('copy');
+      });
+      
+      // 滚动事件（节流）
+      let scrollTimer = null;
+      window.addEventListener('scroll', () => {
+        if (scrollTimer) return;
+        
+        scrollTimer = setTimeout(() => {
+          if (Math.random() < 0.1) {
+            this.showRandomMessage('scroll');
+          }
+          scrollTimer = null;
+        }, 3000);
+      });
+    }
+    
+    showMessage(text) {
+      if (!this.config.enableMessage || !this.messageBox) return;
+      
+      clearTimeout(this.messageTimer);
+      
+      const content = this.messageBox.querySelector('.atri-message-content');
+      content.textContent = text;
+      this.messageBox.style.display = 'block';
+      
+      this.messageTimer = setTimeout(() => {
+        this.messageBox.style.display = 'none';
+      }, this.config.messageTimeout);
+    }
+    
+    showRandomMessage(type) {
+      const messages = this.config.messages[type];
+      if (messages && messages.length > 0) {
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        this.showMessage(randomMessage);
+      }
+    }
+    
+    takeScreenshot() {
+      try {
+        const canvas = this.app.renderer.extract.canvas(this.app.stage);
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            console.error('[ATRI] 截图失败：无法生成图像');
+            this.showMessage('截图失败，请重试');
+            return;
+          }
+          
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'ATRI_screenshot_' + Date.now() + '.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // 延迟释放 URL 以确保下载完成
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          
+          this.showMessage('截图保存成功！');
+          console.log('[ATRI] 截图已保存');
+        }, 'image/png');
+      } catch (error) {
+        console.error('[ATRI] 截图失败:', error);
+        this.showMessage('截图失败，请重试');
+      }
+    }
+  }
+  
+  // 初始化 ATRI
+  try {
+    const atri = new ATRILive2D(CONFIG);
+    await atri.init();
+    
+    // 暴露到全局（用于调试）
+    window.ATRI = atri;
+    
+  } catch (error) {
+    console.error('[ATRI] 初始化失败:', error);
+  }
+})();
+</script>
+
+<style>
+/* ===================================================
+ * ATRI Live2D 增强样式
+ * ================================================== */
+
+#atri-live2d-widget {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  user-select: none;
+}
+
+#atri-live2d-widget:hover {
+  transform: translateY(-5px);
+}
+
+#atri-canvas {
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+  transition: opacity 0.3s ease;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* 对话框样式 */
+#atri-message-box {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  color: #333;
+  padding: 12px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 14px;
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+  pointer-events: none;
+  animation: messageSlideIn 0.3s ease-out;
+  z-index: 1000;
+}
+
+#atri-message-box::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid rgba(255, 255, 255, 0.85);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.atri-message-content {
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 控制面板样式 */
+#atri-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.atri-control-btn {
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: #555;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.atri-control-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #222;
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.atri-control-btn:active {
+  transform: translateY(0) scale(0.95);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* 拖动按钮激活状态 */
+.atri-control-btn.active,
+.atri-control-btn#atri-drag.active {
+  background: rgba(102, 126, 234, 0.8) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3), 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* 动画效果 */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes atriWave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+/* 欢迎动画 */
+#atri-canvas {
+  animation: atriEntrance 1s ease-out;
+}
+
+@keyframes atriEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  #atri-live2d-widget {
+    right: 5px !important;
+    bottom: 0 !important;
+  }
+  
+  #atri-canvas {
+    width: 200px;
+    height: 300px;
+  }
+  
+  #atri-message-box {
+    font-size: 12px;
+    padding: 8px 15px;
+    top: -70px;
+  }
+  
+  .atri-control-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  /* 移动端音乐播放器样式 */
+  #music-player {
+    bottom: 10px !important;
+    left: 10px !important;
+  }
+  
+  #music-player > div {
+    padding: 8px 12px !important;
+  }
+  
+  #music-toggle {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  
+  #music-info {
+    min-width: 80px !important;
+  }
+  
+  #music-info > div:first-child {
+    font-size: 11px !important;
+  }
+}
+
+/* 超小屏幕调整 */
+@media (max-width: 480px) {
+  #atri-live2d-widget {
+    display: none;
+  }
+  
+  /* 超小屏幕上音乐播放器只显示按钮 */
+  #music-info {
+    display: none !important;
+  }
+  
+  #music-player > div {
+    padding: 6px !important;
+    gap: 0 !important;
+  }
+}
+
+/* 打印时隐藏 */
+@media print {
+  #atri-live2d-widget,
+  #music-player {
+    display: none !important;
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  #atri-message-box {
+    background: rgba(40, 40, 40, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  #atri-message-box::after {
+    border-top-color: rgba(40, 40, 40, 0.85);
+  }
+  
+  /* 暗色模式下的控制按钮 */
+  .atri-control-btn {
+    background: rgba(50, 50, 50, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #ccc;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .atri-control-btn:hover {
+    background: rgba(70, 70, 70, 0.9);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* 暗色模式下的音乐播放器 */
+  #music-player-main {
+    background: rgba(50, 50, 50, 0.75) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  #music-toggle,
+  #music-volume-toggle,
+  #music-hide-toggle,
+  #music-mini-btn {
+    background: rgba(70, 70, 70, 0.7) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ccc !important;
+  }
+  
+  #music-toggle:hover,
+  #music-volume-toggle:hover,
+  #music-hide-toggle:hover,
+  #music-mini-btn:hover {
+    background: rgba(90, 90, 90, 1) !important;
+    color: #fff !important;
+  }
+  
+  #music-title {
+    color: #ddd !important;
+  }
+  
+  #music-time,
+  #music-info > div:nth-child(2) {
+    color: #999 !important;
+  }
+  
+  #music-progress {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+/* 加载状态 */
+.atri-loading {
+  position: relative;
+}
+
+.atri-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(102, 126, 234, 0.3);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 悬停提示 */
+.atri-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.atri-control-btn:hover + .atri-tooltip {
+  opacity: 1;
+}
+
+/* 无障碍支持 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+
+<!-- 背景音乐播放器 -->
+<div id="music-player" style="position: fixed; bottom: 20px; left: 20px; z-index: 998; pointer-events: auto; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+  <audio id="bg-music" loop preload="auto">
+    <source src="/music/yumefuribashi.mp3" type="audio/mpeg">
+    您的浏览器不支持音频播放
+  </audio>
+  
+  <!-- 播放器主体 -->
+  <div id="music-player-main" style="display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); padding: 12px 15px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+    <!-- 播放/暂停按钮 -->
+    <button id="music-toggle" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #555; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); flex-shrink: 0;" title="播放/暂停">
+      <i class="fa fa-play" id="music-icon" style="font-size: 14px;"></i>
+    </button>
+    
+    <!-- 音乐信息 -->
+    <div id="music-info" style="display: flex; flex-direction: column; gap: 4px; min-width: 150px; max-width: 200px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span id="music-title" style="font-size: 13px; color: #333; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">梦浮桥</span>
+        <span id="music-time" style="font-size: 11px; color: #999; margin-left: 8px;">0:00 / 0:00</span>
+      </div>
+      <div style="font-size: 11px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">ATRI -My Dear Moments-</div>
+      <div id="music-progress" style="height: 4px; background: rgba(0, 0, 0, 0.1); border-radius: 2px; overflow: hidden; cursor: pointer; position: relative;">
+        <div id="music-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); transition: width 0.1s linear;"></div>
+      </div>
+    </div>
+    
+    <!-- 音量控制按钮 -->
+    <button id="music-volume-toggle" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #555; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); flex-shrink: 0;" title="音量">
+      <i class="fa fa-volume-up" id="volume-icon" style="font-size: 14px;"></i>
+    </button>
+    
+    <!-- 隐藏/显示按钮 -->
+    <button id="music-hide-toggle" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #555; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); flex-shrink: 0;" title="隐藏播放器">
+      <i class="fa fa-chevron-down" id="hide-icon" style="font-size: 12px;"></i>
+    </button>
+  </div>
+  
+  <!-- 迷你模式按钮（隐藏时显示） -->
+  <button id="music-mini-btn" style="display: none; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.3); width: 48px; height: 48px; border-radius: 50%; cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #555;" title="显示播放器">
+    <i class="fa fa-music" style="font-size: 18px;"></i>
+  </button>
+</div>
+
+<script>
+(function() {
+  const audio = document.getElementById('bg-music');
+  const toggleBtn = document.getElementById('music-toggle');
+  const icon = document.getElementById('music-icon');
+  const progressBar = document.getElementById('music-progress-bar');
+  const progressContainer = document.getElementById('music-progress');
+  const musicInfo = document.getElementById('music-info');
+  const timeDisplay = document.getElementById('music-time');
+  const volumeToggle = document.getElementById('music-volume-toggle');
+  const volumeIcon = document.getElementById('volume-icon');
+  const hideToggle = document.getElementById('music-hide-toggle');
+  const hideIcon = document.getElementById('hide-icon');
+  const playerMain = document.getElementById('music-player-main');
+  const miniBtn = document.getElementById('music-mini-btn');
+  const player = document.getElementById('music-player');
+  
+  // 设置初始音量
+  let currentVolume = parseFloat(localStorage.getItem('music_volume') || '0.3');
+  audio.volume = currentVolume;
+  
+  // 从 localStorage 读取状态
+  const wasPlaying = localStorage.getItem('music_playing') === 'true';
+  const wasHidden = localStorage.getItem('music_hidden') === 'true';
+  
+  // 格式化时间
+  function formatTime(seconds) {
+    if (!seconds || isNaN(seconds)) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+  
+  // 切换播放/暂停
+  function togglePlay() {
+    if (audio.paused) {
+      audio.play().then(() => {
+        icon.classList.remove('fa-play');
+        icon.classList.add('fa-pause');
+        localStorage.setItem('music_playing', 'true');
+      }).catch(err => {
+        console.error('[Music] 播放失败:', err);
+        document.getElementById('music-title').textContent = '播放失败';
+      });
+    } else {
+      audio.pause();
+      icon.classList.remove('fa-pause');
+      icon.classList.add('fa-play');
+      localStorage.setItem('music_playing', 'false');
+    }
+  }
+  
+  // 切换音量
+  function toggleVolume() {
+    if (audio.volume > 0) {
+      localStorage.setItem('music_last_volume', audio.volume.toString());
+      audio.volume = 0;
+      volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down');
+      volumeIcon.classList.add('fa-volume-off');
+    } else {
+      const lastVolume = parseFloat(localStorage.getItem('music_last_volume') || '0.3');
+      audio.volume = lastVolume;
+      updateVolumeIcon(lastVolume);
+    }
+    localStorage.setItem('music_volume', audio.volume.toString());
+  }
+  
+  // 更新音量图标
+  function updateVolumeIcon(volume) {
+    volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down', 'fa-volume-off');
+    if (volume === 0) {
+      volumeIcon.classList.add('fa-volume-off');
+    } else if (volume < 0.5) {
+      volumeIcon.classList.add('fa-volume-down');
+    } else {
+      volumeIcon.classList.add('fa-volume-up');
+    }
+  }
+  
+  // 切换隐藏/显示
+  function toggleHide() {
+    const isHidden = playerMain.style.display === 'none';
+    if (isHidden) {
+      playerMain.style.display = 'flex';
+      miniBtn.style.display = 'none';
+      localStorage.setItem('music_hidden', 'false');
+    } else {
+      playerMain.style.display = 'none';
+      miniBtn.style.display = 'flex';
+      localStorage.setItem('music_hidden', 'true');
+    }
+  }
+  
+  // 按钮样式函数
+  function addButtonHover(btn) {
+    btn.addEventListener('mouseenter', () => {
+      btn.style.background = 'rgba(255, 255, 255, 0.9)';
+      btn.style.color = '#222';
+      btn.style.transform = 'scale(1.1)';
+      btn.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.15)';
+    });
+    
+    btn.addEventListener('mouseleave', () => {
+      btn.style.background = 'rgba(255, 255, 255, 0.7)';
+      btn.style.color = '#555';
+      btn.style.transform = 'scale(1)';
+      btn.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.08)';
+    });
+  }
+  
+  // 事件监听
+  toggleBtn.addEventListener('click', togglePlay);
+  volumeToggle.addEventListener('click', toggleVolume);
+  hideToggle.addEventListener('click', toggleHide);
+  miniBtn.addEventListener('click', toggleHide);
+  
+  // 添加悬停效果
+  addButtonHover(toggleBtn);
+  addButtonHover(volumeToggle);
+  addButtonHover(hideToggle);
+  addButtonHover(miniBtn);
+  
+  // 进度条点击跳转
+  progressContainer.addEventListener('click', (e) => {
+    const rect = progressContainer.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = percent * audio.duration;
+  });
+  
+  // 更新进度条和时间
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+      const progress = (audio.currentTime / audio.duration) * 100;
+      progressBar.style.width = progress + '%';
+      timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+    }
+  });
+  
+  // 音量变化时更新图标
+  audio.addEventListener('volumechange', () => {
+    updateVolumeIcon(audio.volume);
+  });
+  
+  // 错误处理
+  audio.addEventListener('error', (e) => {
+    console.error('[Music] 加载失败:', e);
+    document.getElementById('music-title').textContent = '音频加载失败';
+    timeDisplay.textContent = '--:-- / --:--';
+  });
+  
+  // 加载完成
+  audio.addEventListener('loadedmetadata', () => {
+    timeDisplay.textContent = `0:00 / ${formatTime(audio.duration)}`;
+  });
+  
+  // 恢复隐藏状态
+  if (wasHidden) {
+    playerMain.style.display = 'none';
+    miniBtn.style.display = 'flex';
+  }
+  
+  // 初始化音量图标
+  updateVolumeIcon(currentVolume);
+  
+  // 自动播放（如果上次是播放状态）
+  if (wasPlaying) {
+    setTimeout(() => {
+      audio.play().then(() => {
+        icon.classList.remove('fa-play');
+        icon.classList.add('fa-pause');
+      }).catch(() => {
+        localStorage.setItem('music_playing', 'false');
+      });
+    }, 1000);
+  }
+  
+  // 移动端适配
+  if (window.innerWidth < 768) {
+    musicInfo.style.minWidth = '100px';
+    musicInfo.style.maxWidth = '120px';
+  }
+})();
+</script>
+
+
+  <!-- ATRI Live2D Model --><!-- ATRI Live2D 增强版 - v2.0 -->
+<div id="atri-live2d-widget" style="position: fixed; right: 20px; bottom: 0; z-index: 999; pointer-events: none;">
+  <canvas id="atri-canvas" width="350" height="500"></canvas>
+  
+  <!-- ATRI 对话框 -->
+  <div id="atri-message-box" style="display: none;">
+    <div class="atri-message-content"></div>
+  </div>
+  
+  <!-- ATRI 控制面板 -->
+  <div id="atri-controls" style="display: none;">
+    <button class="atri-control-btn" id="atri-toggle" title="显示/隐藏 ATRI">
+      <i class="fa fa-eye"></i>
+    </button>
+    <button class="atri-control-btn" id="atri-photo" title="截图">
+      <i class="fa fa-camera"></i>
+    </button>
+    <button class="atri-control-btn" id="atri-home" title="回到原位">
+      <i class="fa fa-home"></i>
+    </button>
+  </div>
+</div>
+
+<!-- 加载 Live2D 库文件 - 按正确顺序加载 -->
+<!-- Cubism 2 运行时 (用于兼容性) -->
+<script src="/js/live2d-libs/live2d.min.js"></script>
+<!-- Cubism 4 核心 (用于 Cubism 3.0/4.0 模型) -->
+<script src="/js/live2d-libs/live2dcubismcore.min.js"></script>
+<!-- PixiJS 渲染引擎 -->
+<script src="/js/live2d-libs/pixi.min.js"></script>
+<!-- Live2D 显示插件 -->
+<script src="/js/live2d-libs/pixi-live2d-display.min.js"></script>
+
+<script>
+(async function() {
+  'use strict';
+  
+  // ===================================================
+  // ATRI Live2D 增强版 v2.0
+  // ===================================================
+  
+  // 配置对象
+  const CONFIG = {
+    modelPath: '/live2d/ATRI/ATRI.model3.json',
+    canvasId: 'atri-canvas',
+    width: 350,
+    height: 500,
+    scale: 0.25,
+    mobileScale: 0.18,
+    messages: {
+      welcome: ['你好呀！我是 ATRI~', '欢迎来到 GINKA 的博客！', '今天也要加油哦！'],
+      click: ['呀！不要戳我~', '嘿嘿~', '怎么了吗？', '在呢在呢~'],
+      hover: ['有什么需要帮助的吗？', '我在这里哦~'],
+      copy: ['复制成功啦！', '内容已经复制好了~'],
+      scroll: ['看到什么有趣的内容了吗？', '继续往下看吧~']
+    },
+    motionGroups: ['tap_body', 'shake', 'idle', 'flick_head'],
+    enableDrag: true,
+    enableMessage: true,
+    enableControls: true,
+    messageTimeout: 3000
+  };
+  
+  // ATRI 类
+  class ATRILive2D {
+    constructor(config) {
+      this.config = config;
+      this.app = null;
+      this.model = null;
+      this.widget = null;
+      this.canvas = null;
+      this.messageBox = null;
+      this.messageTimer = null;
+      this.isDragging = false;
+      this.dragOffset = { x: 0, y: 0 };
+      this.isVisible = true;
+      this.mouseX = 0;
+      this.mouseY = 0;
+    }
+    
+    async init() {
+      console.log('[ATRI] 初始化开始...');
+      
+      // 等待库加载
+      await this.waitForLibraries();
+      
+      // 初始化元素
+      this.initElements();
+      
+      // 创建应用
+      await this.createApp();
+      
+      // 加载模型
+      await this.loadModel();
+      
+      // 设置交互
+      this.setupInteractions();
+      
+      // 显示欢迎消息
+      this.showRandomMessage('welcome');
+      
+      console.log('[ATRI] ✓ 初始化完成！');
+    }
+    
+    waitForLibraries() {
+      return new Promise((resolve, reject) => {
+        let retryCount = 0;
+        const maxRetries = 20;
+        
+        const checkInterval = setInterval(() => {
+          retryCount++;
+          
+          if (window.PIXI && window.PIXI.live2d && window.PIXI.live2d.Live2DModel) {
+            clearInterval(checkInterval);
+            console.log('[ATRI] ✓ 库加载完成');
+            resolve();
+          } else if (retryCount >= maxRetries) {
+            clearInterval(checkInterval);
+            reject(new Error('库加载超时'));
+          }
+        }, 300);
+      });
+    }
+    
+    initElements() {
+      this.widget = document.getElementById('atri-live2d-widget');
+      this.canvas = document.getElementById(this.config.canvasId);
+      this.messageBox = document.getElementById('atri-message-box');
+      
+      if (!this.canvas) {
+        throw new Error('Canvas 元素未找到');
+      }
+      
+      // 显示控制面板
+      if (this.config.enableControls) {
+        document.getElementById('atri-controls').style.display = 'flex';
+      }
+    }
+    
+    async createApp() {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const scale = isMobile ? this.config.mobileScale : this.config.scale;
+      
+      this.app = new PIXI.Application({
+        view: this.canvas,
+        width: this.config.width,
+        height: this.config.height,
+        transparent: true,
+        backgroundAlpha: 0,
+        antialias: true,
+        resolution: window.devicePixelRatio || 1,
+        autoDensity: true
+      });
+      
+      console.log('[ATRI] PixiJS 应用创建成功');
+    }
+    
+    async loadModel() {
+      console.log('[ATRI] 开始加载模型:', this.config.modelPath);
+      
+      this.model = await window.PIXI.live2d.Live2DModel.from(this.config.modelPath, {
+        autoInteract: false,
+        autoUpdate: true
+      });
+      
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const scale = isMobile ? this.config.mobileScale : this.config.scale;
+      
+      this.model.anchor.set(0.5, 0.5);
+      this.model.scale.set(scale);
+      this.model.position.set(this.config.width / 2, this.config.height * 0.85);
+      
+      this.app.stage.addChild(this.model);
+      
+      console.log('[ATRI] ✓ 模型加载成功');
+    }
+    
+    setupInteractions() {
+      // 启用交互
+      this.model.eventMode = 'static';
+      this.model.cursor = 'pointer';
+      this.model.interactive = true;
+      this.canvas.style.pointerEvents = 'auto';
+      
+      // 点击交互
+      this.model.on('pointertap', () => this.onModelClick());
+      this.model.on('pointerdown', () => this.onModelClick());
+      
+      // 鼠标悬停
+      this.model.on('pointerover', () => this.onModelHover());
+      
+      // 鼠标跟踪
+      this.setupMouseTracking();
+      
+      // 拖拽功能
+      if (this.config.enableDrag) {
+        this.setupDragging();
+      }
+      
+      // 自动闲置动画
+      this.setupIdleAnimation();
+      
+      // 响应式调整
+      this.setupResponsive();
+      
+      // 控制按钮
+      if (this.config.enableControls) {
+        this.setupControls();
+      }
+      
+      // 页面事件
+      this.setupPageEvents();
+    }
+    
+    onModelClick() {
+      this.playRandomMotion();
+      this.showRandomMessage('click');
+    }
+    
+    onModelHover() {
+      if (this.config.enableMessage && Math.random() < 0.3) {
+        this.showRandomMessage('hover');
+      }
+    }
+    
+    playRandomMotion() {
+      if (!this.model.internalModel || !this.model.internalModel.motionManager) return;
+      
+      for (const group of this.config.motionGroups) {
+        const motions = this.model.internalModel.motionManager.definitions[group];
+        if (motions && motions.length > 0) {
+          const randomMotion = Math.floor(Math.random() * motions.length);
+          this.model.motion(group, randomMotion);
+          console.log('[ATRI] 播放动作:', group, '#' + randomMotion);
+          break;
+        }
+      }
+    }
+    
+    setupMouseTracking() {
+      document.addEventListener('mousemove', (event) => {
+        this.mouseX = event.clientX;
+        this.mouseY = event.clientY;
+      });
+      
+      this.app.ticker.add(() => {
+        if (!this.model.internalModel || !this.model.internalModel.coreModel) return;
+        
+        const centerX = window.innerWidth - this.config.width / 2 - 20;
+        const centerY = this.config.height / 2;
+        
+        const dx = (this.mouseX - centerX) / centerX;
+        const dy = (this.mouseY - centerY) / centerY;
+        
+        const maxMove = 0.5;
+        const finalDx = Math.max(-maxMove, Math.min(maxMove, dx));
+        const finalDy = Math.max(-maxMove, Math.min(maxMove, dy));
+        
+        this.model.internalModel.coreModel.setParameterValueById('ParamAngleX', finalDx * 30);
+        this.model.internalModel.coreModel.setParameterValueById('ParamAngleY', finalDy * 30);
+        this.model.internalModel.coreModel.setParameterValueById('ParamEyeBallX', finalDx);
+        this.model.internalModel.coreModel.setParameterValueById('ParamEyeBallY', finalDy);
+      });
+    }
+    
+    setupDragging() {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      
+      // 鼠标悬停显示可拖拽光标
+      this.canvas.addEventListener('mouseenter', () => {
+        if (!isDragging) {
+          this.canvas.style.cursor = 'move';
+        }
+      });
+      
+      this.canvas.addEventListener('mouseleave', () => {
+        if (!isDragging) {
+          this.canvas.style.cursor = 'pointer';
+        }
+      });
+      
+      this.canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        const rect = this.widget.getBoundingClientRect();
+        startX = e.clientX - rect.left;
+        startY = e.clientY - rect.top;
+        this.canvas.style.cursor = 'grabbing';
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+          const newRight = window.innerWidth - e.clientX - (this.config.width - startX);
+          const newBottom = window.innerHeight - e.clientY - (this.config.height - startY);
+          
+          // 确保不超出屏幕边界
+          const boundedRight = Math.max(0, Math.min(window.innerWidth - this.config.width, newRight));
+          const boundedBottom = Math.max(0, Math.min(window.innerHeight - this.config.height, newBottom));
+          
+          this.widget.style.right = boundedRight + 'px';
+          this.widget.style.bottom = boundedBottom + 'px';
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          this.canvas.style.cursor = 'move';
+          
+          // 保存位置到 localStorage
+          const position = {
+            right: this.widget.style.right,
+            bottom: this.widget.style.bottom
+          };
+          localStorage.setItem('atri_position', JSON.stringify(position));
+          console.log('[ATRI] 位置已保存');
+        }
+      });
+      
+      // 恢复上次保存的位置
+      const savedPosition = localStorage.getItem('atri_position');
+      if (savedPosition) {
+        try {
+          const position = JSON.parse(savedPosition);
+          this.widget.style.right = position.right;
+          this.widget.style.bottom = position.bottom;
+          console.log('[ATRI] 恢复上次位置');
+        } catch (e) {
+          console.warn('[ATRI] 无法恢复位置:', e);
+        }
+      }
+    }
+    
+    setupIdleAnimation() {
+      setInterval(() => {
+        if (!this.model.internalModel || !this.model.internalModel.motionManager) return;
+        
+        // 尝试多种可能的闲置动画名称
+        const possibleNames = ['Idle', 'idle', 'IDLE'];
+        let idleMotions = null;
+        let groupName = null;
+        
+        for (const name of possibleNames) {
+          if (this.model.internalModel.motionManager.definitions[name]) {
+            idleMotions = this.model.internalModel.motionManager.definitions[name];
+            groupName = name;
+            break;
+          }
+        }
+        
+        if (idleMotions && idleMotions.length > 0 && groupName) {
+          const randomIdle = Math.floor(Math.random() * idleMotions.length);
+          this.model.motion(groupName, randomIdle);
+          console.log('[ATRI] 自动播放闲置动画:', groupName, '#' + randomIdle);
+        }
+      }, 15000);
+    }
+    
+    setupResponsive() {
+      window.addEventListener('resize', () => {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const newScale = isMobile ? this.config.mobileScale : this.config.scale;
+        this.model.scale.set(newScale);
+      });
+    }
+    
+    setupControls() {
+      // 切换显示/隐藏
+      document.getElementById('atri-toggle').addEventListener('click', () => {
+        this.isVisible = !this.isVisible;
+        this.canvas.style.opacity = this.isVisible ? '1' : '0';
+        this.showMessage(this.isVisible ? '我回来啦~' : '我先藏起来了~');
+      });
+      
+      // 截图功能
+      document.getElementById('atri-photo').addEventListener('click', () => {
+        this.takeScreenshot();
+      });
+      
+      // 回到原位
+      document.getElementById('atri-home').addEventListener('click', () => {
+        this.widget.style.right = '20px';
+        this.widget.style.bottom = '0';
+        // 清除保存的位置
+        localStorage.removeItem('atri_position');
+        this.showMessage('好的，回到原来的位置了~');
+        console.log('[ATRI] 位置已重置');
+      });
+    }
+    
+    setupPageEvents() {
+      // 复制事件
+      document.addEventListener('copy', () => {
+        this.showRandomMessage('copy');
+      });
+      
+      // 滚动事件（节流）
+      let scrollTimer = null;
+      window.addEventListener('scroll', () => {
+        if (scrollTimer) return;
+        
+        scrollTimer = setTimeout(() => {
+          if (Math.random() < 0.1) {
+            this.showRandomMessage('scroll');
+          }
+          scrollTimer = null;
+        }, 3000);
+      });
+    }
+    
+    showMessage(text) {
+      if (!this.config.enableMessage || !this.messageBox) return;
+      
+      clearTimeout(this.messageTimer);
+      
+      const content = this.messageBox.querySelector('.atri-message-content');
+      content.textContent = text;
+      this.messageBox.style.display = 'block';
+      
+      this.messageTimer = setTimeout(() => {
+        this.messageBox.style.display = 'none';
+      }, this.config.messageTimeout);
+    }
+    
+    showRandomMessage(type) {
+      const messages = this.config.messages[type];
+      if (messages && messages.length > 0) {
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        this.showMessage(randomMessage);
+      }
+    }
+    
+    takeScreenshot() {
+      try {
+        const canvas = this.app.renderer.extract.canvas(this.app.stage);
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            console.error('[ATRI] 截图失败：无法生成图像');
+            this.showMessage('截图失败，请重试');
+            return;
+          }
+          
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'ATRI_screenshot_' + Date.now() + '.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // 延迟释放 URL 以确保下载完成
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          
+          this.showMessage('截图保存成功！');
+          console.log('[ATRI] 截图已保存');
+        }, 'image/png');
+      } catch (error) {
+        console.error('[ATRI] 截图失败:', error);
+        this.showMessage('截图失败，请重试');
+      }
+    }
+  }
+  
+  // 初始化 ATRI
+  try {
+    const atri = new ATRILive2D(CONFIG);
+    await atri.init();
+    
+    // 暴露到全局（用于调试）
+    window.ATRI = atri;
+    
+  } catch (error) {
+    console.error('[ATRI] 初始化失败:', error);
+  }
+})();
+</script>
+
+<style>
+/* ===================================================
+ * ATRI Live2D 增强样式
+ * ================================================== */
+
+#atri-live2d-widget {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  user-select: none;
+}
+
+#atri-live2d-widget:hover {
+  transform: translateY(-5px);
+}
+
+#atri-canvas {
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+  transition: opacity 0.3s ease;
+}
+
+/* 对话框样式 */
+#atri-message-box {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  animation: messageSlideIn 0.3s ease-out;
+  z-index: 1000;
+}
+
+#atri-message-box::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #764ba2;
+}
+
+.atri-message-content {
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 控制面板样式 */
+#atri-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.atri-control-btn {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.atri-control-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.atri-control-btn:active {
+  transform: scale(0.95);
+}
+
+/* 动画效果 */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes atriWave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+/* 欢迎动画 */
+#atri-canvas {
+  animation: atriEntrance 1s ease-out;
+}
+
+@keyframes atriEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  #atri-live2d-widget {
+    right: 5px !important;
+    bottom: 0 !important;
+  }
+  
+  #atri-canvas {
+    width: 200px;
+    height: 300px;
+  }
+  
+  #atri-message-box {
+    font-size: 12px;
+    padding: 8px 15px;
+    top: -70px;
+  }
+  
+  .atri-control-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+}
+
+/* 超小屏幕隐藏 */
+@media (max-width: 480px) {
+  #atri-live2d-widget {
+    display: none;
+  }
+}
+
+/* 打印时隐藏 */
+@media print {
+  #atri-live2d-widget {
+    display: none !important;
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  #atri-message-box {
+    background: linear-gradient(135deg, #434343 0%, #000000 100%);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  }
+  
+  #atri-message-box::after {
+    border-top-color: #000000;
+  }
+}
+
+/* 加载状态 */
+.atri-loading {
+  position: relative;
+}
+
+.atri-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(102, 126, 234, 0.3);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 悬停提示 */
+.atri-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.atri-control-btn:hover + .atri-tooltip {
+  opacity: 1;
+}
+
+/* 无障碍支持 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+
+
+  <!-- GINKA Video Background -->
+  <div id="video-background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -999; overflow: hidden;">
+    <video autoplay muted loop style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+      <source src="/images/background.mp4" type="video/mp4">
+      您的浏览器不支持视频背景。
+    </video>
+  </div>
+
+</body>
+</html>
