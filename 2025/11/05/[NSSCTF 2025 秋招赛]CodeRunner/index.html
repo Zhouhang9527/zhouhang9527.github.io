@@ -474,9 +474,9 @@ img:not([src]) {
           <div class="post-tags">
               <a href="../../../../tags/ctf/" rel="tag"># CTF</a>
               <a href="../../../../tags/reverse/" rel="tag"># Reverse</a>
+              <a href="../../../../tags/%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/" rel="tag"># 动态调试</a>
               <a href="../../../../tags/unity/" rel="tag"># Unity</a>
               <a href="../../../../tags/il2cpp/" rel="tag"># IL2CPP</a>
-              <a href="../../../../tags/%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/" rel="tag"># 动态调试</a>
           </div>
 
         
@@ -1643,92 +1643,54 @@ document.addEventListener('DOMContentLoaded', function() {
   top: 10px;
   right: 10px;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   pointer-events: auto;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .atri-control-btn {
-  width: 44px;
-  height: 44px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  width: 42px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   color: #667eea;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 3px rgba(255, 255, 255, 0.6);
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.atri-control-btn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.25) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .atri-control-btn:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+  background: rgba(255, 255, 255, 0.85);
   color: #764ba2;
-  border-color: rgba(118, 75, 162, 0.4);
-  transform: translateY(-6px) scale(1.15);
-  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.3), 0 6px 16px rgba(118, 75, 162, 0.2), inset 0 1px 3px rgba(255, 255, 255, 0.8);
-}
-
-.atri-control-btn:hover::before {
-  width: 120%;
-  height: 120%;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .atri-control-btn:active {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.25), 0 3px 10px rgba(0, 0, 0, 0.1);
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
 
 /* 激活状态 */
 .atri-control-btn.active,
 .atri-control-btn#atri-drag.active {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%) !important;
+  background: rgba(102, 126, 234, 0.85) !important;
   color: white !important;
-  border-color: rgba(255, 255, 255, 0.6) !important;
-  box-shadow: 0 8px 28px rgba(102, 126, 234, 0.45), 0 4px 14px rgba(118, 75, 162, 0.35), inset 0 1px 3px rgba(255, 255, 255, 0.4) !important;
-  animation: pulseGlow 2s ease-in-out infinite;
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 8px 28px rgba(102, 126, 234, 0.45), 0 4px 14px rgba(118, 75, 162, 0.35), inset 0 1px 3px rgba(255, 255, 255, 0.4);
-  }
-  50% {
-    box-shadow: 0 10px 32px rgba(102, 126, 234, 0.6), 0 5px 16px rgba(118, 75, 162, 0.5), inset 0 1px 3px rgba(255, 255, 255, 0.5);
-  }
+  border-color: rgba(102, 126, 234, 0.5) !important;
+  box-shadow: 0 3px 12px rgba(102, 126, 234, 0.35) !important;
 }
 
 .atri-control-btn.active:hover,
 .atri-control-btn#atri-drag.active:hover {
-  transform: translateY(-6px) scale(1.15) !important;
-  animation: none;
-  box-shadow: 0 12px 36px rgba(102, 126, 234, 0.55), 0 6px 18px rgba(118, 75, 162, 0.45) !important;
+  background: rgba(118, 75, 162, 0.9) !important;
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 0 4px 16px rgba(118, 75, 162, 0.4) !important;
 }
 
 /* 动画效果 */
@@ -1919,88 +1881,30 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 /* 音乐播放器按钮优化 */
-#music-toggle,
-#music-volume-toggle,
-#music-hide-toggle {
-  position: relative;
-  overflow: hidden;
-}
-
-#music-toggle::before,
-#music-volume-toggle::before,
-#music-hide-toggle::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-#music-toggle:hover::before,
-#music-volume-toggle:hover::before,
-#music-hide-toggle:hover::before {
-  width: 120%;
-  height: 120%;
-}
-
 #music-toggle:hover,
 #music-volume-toggle:hover,
 #music-hide-toggle:hover {
-  transform: translateY(-3px) scale(1.1);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.25), 0 3px 8px rgba(0, 0, 0, 0.12) !important;
-  color: #667eea !important;
-  border-color: rgba(102, 126, 234, 0.3) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  transform: scale(1.05);
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.15) !important;
 }
 
 #music-toggle:active,
 #music-volume-toggle:active,
 #music-hide-toggle:active {
-  transform: translateY(-1px) scale(1.05);
-  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2), 0 2px 5px rgba(0, 0, 0, 0.08) !important;
-}
-
-#music-mini-btn {
-  position: relative;
-  overflow: hidden;
-  animation: musicPulse 2s ease-in-out infinite;
-}
-
-#music-mini-btn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-#music-mini-btn:hover::before {
-  width: 120%;
-  height: 120%;
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
 }
 
 #music-mini-btn:hover {
-  transform: translateY(-4px) scale(1.15);
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  animation: none;
+  background: rgba(255, 255, 255, 0.85) !important;
+  transform: scale(1.05);
+  box-shadow: 0 3px 16px rgba(102, 126, 234, 0.2) !important;
 }
 
-@keyframes musicPulse {
-  0%, 100% {
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.15);
-  }
-  50% {
-    box-shadow: 0 10px 36px rgba(102, 126, 234, 0.25);
-  }
+#music-mini-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12) !important;
 }
 
 /* 加载状态 */
@@ -2066,14 +1970,14 @@ document.addEventListener('DOMContentLoaded', function() {
   </audio>
   
   <!-- 播放器主体 -->
-  <div id="music-player-main" style="display: flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); padding: 14px 18px; border-radius: 32px; border: 1.5px solid rgba(255, 255, 255, 0.5); box-shadow: 0 10px 40px rgba(102, 126, 234, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 3px rgba(255, 255, 255, 0.6); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+  <div id="music-player-main" style="display: flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 12px 16px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); transition: all 0.3s ease;">
     <!-- 音乐封面 -->
     <div id="music-cover" style="width: 48px; height: 48px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); flex-shrink: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
       <img src="/music/ginka-cover.jpg" alt="夢浮橋 - 青木陽菜" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">
     </div>
     
     <!-- 播放/暂停按钮 -->
-    <button id="music-toggle" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px) saturate(150%); -webkit-backdrop-filter: blur(12px) saturate(150%); border: 1.5px solid rgba(102, 126, 234, 0.2); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #667eea; box-shadow: 0 3px 10px rgba(102, 126, 234, 0.15), 0 1px 4px rgba(0, 0, 0, 0.08); flex-shrink: 0;" title="播放/暂停">
+    <button id="music-toggle" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(102, 126, 234, 0.2); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: #667eea; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); flex-shrink: 0;" title="播放/暂停">
       <i class="fa fa-play" id="music-icon" style="font-size: 16px; margin-left: 2px;"></i>
     </button>
     
@@ -2090,18 +1994,18 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     
     <!-- 音量控制按钮 -->
-    <button id="music-volume-toggle" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px) saturate(150%); -webkit-backdrop-filter: blur(12px) saturate(150%); border: 1.5px solid rgba(102, 126, 234, 0.15); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #667eea; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06); flex-shrink: 0;" title="音量">
+    <button id="music-volume-toggle" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(102, 126, 234, 0.15); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: #667eea; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); flex-shrink: 0;" title="音量">
       <i class="fa fa-volume-up" id="volume-icon" style="font-size: 14px;"></i>
     </button>
     
     <!-- 隐藏/显示按钮 -->
-    <button id="music-hide-toggle" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px) saturate(150%); -webkit-backdrop-filter: blur(12px) saturate(150%); border: 1.5px solid rgba(102, 126, 234, 0.15); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #667eea; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06); flex-shrink: 0;" title="隐藏播放器">
+    <button id="music-hide-toggle" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(102, 126, 234, 0.15); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: #667eea; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); flex-shrink: 0;" title="隐藏播放器">
       <i class="fa fa-chevron-down" id="hide-icon" style="font-size: 12px;"></i>
     </button>
   </div>
   
   <!-- 迷你模式按钮（隐藏时显示） -->
-  <button id="music-mini-btn" style="display: none; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); border: 1.5px solid rgba(102, 126, 234, 0.3); width: 52px; height: 52px; border-radius: 50%; cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 3px rgba(255, 255, 255, 0.6); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #667eea;" title="显示播放器">
+  <button id="music-mini-btn" style="display: none; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(102, 126, 234, 0.25); width: 48px; height: 48px; border-radius: 50%; cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; color: #667eea;" title="显示播放器">
     <i class="fa fa-music" style="font-size: 18px;"></i>
   </button>
 </div>
