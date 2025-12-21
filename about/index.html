@@ -367,7 +367,7 @@ img:not([src]) {
 <p>这里是我分享技术见解和生活感悟的地方。我专注于网络安全、逆向工程等领域的研究和学习。</p>
 <h2 id="联系方式"><a href="#联系方式" class="headerlink" title="联系方式"></a>联系方式</h2><ul>
 <li>GitHub: <a target="_blank" rel="noopener" href="https://github.com/Zhouhang9527">Zhouhang9527</a></li>
-<li>邮箱: <a href="mailto:&#51;&#48;&#x35;&#48;&#48;&#x35;&#x35;&#49;&#51;&#50;&#64;&#x71;&#x71;&#x2e;&#x63;&#111;&#109;">3050055132@qq.com</a></li>
+<li>邮箱: <a href="mailto:&#51;&#x30;&#53;&#48;&#x30;&#53;&#53;&#x31;&#x33;&#50;&#64;&#113;&#x71;&#x2e;&#x63;&#111;&#x6d;">3050055132@qq.com</a></li>
 </ul>
 <p>感谢您的访问！</p>
 <h2 id="访客统计"><a href="#访客统计" class="headerlink" title="访客统计"></a>访客统计</h2><div class="visitor-stats">
@@ -1209,15 +1209,15 @@ document.addEventListener('DOMContentLoaded', function() {
 .atri-control-btn {
   width: 42px;
   height: 42px;
-  background: rgba(255, 255, 255, 0.7);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(102, 126, 234, 0.25);
   border-radius: 50%;
   color: #667eea;
   font-size: 16px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -1225,10 +1225,11 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .atri-control-btn:hover {
-  background: rgba(255, 255, 255, 0.85);
-  color: #764ba2;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+  color: #fff;
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3), 0 0 20px rgba(102, 126, 234, 0.2);
+  border-color: rgba(102, 126, 234, 0.4);
 }
 
 .atri-control-btn:active {
@@ -1443,27 +1444,31 @@ document.addEventListener('DOMContentLoaded', function() {
 #music-toggle:hover,
 #music-volume-toggle:hover,
 #music-hide-toggle:hover {
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.4), rgba(118, 75, 162, 0.4)) !important;
+  color: #fff !important;
   transform: scale(1.05);
-  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.15) !important;
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3), 0 0 15px rgba(102, 126, 234, 0.2) !important;
+  border-color: rgba(102, 126, 234, 0.5) !important;
 }
 
 #music-toggle:active,
 #music-volume-toggle:active,
 #music-hide-toggle:active {
   transform: scale(0.95);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 1px 4px rgba(102, 126, 234, 0.2) !important;
 }
 
 #music-mini-btn:hover {
-  background: rgba(255, 255, 255, 0.85) !important;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.45), rgba(118, 75, 162, 0.45)) !important;
+  color: #fff !important;
   transform: scale(1.05);
-  box-shadow: 0 3px 16px rgba(102, 126, 234, 0.2) !important;
+  box-shadow: 0 3px 16px rgba(102, 126, 234, 0.35), 0 0 20px rgba(102, 126, 234, 0.25) !important;
+  border-color: rgba(102, 126, 234, 0.6) !important;
 }
 
 #music-mini-btn:active {
   transform: scale(0.95);
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 1px 6px rgba(102, 126, 234, 0.2) !important;
 }
 
 /* 加载状态 */
@@ -1536,7 +1541,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     
     <!-- 播放/暂停按钮 -->
-    <button id="music-toggle" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(102, 126, 234, 0.2); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: #667eea; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); flex-shrink: 0;" title="播放/暂停">
+    <button id="music-toggle" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2)); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(102, 126, 234, 0.3); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: #667eea; box-shadow: 0 2px 6px rgba(102, 126, 234, 0.15); flex-shrink: 0;" title="播放/暂停">
       <i class="fa fa-play" id="music-icon" style="font-size: 16px; margin-left: 2px;"></i>
     </button>
     
@@ -1553,18 +1558,18 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     
     <!-- 音量控制按钮 -->
-    <button id="music-volume-toggle" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(102, 126, 234, 0.15); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: #667eea; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); flex-shrink: 0;" title="音量">
+    <button id="music-volume-toggle" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15)); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(102, 126, 234, 0.2); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: #667eea; box-shadow: 0 2px 6px rgba(102, 126, 234, 0.1); flex-shrink: 0;" title="音量">
       <i class="fa fa-volume-up" id="volume-icon" style="font-size: 14px;"></i>
     </button>
     
     <!-- 隐藏/显示按钮 -->
-    <button id="music-hide-toggle" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(102, 126, 234, 0.15); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: #667eea; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); flex-shrink: 0;" title="隐藏播放器">
+    <button id="music-hide-toggle" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15)); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(102, 126, 234, 0.2); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: #667eea; box-shadow: 0 2px 6px rgba(102, 126, 234, 0.1); flex-shrink: 0;" title="隐藏播放器">
       <i class="fa fa-chevron-down" id="hide-icon" style="font-size: 12px;"></i>
     </button>
   </div>
   
   <!-- 迷你模式按钮（隐藏时显示） -->
-  <button id="music-mini-btn" style="display: none; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(102, 126, 234, 0.25); width: 48px; height: 48px; border-radius: 50%; cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; color: #667eea;" title="显示播放器">
+  <button id="music-mini-btn" style="display: none; background: linear-gradient(135deg, rgba(102, 126, 234, 0.25), rgba(118, 75, 162, 0.25)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(102, 126, 234, 0.35); width: 48px; height: 48px; border-radius: 50%; cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 2px 12px rgba(102, 126, 234, 0.2); transition: all 0.3s ease; color: #667eea;" title="显示播放器">
     <i class="fa fa-music" style="font-size: 18px;"></i>
   </button>
 </div>
@@ -1604,17 +1609,24 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // 切换播放/暂停
   function togglePlay() {
+    console.log('[Music] 切换播放状态, 当前暂停状态:', audio.paused);
     if (audio.paused) {
-      audio.play().then(() => {
-        icon.classList.remove('fa-play');
-        icon.classList.add('fa-pause');
-        localStorage.setItem('music_playing', 'true');
-      }).catch(err => {
-        console.error('[Music] 播放失败:', err);
-        document.getElementById('music-title').textContent = '播放失败';
-      });
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          console.log('[Music] 播放成功');
+          icon.classList.remove('fa-play');
+          icon.classList.add('fa-pause');
+          localStorage.setItem('music_playing', 'true');
+        }).catch(err => {
+          console.error('[Music] 播放失败:', err);
+          alert('音乐播放失败：' + err.message + '\n请检查音频文件是否存在');
+          document.getElementById('music-title').textContent = '播放失败';
+        });
+      }
     } else {
       audio.pause();
+      console.log('[Music] 暂停播放');
       icon.classList.remove('fa-pause');
       icon.classList.add('fa-play');
       localStorage.setItem('music_playing', 'false');
@@ -1895,9 +1907,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  // 右键菜单
+  // 右键菜单效果（不阻止默认右键菜单）
   document.addEventListener('contextmenu', (e) => {
-    e.preventDefault(); // 阻止默认右键菜单，防止原版光标出现
     cursor.classList.add('context-menu');
     setTimeout(() => {
       cursor.classList.remove('context-menu');
