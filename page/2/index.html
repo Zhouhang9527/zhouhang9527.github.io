@@ -1488,7 +1488,7 @@ img:not([src]) {
 <!-- 背景音乐播放器 -->
 <div id="music-player" style="position: fixed; bottom: 20px; left: 20px; z-index: 998; pointer-events: auto; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
   <audio id="bg-music" loop preload="auto">
-    <source src="/music/ginka-theme.mp3" type="audio/mpeg">
+    <source src="/music/M500001M2iGW17u6X4.mp3" type="audio/mpeg">
     您的浏览器不支持音频播放
   </audio>
   
@@ -1496,7 +1496,7 @@ img:not([src]) {
   <div id="music-player-main" style="display: flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 12px 16px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); transition: all 0.3s ease;">
     <!-- 音乐封面 -->
     <div id="music-cover" style="width: 48px; height: 48px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); flex-shrink: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-      <img src="/music/ginka-cover.jpg" alt="夢浮橋 - 青木陽菜" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">
+      <img src="/music/109951170492493512.jpg" alt="夢浮橋 - 青木陽菜" style="width: 100%; height: 100%; object-fit: cover;" onerror="console.log('封面加载失败')">
     </div>
     
     <!-- 播放/暂停按钮 -->
@@ -1626,46 +1626,33 @@ img:not([src]) {
     }
   }
   
-  // 按钮样式函数
-  function addButtonHover(btn) {
-    btn.addEventListener('mouseenter', () => {
-      btn.style.background = 'rgba(255, 255, 255, 1)';
-      btn.style.color = '#222';
-      btn.style.transform = 'translateY(-2px) scale(1.05)';
-      btn.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-      btn.style.borderColor = 'rgba(0, 0, 0, 0.15)';
-    });
-    
-    btn.addEventListener('mouseleave', () => {
-      btn.style.background = 'rgba(255, 255, 255, 0.9)';
-      btn.style.color = '#555';
-      btn.style.transform = 'translateY(0) scale(1)';
-      btn.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.1)';
-      btn.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-    });
-    
-    btn.addEventListener('mousedown', () => {
-      btn.style.transform = 'translateY(0) scale(0.95)';
-      btn.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-    });
-    
-    btn.addEventListener('mouseup', () => {
-      btn.style.transform = 'translateY(-2px) scale(1.05)';
-      btn.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-    });
-  }
-  
   // 事件监听
   toggleBtn.addEventListener('click', togglePlay);
   volumeToggle.addEventListener('click', toggleVolume);
   hideToggle.addEventListener('click', toggleHide);
   miniBtn.addEventListener('click', toggleHide);
   
-  // 添加悬停效果
-  addButtonHover(toggleBtn);
-  addButtonHover(volumeToggle);
-  addButtonHover(hideToggle);
-  addButtonHover(miniBtn);
+  // 音频加载错误处理
+  audio.addEventListener('error', (e) => {
+    console.error('[Music] 音频加载失败:', e);
+    document.getElementById('music-title').textContent = '加载失败';
+    icon.classList.remove('fa-pause');
+    icon.classList.add('fa-play');
+  });
+  
+  // 音频加载成功
+  audio.addEventListener('loadedmetadata', () => {
+    console.log('[Music] 音频加载成功, 时长:', formatTime(audio.duration));
+    timeDisplay.textContent = `0:00 / ${formatTime(audio.duration)}`;
+  });
+  
+  // 音频可以播放
+  audio.addEventListener('canplay', () => {
+    console.log('[Music] 音频可以播放');
+    if (wasPlaying) {
+      audio.play().catch(err => console.error('[Music] 自动播放失败:', err));
+    }
+  });
   
   // 进度条点击跳转
   progressContainer.addEventListener('click', (e) => {
@@ -1735,6 +1722,17 @@ img:not([src]) {
   cursor: none !important;
 }
 
+/* 文字选中样式 */
+::selection {
+  background: rgba(102, 126, 234, 0.3);
+  color: #333;
+}
+
+::-moz-selection {
+  background: rgba(102, 126, 234, 0.3);
+  color: #333;
+}
+
 #custom-cursor {
   position: fixed;
   width: 24px;
@@ -1767,6 +1765,12 @@ img:not([src]) {
   transform: scale(0.9);
   background: radial-gradient(circle, rgba(102, 234, 126, 0.7) 0%, rgba(75, 162, 118, 0.4) 50%, transparent 70%);
   box-shadow: 0 0 20px rgba(102, 234, 126, 0.6), 0 0 35px rgba(75, 162, 118, 0.4);
+}
+
+#custom-cursor.selecting {
+  transform: scale(1.1);
+  background: radial-gradient(circle, rgba(234, 179, 102, 0.7) 0%, rgba(162, 118, 75, 0.4) 50%, transparent 70%);
+  box-shadow: 0 0 20px rgba(234, 179, 102, 0.6), 0 0 35px rgba(162, 118, 75, 0.4);
 }
 
 #custom-cursor.hidden {
@@ -1855,10 +1859,21 @@ img:not([src]) {
   
   // 右键菜单
   document.addEventListener('contextmenu', (e) => {
+    e.preventDefault(); // 阻止默认右键菜单，防止原版光标出现
     cursor.classList.add('context-menu');
     setTimeout(() => {
       cursor.classList.remove('context-menu');
     }, 500);
+  });
+  
+  // 监听文字选中
+  document.addEventListener('selectionchange', () => {
+    const selection = window.getSelection();
+    if (selection && selection.toString().length > 0) {
+      cursor.classList.add('selecting');
+    } else {
+      cursor.classList.remove('selecting');
+    }
   });
   
   // 拖尾效果
