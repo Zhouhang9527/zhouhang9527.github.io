@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] 花指令</title>
+    <url>/2025/10/19/NSSCTF2025%E5%85%A5%E9%97%A8%E9%A2%98%E7%9B%AE-%E8%8A%B1%E6%8C%87%E4%BB%A4/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>：NSSCTF 2025 秋招赛 · 花指令</p>
+<p><strong>题目类型</strong>：Reverse Engineering</p>
+<p><strong>难度评估</strong>：入门</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：基础分析"><a href="#第一步：基础分析" class="headerlink" title="第一步：基础分析"></a>第一步：基础分析</h3><p>先用 DIE 看一下，样本是 32 位 PE，可确认未加壳，直接用 IDA 静态分析足够。</p>
+<h3 id="第二步：主流程梳理"><a href="#第二步：主流程梳理" class="headerlink" title="第二步：主流程梳理"></a>第二步：主流程梳理</h3><p>在 IDA 中按 <code>F5</code> 查看伪代码，可以看到 <code>main</code> 读取输入后把它平均切成三段，再分别传入 <code>flower_1</code>、<code>flower_2</code>、<code>flower_3</code> 做校验：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="type">char</span> input[<span class="number">100</span>];</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">&quot;%99s&quot;</span>, input);</span><br><span class="line">  <span class="type">size_t</span> len = <span class="built_in">strlen</span>(input);</span><br><span class="line">  <span class="type">size_t</span> len1 = len / <span class="number">3</span>;</span><br><span class="line">  <span class="type">size_t</span> len2 = len / <span class="number">3</span>;</span><br><span class="line">  <span class="type">size_t</span> len3 = len - len1 - len2;</span><br><span class="line">  <span class="built_in">strncpy</span>(part1, input, len1);</span><br><span class="line">  <span class="built_in">strncpy</span>(part2, input + len1, len2);</span><br><span class="line">  <span class="built_in">strncpy</span>(part3, input + len1 + len2, len3);</span><br><span class="line">  <span class="keyword">if</span> (flower_1(part1) &amp;&amp; flower_2(part2) &amp;&amp; flower_3(part3))</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Congratulations!&quot;</span>);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;GG&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="第三步：清除花指令"><a href="#第三步：清除花指令" class="headerlink" title="第三步：清除花指令"></a>第三步：清除花指令</h3><p>进入 <code>flower_x</code> 系列函数可以发现大量成对出现的 <code>jz</code> &#x2F; <code>jnz</code>、<code>xor eax, eax</code> + <code>jz</code> 等典型花指令。方法很固定：</p>
+<ul>
+<li>在反汇编窗口按 <code>U</code> 取消伪代码还原；</li>
+<li>把干扰跳转改成 <code>NOP</code> 或直接改为 <code>jmp</code>；</li>
+<li>重新按 <code>C</code> 识别指令，流程就顺回来了。</li>
+</ul>
+<p>处理完花指令之后，三个函数的核心逻辑变得很清晰：都在使用同一个密钥对输入做异或校验。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">flower_2</span><span class="params">(<span class="type">char</span> *a)</span> &#123;</span><br><span class="line">  <span class="type">const</span> <span class="type">char</span> key[] = <span class="string">&quot;Ciallo&quot;</span>;</span><br><span class="line">  <span class="type">const</span> <span class="type">unsigned</span> <span class="type">char</span> answer2[] = &#123;<span class="number">0x26</span>,<span class="number">0x44</span>,<span class="number">0x07</span>,<span class="number">0x5e</span>,<span class="number">0x5c</span>,<span class="number">0x5f</span>,<span class="number">0x6e</span>,<span class="number">0x5d</span>,<span class="number">0x02</span>,<span class="number">0x5d</span>,<span class="number">0x55</span>,<span class="number">0x42</span>,<span class="number">0x22</span>,<span class="number">0x50</span>&#125;;</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; <span class="built_in">strlen</span>(a); ++i)</span><br><span class="line">    <span class="keyword">if</span> ((key[i % <span class="number">6</span>] ^ a[i]) != answer2[i])</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>flower_1</code> 与 <code>flower_3</code> 的写法完全相同，只是常量数组不同。</p>
+<h3 id="第四步：脚本复现"><a href="#第四步：脚本复现" class="headerlink" title="第四步：脚本复现"></a>第四步：脚本复现</h3><p>把三个数组和密钥抄出来，写个脚本按位异或即可还原 flag：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">answer1 = [<span class="number">0x0d</span>, <span class="number">0x3a</span>, <span class="number">0x32</span>, <span class="number">0x2f</span>, <span class="number">0x38</span>, <span class="number">0x29</span>, <span class="number">0x38</span>, <span class="number">0x5d</span>, <span class="number">0x56</span>, <span class="number">0x58</span>, <span class="number">0x5e</span>, <span class="number">0x09</span>, <span class="number">0x21</span>, <span class="number">0x0d</span>]</span><br><span class="line">answer2 = [<span class="number">0x26</span>, <span class="number">0x44</span>, <span class="number">0x07</span>, <span class="number">0x5e</span>, <span class="number">0x5c</span>, <span class="number">0x5f</span>, <span class="number">0x6e</span>, <span class="number">0x5d</span>, <span class="number">0x02</span>, <span class="number">0x5d</span>, <span class="number">0x55</span>, <span class="number">0x42</span>, <span class="number">0x22</span>, <span class="number">0x50</span>]</span><br><span class="line">answer3 = [<span class="number">0x27</span>, <span class="number">0x5c</span>, <span class="number">0x4c</span>, <span class="number">0x54</span>, <span class="number">0x08</span>, <span class="number">0x56</span>, <span class="number">0x72</span>, <span class="number">0x5f</span>, <span class="number">0x50</span>, <span class="number">0x5f</span>, <span class="number">0x5c</span>, <span class="number">0x0b</span>, <span class="number">0x76</span>, <span class="number">0x08</span>, <span class="number">0x53</span>, <span class="number">0x11</span>]</span><br><span class="line">key = [<span class="number">0x43</span>, <span class="number">0x69</span>, <span class="number">0x61</span>, <span class="number">0x6c</span>, <span class="number">0x6c</span>, <span class="number">0x6f</span>]</span><br><span class="line"></span><br><span class="line">flag_bytes = []</span><br><span class="line"><span class="keyword">for</span> idx, val <span class="keyword">in</span> <span class="built_in">enumerate</span>(answer1 + answer2 + answer3):</span><br><span class="line">  flag_bytes.append(val ^ key[idx % <span class="built_in">len</span>(key)])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>.join(<span class="built_in">chr</span>(b) <span class="keyword">for</span> b <span class="keyword">in</span> flag_bytes))</span><br></pre></td></tr></table></figure>
+
+<h3 id="第五步：验证结果"><a href="#第五步：验证结果" class="headerlink" title="第五步：验证结果"></a>第五步：验证结果</h3><p>脚本输出的结果为 <code>NSSCTF{4742fbde-f200-4c19-a9d5-8d916130d5a2}</code>，与题目给出的 flag 完全一致。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>识别并清理 <code>jz</code> &#x2F; <code>jnz</code>、<code>xor reg, reg</code> + <code>jz</code> 这类花指令是关键；</li>
+<li>去除干扰后三个函数实质上是相同的异或校验；</li>
+<li>通过脚本复现校验过程可以快速确认 flag，后续遇到类似题型也可以参照此流程。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>花指令</tag>
+        <tag>IDA Pro</tag>
+        <tag>异或解密</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[HUBUCTF 2022 新生赛] simple_RE 题解</title>
+    <url>/2025/10/10/%5BHUBUCTF%202022%20%E6%96%B0%E7%94%9F%E8%B5%9B%5Dsimple_RE/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [HUBUCTF 2022 新生赛] simple_RE<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 简单</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：文件分析"><a href="#第一步：文件分析" class="headerlink" title="第一步：文件分析"></a>第一步：文件分析</h3><p>拖入 die 进行查壳分析，发现程序是 64 位、小端序、无壳的可执行文件。</p>
+<h3 id="第二步：逆向分析"><a href="#第二步：逆向分析" class="headerlink" title="第二步：逆向分析"></a>第二步：逆向分析</h3><p>用 IDA 打开，F5 查看伪代码。主函数如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __fastcall <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv, <span class="type">const</span> <span class="type">char</span> **envp)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> p_Size; <span class="comment">// [rsp+24h] [rbp-44h] BYREF</span></span><br><span class="line">  <span class="type">void</span> *Buf1; <span class="comment">// [rsp+28h] [rbp-40h] BYREF</span></span><br><span class="line">  <span class="type">char</span> v6[<span class="number">56</span>]; <span class="comment">// [rsp+30h] [rbp-38h] BYREF</span></span><br><span class="line"></span><br><span class="line">  sub_401770(argc: argc, argv: argv, envp: envp);</span><br><span class="line">  <span class="built_in">printf</span>(Format: <span class="string">&quot;please input the flag:&quot;</span>);</span><br><span class="line">  <span class="built_in">scanf</span>(Format: <span class="string">&quot;%s&quot;</span>, v6);</span><br><span class="line">  Buf1 = <span class="number">0</span>;</span><br><span class="line">  sub_401570(a1: v6, p_Buf1: &amp;Buf1, p_Size: &amp;p_Size);</span><br><span class="line">  <span class="keyword">if</span> ( !<span class="built_in">memcmp</span>(</span><br><span class="line">          Buf1: Buf1,</span><br><span class="line">          Buf2: a5mc58bphliax7j,                      <span class="comment">// &quot;5Mc58bPHLiAx7J8ocJIlaVUxaJvMcoYMaoPMaOfg15c475tscHfM/8==&quot;</span></span><br><span class="line">          Size: p_Size) )</span><br><span class="line">    <span class="built_in">printf</span>(Format: <span class="string">&quot;\nsuccess!&quot;</span>);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">printf</span>(Format: <span class="string">&quot;\nfailed!&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( Buf1 )</span><br><span class="line">    <span class="built_in">free</span>(Buf1: Buf1);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序逻辑很简单：输入 flag，调用处理函数，然后比较结果。</p>
+<h3 id="第三步：深入分析编码函数"><a href="#第三步：深入分析编码函数" class="headerlink" title="第三步：深入分析编码函数"></a>第三步：深入分析编码函数</h3><p>双击进入 <code>sub_401570</code> 函数内部（已有部分注释）：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__int64 __fastcall <span class="title function_">sub_401570</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *a1, <span class="type">void</span> **p_Buf1, <span class="type">int</span> *p_Size)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> lenth; <span class="comment">// r15d</span></span><br><span class="line">  <span class="type">int</span> n2; <span class="comment">// r12d</span></span><br><span class="line">  <span class="type">int</span> _______; <span class="comment">// r13d</span></span><br><span class="line">  __int64 ________1; <span class="comment">// r14</span></span><br><span class="line">  _BYTE *v10; <span class="comment">// rax</span></span><br><span class="line">  _BYTE *v11; <span class="comment">// r9</span></span><br><span class="line">  __int64 three_i; <span class="comment">// r8</span></span><br><span class="line">  <span class="type">char</span> v13; <span class="comment">// cl</span></span><br><span class="line">  <span class="type">char</span> v14; <span class="comment">// r11</span></span><br><span class="line">  <span class="type">char</span> v15; <span class="comment">// r10</span></span><br><span class="line"></span><br><span class="line">  lenth = <span class="built_in">strlen</span>(Str: a1);</span><br><span class="line">  n2 = lenth % <span class="number">3</span>;</span><br><span class="line">  <span class="keyword">if</span> ( lenth % <span class="number">3</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    _______ = <span class="number">4</span> * (lenth / <span class="number">3</span>) + <span class="number">4</span>;</span><br><span class="line">    ________1 = _______;</span><br><span class="line">    v10 = <span class="built_in">malloc</span>(Size: _______ + <span class="number">1LL</span>);</span><br><span class="line">    v10[_______] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> ( lenth &lt;= <span class="number">0</span> )</span><br><span class="line">      <span class="keyword">goto</span> LABEL_5;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    _______ = <span class="number">4</span> * (lenth / <span class="number">3</span>);</span><br><span class="line">    ________1 = _______;</span><br><span class="line">    v10 = <span class="built_in">malloc</span>(Size: _______ + <span class="number">1LL</span>);</span><br><span class="line">    v10[_______] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> ( lenth &lt;= <span class="number">0</span> )</span><br><span class="line">      <span class="keyword">goto</span> LABEL_8;</span><br><span class="line">  &#125;</span><br><span class="line">  v11 = v10;</span><br><span class="line">  three_i = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    v11 += <span class="number">4</span>;</span><br><span class="line">    v13 = a1[three_i];</span><br><span class="line">    *(v11 - <span class="number">4</span>) = aQvejafhmuyjbac[v13 &gt;&gt; <span class="number">2</span>];     <span class="comment">// 00AAAAAA</span></span><br><span class="line">    v14 = a1[three_i + <span class="number">1</span>];</span><br><span class="line">    *(v11 - <span class="number">3</span>) = aQvejafhmuyjbac[(v14 &gt;&gt; <span class="number">4</span>) | (<span class="number">16</span> * v13) &amp; <span class="number">48</span>]; <span class="comment">// 0000BBBB + 00AA0000 = 00AABBBB</span></span><br><span class="line">    v15 = a1[three_i + <span class="number">2</span>];</span><br><span class="line">    three_i += <span class="number">3</span>;</span><br><span class="line">    *(v11 - <span class="number">2</span>) = aQvejafhmuyjbac[(v15 &gt;&gt; <span class="number">6</span>) | (<span class="number">4</span> * v14) &amp; <span class="number">60</span>];  <span class="comment">// 000000CC + 00BBBB00 = 00BBBBCC</span></span><br><span class="line">    *(v11 - <span class="number">1</span>) = aQvejafhmuyjbac[v15 &amp; <span class="number">0x3F</span>];   <span class="comment">// 00CCCCCC</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( lenth &gt; (<span class="type">int</span>)three_i );</span><br><span class="line"></span><br><span class="line">LABEL_5:</span><br><span class="line">  <span class="keyword">if</span> ( n2 == <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v10[________1 - <span class="number">2</span>] = <span class="number">61</span>;</span><br><span class="line">    v10[________1 - <span class="number">1</span>] = <span class="number">61</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> ( n2 == <span class="number">2</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v10[________1 - <span class="number">1</span>] = <span class="number">61</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">LABEL_8:</span><br><span class="line">  *p_Buf1 = v10;</span><br><span class="line">  *p_Size = _______;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="第四步：识别编码模式"><a href="#第四步：识别编码模式" class="headerlink" title="第四步：识别编码模式"></a>第四步：识别编码模式</h3><p>通过分析可以看出，这是一个使用自定义字符集的 Base64 编码实现。虽然可以使用在线解码工具快速得到结果，但为了更好地理解编码过程，我们来手动编写解码脚本。</p>
+<p>首先，在 main 函数中找到硬编码的密文：<code>5Mc58bPHLiAx7J8ocJIlaVUxaJvMcoYMaoPMaOfg15c475tscHfM/8==</code></p>
+<p>然后在 <code>sub_401570</code> 函数中找到 Base64 字符映射表：<code>qvEJAfHmUYjBac+u8Ph5n9Od17FrICL/X0gVtM4Qk6T2z3wNSsyoebilxWKGZpRD</code></p>
+<p>理解编码逻辑后，手动实现对应的解码脚本：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">enc=(<span class="string">&#x27;5Mc58bPHLiAx7J8ocJIlaVUxaJvMcoYMaoPMaOfg15c475tscHfM/8==&#x27;</span>)</span><br><span class="line">enc_=[]</span><br><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> enc:</span><br><span class="line">    enc_.append(<span class="built_in">ord</span>(a))</span><br><span class="line">key = [<span class="number">0x71</span>, <span class="number">0x76</span>, <span class="number">0x45</span>, <span class="number">0x4a</span>, <span class="number">0x41</span>, <span class="number">0x66</span>, <span class="number">0x48</span>, <span class="number">0x6d</span>, <span class="number">0x55</span>, <span class="number">0x59</span>, <span class="number">0x6a</span>, <span class="number">0x42</span>, <span class="number">0x61</span>, <span class="number">0x63</span>, <span class="number">0x2b</span>, <span class="number">0x75</span>, <span class="number">0x38</span>, <span class="number">0x50</span>, <span class="number">0x68</span>, <span class="number">0x35</span>, <span class="number">0x6e</span>, <span class="number">0x39</span>, <span class="number">0x4f</span>, <span class="number">0x64</span>, <span class="number">0x31</span>, <span class="number">0x37</span>, <span class="number">0x46</span>, <span class="number">0x72</span>, <span class="number">0x49</span>, <span class="number">0x43</span>, <span class="number">0x4c</span>, <span class="number">0x2f</span>, <span class="number">0x58</span>, <span class="number">0x30</span>, <span class="number">0x67</span>, <span class="number">0x56</span>, <span class="number">0x74</span>, <span class="number">0x4d</span>, <span class="number">0x34</span>, <span class="number">0x51</span>, <span class="number">0x6b</span>, <span class="number">0x36</span>, <span class="number">0x54</span>, <span class="number">0x32</span>, <span class="number">0x7a</span>, <span class="number">0x33</span>, <span class="number">0x77</span>, <span class="number">0x4e</span>, <span class="number">0x53</span>, <span class="number">0x73</span>, <span class="number">0x79</span>, <span class="number">0x6f</span>, <span class="number">0x65</span>, <span class="number">0x62</span>, <span class="number">0x69</span>, <span class="number">0x6c</span>, <span class="number">0x78</span>, <span class="number">0x57</span>, <span class="number">0x4b</span>, <span class="number">0x47</span>, <span class="number">0x5a</span>, <span class="number">0x70</span>, <span class="number">0x52</span>, <span class="number">0x44</span>, <span class="number">0x0</span>]</span><br><span class="line">i=<span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> i&lt;<span class="built_in">len</span>(enc_):</span><br><span class="line">    i+=<span class="number">4</span></span><br><span class="line">    v1=key.index(enc_[i-<span class="number">4</span>])</span><br><span class="line">    v2=key.index(enc_[i-<span class="number">3</span>])</span><br><span class="line">    v13=(v2&amp;<span class="number">0b00110000</span>)&gt;&gt;<span class="number">4</span>|(v1&amp;<span class="number">0b00111111</span>)&lt;&lt;<span class="number">2</span></span><br><span class="line">    <span class="keyword">if</span> enc_[i-<span class="number">2</span>]==<span class="built_in">ord</span>(<span class="string">&#x27;=&#x27;</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="built_in">chr</span>(v13),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    v3=key.index(enc_[i-<span class="number">2</span>])</span><br><span class="line">    v14=(v3&amp;<span class="number">0b00111100</span>)&gt;&gt;<span class="number">2</span>|(v2&amp;<span class="number">0b00001111</span>)&lt;&lt;<span class="number">4</span></span><br><span class="line">    <span class="keyword">if</span> enc_[i-<span class="number">1</span>]==(<span class="string">&#x27;=&#x27;</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="built_in">chr</span>(v14),end=<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    v4=key.index(enc_[i-<span class="number">1</span>])</span><br><span class="line">    v15=v4|(v3&amp;<span class="number">0b000011</span>)&lt;&lt;<span class="number">6</span></span><br><span class="line">    [<span class="built_in">print</span>(<span class="built_in">chr</span>(i),end=<span class="string">&#x27;&#x27;</span>) <span class="keyword">for</span> i <span class="keyword">in</span> (v13,v14,v15)]</span><br></pre></td></tr></table></figure>
+<h3 id="第五步：解码验证"><a href="#第五步：解码验证" class="headerlink" title="第五步：解码验证"></a>第五步：解码验证</h3><p>运行脚本，成功得到 flag：NSSCTF{a8d4347722800e72e34e1aba3fe914ae}</p>
+<p>解题总结<br>这是一道经典的逆向工程题目，主要考察以下能力点：</p>
+<p>静态分析能力：熟练使用 IDA Pro 进行反汇编和伪代码分析<br>自定义编码识别：准确识别出 Base64 的变体实现<br>编码逆向工程：深入理解编码逻辑并实现解码算法<br>通过仔细分析程序的编码表和处理逻辑，手动构建了对应的解码器，最终成功破解了 flag。</p>
+<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>IDA Pro</tag>
+        <tag>Base64</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] Ultimate Packer for eXecutables</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DUltimate%20Packer%20for%20eXecutables/</url>
+    <content><![CDATA[<h3 id="题目四-Ultimate-Packer-for-eXecutables"><a href="#题目四-Ultimate-Packer-for-eXecutables" class="headerlink" title="题目四:Ultimate Packer for eXecutables"></a>题目四:Ultimate Packer for eXecutables</h3><p>DIE 显示样本被 UPX 压缩，还提示入口信息异常。</p>
+<p><img src="pasted-image-20251104182310.png"></p>
+<p>直接 <code>upx -d</code> 会报错，因为作者把头部签名改掉了。</p>
+<p><img src="pasted-image-20251104182334.png"></p>
+<p>用 010 Editor 打开，手工把 <code>UPX!</code> 对应的几个字节覆写回来。</p>
+<p><img src="pasted-image-20251104182708.png"></p>
+<p>保存后重新 <code>upx -d</code> 就能顺利脱壳。后续流程：把修复后的二进制丢进 IDA，跟代码逻辑写解密脚本即可。注意程序中有 <code>input * 122</code> 这种会溢出的运算，所以脚本里采用遍历可打印字符、逐字节模 256 验证，避免直接倒推导致结果不对。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>IDA Pro</tag>
+        <tag>UPX</tag>
+        <tag>脱壳</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] CodeRunner</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DCodeRunner/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] CodeRunner<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 困难</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="第一步：文件分析"><a href="#第一步：文件分析" class="headerlink" title="第一步：文件分析"></a>第一步：文件分析</h3><p><img src="pasted-image-20251105125646.png" alt="Detect IL2CPP 后端"></p>
+<p>Unity3D 程序，解压后发现是 IL2CPP 后端（不是 Mono）。</p>
+<h3 id="第二步：脱壳处理"><a href="#第二步：脱壳处理" class="headerlink" title="第二步：脱壳处理"></a>第二步：脱壳处理</h3><p>发现 GameAssembly.dll 被 UPX 加壳且文件头被修改。用 010 Editor 修复文件头后脱壳。</p>
+<p><img src="pasted-image-20251105130503.png" alt="010 Editor 修头"></p>
+<p><img src="pasted-image-20251105131649.png" alt="010 Editor 更多细节"></p>
+<h3 id="第三步：IL2CPP-反编译"><a href="#第三步：IL2CPP-反编译" class="headerlink" title="第三步：IL2CPP 反编译"></a>第三步：IL2CPP 反编译</h3><p>使用 IL2cppDumper 从二进制文件中提取类型和方法信息。</p>
+<p><img src="pasted-image-20251105125812.png" alt="IL2cppDumper 导出"></p>
+<p><img src="pasted-image-20251105130714.png" alt="IL2cppDumper 导出结果"></p>
+<h3 id="第四步：代码反编译"><a href="#第四步：代码反编译" class="headerlink" title="第四步：代码反编译"></a>第四步：代码反编译</h3><p>使用 dnSpy 反编译 .NET 代码。</p>
+<p><img src="pasted-image-20251105130959.png" alt="dnSpy 关键位置"></p>
+<h3 id="第五步：关键函数定位"><a href="#第五步：关键函数定位" class="headerlink" title="第五步：关键函数定位"></a>第五步：关键函数定位</h3><p>借助 IDA 与 IL2cppDumper 脚本，定位 <code>QRCodeBuilder</code> 类找到二维码生成逻辑。</p>
+<p><img src="pasted-image-20251105132137.png" alt="IDA 载入脚本（1）"><br><img src="pasted-image-20251105132204.png" alt="IDA 载入脚本（2）"><br><img src="pasted-image-20251105132156.png" alt="IDA 载入脚本（3）"></p>
+<p><img src="pasted-image-20251105132214.png" alt="IDA + 脚本就位"></p>
+<p><img src="pasted-image-20251105134410.png" alt="搜索 QRCodeBuilder 类"></p>
+<p><img src="pasted-image-20251105140316.png" alt="QRCode 构建相关函数视图"></p>
+<h3 id="第六步：动态调试"><a href="#第六步：动态调试" class="headerlink" title="第六步：动态调试"></a>第六步：动态调试</h3><p>分析代码发现程序会根据 qrMatrix 动态生成二维码。需要动态调试获取矩阵数据。</p>
+<p><img src="pasted-image-20251105141018.png" alt="Awake&#x2F;Construct 调用关系"></p>
+<p><img src="pasted-image-20251105141113.png" alt="qrMatrix 生成推断"></p>
+<h3 id="第七步：绕过反调试"><a href="#第七步：绕过反调试" class="headerlink" title="第七步：绕过反调试"></a>第七步：绕过反调试</h3><p>程序有反调试保护，调用了 WinAPI_DetectDebugger。patch 该函数为直接返回，绕过检测。</p>
+<p><img src="pasted-image-20251105142303.png" alt="附加进程与入口断点"></p>
+<h3 id="第八步：获取矩阵数据"><a href="#第八步：获取矩阵数据" class="headerlink" title="第八步：获取矩阵数据"></a>第八步：获取矩阵数据</h3><p>在 Unity 程序中下断点，获取 this 指针，通过偏移量找到 qrMatrix 的地址，提取矩阵数据。</p>
+<p><img src="pasted-image-20251105143407.png" alt="寄存器与偏移定位"></p>
+<h3 id="第九步：生成二维码"><a href="#第九步：生成二维码" class="headerlink" title="第九步：生成二维码"></a>第九步：生成二维码</h3><p>使用提取的矩阵数据，编写脚本生成二维码图片：</p>
+<p><img src="pasted-image-20251105152619.png" alt="转二维码脚本"></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 二维码生成脚本</span></span><br><span class="line"><span class="keyword">import</span> qrcode</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从调试中提取的矩阵数据 (21x21 二进制矩阵)</span></span><br><span class="line">matrix = [</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将矩阵转换为字符串</span></span><br><span class="line">matrix_str = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> matrix:</span><br><span class="line">    <span class="keyword">for</span> bit <span class="keyword">in</span> row:</span><br><span class="line">        matrix_str += <span class="built_in">str</span>(bit)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成二维码</span></span><br><span class="line">qr = qrcode.QRCode(version=<span class="number">1</span>, box_size=<span class="number">10</span>, border=<span class="number">5</span>)</span><br><span class="line">qr.add_data(matrix_str)</span><br><span class="line">qr.make(fit=<span class="literal">True</span>)</span><br><span class="line">img = qr.make_image(fill=<span class="string">&#x27;black&#x27;</span>, back_color=<span class="string">&#x27;white&#x27;</span>)</span><br><span class="line">img.save(<span class="string">&#x27;flag_qr.png&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;二维码已生成，扫描获取flag&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="题目六-CodeRunner（简要回顾）"><a href="#题目六-CodeRunner（简要回顾）" class="headerlink" title="题目六:CodeRunner（简要回顾）"></a>题目六:CodeRunner（简要回顾）</h3><ul>
+<li>确认为 IL2CPP 后端 → IL2cppDumper 导出元数据。</li>
+<li>修头 + UPX 脱壳后，配合 IDA 脚本定位 <code>QRCodeBuilder</code>。</li>
+<li>绕过反调试，获取 <code>this</code>，按 offset 0x48 取出 <code>qrMatrix</code>。</li>
+<li>脚本生成二维码，得到 flag。</li>
+</ul>
+<p>为避免重复展示，回顾部分不再嵌入截图；全部详细截图见上文“解题过程”。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>Unity</tag>
+        <tag>IL2CPP</tag>
+        <tag>动态调试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] ez_tea<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="题目八-ez-tea"><a href="#题目八-ez-tea" class="headerlink" title="题目八:ez_tea"></a>题目八:ez_tea</h3><p>程序执行前会先弹对话框提示“检测到调试器”，随后直接退出。查 API 引用时能看到 <code>MessageBox</code> 和常见的 <code>IsDebuggerPresent</code> 等函数，锁定反调试模块后，把入口 patch 成 <code>ret</code> 就能让程序安静下来。</p>
+<p>绕过之后继续动调，发现读入的 flag 先被简单混淆，再走了一遍改造过常量的 TEA。把加密块和新的 key dump 出来，照旧写脚本倒着执行 —— 每轮扣掉 <code>delta</code>、处理高位低位、循环 32 次。最后把混淆操作按原逻辑逆过来（按位异或&#x2F;加减）就能还原明文。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>动态调试</tag>
+        <tag>反反调试</tag>
+        <tag>TEA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] debuggggg</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Ddebuggggg/</url>
+    <content><![CDATA[<h3 id="题目五-debuggggg"><a href="#题目五-debuggggg" class="headerlink" title="题目五: debuggggg"></a>题目五: debuggggg</h3><p>样本是个 Linux 可执行文件，<code>main</code> 里读取输入后调用若干校验函数。</p>
+<p><img src="pasted-image-20251104221613.png"></p>
+<p>静态分析很快被 <code>rand()</code> 绕住，找不到 seed 就无法还原 <code>buf</code>。题目名字已经明示要“调试”，于是直接改用 WSL 远程调试。</p>
+<p><img src="pasted-image-20251104221751.png"></p>
+<p><img src="pasted-image-20251104222157.png"></p>
+<p>进入调试后发现程序在关键逻辑之前还有一段输入长度检测，不达到要求就直接退出，断点根本跑不到。把这里的条件跳转 patch 掉，强制通过长度校验。</p>
+<p><img src="pasted-image-20251104223356.png"></p>
+<p><img src="pasted-image-20251104223512.png"></p>
+<p>记得改完要重新加载 patched 版本（<code>copy new</code>），不然还是老代码。</p>
+<p><img src="pasted-image-20251104224152.png"></p>
+<p><img src="pasted-image-20251104224419.png"></p>
+<p>拿到 <code>rand()</code> 生成的数组之后，脚本只需要按模运算逆推即可。加密是 <code>C = (P + K) mod 256</code>，解密自然就是 <code>P = (C - K) mod 256</code>（为了保险可以先加 256 再取模）。遍历密文，逐个还原字符，flag 就出来了。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">flag += <span class="built_in">chr</span>(p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Flag:&quot;</span>, flag)</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道动态调试题目，主要考察以下能力点：</p>
+<ul>
+<li>Linux 程序的动态调试</li>
+<li>IDA 远程调试配置</li>
+<li>程序 patch 技术</li>
+<li>随机数相关加密的逆向</li>
+</ul>
+<p>通过动态调试获取关键数据，最终成功破解了 flag。</p>
+<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>动态调试</tag>
+        <tag>反反调试</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] fl-ow-er</title>
+    <url>//2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dfl-ow-er/</url>
+    <content><![CDATA[<h3 id="题目二-flower"><a href="#题目二-flower" class="headerlink" title="题目二:flower~"></a>题目二:fl<del>ow</del>er~</h3><p>拖进 IDA 之后直接 <code>F5</code> 会提示存在跳转陷阱，一眼望去全是经典的花指令 —— 成对的 <code>jz/jnz</code> 以及对同一地址的重复跳转。</p>
+<p><img src="pasted-image-20251103233312.png"></p>
+<p>处理思路也很固定：先按 <code>U</code> 取消反编译，再 <code>Ctrl+N</code> 把被花指令“包裹”的字节改成 <code>NOP</code>，最后 <code>C</code> 重新识别，流程就顺回来了。</p>
+<p><img src="pasted-image-20251103233447.png"></p>
+<p>遇到必跳的 <code>jz</code>&#x2F;<code>jnz</code> 组合时，把其中一条改成 <code>jmp</code>，另一条直接填 <code>NOP</code>。接下来还有一处“<code>xor eax, eax</code> + <code>jz</code>”的隐藏花指令，同理改成 <code>jmp</code> 并清理冗余字节即可。</p>
+<p><img src="pasted-image-20251103233645.png"></p>
+<p><img src="pasted-image-20251103233707.png"></p>
+<p>花指令清完再 <code>F5</code>，<code>main</code> 的伪代码就能顺利出来。继续跟进 <code>loc_401000</code>，核心逻辑只是简单的异或循环。把数据段里的密文和密钥抠出来，写个脚本逐字节 <code>cipher[i] ^ key[i]</code>，就能把 flag 弄出来。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>花指令</tag>
+        <tag>IDA Pro</tag>
+        <tag>异或解密</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] 一种很新的签到</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E4%B8%80%E7%A7%8D%E5%BE%88%E6%96%B0%E7%9A%84%E7%AD%BE%E5%88%B0/</url>
+    <content><![CDATA[<h3 id="题目一-一种很新的签到"><a href="#题目一-一种很新的签到" class="headerlink" title="题目一:一种很新的签到"></a>题目一:一种很新的签到</h3><p>先把程序丢进 DIE，确认没有装壳之后直接交给 IDA 处理。</p>
+<p><img src="pasted-image-20251103232546.png"></p>
+<p>IDA 里进入 <code>main</code>，按 <code>F5</code> 虽然能看到伪代码，但流程有些噪音。直接 <code>Shift+F12</code> 查看字符串表，硬编码的 flag 就明晃晃地躺在那里，抄下来提交即可。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>IDA Pro</tag>
+        <tag>签到题</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] 哈基米</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E5%93%88%E5%9F%BA%E7%B1%B3/</url>
+    <content><![CDATA[<h3 id="题目三-哈基米"><a href="#题目三-哈基米" class="headerlink" title="题目三:哈基米"></a>题目三:哈基米</h3><p>附件是一个 exe，拖进 DIE 一眼就能看出是 PyInstaller 打包。</p>
+<p><img src="pasted-image-20251104110246.png"></p>
+<p>直接用 <code>pyinstxtractor</code> 解包，能拿到一堆 <code>pyc</code> 文件。</p>
+<p><img src="pasted-image-20251104110649.png"></p>
+<p>在生成的 <code>pyi</code> 清单里能看到目标运行时是 Python 3.8。</p>
+<p><img src="pasted-image-20251104110755.png"></p>
+<p>因此反编译时选 <code>uncompyle6</code>（或仓库里的 <code>Exe-decompiling</code>），优先把 <code>HJM.pyc</code> 还原。</p>
+<p><img src="pasted-image-20251104113113.png"></p>
+<p>伪代码里引用了另一个模块里的 <code>CHARS1</code>。顺着路径继续反编译，就能得到生成表的逻辑。把那段代码抄进自己的脚本，按原算法恢复字母表，再和密文做一遍同样的处理即可拿到 flag。</p>
+<p><img src="pasted-image-20251104133841.png"></p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>PyInstaller</tag>
+        <tag>Python反编译</tag>
+        <tag>pycdc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E6%9D%A5%E4%BA%86%E5%97%B7%EF%BC%8C%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9%EF%BC%81/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
+<h3 id="题目七-来了嗷，常见加密大杂烩！"><a href="#题目七-来了嗷，常见加密大杂烩！" class="headerlink" title="题目七:来了嗷，常见加密大杂烩！"></a>题目七:来了嗷，常见加密大杂烩！</h3><p>IDA 里主函数直接把输入按块送进不同的加密分支，完全是考脚本能力。流程大概是：自定义字符集的 Base64 → RC4 → XTEA → TEA。</p>
+<p>按照代码把每一层写成独立函数，逐段还原即可。Base64 要注意使用程序里的字符集；RC4 走标准的 KSA&#x2F;PRGA；XTEA 和 TEA 直接按逆运算实现（循环 32 轮，每轮同步扣掉 delta）。最终四层都跑完，就能得到明文 flag。<br>通过逐个逆向各个加密环节，最终成功破解了 flag。</p>
+<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>Base64</tag>
+        <tag>TEA</tag>
+        <tag>加密算法</tag>
+        <tag>RC4</tag>
+        <tag>XTEA</tag>
+      </tags>
+  </entry>
+</search>
