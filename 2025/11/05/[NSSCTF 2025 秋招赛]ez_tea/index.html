@@ -948,15 +948,36 @@ document.addEventListener('DOMContentLoaded', function() {
   const rootBase = (siteRoot && siteRoot.endsWith('/')) ? siteRoot : (siteRoot + '/');
   const assetUrl = (p) => rootBase + String(p).replace(/^\/+/, '');
 
+  // 移动端检测函数
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+           (window.innerWidth <= 768);
+  };
+
+  // 根据设备类型调整配置
+  const getDeviceConfig = () => {
+    const isMobile = isMobileDevice();
+    const isSmallScreen = window.innerWidth <= 480;
+    
+    return {
+      width: isSmallScreen ? 160 : (isMobile ? 200 : 350),
+      height: isSmallScreen ? 240 : (isMobile ? 300 : 500),
+      scale: isSmallScreen ? 0.15 : (isMobile ? 0.18 : 0.25),
+      messageTimeout: isMobile ? 3000 : 4000
+    };
+  };
+
+  const deviceConfig = getDeviceConfig();
+
   const CONFIG = {
     modelPath: assetUrl('live2d/ATRI/ATRI.model3.json'),
     canvasId: 'atri-canvas',
-    width: 350,
-    height: 500,
-    scale: 0.25,
+    width: deviceConfig.width,
+    height: deviceConfig.height,
+    scale: deviceConfig.scale,
     mobileScale: 0.18,
     enableMessage: true,
-    messageTimeout: 4000,
+    messageTimeout: deviceConfig.messageTimeout,
     messages: {
       welcome: ['你好呀！我是 ATRI~', '欢迎来到这里！', '让我陪你一起吧~'],
       click: ['呀！不要戳我~', '嘿嘿~', '怎么了吗？', '在呢在呢~'],
@@ -1136,7 +1157,37 @@ document.addEventListener('DOMContentLoaded', function() {
       await this.initVoicePlayer();
       this.setupControls();
       this.setupCanvasEvents();
+      this.setupResponsiveHandler();
       this.welcomeOnce();
+    }
+
+    setupResponsiveHandler() {
+      // 响应窗口大小变化，调整 ATRI 位置和大小
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          const isMobile = isMobileDevice();
+          if (this.model) {
+            this.fitModelToCanvas(isMobile);
+          }
+          
+          // 移动端时确保不超出屏幕
+          if (isMobile) {
+            const rect = this.widget.getBoundingClientRect();
+            const maxLeft = Math.max(0, window.innerWidth - rect.width);
+            const maxTop = Math.max(0, window.innerHeight - rect.height);
+            
+            const currentLeft = parseFloat(this.widget.style.left || '0');
+            const currentTop = parseFloat(this.widget.style.top || '0');
+            
+            if (currentLeft > maxLeft || currentTop > maxTop) {
+              this.widget.style.left = Math.min(currentLeft, maxLeft) + 'px';
+              this.widget.style.top = Math.min(currentTop, maxTop) + 'px';
+            }
+          }
+        }, 300);
+      });
     }
 
     applySavedPosition() {
@@ -1289,8 +1340,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     setupCanvasEvents() {
-      // 点击模型：触发 click 语音/字幕（或仅文字）
-      this.canvas.addEventListener('click', (e) => {
+      // 点击/触摸模型：触发 click 语音/字幕（或仅文字）
+      const handleInteraction = (e) => {
         e.preventDefault();
         e.stopPropagation();
         if (this.voiceConfig && this.voiceConfig.enabled) {
@@ -1299,7 +1350,26 @@ document.addEventListener('DOMContentLoaded', function() {
           this.showRandomText('click');
           this.playRandomMotion();
         }
+      };
+
+      // PC 端点击
+      this.canvas.addEventListener('click', handleInteraction);
+      
+      // 移动端触摸（避免触发两次）
+      let touchHandled = false;
+      this.canvas.addEventListener('touchstart', (e) => {
+        touchHandled = true;
+        handleInteraction(e);
       });
+      
+      // 如果触摸已处理，跳过点击事件
+      this.canvas.addEventListener('click', (e) => {
+        if (touchHandled) {
+          touchHandled = false;
+          return;
+        }
+        handleInteraction(e);
+      }, true);
     }
 
     setupControls() {
@@ -1655,13 +1725,31 @@ document.addEventListener('DOMContentLoaded', function() {
  * ATRI Live2D 增强样式
  * ================================================== */
 
+/* 全局移动端优化 */
+@media (hover: none) and (pointer: coarse) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
 #atri-live2d-widget {
   transition: opacity 0.3s ease, transform 0.3s ease;
   user-select: none;
+  /* 移动端性能优化 */
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 #atri-live2d-widget:hover {
   transform: translateY(-5px);
+}
+
+/* 移动端设备上减少或禁用 hover 效果 */
+@media (hover: none) and (pointer: coarse) {
+  #atri-live2d-widget:hover {
+    transform: none;
+  }
 }
 
 #atri-canvas {
@@ -1671,6 +1759,10 @@ document.addEventListener('DOMContentLoaded', function() {
   transition: opacity 0.3s ease;
   pointer-events: auto;
   cursor: pointer;
+  /* 移动端触摸优化 */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  user-select: none;
 }
 
 /* 对话框样式 */
@@ -1692,6 +1784,9 @@ document.addEventListener('DOMContentLoaded', function() {
   pointer-events: none;
   animation: messageSlideIn 0.3s ease-out;
   z-index: 1000;
+  max-width: 280px;
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 #atri-message-box::after {
@@ -1764,6 +1859,10 @@ document.addEventListener('DOMContentLoaded', function() {
   justify-content: center !important;
   position: relative !important;
   overflow: hidden !important;
+  /* 移动端触摸优化 */
+  -webkit-tap-highlight-color: transparent !important;
+  touch-action: manipulation !important;
+  user-select: none !important;
 }
 
 .atri-control-btn::before {
@@ -1790,6 +1889,16 @@ document.addEventListener('DOMContentLoaded', function() {
               inset 0 2px 3px rgba(255, 255, 255, 0.9),
               inset 0 -2px 2px rgba(0, 0, 0, 0.06) !important;
   border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 移动端触摸反馈 - 替代 hover */
+@media (hover: none) and (pointer: coarse) {
+  .atri-control-btn:active {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.45) 0%, 
+      rgba(255, 255, 255, 0.25) 100%) !important;
+    transform: scale(0.95) !important;
+  }
 }
 
 .atri-control-btn:hover::before {
@@ -1844,8 +1953,32 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 }
 
-/* 移动端适配 */
-@media (max-width: 768px) {
+/* 移动端适配 - 平板尺寸 (768px-1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  #atri-live2d-widget {
+    right: 10px !important;
+  }
+  
+  #atri-canvas {
+    width: 280px;
+    height: 400px;
+  }
+  
+  #atri-message-box {
+    font-size: 13px;
+    padding: 10px 18px;
+    max-width: 220px;
+  }
+  
+  .atri-control-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 15px;
+  }
+}
+
+/* 移动端适配 - 普通手机 (481px-768px) */
+@media (max-width: 768px) and (min-width: 481px) {
   #atri-live2d-widget {
     right: 5px !important;
     bottom: 0 !important;
@@ -1860,18 +1993,29 @@ document.addEventListener('DOMContentLoaded', function() {
     font-size: 12px;
     padding: 8px 15px;
     top: -70px;
+    max-width: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  #atri-controls {
+    flex-wrap: wrap;
+    max-width: 200px;
+    gap: 4px;
   }
   
   .atri-control-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+    margin: 0;
   }
   
   /* 移动端音乐播放器样式 */
   #music-player {
     bottom: 10px !important;
     left: 10px !important;
+    max-width: calc(100vw - 220px);
   }
   
   #music-player > div {
@@ -1885,27 +2029,116 @@ document.addEventListener('DOMContentLoaded', function() {
   
   #music-info {
     min-width: 80px !important;
+    max-width: 140px !important;
   }
   
   #music-info > div:first-child {
     font-size: 11px !important;
   }
+  
+  #music-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
-/* 超小屏幕调整 */
+/* 超小屏幕调整 - 小屏手机 (max-width: 480px) */
 @media (max-width: 480px) {
   #atri-live2d-widget {
-    display: none;
+    right: 0 !important;
+    bottom: 60px !important;
+    transform: scale(0.85);
+    transform-origin: bottom right;
   }
   
-  /* 超小屏幕上音乐播放器只显示按钮 */
+  #atri-canvas {
+    width: 160px;
+    height: 240px;
+  }
+  
+  #atri-message-box {
+    font-size: 11px;
+    padding: 6px 12px;
+    top: -60px;
+    max-width: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  #atri-controls {
+    flex-direction: column;
+    gap: 3px;
+  }
+  
+  .atri-control-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    padding: 0;
+  }
+  
+  /* 超小屏幕上音乐播放器紧凑显示 */
+  #music-player {
+    bottom: 8px !important;
+    left: 8px !important;
+    max-width: calc(100vw - 180px);
+  }
+  
   #music-info {
     display: none !important;
   }
   
   #music-player > div {
     padding: 6px !important;
-    gap: 0 !important;
+    gap: 6px !important;
+  }
+  
+  #music-toggle,
+  #music-volume-toggle {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
+
+/* 横屏模式适配 */
+@media (max-height: 500px) and (orientation: landscape) {
+  #atri-live2d-widget {
+    right: 5px !important;
+    bottom: 0 !important;
+  }
+  
+  #atri-canvas {
+    width: 160px;
+    height: 240px;
+  }
+  
+  #atri-message-box {
+    top: -50px;
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+  
+  .atri-control-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+  
+  #music-player {
+    left: 10px !important;
+    bottom: 10px !important;
+  }
+}
+
+/* 超超小屏幕 - 完全隐藏 Live2D (max-width: 360px) */
+@media (max-width: 360px) {
+  #atri-live2d-widget {
+    display: none !important;
+  }
+  
+  #music-player {
+    max-width: calc(100vw - 20px) !important;
   }
 }
 
@@ -2140,6 +2373,18 @@ document.addEventListener('DOMContentLoaded', function() {
   border-color: rgba(255, 255, 255, 0.5) !important;
 }
 
+/* 移动端触摸反馈 */
+@media (hover: none) and (pointer: coarse) {
+  #music-toggle:active,
+  #music-volume-toggle:active,
+  #music-hide-toggle:active,
+  #music-next:active,
+  #music-mini-btn:active {
+    background: rgba(255, 255, 255, 0.4) !important;
+    transform: scale(0.92) !important;
+  }
+}
+
 #music-toggle:active,
 #music-volume-toggle:active,
 #music-hide-toggle:active,
@@ -2149,6 +2394,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 #music-player-main:hover {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* 音乐播放器移动端样式优化 */
+#music-player * {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+#music-progress {
+  touch-action: none;
 }
 </style>
 
