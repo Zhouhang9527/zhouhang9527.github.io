@@ -442,30 +442,6 @@ img:not([src]) {
               
               
             
-            <a href="../upx/"
-               class="tag-cloud-item"
-               style="font-size: 16px; opacity: 0.7;"
-               title="UPX (1 篇文章)">
-              UPX
-            </a>
-          
-            
-            
-              
-              
-            
-            <a href="../%E8%84%B1%E5%A3%B3/"
-               class="tag-cloud-item"
-               style="font-size: 16px; opacity: 0.7;"
-               title="脱壳 (1 篇文章)">
-              脱壳
-            </a>
-          
-            
-            
-              
-              
-            
             <a href=""
                class="tag-cloud-item"
                style="font-size: 16px; opacity: 0.7;"
@@ -495,6 +471,30 @@ img:not([src]) {
                style="font-size: 20px; opacity: 0.9;"
                title="动态调试 (3 篇文章)">
               动态调试
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../upx/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="UPX (1 篇文章)">
+              UPX
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../%E8%84%B1%E5%A3%B3/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="脱壳 (1 篇文章)">
+              脱壳
             </a>
           
             
@@ -550,42 +550,6 @@ img:not([src]) {
               
               
             
-            <a href="../pyinstaller/"
-               class="tag-cloud-item"
-               style="font-size: 16px; opacity: 0.7;"
-               title="PyInstaller (1 篇文章)">
-              PyInstaller
-            </a>
-          
-            
-            
-              
-              
-            
-            <a href="../python%E5%8F%8D%E7%BC%96%E8%AF%91/"
-               class="tag-cloud-item"
-               style="font-size: 16px; opacity: 0.7;"
-               title="Python反编译 (1 篇文章)">
-              Python反编译
-            </a>
-          
-            
-            
-              
-              
-            
-            <a href="../pycdc/"
-               class="tag-cloud-item"
-               style="font-size: 16px; opacity: 0.7;"
-               title="pycdc (1 篇文章)">
-              pycdc
-            </a>
-          
-            
-            
-              
-              
-            
             <a href="../%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"
                class="tag-cloud-item"
                style="font-size: 16px; opacity: 0.7;"
@@ -615,6 +579,42 @@ img:not([src]) {
                style="font-size: 16px; opacity: 0.7;"
                title="XTEA (1 篇文章)">
               XTEA
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../pyinstaller/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="PyInstaller (1 篇文章)">
+              PyInstaller
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../python%E5%8F%8D%E7%BC%96%E8%AF%91/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="Python反编译 (1 篇文章)">
+              Python反编译
+            </a>
+          
+            
+            
+              
+              
+            
+            <a href="../pycdc/"
+               class="tag-cloud-item"
+               style="font-size: 16px; opacity: 0.7;"
+               title="pycdc (1 篇文章)">
+              pycdc
             </a>
           
         </div>
@@ -1016,10 +1016,62 @@ img:not([src]) {
 
     welcomeOnce() {
       setTimeout(() => {
-        // 有语音配置时：欢迎语走 welcome 分类（语音/字幕驱动）
+        // 有语音配置时：欢迎语按时间段筛选，避免晚上说早上好
         if (this.voiceConfig && this.voiceConfig.enabled) {
-          this.playVoice('welcome');
-          return;
+          const hour = new Date().getHours();
+          // 不是强制“必须说晚上好”，而是“排除明显错时”的问候（允许通用问候）
+          const greetingFilter = (() => {
+            const rx = {
+              morning: /(早上|早安|morning|おはよう)/i,
+              noon: /(中午|午安|noon|lunch)/i,
+              afternoon: /(下午|afternoon)/i,
+              evening: /(晚上|晚好|evening|こんばんは)/i,
+              night: /(夜深|深夜|夜晚|晚安|night|おやすみ)/i
+            };
+
+            let allow = ['morning'];
+            if (hour >= 12 && hour < 14) allow = ['noon'];
+            else if (hour >= 14 && hour < 18) allow = ['afternoon'];
+            else if (hour >= 18 && hour < 22) allow = ['evening', 'night'];
+            else if (hour >= 22 || hour < 5) allow = ['night'];
+            else if (hour >= 5 && hour < 12) allow = ['morning'];
+
+            const banned = Object.keys(rx)
+              .filter((k) => allow.indexOf(k) === -1)
+              .map((k) => rx[k]);
+
+            return (voice) => {
+              const t = ((voice && voice.text) ? String(voice.text) : '') + ' ' + ((voice && voice.ja) ? String(voice.ja) : '');
+              // 不包含时间词的通用问候会通过；包含“错时词”的会被排除
+              for (const r of banned) {
+                if (r.test(t)) return false;
+              }
+              return true;
+            };
+          })();
+
+          const categories = (this.voiceConfig && this.voiceConfig.categories) ? this.voiceConfig.categories : {};
+          const candidates = [];
+          // 优先尝试更“时间段”语义的分类名（如果作者有这样分）
+          if (hour >= 5 && hour < 9) candidates.push('morning');
+          else if (hour >= 9 && hour < 12) candidates.push('forenoon', 'morning');
+          else if (hour >= 12 && hour < 14) candidates.push('noon');
+          else if (hour >= 14 && hour < 18) candidates.push('afternoon');
+          else if (hour >= 18 && hour < 22) candidates.push('evening');
+          else candidates.push('night');
+          // 最后再用通用欢迎类
+          candidates.push('welcome', 'greet', 'hello');
+
+          for (const cat of candidates) {
+            if (categories && categories[cat] && categories[cat].length) {
+              const ok = this.playVoice(cat, {
+                filter: greetingFilter
+              });
+              if (ok) return;
+            }
+          }
+
+          // 如果没找到匹配时间段的语音，就不要强行放错的语音，退化为文本问候
         }
 
         // 无语音配置：退化为文本问候
@@ -1317,15 +1369,25 @@ img:not([src]) {
       }
     }
 
-    playVoice(category) {
+    playVoice(category, options) {
       if (!this.voiceConfig || !this.voicePlayer || !this.voiceConfig.enabled) return;
       const voices = (this.voiceConfig.categories && this.voiceConfig.categories[category]) || [];
       if (!voices.length) {
         console.log(`[ATRI Voice] 类别 "${category}" 没有可用语音`);
-        return;
+        return false;
       }
 
-      const voice = voices[Math.floor(Math.random() * voices.length)];
+      let pool = voices;
+      const filterFn = options && typeof options === 'object' && typeof options.filter === 'function' ? options.filter : null;
+      if (filterFn) {
+        const filtered = voices.filter((v) => {
+          try { return !!filterFn(v); } catch (_) { return false; }
+        });
+        if (filtered.length) pool = filtered;
+        else return false;
+      }
+
+      const voice = pool[Math.floor(Math.random() * pool.length)];
       const voicePath = this.voiceConfig.basePath + voice.file;
 
       if (voice.ja) {
@@ -1343,6 +1405,8 @@ img:not([src]) {
         console.log('[ATRI Voice] 播放失败（可能需要用户交互）:', err && err.message ? err.message : err);
         this.stopTalkingFace();
       });
+
+      return true;
     }
 
     setVoiceVolume(volume) {
@@ -1815,7 +1879,7 @@ img:not([src]) {
 <!-- 背景音乐播放器 -->
 <div id="music-player" style="position: fixed; bottom: 20px; left: 20px; z-index: 998; pointer-events: auto; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
   <audio id="bg-music" loop preload="auto">
-    <source src="/music/M500001M2iGW17u6X4.mp3" type="audio/mpeg">
+    <source src="/music/ginka-op-hikari-hanate.mp3" type="audio/mpeg">
     您的浏览器不支持音频播放
   </audio>
   
@@ -1823,7 +1887,7 @@ img:not([src]) {
   <div id="music-player-main" style="display: flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 12px 16px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); transition: all 0.3s ease;">
     <!-- 音乐封面 -->
     <div id="music-cover" style="width: 48px; height: 48px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); flex-shrink: 0; background: linear-gradient(135deg, #5b9bd5 0%, #7eb8e6 100%);">
-      <img src="/music/109951170492493512.jpg" alt="夢浮橋 - 青木陽菜" style="width: 100%; height: 100%; object-fit: cover;" onerror="console.log('封面加载失败')">
+      <img src="/music/ginka-op-hikari-hanate.webp" alt="光放て！ - 柳麻美" style="width: 100%; height: 100%; object-fit: cover;" onerror="console.log('封面加载失败')">
     </div>
     
     <!-- 播放/暂停按钮 -->
@@ -1834,10 +1898,10 @@ img:not([src]) {
     <!-- 音乐信息 -->
     <div id="music-info" style="display: flex; flex-direction: column; gap: 4px; min-width: 150px; max-width: 200px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span id="music-title" style="font-size: 13px; color: #333; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">夢浮橋</span>
+        <span id="music-title" style="font-size: 13px; color: #333; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">光放て！</span>
         <span id="music-time" style="font-size: 11px; color: #999; margin-left: 8px;">0:00 / 0:00</span>
       </div>
-      <div style="font-size: 11px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">青木陽菜 / GINKA ED</div>
+      <div style="font-size: 11px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">柳麻美 / ATRI OST</div>
       <div id="music-progress" style="height: 4px; background: rgba(0, 0, 0, 0.1); border-radius: 2px; overflow: hidden; cursor: pointer; position: relative;">
         <div id="music-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #5b9bd5 0%, #7eb8e6 100%); transition: width 0.1s linear;"></div>
       </div>
@@ -1901,11 +1965,21 @@ img:not([src]) {
   // 音乐列表（含歌词）
   const musicList = [
     {
+      title: '光放て！',
+      artist: '柳麻美',
+      album: 'ATRI -My Dear Moments- (Original Soundtrack)',
+      src: assetUrl('music/ginka-op-hikari-hanate.mp3'),
+      cover: assetUrl('music/ginka-op-hikari-hanate.webp'),
+      lyrics: [
+        { time: 0, text: '♪ 光放て！ - 柳麻美' }
+      ]
+    },
+    {
       title: '夢浮桥',
       artist: '青木阳菜',
       album: 'GINKA ED',
-      src: assetUrl('music/M500001M2iGW17u6X4.mp3'),
-      cover: assetUrl('music/109951170492493512.jpg'),
+      src: assetUrl('music/ginka-ed-yumeukihashi.mp3'),
+      cover: assetUrl('music/ginka-ed-yumeukihashi.jpg'),
       lyrics: [
         { time: 0, text: '♪ 夢浮桥 - 青木阳菜' },
         { time: 15, text: '夢の中で会えたなら' },
@@ -1986,11 +2060,6 @@ img:not([src]) {
     // 如果正在播放，则继续播放
     if (!audio.paused) {
       audio.play().catch(err => console.error('[Music] 播放失败:', err));
-    }
-    
-    // ATRI 提示
-    if (window.ATRI) {
-      window.ATRI.showMessage(`正在播放: ${musicList[currentMusicIndex].title}`, 3000);
     }
   }
   
@@ -2198,26 +2267,12 @@ img:not([src]) {
         icon.classList.remove('fa-play');
         icon.classList.add('fa-pause');
         localStorage.setItem('music_playing', 'true');
-        
-        // ATRI 提示
-        if (window.ATRI) {
-          setTimeout(() => {
-            window.ATRI.showMessage(`正在播放: ${musicList[currentMusicIndex].title}`, 3000);
-          }, 500);
-        }
       }).catch(err => {
         console.log('[Music] ⚠ 自动播放被浏览器阻止，请点击小按钮开始播放');
         console.log('[Music] 错误详情:', err.message);
         icon.classList.remove('fa-pause');
         icon.classList.add('fa-play');
         localStorage.setItem('music_playing', 'false');
-        
-        // ATRI 提示用户点击播放
-        if (window.ATRI) {
-          setTimeout(() => {
-            window.ATRI.showMessage('点击左下角小音乐按钮开始播放~', 3000);
-          }, 1500);
-        }
       });
     }
   }, 500);
@@ -2353,8 +2408,8 @@ img:not([src]) {
 
 #custom-cursor {
   position: fixed;
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(91, 155, 213, 0.7) 0%, rgba(126, 184, 230, 0.4) 50%, transparent 70%);
   backdrop-filter: blur(3px);
@@ -2398,9 +2453,9 @@ img:not([src]) {
 
 #custom-cursor-trail {
   position: fixed;
-  width: 40px;
-  height: 40px;
-  border: 2px solid rgba(91, 155, 213, 0.3);
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid rgba(91, 155, 213, 0.28);
   border-radius: 50%;
   pointer-events: none;
   z-index: 99998;
@@ -2428,8 +2483,8 @@ img:not([src]) {
   document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
-    cursor.style.left = mouseX - 12 + 'px';
-    cursor.style.top = mouseY - 12 + 'px';
+    cursor.style.left = mouseX - 9 + 'px';
+    cursor.style.top = mouseY - 9 + 'px';
     
     // 显示光标（鼠标在页面内）
     cursor.classList.remove('hidden');
@@ -2497,8 +2552,8 @@ img:not([src]) {
   function animateTrail() {
     trailX += (mouseX - trailX) * 0.15;
     trailY += (mouseY - trailY) * 0.15;
-    trail.style.left = trailX - 20 + 'px';
-    trail.style.top = trailY - 20 + 'px';
+    trail.style.left = trailX - 16 + 'px';
+    trail.style.top = trailY - 16 + 'px';
     requestAnimationFrame(animateTrail);
   }
   animateTrail();
@@ -2507,8 +2562,8 @@ img:not([src]) {
   const links = document.querySelectorAll('a, button, .clickable');
   links.forEach(link => {
     link.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'scale(1.5)';
-      trail.style.transform = 'scale(1.3)';
+      cursor.style.transform = 'scale(1.35)';
+      trail.style.transform = 'scale(1.2)';
       trail.style.borderColor = 'rgba(126, 184, 230, 0.5)';
     });
     link.addEventListener('mouseleave', () => {
@@ -2572,12 +2627,12 @@ img:not([src]) {
     setTimeout(() => particle.remove(), 14000);
   }
   
-  // 定期创建粒子
-  setInterval(createParticle, 3000);
+  // 定期创建粒子（更简约、降低开销）
+  setInterval(createParticle, 5500);
   
   // 初始创建几个
-  for (let i = 0; i < 5; i++) {
-    setTimeout(createParticle, i * 600);
+  for (let i = 0; i < 3; i++) {
+    setTimeout(createParticle, i * 800);
   }
 })();
 </script>
@@ -2605,6 +2660,43 @@ img:not([src]) {
   document.addEventListener('pjax:send', function() {
     console.log('[PJAX] 开始加载新页面...');
   });
+})();
+</script>
+
+<!-- 修复：顶部“首页/品牌”在 PJAX 下偶发无法返回主页 -->
+<script>
+(function() {
+  const homeUrl = (window.CONFIG && window.CONFIG.root) ? window.CONFIG.root : '/';
+
+  const goHome = () => {
+    // 优先使用 NexT 的 PJAX（切换更连贯、音乐不中断）
+    try {
+      if (window.pjax && typeof window.pjax.loadUrl === 'function') {
+        window.pjax.loadUrl(homeUrl);
+        return;
+      }
+    } catch (_) {}
+    window.location.href = homeUrl;
+  };
+
+  document.addEventListener('click', (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (!a) return;
+
+    // NexT 顶部菜单“首页”
+    if (a.matches('.menu-item-home > a')) {
+      e.preventDefault();
+      goHome();
+      return;
+    }
+
+    // 左上角品牌
+    if (a.matches('a.brand[rel="start"]')) {
+      e.preventDefault();
+      goHome();
+      return;
+    }
+  }, { capture: true });
 })();
 </script>
 
@@ -2773,18 +2865,79 @@ img:not([src]) {
           window.location.reload();
           break;
         case 'home':
-          window.location.href = (window.CONFIG && window.CONFIG.root) ? window.CONFIG.root : '/';
+          (function() {
+            const url = (window.CONFIG && window.CONFIG.root) ? window.CONFIG.root : '/';
+            try {
+              if (window.pjax && typeof window.pjax.loadUrl === 'function') {
+                window.pjax.loadUrl(url);
+                return;
+              }
+            } catch (_) {}
+            window.location.href = url;
+          })();
           break;
         case 'top':
           window.scrollTo({ top: 0, behavior: 'smooth' });
           break;
         case 'atri':
           if (window.ATRI) {
+            // 右键菜单“打招呼”优先用语音回应（仍会显示字幕）
+            const categories = (window.ATRI.voiceConfig && window.ATRI.voiceConfig.categories) ? window.ATRI.voiceConfig.categories : {};
+            const preferred = ['welcome', 'greet', 'hello', 'menu'];
+            let picked = '';
+            for (const key of preferred) {
+              if (categories && categories[key] && categories[key].length) {
+                picked = key;
+                break;
+              }
+            }
+
+            const hour = new Date().getHours();
+            // 右键打招呼同样：允许通用问候，只过滤“错时问候”
+            const greetingFilter = (() => {
+              const rx = {
+                morning: /(早上|早安|morning|おはよう)/i,
+                noon: /(中午|午安|noon|lunch)/i,
+                afternoon: /(下午|afternoon)/i,
+                evening: /(晚上|晚好|evening|こんばんは)/i,
+                night: /(夜深|深夜|夜晚|晚安|night|おやすみ)/i
+              };
+
+              let allow = ['morning'];
+              if (hour >= 12 && hour < 14) allow = ['noon'];
+              else if (hour >= 14 && hour < 18) allow = ['afternoon'];
+              else if (hour >= 18 && hour < 22) allow = ['evening', 'night'];
+              else if (hour >= 22 || hour < 5) allow = ['night'];
+              else if (hour >= 5 && hour < 12) allow = ['morning'];
+
+              const banned = Object.keys(rx)
+                .filter((k) => allow.indexOf(k) === -1)
+                .map((k) => rx[k]);
+
+              return (voice) => {
+                const t = ((voice && voice.text) ? String(voice.text) : '') + ' ' + ((voice && voice.ja) ? String(voice.ja) : '');
+                for (const r of banned) {
+                  if (r.test(t)) return false;
+                }
+                return true;
+              };
+            })();
+
+            let replied = false;
+            if (picked && typeof window.ATRI.playVoice === 'function') {
+              replied = !!window.ATRI.playVoice(picked, {
+                filter: greetingFilter
+              });
+            }
+
+            if (replied) break;
+
+            // 兜底：语音配置未加载 / 分类不存在 / 筛选后无匹配语音时，至少给一句文字回应
             const greetings = [
               '你好呀！有什么需要帮助的吗？',
               '我在这里哦~',
               '嘿嘿，找我有什么事吗？',
-              '欢迎光临！✨',
+              '欢迎光临！',
               '今天也要加油哦！'
             ];
             window.ATRI.showMessage(greetings[Math.floor(Math.random() * greetings.length)], 3000);
