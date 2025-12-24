@@ -1269,7 +1269,7 @@ pre code {
   transition: all 0.2s ease-in-out;
 }
 .links-of-author a::before {
-  background: #0f41d9;
+  background: #177d94;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
@@ -2807,6 +2807,292 @@ header.header {
 .sub-menu .menu-item {
   display: inline-block;
 }
+body {
+  font-family: 'Noto Serif SC', serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.site-author-image {
+  border-radius: 50% !important;
+  padding: 2px;
+  border: 1px solid #eee;
+  transition: transform 0.5s ease-in-out;
+}
+.site-author-image:hover {
+  transform: rotate(360deg);
+}
+/* 隐藏滚动条但保留滚动功能 */
+html {
+  overflow-y: auto !important;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+::-webkit-scrollbar {
+  width: 0px !important;
+  height: 0px !important;
+  display: none !important;
+}
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+::-webkit-scrollbar-thumb {
+  background: transparent !important;
+  display: none !important;
+}
+.site-brand-container .site-meta .site-title {
+  font-size: 2em;
+  font-weight: 700;
+  color: #37c6c0;
+  transition: all 0.3s ease;
+}
+.site-brand-container .site-meta .site-title:hover {
+  color: #ff6b6b;
+  transform: scale(1.05);
+}
+.site-brand-container .site-meta .site-subtitle {
+  font-size: 1em;
+  color: #666;
+  margin-top: 10px;
+  font-style: italic;
+}
+.post-body p {
+  margin: 1.2em 0;
+  text-align: justify;
+}
+.post-body h1,
+.post-body h2,
+.post-body h3,
+.post-body h4,
+.post-body h5,
+.post-body h6 {
+  margin-top: 1.8em;
+  margin-bottom: 0.8em;
+  font-weight: 600;
+  position: relative;
+}
+.post-body h1::before,
+.post-body h2::before,
+.post-body h3::before,
+.post-body h4::before,
+.post-body h5::before,
+.post-body h6::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: linear-gradient(to bottom, #37c6c0, #ff6b6b);
+  border-radius: 2px;
+}
+.post-body blockquote {
+  border-left: 4px solid #37c6c0;
+  background: #f5f5f5;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  border-radius: 4px;
+  font-style: italic;
+}
+.post-body blockquote p {
+  margin: 0.5em 0;
+}
+.post-body a {
+  color: #37c6c0;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+.post-body a:hover {
+  color: #ff6b6b;
+  border-bottom-color: #ff6b6b;
+}
+.post-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.post-body table thead {
+  background: #37c6c0;
+  color: #fff;
+}
+.post-body table th,
+.post-body table td {
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+}
+.post-body table tr {
+  transition: background 0.2s ease;
+}
+.post-body table tr:hover {
+  background: #f5f5f5;
+}
+.post-body img {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+.post-body img:hover {
+  transform: scale(1.02);
+}
+.sidebar {
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+.sidebar .sidebar-inner {
+  padding: 20px;
+}
+.sidebar .site-author-name {
+  color: #222;
+  font-weight: 600;
+  font-size: 1.2em;
+}
+.sidebar .links-of-author a {
+  color: #37c6c0;
+  transition: all 0.3s ease;
+}
+.sidebar .links-of-author a:hover {
+  color: #ff6b6b;
+  transform: translateX(5px);
+}
+.tag-cloud a {
+  display: inline-block;
+  margin: 5px;
+  padding: 5px 15px;
+  background: #f5f5f5;
+  color: #222;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+.tag-cloud a:hover {
+  background: #37c6c0;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+.posts-collapse .post-header {
+  position: relative;
+}
+.posts-collapse .post-header::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  background: #37c6c0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(55,198,192,0.2);
+}
+.posts-collapse .post-title {
+  transition: all 0.3s ease;
+}
+.posts-collapse .post-title:hover {
+  color: #ff6b6b;
+  transform: translateX(10px);
+}
+.footer {
+  background: #222;
+  color: #999;
+  padding: 30px 0;
+}
+.footer .footer-inner {
+  text-align: center;
+}
+.footer a {
+  color: #37c6c0;
+}
+.footer a:hover {
+  color: #ff6b6b;
+}
+.post,
+.page {
+  animation: fadeIn 0.6s ease-out;
+}
+.post-button {
+  margin-top: 40px;
+  text-align: center;
+}
+.post-button .btn {
+  background: rgba(91,155,213,0.15) !important;
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  border: 1.5px solid rgba(91,155,213,0.3) !important;
+  color: #5b9bd5 !important;
+  font-size: 14px !important;
+  padding: 10px 28px !important;
+  border-radius: 25px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 4px 15px rgba(91,155,213,0.15), 0 2px 8px rgba(91,155,213,0.08), inset 0 1px 0 rgba(255,255,255,0.5) !important;
+  position: relative;
+  overflow: hidden;
+}
+.post-button .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(91,155,213,0.2), transparent);
+  transition: left 0.5s ease;
+}
+.post-button .btn:hover::before {
+  left: 100%;
+}
+.post-button .btn:hover {
+  background: rgba(91,155,213,0.25) !important;
+  border-color: rgba(91,155,213,0.5) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 8px 25px rgba(91,155,213,0.25), 0 4px 12px rgba(91,155,213,0.15), inset 0 1px 0 rgba(255,255,255,0.6) !important;
+}
+.post-button .btn:active {
+  transform: translateY(0) scale(0.98) !important;
+  box-shadow: 0 2px 8px rgba(91,155,213,0.2), inset 0 1px 0 rgba(255,255,255,0.4) !important;
+}
+@media (max-width: 768px) {
+  .post-body h1::before,
+  .post-body h2::before,
+  .post-body h3::before,
+  .post-body h4::before,
+  .post-body h5::before,
+  .post-body h6::before {
+    display: none;
+  }
+  .sidebar {
+    margin-top: 20px;
+  }
+}
+@media print {
+  .sidebar,
+  .header,
+  .footer,
+  .comments {
+    display: none;
+  }
+  .post-body {
+    max-width: 100%;
+  }
+  .post-body a {
+    color: #222;
+    text-decoration: underline;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 /* ======================================================
    GINKA Style v8.0 - Final for NexT Mist (Complete)
    ====================================================== */
@@ -2815,9 +3101,10 @@ header.header {
    @font-face { font-family: 'OppoSans'; src: url('/fonts/OppoSans-Bold.ttf') format('truetype'); font-weight: bold; font-display: swap; }
    @font-face { font-family: 'LXGW WenKai'; src: url('/fonts/LxgwWenKai.ttf') format('truetype'); font-weight: normal; font-display: swap; }
    
-   #video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -999; }
+   #video-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -999; }
    #video-background video { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-   body { font-family: 'OppoSans', sans-serif; }
+   body { font-family: 'OppoSans', sans-serif; background: transparent !important; }
+   html { background: transparent !important; }
 
    /* 导入 ATRI Live2D 样式 */
    @import url('/css/live2d-atri.css');
@@ -3032,4 +3319,11 @@ img:not(.ginka-player-cover):hover {
 .tk-comment:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 25px rgba(91, 153, 229, 0.1);
+}
+.site-author-image {
+  border-radius: 50% !important;
+  transition: transform 0.5s ease-in-out;
+}
+.site-author-image:hover {
+  transform: rotate(360deg);
 }
