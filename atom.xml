@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>GINKA</title>
+  <icon>https://www.gravatar.com/avatar/6e06cd9bb32346f9a4b77a9a01ae3aeb</icon>
+  <subtitle>Pwn &amp; Reverse Engineering</subtitle>
+  <link href="https://zhouhang9527.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://zhouhang9527.github.io/"/>
+  <updated>2025-12-23T10:23:54.853Z</updated>
+  <id>https://zhouhang9527.github.io/</id>
+  
+  <author>
+    <name>GINKA</name>
+    <email>3050055132@qq.com</email>
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>[miniVN] VSnake</title>
+    <link href="https://zhouhang9527.github.io/2025/12/23/[miniVN]%20VSnake/"/>
+    <id>https://zhouhang9527.github.io/2025/12/23/[miniVN]%20VSnake/</id>
+    <published>2025-12-23T02:40:00.000Z</published>
+    <updated>2025-12-23T10:23:54.853Z</updated>
+    
+    
+    <summary type="html">miniVN VSnake 题解，定位得分逻辑与多层加密（RC4/AES/XTEA），基于 MD5 关键值爆破果实序列。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="RC4" scheme="https://zhouhang9527.github.io/tags/rc4/"/>
+    
+    <category term="XTEA" scheme="https://zhouhang9527.github.io/tags/xtea/"/>
+    
+    <category term="AES" scheme="https://zhouhang9527.github.io/tags/aes/"/>
+    
+    <category term="MD5" scheme="https://zhouhang9527.github.io/tags/md5/"/>
+    
+    <category term="爆破" scheme="https://zhouhang9527.github.io/tags/%E7%88%86%E7%A0%B4/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[miniVN] Crackme!</title>
+    <link href="https://zhouhang9527.github.io/2025/12/23/[miniVN]%20Crackme/"/>
+    <id>https://zhouhang9527.github.io/2025/12/23/[miniVN]%20Crackme/</id>
+    <published>2025-12-23T02:20:00.000Z</published>
+    <updated>2025-12-23T10:23:54.853Z</updated>
+    
+    
+    <summary type="html">miniVN Crackme! 题解，绕过反调试与 hook 的 memcmp，分析 RC4 并恢复正确密文。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="动态调试" scheme="https://zhouhang9527.github.io/tags/%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/"/>
+    
+    <category term="RC4" scheme="https://zhouhang9527.github.io/tags/rc4/"/>
+    
+    <category term="反调试" scheme="https://zhouhang9527.github.io/tags/%E5%8F%8D%E8%B0%83%E8%AF%95/"/>
+    
+    <category term="Patch" scheme="https://zhouhang9527.github.io/tags/patch/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[miniVN] ezAndroid</title>
+    <link href="https://zhouhang9527.github.io/2025/12/23/[miniVN]%20ezAndroid/"/>
+    <id>https://zhouhang9527.github.io/2025/12/23/[miniVN]%20ezAndroid/</id>
+    <published>2025-12-23T02:00:00.000Z</published>
+    <updated>2025-12-23T10:23:54.853Z</updated>
+    
+    
+    <summary type="html">miniVN ezAndroid 题解，jadx + so 分析，AES/XTEA 解密还原 flag。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="XTEA" scheme="https://zhouhang9527.github.io/tags/xtea/"/>
+    
+    <category term="Android" scheme="https://zhouhang9527.github.io/tags/android/"/>
+    
+    <category term="AES" scheme="https://zhouhang9527.github.io/tags/aes/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
+    <link href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]ez_tea/"/>
+    <id>https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]ez_tea/</id>
+    <published>2025-11-05T04:30:00.000Z</published>
+    <updated>2025-11-06T08:10:47.222Z</updated>
+    
+    
+    <summary type="html">NSSCTF 2025 秋招赛第八题 ez_tea 的详细解题过程，反反调试与 TEA 解密分析。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="动态调试" scheme="https://zhouhang9527.github.io/tags/%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/"/>
+    
+    <category term="反反调试" scheme="https://zhouhang9527.github.io/tags/%E5%8F%8D%E5%8F%8D%E8%B0%83%E8%AF%95/"/>
+    
+    <category term="TEA" scheme="https://zhouhang9527.github.io/tags/tea/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！</title>
+    <link href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]%E6%9D%A5%E4%BA%86%E5%97%B7%EF%BC%8C%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9%EF%BC%81/"/>
+    <id>https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]%E6%9D%A5%E4%BA%86%E5%97%B7%EF%BC%8C%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9%EF%BC%81/</id>
+    <published>2025-11-05T04:00:00.000Z</published>
+    <updated>2025-11-06T08:10:47.115Z</updated>
+    
+    
+    <summary type="html">NSSCTF 2025 秋招赛第七题来了嗷，常见加密大杂烩！的详细解题过程，多重加密算法逆向分析。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="Base64" scheme="https://zhouhang9527.github.io/tags/base64/"/>
+    
+    <category term="TEA" scheme="https://zhouhang9527.github.io/tags/tea/"/>
+    
+    <category term="加密算法" scheme="https://zhouhang9527.github.io/tags/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
+    
+    <category term="RC4" scheme="https://zhouhang9527.github.io/tags/rc4/"/>
+    
+    <category term="XTEA" scheme="https://zhouhang9527.github.io/tags/xtea/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] CodeRunner</title>
+    <link href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/"/>
+    <id>https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]CodeRunner/</id>
+    <published>2025-11-05T03:30:00.000Z</published>
+    <updated>2025-11-06T09:43:04.280Z</updated>
+    
+    
+    <summary type="html">NSSCTF 2025 秋招赛第六题 CodeRunner 的详细解题过程，Unity IL2CPP 逆向分析。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="Unity" scheme="https://zhouhang9527.github.io/tags/unity/"/>
+    
+    <category term="IL2CPP" scheme="https://zhouhang9527.github.io/tags/il2cpp/"/>
+    
+    <category term="动态调试" scheme="https://zhouhang9527.github.io/tags/%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] debuggggg</title>
+    <link href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]debuggggg/"/>
+    <id>https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]debuggggg/</id>
+    <published>2025-11-05T02:45:00.000Z</published>
+    <updated>2025-11-06T08:35:34.637Z</updated>
+    
+    
+    <summary type="html">NSSCTF 2025 秋招赛第五题 debuggggg 的详细解题过程，主要记录 WSL 远程调试和 patch 技巧。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="动态调试" scheme="https://zhouhang9527.github.io/tags/%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/"/>
+    
+    <category term="Linux" scheme="https://zhouhang9527.github.io/tags/linux/"/>
+    
+    <category term="反反调试" scheme="https://zhouhang9527.github.io/tags/%E5%8F%8D%E5%8F%8D%E8%B0%83%E8%AF%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] Ultimate Packer for eXecutables</title>
+    <link href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]Ultimate%20Packer%20for%20eXecutables/"/>
+    <id>https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]Ultimate%20Packer%20for%20eXecutables/</id>
+    <published>2025-11-05T02:30:00.000Z</published>
+    <updated>2025-11-06T09:22:15.808Z</updated>
+    
+    
+    <summary type="html">NSSCTF 2025 秋招赛第四题 Ultimate Packer for eXecutables 的详细解题过程，UPX 脱壳与逆向分析。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="IDA Pro" scheme="https://zhouhang9527.github.io/tags/ida-pro/"/>
+    
+    <category term="UPX" scheme="https://zhouhang9527.github.io/tags/upx/"/>
+    
+    <category term="脱壳" scheme="https://zhouhang9527.github.io/tags/%E8%84%B1%E5%A3%B3/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] 哈基米</title>
+    <link href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]%E5%93%88%E5%9F%BA%E7%B1%B3/"/>
+    <id>https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]%E5%93%88%E5%9F%BA%E7%B1%B3/</id>
+    <published>2025-11-05T02:00:00.000Z</published>
+    <updated>2025-11-06T08:24:54.752Z</updated>
+    
+    
+    <summary type="html">NSSCTF 2025 秋招赛第三题哈基米的记录。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="PyInstaller" scheme="https://zhouhang9527.github.io/tags/pyinstaller/"/>
+    
+    <category term="Python反编译" scheme="https://zhouhang9527.github.io/tags/python%E5%8F%8D%E7%BC%96%E8%AF%91/"/>
+    
+    <category term="pycdc" scheme="https://zhouhang9527.github.io/tags/pycdc/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] fl-ow-er</title>
+    <link href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]fl-ow-er/"/>
+    <id>https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]fl-ow-er/</id>
+    <published>2025-11-05T01:30:00.000Z</published>
+    <updated>2025-11-06T08:26:25.161Z</updated>
+    
+    
+    <summary type="html">NSSCTF 2025 秋招赛第二题 fl-ow-er 的记录。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="花指令" scheme="https://zhouhang9527.github.io/tags/%E8%8A%B1%E6%8C%87%E4%BB%A4/"/>
+    
+    <category term="IDA Pro" scheme="https://zhouhang9527.github.io/tags/ida-pro/"/>
+    
+    <category term="异或解密" scheme="https://zhouhang9527.github.io/tags/%E5%BC%82%E6%88%96%E8%A7%A3%E5%AF%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] 一种很新的签到</title>
+    <link href="https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]%E4%B8%80%E7%A7%8D%E5%BE%88%E6%96%B0%E7%9A%84%E7%AD%BE%E5%88%B0/"/>
+    <id>https://zhouhang9527.github.io/2025/11/05/[NSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B]%E4%B8%80%E7%A7%8D%E5%BE%88%E6%96%B0%E7%9A%84%E7%AD%BE%E5%88%B0/</id>
+    <published>2025-11-05T01:00:00.000Z</published>
+    <updated>2025-11-06T08:24:27.438Z</updated>
+    
+    
+    <summary type="html">NSSCTF 2025 秋招赛第一题一种很新的签到的详细解题过程。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="IDA Pro" scheme="https://zhouhang9527.github.io/tags/ida-pro/"/>
+    
+    <category term="签到题" scheme="https://zhouhang9527.github.io/tags/%E7%AD%BE%E5%88%B0%E9%A2%98/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] 花指令</title>
+    <link href="https://zhouhang9527.github.io/2025/10/19/NSSCTF2025%E5%85%A5%E9%97%A8%E9%A2%98%E7%9B%AE-%E8%8A%B1%E6%8C%87%E4%BB%A4/"/>
+    <id>https://zhouhang9527.github.io/2025/10/19/NSSCTF2025%E5%85%A5%E9%97%A8%E9%A2%98%E7%9B%AE-%E8%8A%B1%E6%8C%87%E4%BB%A4/</id>
+    <published>2025-10-19T12:00:00.000Z</published>
+    <updated>2025-11-06T08:42:15.375Z</updated>
+    
+    
+    <summary type="html">NSSCTF 2025 秋招赛入门题目《花指令》的详细解题步骤，覆盖花指令清理、逻辑还原与脚本复现。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="花指令" scheme="https://zhouhang9527.github.io/tags/%E8%8A%B1%E6%8C%87%E4%BB%A4/"/>
+    
+    <category term="IDA Pro" scheme="https://zhouhang9527.github.io/tags/ida-pro/"/>
+    
+    <category term="异或解密" scheme="https://zhouhang9527.github.io/tags/%E5%BC%82%E6%88%96%E8%A7%A3%E5%AF%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>[HUBUCTF 2022 新生赛] simple_RE 题解</title>
+    <link href="https://zhouhang9527.github.io/2025/10/10/[HUBUCTF%202022%20%E6%96%B0%E7%94%9F%E8%B5%9B]simple_RE/"/>
+    <id>https://zhouhang9527.github.io/2025/10/10/[HUBUCTF%202022%20%E6%96%B0%E7%94%9F%E8%B5%9B]simple_RE/</id>
+    <published>2025-10-10T10:00:00.000Z</published>
+    <updated>2025-10-10T14:35:23.631Z</updated>
+    
+    
+    <summary type="html">HUBUCTF 2022 新生赛 reverse 题目 simple_RE 的详细解题过程，自定义 Base64 编码逆向分析。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="CTF" scheme="https://zhouhang9527.github.io/tags/ctf/"/>
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="IDA Pro" scheme="https://zhouhang9527.github.io/tags/ida-pro/"/>
+    
+    <category term="Base64" scheme="https://zhouhang9527.github.io/tags/base64/"/>
+    
+  </entry>
+  
+</feed>

@@ -74,66 +74,6 @@
       </tags>
   </entry>
   <entry>
-    <title>[NSSCTF 2025 秋招赛] Ultimate Packer for eXecutables</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DUltimate%20Packer%20for%20eXecutables/</url>
-    <content><![CDATA[<h3 id="题目四-Ultimate-Packer-for-eXecutables"><a href="#题目四-Ultimate-Packer-for-eXecutables" class="headerlink" title="题目四:Ultimate Packer for eXecutables"></a>题目四:Ultimate Packer for eXecutables</h3><p>DIE 显示样本被 UPX 压缩，还提示入口信息异常。</p>
-<p><img data-src="pasted-image-20251104182310.png"></p>
-<p>直接 <code>upx -d</code> 会报错，因为作者把头部签名改掉了。</p>
-<p><img data-src="pasted-image-20251104182334.png"></p>
-<p>用 010 Editor 打开，手工把 <code>UPX!</code> 对应的几个字节覆写回来。</p>
-<p><img data-src="pasted-image-20251104182708.png"></p>
-<p>保存后重新 <code>upx -d</code> 就能顺利脱壳。后续流程：把修复后的二进制丢进 IDA，跟代码逻辑写解密脚本即可。注意程序中有 <code>input * 122</code> 这种会溢出的运算，所以脚本里采用遍历可打印字符、逐字节模 256 验证，避免直接倒推导致结果不对。</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>IDA Pro</tag>
-        <tag>UPX</tag>
-        <tag>脱壳</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[NSSCTF 2025 秋招赛] debuggggg</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Ddebuggggg/</url>
-    <content><![CDATA[<h3 id="题目五-debuggggg"><a href="#题目五-debuggggg" class="headerlink" title="题目五: debuggggg"></a>题目五: debuggggg</h3><p>样本是个 Linux 可执行文件，<code>main</code> 里读取输入后调用若干校验函数。</p>
-<p><img data-src="pasted-image-20251104221613.png"></p>
-<p>静态分析很快被 <code>rand()</code> 绕住，找不到 seed 就无法还原 <code>buf</code>。题目名字已经明示要“调试”，于是直接改用 WSL 远程调试。</p>
-<p><img data-src="pasted-image-20251104221751.png"></p>
-<p><img data-src="pasted-image-20251104222157.png"></p>
-<p>进入调试后发现程序在关键逻辑之前还有一段输入长度检测，不达到要求就直接退出，断点根本跑不到。把这里的条件跳转 patch 掉，强制通过长度校验。</p>
-<p><img data-src="pasted-image-20251104223356.png"></p>
-<p><img data-src="pasted-image-20251104223512.png"></p>
-<p>记得改完要重新加载 patched 版本（<code>copy new</code>），不然还是老代码。</p>
-<p><img data-src="pasted-image-20251104224152.png"></p>
-<p><img data-src="pasted-image-20251104224419.png"></p>
-<p>拿到 <code>rand()</code> 生成的数组之后，脚本只需要按模运算逆推即可。加密是 <code>C = (P + K) mod 256</code>，解密自然就是 <code>P = (C - K) mod 256</code>（为了保险可以先加 256 再取模）。遍历密文，逐个还原字符，flag 就出来了。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">flag += <span class="built_in">chr</span>(p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Flag:&quot;</span>, flag)</span><br></pre></td></tr></table></figure>
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道动态调试题目，主要考察以下能力点：</p>
-<ul>
-<li>Linux 程序的动态调试</li>
-<li>IDA 远程调试配置</li>
-<li>程序 patch 技术</li>
-<li>随机数相关加密的逆向</li>
-</ul>
-<p>通过动态调试获取关键数据，最终成功破解了 flag。</p>
-<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>动态调试</tag>
-        <tag>Linux</tag>
-        <tag>反反调试</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>[NSSCTF 2025 秋招赛] CodeRunner</title>
     <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DCodeRunner/</url>
     <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] CodeRunner<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 困难</p>
@@ -177,9 +117,47 @@
       <tags>
         <tag>CTF</tag>
         <tag>Reverse</tag>
-        <tag>动态调试</tag>
         <tag>Unity</tag>
         <tag>IL2CPP</tag>
+        <tag>动态调试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] debuggggg</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Ddebuggggg/</url>
+    <content><![CDATA[<h3 id="题目五-debuggggg"><a href="#题目五-debuggggg" class="headerlink" title="题目五: debuggggg"></a>题目五: debuggggg</h3><p>样本是个 Linux 可执行文件，<code>main</code> 里读取输入后调用若干校验函数。</p>
+<p><img data-src="pasted-image-20251104221613.png"></p>
+<p>静态分析很快被 <code>rand()</code> 绕住，找不到 seed 就无法还原 <code>buf</code>。题目名字已经明示要“调试”，于是直接改用 WSL 远程调试。</p>
+<p><img data-src="pasted-image-20251104221751.png"></p>
+<p><img data-src="pasted-image-20251104222157.png"></p>
+<p>进入调试后发现程序在关键逻辑之前还有一段输入长度检测，不达到要求就直接退出，断点根本跑不到。把这里的条件跳转 patch 掉，强制通过长度校验。</p>
+<p><img data-src="pasted-image-20251104223356.png"></p>
+<p><img data-src="pasted-image-20251104223512.png"></p>
+<p>记得改完要重新加载 patched 版本（<code>copy new</code>），不然还是老代码。</p>
+<p><img data-src="pasted-image-20251104224152.png"></p>
+<p><img data-src="pasted-image-20251104224419.png"></p>
+<p>拿到 <code>rand()</code> 生成的数组之后，脚本只需要按模运算逆推即可。加密是 <code>C = (P + K) mod 256</code>，解密自然就是 <code>P = (C - K) mod 256</code>（为了保险可以先加 256 再取模）。遍历密文，逐个还原字符，flag 就出来了。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">flag += <span class="built_in">chr</span>(p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Flag:&quot;</span>, flag)</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这是一道动态调试题目，主要考察以下能力点：</p>
+<ul>
+<li>Linux 程序的动态调试</li>
+<li>IDA 远程调试配置</li>
+<li>程序 patch 技术</li>
+<li>随机数相关加密的逆向</li>
+</ul>
+<p>通过动态调试获取关键数据，最终成功破解了 flag。</p>
+<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>动态调试</tag>
+        <tag>Linux</tag>
+        <tag>反反调试</tag>
       </tags>
   </entry>
   <entry>
@@ -203,6 +181,28 @@
         <tag>花指令</tag>
         <tag>IDA Pro</tag>
         <tag>异或解密</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] Ultimate Packer for eXecutables</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DUltimate%20Packer%20for%20eXecutables/</url>
+    <content><![CDATA[<h3 id="题目四-Ultimate-Packer-for-eXecutables"><a href="#题目四-Ultimate-Packer-for-eXecutables" class="headerlink" title="题目四:Ultimate Packer for eXecutables"></a>题目四:Ultimate Packer for eXecutables</h3><p>DIE 显示样本被 UPX 压缩，还提示入口信息异常。</p>
+<p><img data-src="pasted-image-20251104182310.png"></p>
+<p>直接 <code>upx -d</code> 会报错，因为作者把头部签名改掉了。</p>
+<p><img data-src="pasted-image-20251104182334.png"></p>
+<p>用 010 Editor 打开，手工把 <code>UPX!</code> 对应的几个字节覆写回来。</p>
+<p><img data-src="pasted-image-20251104182708.png"></p>
+<p>保存后重新 <code>upx -d</code> 就能顺利脱壳。后续流程：把修复后的二进制丢进 IDA，跟代码逻辑写解密脚本即可。注意程序中有 <code>input * 122</code> 这种会溢出的运算，所以脚本里采用遍历可打印字符、逐字节模 256 验证，避免直接倒推导致结果不对。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>IDA Pro</tag>
+        <tag>UPX</tag>
+        <tag>脱壳</tag>
       </tags>
   </entry>
   <entry>
