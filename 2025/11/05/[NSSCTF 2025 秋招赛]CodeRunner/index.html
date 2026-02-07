@@ -687,12 +687,14 @@
     async initVoicePlayer() {
       try {
         const cdnConfigUrls = [
+          '/voice-config.json',
           'https://cdn.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice-config.json',
           'https://fastly.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice-config.json',
           'https://gcore.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice-config.json'
         ];
 
         const cdnBasePaths = {
+          'local': 'https://cdn.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice/',
           'cdn.jsdelivr.net': 'https://cdn.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice/',
           'fastly.jsdelivr.net': 'https://fastly.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice/',
           'gcore.jsdelivr.net': 'https://gcore.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice/'
@@ -745,7 +747,7 @@
         // 使用 CDN 路径 (注意：文件后缀已改为 .opus)
         this.voiceConfig.baseUrl = 'https://cdn.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice/';
         
-        // =================================================================
+        // =================================================================local
 
         const host = (() => { try { return new URL(loadedFrom).host; } catch (_) { return ''; } })();
         this.voiceConfig.basePath = cdnBasePaths[host] || cdnBasePaths['cdn.jsdelivr.net'];
