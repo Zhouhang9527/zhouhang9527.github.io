@@ -37,13 +37,13 @@
     
     <category term="RC4" scheme="https://zhouhang9527.github.io/tags/rc4/"/>
     
-    <category term="MD5" scheme="https://zhouhang9527.github.io/tags/md5/"/>
-    
-    <category term="爆破" scheme="https://zhouhang9527.github.io/tags/%E7%88%86%E7%A0%B4/"/>
+    <category term="XTEA" scheme="https://zhouhang9527.github.io/tags/xtea/"/>
     
     <category term="AES" scheme="https://zhouhang9527.github.io/tags/aes/"/>
     
-    <category term="XTEA" scheme="https://zhouhang9527.github.io/tags/xtea/"/>
+    <category term="MD5" scheme="https://zhouhang9527.github.io/tags/md5/"/>
+    
+    <category term="爆破" scheme="https://zhouhang9527.github.io/tags/%E7%88%86%E7%A0%B4/"/>
     
   </entry>
   
@@ -95,11 +95,11 @@
     
     <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
     
-    <category term="AES" scheme="https://zhouhang9527.github.io/tags/aes/"/>
-    
     <category term="XTEA" scheme="https://zhouhang9527.github.io/tags/xtea/"/>
     
     <category term="Android" scheme="https://zhouhang9527.github.io/tags/android/"/>
+    
+    <category term="AES" scheme="https://zhouhang9527.github.io/tags/aes/"/>
     
   </entry>
   
@@ -155,9 +155,9 @@
     
     <category term="RC4" scheme="https://zhouhang9527.github.io/tags/rc4/"/>
     
-    <category term="XTEA" scheme="https://zhouhang9527.github.io/tags/xtea/"/>
-    
     <category term="加密算法" scheme="https://zhouhang9527.github.io/tags/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
+    
+    <category term="XTEA" scheme="https://zhouhang9527.github.io/tags/xtea/"/>
     
   </entry>
   

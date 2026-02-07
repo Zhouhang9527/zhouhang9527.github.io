@@ -183,6 +183,24 @@
       </tags>
   </entry>
   <entry>
+    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] ez_tea<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="题目八-ez-tea"><a href="#题目八-ez-tea" class="headerlink" title="题目八:ez_tea"></a>题目八:ez_tea</h3><p>程序执行前会先弹对话框提示“检测到调试器”，随后直接退出。查 API 引用时能看到 <code>MessageBox</code> 和常见的 <code>IsDebuggerPresent</code> 等函数，锁定反调试模块后，把入口 patch 成 <code>ret</code> 就能让程序安静下来。</p>
+<p>绕过之后继续动调，发现读入的 flag 先被简单混淆，再走了一遍改造过常量的 TEA。把加密块和新的 key dump 出来，照旧写脚本倒着执行 —— 每轮扣掉 <code>delta</code>、处理高位低位、循环 32 次。最后把混淆操作按原逻辑逆过来（按位异或&#x2F;加减）就能还原明文。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>动态调试</tag>
+        <tag>反反调试</tag>
+        <tag>TEA</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[NSSCTF 2025 秋招赛] fl-ow-er</title>
     <url>//2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dfl-ow-er/</url>
     <content><![CDATA[<h3 id="题目二-flower"><a href="#题目二-flower" class="headerlink" title="题目二:flower~"></a>题目二:fl<del>ow</del>er~</h3><p>拖进 IDA 之后直接 <code>F5</code> 会提示存在跳转陷阱，一眼望去全是经典的花指令 —— 成对的 <code>jz/jnz</code> 以及对同一地址的重复跳转。</p>
@@ -203,49 +221,6 @@
         <tag>花指令</tag>
         <tag>IDA Pro</tag>
         <tag>异或解密</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] ez_tea<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="题目八-ez-tea"><a href="#题目八-ez-tea" class="headerlink" title="题目八:ez_tea"></a>题目八:ez_tea</h3><p>程序执行前会先弹对话框提示“检测到调试器”，随后直接退出。查 API 引用时能看到 <code>MessageBox</code> 和常见的 <code>IsDebuggerPresent</code> 等函数，锁定反调试模块后，把入口 patch 成 <code>ret</code> 就能让程序安静下来。</p>
-<p>绕过之后继续动调，发现读入的 flag 先被简单混淆，再走了一遍改造过常量的 TEA。把加密块和新的 key dump 出来，照旧写脚本倒着执行 —— 每轮扣掉 <code>delta</code>、处理高位低位、循环 32 次。最后把混淆操作按原逻辑逆过来（按位异或&#x2F;加减）就能还原明文。</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>动态调试</tag>
-        <tag>反反调试</tag>
-        <tag>TEA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[NSSCTF 2025 秋招赛] 哈基米</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E5%93%88%E5%9F%BA%E7%B1%B3/</url>
-    <content><![CDATA[<h3 id="题目三-哈基米"><a href="#题目三-哈基米" class="headerlink" title="题目三:哈基米"></a>题目三:哈基米</h3><p>附件是一个 exe，拖进 DIE 一眼就能看出是 PyInstaller 打包。</p>
-<p><img data-src="pasted-image-20251104110246.png"></p>
-<p>直接用 <code>pyinstxtractor</code> 解包，能拿到一堆 <code>pyc</code> 文件。</p>
-<p><img data-src="pasted-image-20251104110649.png"></p>
-<p>在生成的 <code>pyi</code> 清单里能看到目标运行时是 Python 3.8。</p>
-<p><img data-src="pasted-image-20251104110755.png"></p>
-<p>因此反编译时选 <code>uncompyle6</code>（或仓库里的 <code>Exe-decompiling</code>），优先把 <code>HJM.pyc</code> 还原。</p>
-<p><img data-src="pasted-image-20251104113113.png"></p>
-<p>伪代码里引用了另一个模块里的 <code>CHARS1</code>。顺着路径继续反编译，就能得到生成表的逻辑。把那段代码抄进自己的脚本，按原算法恢复字母表，再和密文做一遍同样的处理即可拿到 flag。</p>
-<p><img data-src="pasted-image-20251104133841.png"></p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>PyInstaller</tag>
-        <tag>Python反编译</tag>
-        <tag>pycdc</tag>
       </tags>
   </entry>
   <entry>
@@ -303,6 +278,87 @@
       </tags>
   </entry>
   <entry>
+    <title>[NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E6%9D%A5%E4%BA%86%E5%97%B7%EF%BC%8C%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9%EF%BC%81/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
+<h3 id="题目七-来了嗷，常见加密大杂烩！"><a href="#题目七-来了嗷，常见加密大杂烩！" class="headerlink" title="题目七:来了嗷，常见加密大杂烩！"></a>题目七:来了嗷，常见加密大杂烩！</h3><p>IDA 里主函数直接把输入按块送进不同的加密分支，完全是考脚本能力。流程大概是：自定义字符集的 Base64 → RC4 → XTEA → TEA。</p>
+<p>按照代码把每一层写成独立函数，逐段还原即可。Base64 要注意使用程序里的字符集；RC4 走标准的 KSA&#x2F;PRGA；XTEA 和 TEA 直接按逆运算实现（循环 32 轮，每轮同步扣掉 delta）。最终四层都跑完，就能得到明文 flag。<br>通过逐个逆向各个加密环节，最终成功破解了 flag。</p>
+<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>Base64</tag>
+        <tag>TEA</tag>
+        <tag>RC4</tag>
+        <tag>加密算法</tag>
+        <tag>XTEA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] 哈基米</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E5%93%88%E5%9F%BA%E7%B1%B3/</url>
+    <content><![CDATA[<h3 id="题目三-哈基米"><a href="#题目三-哈基米" class="headerlink" title="题目三:哈基米"></a>题目三:哈基米</h3><p>附件是一个 exe，拖进 DIE 一眼就能看出是 PyInstaller 打包。</p>
+<p><img data-src="pasted-image-20251104110246.png"></p>
+<p>直接用 <code>pyinstxtractor</code> 解包，能拿到一堆 <code>pyc</code> 文件。</p>
+<p><img data-src="pasted-image-20251104110649.png"></p>
+<p>在生成的 <code>pyi</code> 清单里能看到目标运行时是 Python 3.8。</p>
+<p><img data-src="pasted-image-20251104110755.png"></p>
+<p>因此反编译时选 <code>uncompyle6</code>（或仓库里的 <code>Exe-decompiling</code>），优先把 <code>HJM.pyc</code> 还原。</p>
+<p><img data-src="pasted-image-20251104113113.png"></p>
+<p>伪代码里引用了另一个模块里的 <code>CHARS1</code>。顺着路径继续反编译，就能得到生成表的逻辑。把那段代码抄进自己的脚本，按原算法恢复字母表，再和密文做一遍同样的处理即可拿到 flag。</p>
+<p><img data-src="pasted-image-20251104133841.png"></p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>PyInstaller</tag>
+        <tag>Python反编译</tag>
+        <tag>pycdc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[miniVN] ezAndroid</title>
+    <url>/2025/12/23/%5BminiVN%5D%20ezAndroid/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: ezAndroid<br><strong>类型</strong>: Reverse Engineering &#x2F; Android</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>直接 jadx 打开，定位到 <code>MainActivity</code>。</p>
+<p><img data-src="image-20251207134252867.png"></p>
+<p>逻辑就是先检查 flag 的长度是否为 31、是否是 <code>VNCTF{}</code> 格式，然后把花括号内部的内容分别传进 <code>check1</code> 和 <code>check2</code>。</p>
+<p><img data-src="image-20251207134445601.png"></p>
+<p>再去 <code>value/strings.xml</code> 找到 AES 用的 key。</p>
+<p><img data-src="image-20251207134541436.png"></p>
+<p>用 CyberChef 解出第一部分。</p>
+<p><img data-src="image-20251207134700960.png"></p>
+<p>从这里可以看到 <code>check2</code> 的逻辑在 so 层，解压 apk 用 IDA 打开 so 文件。</p>
+<p><img data-src="image-20251207134710357.png"></p>
+<p>发现是一个 XTEA 加密，key 已经给出了：<code>Th1sIsAn3asyChal</code>。</p>
+<p><img data-src="image-20251207134901393.png"></p>
+<p><img data-src="image-20251207135007174.png"></p>
+<p>再通过交叉引用找到 delta 的值。</p>
+<p><img data-src="image-20251207135036412.png"></p>
+<p>写出解密脚本解出第二部分。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">u32</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x &amp; <span class="number">0xFFFFFFFF</span></span><br><span class="line"></span><br><span class="line">keyy = [<span class="number">0x73316854</span>, <span class="number">0x6E417349</span>, <span class="number">0x79736133</span>, <span class="number">0x6C616843</span>]</span><br><span class="line"></span><br><span class="line">enc_v1, enc_v2 = <span class="number">0xAD05217D</span>, <span class="number">0xF7C0C3E2</span></span><br><span class="line"></span><br><span class="line">delta = <span class="number">1743291877</span></span><br><span class="line"></span><br><span class="line">sum_ = u32(delta * <span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">v1, v2 = enc_v1, enc_v2</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line">    v2 = u32(v2 - ((keyy[(sum_ &gt;&gt; <span class="number">8</span>) &amp; <span class="number">3</span>] + sum_) ^ (v1 + ((v1 &gt;&gt; <span class="number">5</span>) ^ (<span class="number">4</span> * v1)))))</span><br><span class="line">    v1 = u32(v1 - ((keyy[sum_ &amp; <span class="number">3</span>] + sum_) ^ (v2 + ((v2 &gt;&gt; <span class="number">6</span>) ^ (<span class="number">8</span> * v2)))))</span><br><span class="line">    sum_ = u32(sum_ - delta)</span><br><span class="line"></span><br><span class="line">flag_bytes = struct.pack(<span class="string">&#x27;&lt;II&#x27;</span>, v1, v2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;bytes:&#x27;</span>, flag_bytes)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;hex  :&#x27;</span>, flag_bytes.<span class="built_in">hex</span>())</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;utf-8:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="keyword">except</span> UnicodeDecodeError:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;latin1:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;latin-1&#x27;</span>))</span><br><span class="line"><span class="comment"># nd_xt3a!</span></span><br></pre></td></tr></table></figure>
+
+<p>最终得到完整 flag：<code>VNCTF{u_Know_@ndro1d_And_xt3a!}</code></p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>XTEA</tag>
+        <tag>Android</tag>
+        <tag>AES</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[miniVN] VSnake</title>
     <url>/2025/12/23/%5BminiVN%5D%20VSnake/</url>
     <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: VSnake<br><strong>类型</strong>: Reverse Engineering</p>
@@ -342,66 +398,10 @@
         <tag>CTF</tag>
         <tag>Reverse</tag>
         <tag>RC4</tag>
+        <tag>XTEA</tag>
+        <tag>AES</tag>
         <tag>MD5</tag>
         <tag>爆破</tag>
-        <tag>AES</tag>
-        <tag>XTEA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E6%9D%A5%E4%BA%86%E5%97%B7%EF%BC%8C%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9%EF%BC%81/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
-<h3 id="题目七-来了嗷，常见加密大杂烩！"><a href="#题目七-来了嗷，常见加密大杂烩！" class="headerlink" title="题目七:来了嗷，常见加密大杂烩！"></a>题目七:来了嗷，常见加密大杂烩！</h3><p>IDA 里主函数直接把输入按块送进不同的加密分支，完全是考脚本能力。流程大概是：自定义字符集的 Base64 → RC4 → XTEA → TEA。</p>
-<p>按照代码把每一层写成独立函数，逐段还原即可。Base64 要注意使用程序里的字符集；RC4 走标准的 KSA&#x2F;PRGA；XTEA 和 TEA 直接按逆运算实现（循环 32 轮，每轮同步扣掉 delta）。最终四层都跑完，就能得到明文 flag。<br>通过逐个逆向各个加密环节，最终成功破解了 flag。</p>
-<p>本文记录了个人解题思路和学习过程，旨在交流技术心得。如有错误欢迎指正！</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>Base64</tag>
-        <tag>TEA</tag>
-        <tag>RC4</tag>
-        <tag>XTEA</tag>
-        <tag>加密算法</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[miniVN] ezAndroid</title>
-    <url>/2025/12/23/%5BminiVN%5D%20ezAndroid/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: ezAndroid<br><strong>类型</strong>: Reverse Engineering &#x2F; Android</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>直接 jadx 打开，定位到 <code>MainActivity</code>。</p>
-<p><img data-src="image-20251207134252867.png"></p>
-<p>逻辑就是先检查 flag 的长度是否为 31、是否是 <code>VNCTF{}</code> 格式，然后把花括号内部的内容分别传进 <code>check1</code> 和 <code>check2</code>。</p>
-<p><img data-src="image-20251207134445601.png"></p>
-<p>再去 <code>value/strings.xml</code> 找到 AES 用的 key。</p>
-<p><img data-src="image-20251207134541436.png"></p>
-<p>用 CyberChef 解出第一部分。</p>
-<p><img data-src="image-20251207134700960.png"></p>
-<p>从这里可以看到 <code>check2</code> 的逻辑在 so 层，解压 apk 用 IDA 打开 so 文件。</p>
-<p><img data-src="image-20251207134710357.png"></p>
-<p>发现是一个 XTEA 加密，key 已经给出了：<code>Th1sIsAn3asyChal</code>。</p>
-<p><img data-src="image-20251207134901393.png"></p>
-<p><img data-src="image-20251207135007174.png"></p>
-<p>再通过交叉引用找到 delta 的值。</p>
-<p><img data-src="image-20251207135036412.png"></p>
-<p>写出解密脚本解出第二部分。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">u32</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x &amp; <span class="number">0xFFFFFFFF</span></span><br><span class="line"></span><br><span class="line">keyy = [<span class="number">0x73316854</span>, <span class="number">0x6E417349</span>, <span class="number">0x79736133</span>, <span class="number">0x6C616843</span>]</span><br><span class="line"></span><br><span class="line">enc_v1, enc_v2 = <span class="number">0xAD05217D</span>, <span class="number">0xF7C0C3E2</span></span><br><span class="line"></span><br><span class="line">delta = <span class="number">1743291877</span></span><br><span class="line"></span><br><span class="line">sum_ = u32(delta * <span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">v1, v2 = enc_v1, enc_v2</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line">    v2 = u32(v2 - ((keyy[(sum_ &gt;&gt; <span class="number">8</span>) &amp; <span class="number">3</span>] + sum_) ^ (v1 + ((v1 &gt;&gt; <span class="number">5</span>) ^ (<span class="number">4</span> * v1)))))</span><br><span class="line">    v1 = u32(v1 - ((keyy[sum_ &amp; <span class="number">3</span>] + sum_) ^ (v2 + ((v2 &gt;&gt; <span class="number">6</span>) ^ (<span class="number">8</span> * v2)))))</span><br><span class="line">    sum_ = u32(sum_ - delta)</span><br><span class="line"></span><br><span class="line">flag_bytes = struct.pack(<span class="string">&#x27;&lt;II&#x27;</span>, v1, v2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;bytes:&#x27;</span>, flag_bytes)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;hex  :&#x27;</span>, flag_bytes.<span class="built_in">hex</span>())</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;utf-8:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="keyword">except</span> UnicodeDecodeError:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;latin1:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;latin-1&#x27;</span>))</span><br><span class="line"><span class="comment"># nd_xt3a!</span></span><br></pre></td></tr></table></figure>
-
-<p>最终得到完整 flag：<code>VNCTF{u_Know_@ndro1d_And_xt3a!}</code></p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>AES</tag>
-        <tag>XTEA</tag>
-        <tag>Android</tag>
       </tags>
   </entry>
 </search>

@@ -694,7 +694,7 @@
         ];
 
         const cdnBasePaths = {
-          'local': 'https://cdn.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice/',
+          'local': '/voice/atri/',
           'cdn.jsdelivr.net': 'https://cdn.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice/',
           'fastly.jsdelivr.net': 'https://fastly.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice/',
           'gcore.jsdelivr.net': 'https://gcore.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice/'
@@ -724,33 +724,13 @@
         this.voiceConfig = cfg;
         if (typeof this.voiceConfig.enabled === 'undefined') this.voiceConfig.enabled = true;
 
-        // =================================================================
-        // 自定义语音注入 (点赞/点踩)
-        // =================================================================
-        if (!this.voiceConfig.categories) this.voiceConfig.categories = {};
-
-        // 点赞 (Happy) - 选中：哼哼/哎嘿嘿/变聪明/尺寸合适
-        this.voiceConfig.categories.happy = [
-            { file: 'ATR_b112_004.opus', text: '是吧，哎嘿嘿', ja: 'でしょう。えへへー' },
-            { file: 'ATR_b102_014.opus', text: '哼哼～♪', ja: 'んっふふ～♪' },
-            { file: 'ATR_b112_003.opus', text: '光學一天我就變得超聰明了。成為超級機器人指日可待！', ja: '今日だけでめちゃくちゃ賢くなりましたよわたし。スーパーロボットになる日も近いですね！' },
-            { file: 'ATR_b102_013.opus', text: '哇～，尺寸也正合適！', ja: 'わぁ～、サイズもぴったりです！' }
-        ];
-
-        // 点踩 (Angry) - 选中：大笨蛋/不准说那个词/火箭拳警告
-        this.voiceConfig.categories.angry = [
-            { file: 'ATR_b103_019.opus', text: '嗯……吧唧吧唧……夏生先生大笨蛋', ja: 'うぅ～ん……むにゃむにゃ……夏生さんのアホぉ' },
-            { file: 'ATR_b102_074.opus', text: '啊，不准說這個詞！', ja: 'ああっ、それ禁句ですよっ！' },
-            { file: 'ATR_b103_021.opus', text: '是亞托莉……蘿蔔子可是對機器人的蔑稱……這是第二次警告哦……看我火箭拳制裁……', ja: 'アトリですぅ……それロボットへの蔑称ですからぁ……警告２回目ですよぉ……お仕置きのロケットパン……ツ……' }
-        ];
-        
-        // 使用 CDN 路径 (注意：文件后缀已改为 .opus)
-        this.voiceConfig.baseUrl = 'https://cdn.jsdelivr.net/gh/Zhouhang9527/atri-voice-data@main/voice/';
-        
-        // =================================================================local
-
-        const host = (() => { try { return new URL(loadedFrom).host; } catch (_) { return ''; } })();
-        this.voiceConfig.basePath = cdnBasePaths[host] || cdnBasePaths['cdn.jsdelivr.net'];
+        // 优先使用配置文件中的 baseUrl
+        if (this.voiceConfig.baseUrl) {
+          this.voiceConfig.basePath = this.voiceConfig.baseUrl;
+        } else {
+           const host = (() => { try { return new URL(loadedFrom).host; } catch (_) { return ''; } })();
+           this.voiceConfig.basePath = cdnBasePaths[host] || cdnBasePaths['cdn.jsdelivr.net'];
+        }
 
         this.voicePlayer = new Audio();
         // CDN 语音用于 WebAudio 分析口型，需要 CORS
