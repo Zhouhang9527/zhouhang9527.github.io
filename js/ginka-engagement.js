@@ -8,8 +8,8 @@
   const apiBase = meta && typeof meta.content === 'string'
     ? meta.content.trim().replace(/\/+$/, '')
     : '';
+  const hasApiBase = Boolean(apiBase);
 
-  if (!apiBase) return;
   if (window.__ginkaEngagementBound) return;
   window.__ginkaEngagementBound = true;
 
@@ -72,7 +72,41 @@
     }
   }
 
+  function localLikeKey(pathname) {
+    return `ginka:local-like:${normalizePath(pathname)}`;
+  }
+
+  function readLocalLike(pathname) {
+    try {
+      return Math.max(0, Number(localStorage.getItem(localLikeKey(pathname))) || 0);
+    } catch (_error) {
+      return 0;
+    }
+  }
+
+  function writeLocalLike(pathname, value) {
+    try {
+      localStorage.setItem(localLikeKey(pathname), String(Math.max(0, Number(value) || 0)));
+    } catch (_error) {
+      // keep silent
+    }
+  }
+
+  function readBusuanziViews() {
+    const valueNode = document.querySelector('#busuanzi_value_page_pv');
+    if (!valueNode) return 0;
+    const raw = String(valueNode.textContent || '').replace(/[^\d]/g, '');
+    const value = Number(raw);
+    return Number.isFinite(value) ? Math.max(0, value) : 0;
+  }
+
   async function callApi(path, options) {
+    if (!hasApiBase) {
+      const error = new Error('API base unavailable');
+      error.code = 'ENOAPI';
+      throw error;
+    }
+
     const controller = new AbortController();
     const timeoutMs = Math.max(800, Number(options && options.timeoutMs) || REQUEST_TIMEOUT_MS);
     const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -147,6 +181,36 @@
     const cachedStat = readCachedStat(pathname);
     if (cachedStat) {
       renderStatPair(cachedStat, viewsNode, likeButton);
+    }
+
+    if (!hasApiBase) {
+      let localLikes = readLocalLike(pathname);
+      const paintFallback = () => {
+        renderStatPair({
+          views: readBusuanziViews(),
+          likes: localLikes
+        }, viewsNode, likeButton);
+      };
+
+      paintFallback();
+      likeButton.disabled = false;
+
+      likeButton.addEventListener('click', function () {
+        localLikes += 1;
+        writeLocalLike(pathname, localLikes);
+        paintFallback();
+      });
+
+      let syncCount = 0;
+      const syncTimer = setInterval(function () {
+        paintFallback();
+        syncCount += 1;
+        if (syncCount >= 24) {
+          clearInterval(syncTimer);
+        }
+      }, 500);
+
+      return true;
     }
 
     function inLikeCooldown() {
@@ -246,6 +310,8 @@
   }
 
   async function bindHomeCards() {
+    if (!hasApiBase) return false;
+
     const cards = Array.from(document.querySelectorAll('.post-block'));
     if (!cards.length) return false;
 
