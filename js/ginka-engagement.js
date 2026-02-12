@@ -10,6 +10,8 @@
     : '';
 
   if (!apiBase) return;
+  if (window.__ginkaEngagementBound) return;
+  window.__ginkaEngagementBound = true;
 
   function normalizePath(raw) {
     const value = (raw || '/').replace(/\/+$/, '');
@@ -122,11 +124,11 @@
 
   async function bindPostDetail(pathname) {
     const postBody = document.querySelector('.post-body');
-    if (!postBody) return;
+    if (!postBody) return false;
 
     const mountTarget = document.querySelector('.post-meta-container') || document.querySelector('.post-meta') || document.querySelector('.post-header');
-    if (!mountTarget) return;
-    if (mountTarget.querySelector('.ginka-engagement--detail')) return;
+    if (!mountTarget) return false;
+    if (mountTarget.querySelector('.ginka-engagement--detail')) return true;
 
     const panel = document.createElement('div');
     panel.className = 'ginka-engagement ginka-engagement--detail';
@@ -240,11 +242,12 @@
     });
 
     reportViewOnce().finally(refreshStats);
+    return true;
   }
 
   async function bindHomeCards() {
     const cards = Array.from(document.querySelectorAll('.post-block'));
-    if (!cards.length) return;
+    if (!cards.length) return false;
 
     const entries = [];
 
@@ -277,7 +280,7 @@
       });
     }
 
-    if (!entries.length) return;
+    if (!entries.length) return false;
 
     const uniquePaths = Array.from(new Set(entries.map(item => item.path)));
     const statMap = {};
@@ -335,20 +338,77 @@
       }
       renderStatPair(stats, item.viewNode, item.likeNode);
     }
+
+    return true;
   }
 
-  const page = getPageConfig();
-  const pathname = normalizePath(window.location && window.location.pathname ? window.location.pathname : '/');
-
-  if (page.isHome) {
-    bindHomeCards();
-    return;
+  function isLikelyHome(page, pathname) {
+    if (page && page.isHome) return true;
+    if (document.body && document.body.classList.contains('home')) return true;
+    if (pathname === '/' && document.querySelector('.main-inner.index .post-block')) return true;
+    return false;
   }
 
-  if (page.isPost) {
-    bindPostDetail(pathname);
-    return;
+  function isLikelyPost(page) {
+    if (page && page.isPost) return true;
+    return !!document.querySelector('.post-body');
   }
 
-  bindPostDetail(pathname);
+  async function initializeEngagement() {
+    const page = getPageConfig();
+    const pathname = normalizePath(window.location && window.location.pathname ? window.location.pathname : '/');
+    const shouldBindHome = isLikelyHome(page, pathname);
+    const shouldBindPost = isLikelyPost(page);
+
+    if (shouldBindHome) {
+      await bindHomeCards();
+    }
+
+    if (shouldBindPost) {
+      const mounted = await bindPostDetail(pathname);
+      if (!mounted) {
+        setTimeout(function () {
+          bindPostDetail(pathname);
+        }, 180);
+      }
+      return;
+    }
+
+    if (!shouldBindHome) {
+      bindPostDetail(pathname);
+    }
+  }
+
+  let initTimer = 0;
+
+  function scheduleInit(delayMs) {
+    if (initTimer) {
+      clearTimeout(initTimer);
+    }
+    initTimer = setTimeout(function () {
+      initializeEngagement().catch(function () {
+        // keep silent
+      });
+    }, Math.max(0, Number(delayMs) || 0));
+  }
+
+  function boot() {
+    [0, 120, 320].forEach(function (delay) {
+      setTimeout(function () {
+        initializeEngagement().catch(function () {
+          // keep silent
+        });
+      }, delay);
+    });
+
+    document.addEventListener('pjax:complete', function () {
+      scheduleInit(40);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
 })();
