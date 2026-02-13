@@ -26,7 +26,7 @@
 })();
 
 (function () {
-  var OPENING_FORCE_ALWAYS = false;
+  var OPENING_FORCE_ALWAYS = true;
   var OPENING_VERSION = 'opening-v1';
   var OPENING_DATE_KEY = 'ginka:opening:last-date';
   var OPENING_VERSION_KEY = 'ginka:opening:version';
