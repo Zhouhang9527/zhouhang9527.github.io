@@ -12,6 +12,9 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const config = require('./config');
+const rateLimit = require('./middleware/rateLimit');
+const cache = require('./middleware/cache');
+const transformRouter = require('./middleware/transform');
 
 const app = express();
 
@@ -42,8 +45,20 @@ app.use((req, _res, next) => {
 
 // ─── 2. 注册代理路由 ──────────────────────────────────────────────────────────
 
-config.proxies.forEach(({ path, target, pathRewrite, description }) => {
+config.proxies.forEach(({ path, target, pathRewrite, description, rateLimit: rl, cache: ca }) => {
   console.log(`注册代理路由: ${path}  ->  ${target}  (${description})`);
+
+  // 按需挂载限速中间件
+  if (rl) {
+    app.use(path, rateLimit(rl));
+    console.log(`  限速: 每 ${rl.windowMs / 1000}s 最多 ${rl.max} 次`);
+  }
+
+  // 按需挂载缓存中间件
+  if (ca) {
+    app.use(path, cache(ca));
+    console.log(`  缓存: TTL ${ca.ttl / 1000}s`);
+  }
 
   app.use(
     path,
@@ -85,6 +100,12 @@ config.proxies.forEach(({ path, target, pathRewrite, description }) => {
 
 // ─── 3. 辅助路由 ─────────────────────────────────────────────────────────────
 
+// 请求/响应改写演示路由（用途三：改写请求/响应体）
+app.use('/transform', transformRouter);
+
+// 浏览器交互演示页面
+app.use('/demo', express.static(`${__dirname}/demo`));
+
 // 健康检查
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -116,6 +137,7 @@ app.listen(config.port, () => {
   console.log('======================================');
   console.log('  反向代理 API 服务器已启动（仅学习用）');
   console.log(`  地址: http://localhost:${config.port}`);
+  console.log(`  演示页: http://localhost:${config.port}/demo`);
   console.log('  路由列表:');
   config.proxies.forEach(({ path, target }) => {
     console.log(`    ${path}  ->  ${target}`);

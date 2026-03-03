@@ -8,12 +8,30 @@
 
 ## 目录
 
+- [这个能做什么？](#这个能做什么)
 - [原理简介](#原理简介)
 - [快速开始](#快速开始)
 - [项目结构](#项目结构)
 - [配置说明](#配置说明)
 - [使用示例](#使用示例)
 - [常见问题](#常见问题)
+
+---
+
+## 这个能做什么？
+
+本项目通过 6 个具体用途，演示反向代理在实际开发中能解决的问题：
+
+| # | 用途 | 说明 | 对应路由 |
+|---|------|------|---------|
+| ① | **解决跨域（CORS）** | 浏览器无法直接跨域访问的 API，通过代理层统一添加 CORS 头，前端可直接调用 | `/github/*`、`/openai/*` |
+| ② | **响应缓存加速** | GET 请求命中缓存时直接返回，无需再次请求目标服务器，响应更快、API 调用更少 | `/httpbin/*`（30s）、`/github/*`（60s） |
+| ③ | **请求/响应体改写** | 在转发前向请求追加字段，收到响应后再修改内容，无需改动客户端代码 | `/transform/post` |
+| ④ | **请求限速保护** | 每个 IP 在时间窗口内超过最大请求次数后返回 429，保护目标 API 的调用配额 | `/openai/*`（20次/分钟）、`/github/*`（30次/分钟） |
+| ⑤ | **Authorization 头透传** | 客户端携带的 Token 被代理层原样注入到转发请求头中，无需客户端处理 | 所有代理路由 |
+| ⑥ | **服务管理端点** | `/health` 健康检查、`/` 路由列表、`/demo` 浏览器交互演示页 | 内置路由 |
+
+> 💡 **启动服务器后，打开浏览器访问 `http://localhost:3000/demo`，可交互体验以上全部功能。**
 
 ---
 
@@ -69,11 +87,17 @@ npm run dev
 
 ```
 proxy-api/
-├── server.js        # 主入口，创建 Express 应用并挂载代理中间件
-├── config.js        # 代理路由规则配置
-├── package.json     # 项目依赖与脚本
-├── .env.example     # 环境变量示例（复制为 .env 后填写实际值）
-└── README.md        # 本文档
+├── server.js              # 主入口，创建 Express 应用并挂载所有中间件
+├── config.js              # 代理路由规则配置（含限速、缓存参数）
+├── middleware/
+│   ├── rateLimit.js       # 限速中间件（滑动窗口计数器）
+│   ├── cache.js           # 内存缓存中间件（TTL 过期）
+│   └── transform.js       # 请求/响应体改写演示路由
+├── demo/
+│   └── index.html         # 浏览器交互演示页面（访问 /demo）
+├── package.json           # 项目依赖与脚本
+├── .env.example           # 环境变量示例（复制为 .env 后填写实际值）
+└── README.md              # 本文档
 ```
 
 ---
@@ -84,10 +108,12 @@ proxy-api/
 
 ```js
 {
-  path: '/openai',            // 本地路由前缀
-  target: 'https://api.openai.com', // 转发目标地址
-  pathRewrite: { '^/openai': '' },  // 路径重写规则（可选）
+  path: '/openai',                          // 本地路由前缀
+  target: 'https://api.openai.com',         // 转发目标地址
+  pathRewrite: { '^/openai': '' },          // 路径重写规则（可选）
   description: 'OpenAI API 反向代理',
+  rateLimit: { windowMs: 60_000, max: 20 }, // 限速：60s 内最多 20 次（可选）
+  cache: { ttl: 30_000 },                   // 缓存 GET 响应 30s（可选）
 }
 ```
 
@@ -114,18 +140,24 @@ curl http://localhost:3000/
 curl http://localhost:3000/health
 ```
 
-### 代理 GitHub API
+### 浏览器交互演示页
 
-```bash
-# 查询 GitHub 用户信息
-curl http://localhost:3000/github/users/octocat
+```
+http://localhost:3000/demo
 ```
 
-### 代理 httpbin（测试用）
+### 代理 GitHub API（含缓存 + 限速）
+
+```bash
+# 查询 GitHub 用户信息（响应头包含 X-Cache: MISS/HIT 和 X-RateLimit-Remaining）
+curl -i http://localhost:3000/github/users/octocat
+```
+
+### 代理 httpbin（测试用，含缓存）
 
 ```bash
 # 测试 GET 请求
-curl http://localhost:3000/httpbin/get
+curl -i http://localhost:3000/httpbin/get
 
 # 测试 POST 请求（携带 JSON 体）
 curl -X POST http://localhost:3000/httpbin/post \
@@ -133,7 +165,24 @@ curl -X POST http://localhost:3000/httpbin/post \
      -d '{"key": "value"}'
 ```
 
-### 代理 OpenAI API（需提供 API Key）
+### 请求/响应体改写演示
+
+```bash
+# 代理层会自动追加 _proxy 和 _timestamp 字段，并在响应中加入 _note
+curl -X POST http://localhost:3000/transform/post \
+     -H "Content-Type: application/json" \
+     -d '{"name": "张三"}'
+```
+
+### Authorization 头透传
+
+```bash
+# httpbin 会将收到的所有请求头原样返回，验证 Token 是否到达目标服务器
+curl http://localhost:3000/httpbin/headers \
+     -H "Authorization: Bearer sk-YOUR_TOKEN"
+```
+
+### 代理 OpenAI API（需提供 API Key，含限速保护）
 
 ```bash
 curl http://localhost:3000/openai/v1/models \

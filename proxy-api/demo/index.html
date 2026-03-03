@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>反向代理 API — 功能演示</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'PingFang SC', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    h1 { font-size: 1.8rem; color: #38bdf8; margin-bottom: .4rem; }
+    .subtitle { color: #94a3b8; font-size: .95rem; margin-bottom: 2rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.2rem;
+      max-width: 1100px;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 1.4rem;
+    }
+    .card h2 { font-size: 1.05rem; color: #7dd3fc; margin-bottom: .3rem; }
+    .badge {
+      display: inline-block;
+      font-size: .72rem;
+      padding: .15rem .55rem;
+      border-radius: 999px;
+      margin-bottom: .8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-get { background: #14532d; color: #86efac; }
+    .badge-post { background: #7c2d12; color: #fdba74; }
+    .desc { font-size: .88rem; color: #94a3b8; margin-bottom: 1rem; line-height: 1.5; }
+    .field-row { display: flex; gap: .5rem; margin-bottom: .7rem; flex-wrap: wrap; }
+    input, textarea {
+      flex: 1;
+      min-width: 0;
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: .45rem .75rem;
+      font-size: .88rem;
+      font-family: 'Consolas', monospace;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input:focus, textarea:focus { border-color: #38bdf8; }
+    textarea { min-height: 70px; resize: vertical; }
+    button {
+      background: #0369a1;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: .45rem 1.1rem;
+      font-size: .88rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .2s;
+    }
+    button:hover { background: #0284c7; }
+    button:active { background: #0ea5e9; }
+    .response-box {
+      margin-top: .9rem;
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: .75rem;
+      font-size: .8rem;
+      font-family: 'Consolas', monospace;
+      max-height: 220px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      color: #a3e635;
+    }
+    .headers-box {
+      font-size: .75rem;
+      color: #64748b;
+      font-family: 'Consolas', monospace;
+      margin-top: .5rem;
+    }
+    .tag-hit  { color: #4ade80; }
+    .tag-miss { color: #f87171; }
+    .tag-rl   { color: #fb923c; }
+    .spinner {
+      display: inline-block;
+      width: 12px; height: 12px;
+      border: 2px solid #475569;
+      border-top-color: #38bdf8;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <h1>🔁 反向代理 API 功能演示</h1>
+  <p class="subtitle">确保已在本地执行 <code>npm start</code>，服务器默认运行在 <code>http://localhost:3000</code>（端口可通过 PORT 环境变量修改）</p>
+
+  <div class="grid">
+
+    <!-- 用途 1：跨域解决 -->
+    <div class="card">
+      <h2>① 跨域请求解决（CORS）</h2>
+      <span class="badge badge-get">GET</span>
+      <p class="desc">
+        前端直接请求 <code>api.github.com</code> 会被浏览器拦截（跨域）。
+        通过本代理服务器中转，统一添加 CORS 响应头，前端即可无障碍访问。
+      </p>
+      <div class="field-row">
+        <input id="cors-url" value="/github/users/octocat" />
+        <button onclick="doGet('cors-url','cors-res','cors-hdr')">发送</button>
+      </div>
+      <div class="headers-box" id="cors-hdr"></div>
+      <div class="response-box" id="cors-res">// 点击「发送」查看结果</div>
+    </div>
+
+    <!-- 用途 2：缓存加速 -->
+    <div class="card">
+      <h2>② 响应缓存（Cache）</h2>
+      <span class="badge badge-get">GET</span>
+      <p class="desc">
+        连续发送相同请求，首次为 <span class="tag-miss">MISS</span>（实际请求目标服务器），
+        之后 30 秒内返回 <span class="tag-hit">HIT</span>（直接读缓存），速度更快、消耗更少。
+        观察响应头 <code>X-Cache</code> 的变化。
+      </p>
+      <div class="field-row">
+        <input id="cache-url" value="/httpbin/get?demo=cache" />
+        <button onclick="doGet('cache-url','cache-res','cache-hdr')">发送</button>
+      </div>
+      <div class="headers-box" id="cache-hdr"></div>
+      <div class="response-box" id="cache-res">// 连续点击两次，对比 X-Cache 头</div>
+    </div>
+
+    <!-- 用途 3：请求/响应改写 -->
+    <div class="card">
+      <h2>③ 请求 & 响应体改写（Transform）</h2>
+      <span class="badge badge-post">POST</span>
+      <p class="desc">
+        代理层在转发前自动向请求体追加 <code>_proxy: true</code> 和 <code>_timestamp</code> 字段，
+        收到响应后再追加 <code>_note</code> 字段。演示如何在不修改客户端的前提下改写数据。
+      </p>
+      <div class="field-row">
+        <textarea id="transform-body">{"name": "张三", "message": "你好"}</textarea>
+      </div>
+      <div class="field-row">
+        <button onclick="doPost('/transform/post','transform-body','transform-res','transform-hdr')" style="width:100%">发送并查看改写结果</button>
+      </div>
+      <div class="headers-box" id="transform-hdr"></div>
+      <div class="response-box" id="transform-res">// 点击「发送」查看改写后的请求体</div>
+    </div>
+
+    <!-- 用途 4：限速保护 -->
+    <div class="card">
+      <h2>④ 请求限速（Rate Limiting）</h2>
+      <span class="badge badge-get">GET</span>
+      <p class="desc">
+        OpenAI / GitHub 等路由设有每分钟请求上限。
+        连续快速点击多次后会收到 <code>429 Too Many Requests</code>，
+        同时响应头 <code>X-RateLimit-Remaining</code> 会实时递减。
+      </p>
+      <div class="field-row">
+        <input id="rl-url" value="/github/rate_limit" />
+        <button onclick="doGet('rl-url','rl-res','rl-hdr')">发送</button>
+        <button onclick="rapidFire()" title="快速连发 35 次触发限速">💥 连发 35 次</button>
+      </div>
+      <div class="headers-box" id="rl-hdr"></div>
+      <div class="response-box" id="rl-res">// 点击「连发 35 次」后查看 429 响应</div>
+    </div>
+
+    <!-- 用途 5：认证头注入 -->
+    <div class="card">
+      <h2>⑤ Authorization 头透传</h2>
+      <span class="badge badge-get">GET</span>
+      <p class="desc">
+        在输入框中填入任意 Token，代理会将其原样注入到转发请求的 <code>Authorization</code> 头中。
+        httpbin 会将收到的所有请求头原样返回，方便验证头是否到达目标服务器。
+      </p>
+      <div class="field-row">
+        <input id="auth-token" placeholder="Bearer sk-..." />
+      </div>
+      <div class="field-row">
+        <input id="auth-url" value="/httpbin/headers" style="flex:2" />
+        <button onclick="doGetWithAuth('auth-url','auth-token','auth-res','auth-hdr')">发送</button>
+      </div>
+      <div class="headers-box" id="auth-hdr"></div>
+      <div class="response-box" id="auth-res">// 填入 Token 后点击发送</div>
+    </div>
+
+    <!-- 用途 6：健康检查 -->
+    <div class="card">
+      <h2>⑥ 健康检查 & 路由列表</h2>
+      <span class="badge badge-get">GET</span>
+      <p class="desc">
+        代理服务器自身提供 <code>/health</code>（健康检查）和 <code>/</code>（查看所有代理规则）两个管理端点，
+        方便监控服务是否正常运行。
+      </p>
+      <div class="field-row">
+        <button onclick="doGetDirect('/health','hc-res','hc-hdr')" style="flex:1">GET /health</button>
+        <button onclick="doGetDirect('/','hc-res','hc-hdr')" style="flex:1">GET /（路由列表）</button>
+      </div>
+      <div class="headers-box" id="hc-hdr"></div>
+      <div class="response-box" id="hc-res">// 点击上方按钮</div>
+    </div>
+
+  </div>
+
+  <script>
+    const BASE = 'http://localhost:3000';
+
+    function setResult(resId, hdrId, status, headers, body) {
+      const hdrEl = document.getElementById(hdrId);
+      const resEl = document.getElementById(resId);
+      const cache = headers.get('x-cache');
+      const rem   = headers.get('x-ratelimit-remaining');
+      const proxy = headers.get('x-proxied-by');
+      let meta = `HTTP ${status}`;
+      if (cache) meta += `  X-Cache: <span class="${cache === 'HIT' ? 'tag-hit' : 'tag-miss'}">${cache}</span>`;
+      if (rem  != null) meta += `  <span class="tag-rl">Remaining: ${rem}</span>`;
+      if (proxy) meta += `  X-Proxied-By: ${proxy}`;
+      hdrEl.innerHTML = meta;
+      try { resEl.textContent = JSON.stringify(JSON.parse(body), null, 2); }
+      catch { resEl.textContent = body; }
+    }
+
+    function setLoading(resId) {
+      document.getElementById(resId).innerHTML = '<span class="spinner"></span>请求中...';
+    }
+
+    async function doGet(urlId, resId, hdrId) {
+      const url = BASE + document.getElementById(urlId).value.trim();
+      setLoading(resId);
+      try {
+        const r = await fetch(url);
+        setResult(resId, hdrId, r.status, r.headers, await r.text());
+      } catch(e) {
+        document.getElementById(resId).textContent = '❌ ' + e.message + '\n（服务器未启动？请先执行 npm start）';
+      }
+    }
+
+    async function doGetDirect(path, resId, hdrId) {
+      setLoading(resId);
+      try {
+        const r = await fetch(BASE + path);
+        setResult(resId, hdrId, r.status, r.headers, await r.text());
+      } catch(e) {
+        document.getElementById(resId).textContent = '❌ ' + e.message;
+      }
+    }
+
+    async function doGetWithAuth(urlId, tokenId, resId, hdrId) {
+      const url   = BASE + document.getElementById(urlId).value.trim();
+      const token = document.getElementById(tokenId).value.trim();
+      setLoading(resId);
+      const headers = token ? { Authorization: token } : {};
+      try {
+        const r = await fetch(url, { headers });
+        setResult(resId, hdrId, r.status, r.headers, await r.text());
+      } catch(e) {
+        document.getElementById(resId).textContent = '❌ ' + e.message;
+      }
+    }
+
+    async function doPost(path, bodyId, resId, hdrId) {
+      const body = document.getElementById(bodyId).value.trim();
+      setLoading(resId);
+      try {
+        const r = await fetch(BASE + path, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body,
+        });
+        setResult(resId, hdrId, r.status, r.headers, await r.text());
+      } catch(e) {
+        document.getElementById(resId).textContent = '❌ ' + e.message;
+      }
+    }
+
+    async function rapidFire() {
+      const resEl = document.getElementById('rl-res');
+      const hdrEl = document.getElementById('rl-hdr');
+      resEl.textContent = '正在连发 35 次请求...';
+      for (let i = 1; i <= 35; i++) {
+        try {
+          const r = await fetch(BASE + '/github/rate_limit');
+          const rem = r.headers.get('x-ratelimit-remaining');
+          if (r.status === 429) {
+            const txt = await r.text();
+            hdrEl.innerHTML = `HTTP 429  <span class="tag-rl">已触发限速！</span>`;
+            resEl.textContent = `第 ${i} 次请求触发限速：\n` + txt;
+            return;
+          }
+          resEl.textContent = `第 ${i}/35 次  状态: ${r.status}  Remaining: ${rem}`;
+        } catch(e) {
+          resEl.textContent = '❌ ' + e.message; return;
+        }
+      }
+      resEl.textContent = '35 次均未触发限速（可能本地 IP 限速计数已重置，再试一次）';
+    }
+  </script>
+</body>
+</html>
