@@ -183,24 +183,6 @@
       </tags>
   </entry>
   <entry>
-    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] ez_tea<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="题目八-ez-tea"><a href="#题目八-ez-tea" class="headerlink" title="题目八:ez_tea"></a>题目八:ez_tea</h3><p>程序执行前会先弹对话框提示“检测到调试器”，随后直接退出。查 API 引用时能看到 <code>MessageBox</code> 和常见的 <code>IsDebuggerPresent</code> 等函数，锁定反调试模块后，把入口 patch 成 <code>ret</code> 就能让程序安静下来。</p>
-<p>绕过之后继续动调，发现读入的 flag 先被简单混淆，再走了一遍改造过常量的 TEA。把加密块和新的 key dump 出来，照旧写脚本倒着执行 —— 每轮扣掉 <code>delta</code>、处理高位低位、循环 32 次。最后把混淆操作按原逻辑逆过来（按位异或&#x2F;加减）就能还原明文。</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>动态调试</tag>
-        <tag>反反调试</tag>
-        <tag>TEA</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>[NSSCTF 2025 秋招赛] fl-ow-er</title>
     <url>//2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dfl-ow-er/</url>
     <content><![CDATA[<h3 id="题目二-flower"><a href="#题目二-flower" class="headerlink" title="题目二:flower~"></a>题目二:fl<del>ow</del>er~</h3><p>拖进 IDA 之后直接 <code>F5</code> 会提示存在跳转陷阱，一眼望去全是经典的花指令 —— 成对的 <code>jz/jnz</code> 以及对同一地址的重复跳转。</p>
@@ -221,6 +203,41 @@
         <tag>花指令</tag>
         <tag>IDA Pro</tag>
         <tag>异或解密</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] ez_tea<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="题目八-ez-tea"><a href="#题目八-ez-tea" class="headerlink" title="题目八:ez_tea"></a>题目八:ez_tea</h3><p>程序执行前会先弹对话框提示“检测到调试器”，随后直接退出。查 API 引用时能看到 <code>MessageBox</code> 和常见的 <code>IsDebuggerPresent</code> 等函数，锁定反调试模块后，把入口 patch 成 <code>ret</code> 就能让程序安静下来。</p>
+<p>绕过之后继续动调，发现读入的 flag 先被简单混淆，再走了一遍改造过常量的 TEA。把加密块和新的 key dump 出来，照旧写脚本倒着执行 —— 每轮扣掉 <code>delta</code>、处理高位低位、循环 32 次。最后把混淆操作按原逻辑逆过来（按位异或&#x2F;加减）就能还原明文。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>动态调试</tag>
+        <tag>反反调试</tag>
+        <tag>TEA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] 一种很新的签到</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E4%B8%80%E7%A7%8D%E5%BE%88%E6%96%B0%E7%9A%84%E7%AD%BE%E5%88%B0/</url>
+    <content><![CDATA[<h3 id="题目一-一种很新的签到"><a href="#题目一-一种很新的签到" class="headerlink" title="题目一:一种很新的签到"></a>题目一:一种很新的签到</h3><p>先把程序丢进 DIE，确认没有装壳之后直接交给 IDA 处理。</p>
+<p><img data-src="pasted-image-20251103232546.png"></p>
+<p>IDA 里进入 <code>main</code>，按 <code>F5</code> 虽然能看到伪代码，但流程有些噪音。直接 <code>Shift+F12</code> 查看字符串表，硬编码的 flag 就明晃晃地躺在那里，抄下来提交即可。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>IDA Pro</tag>
+        <tag>签到题</tag>
       </tags>
   </entry>
   <entry>
@@ -246,23 +263,6 @@
         <tag>PyInstaller</tag>
         <tag>Python反编译</tag>
         <tag>pycdc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[NSSCTF 2025 秋招赛] 一种很新的签到</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E4%B8%80%E7%A7%8D%E5%BE%88%E6%96%B0%E7%9A%84%E7%AD%BE%E5%88%B0/</url>
-    <content><![CDATA[<h3 id="题目一-一种很新的签到"><a href="#题目一-一种很新的签到" class="headerlink" title="题目一:一种很新的签到"></a>题目一:一种很新的签到</h3><p>先把程序丢进 DIE，确认没有装壳之后直接交给 IDA 处理。</p>
-<p><img data-src="pasted-image-20251103232546.png"></p>
-<p>IDA 里进入 <code>main</code>，按 <code>F5</code> 虽然能看到伪代码，但流程有些噪音。直接 <code>Shift+F12</code> 查看字符串表，硬编码的 flag 就明晃晃地躺在那里，抄下来提交即可。</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>IDA Pro</tag>
-        <tag>签到题</tag>
       </tags>
   </entry>
   <entry>
@@ -324,6 +324,142 @@
       </tags>
   </entry>
   <entry>
+    <title>手动根据 VA(虚拟地址) 查找对应 PA(物理地址)</title>
+    <url>/2026/03/20/va-to-pa-walk/</url>
+    <content><![CDATA[<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>先在虚拟机内用 IDA 动调 exe 并下断点使进程挂起，然后主机 WinDbg 调试，切换到对应进程上下文。</p>
+<p><img data-src="pasted-image-20260320174848.png"></p>
+<p>WinDbg 查找 CR3 的值为 <code>00000000a003e000</code>，也就是页表基址。</p>
+<p><img data-src="pasted-image-20260320175014.png"></p>
+<p>断点处指令虚拟地址为：<code>0x00000000004030c6</code></p>
+<p>根据公式计算对应的 index：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">PML4 = (VA &gt;&gt; <span class="number">39</span>) &amp; <span class="number">0x1ff</span></span><br><span class="line">PDPT = (VA &gt;&gt; <span class="number">30</span>) &amp; <span class="number">0x1ff</span></span><br><span class="line">PD = (VA &gt;&gt; <span class="number">21</span>) &amp; <span class="number">0x1ff</span></span><br><span class="line">PT = (VA &gt;&gt; <span class="number">12</span>) &amp; <span class="number">0x1ff</span></span><br><span class="line">OFFSET = VA &amp; <span class="number">0xfff</span></span><br></pre></td></tr></table></figure>
+
+<p>得：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">PML4 = <span class="number">0x0</span></span><br><span class="line">PDPT = <span class="number">0x0</span></span><br><span class="line">PD = <span class="number">0x2</span></span><br><span class="line">PT = <span class="number">0x3</span></span><br><span class="line">OFFSET = <span class="number">0xC6</span></span><br></pre></td></tr></table></figure>
+
+<p>直接查看页表基址（PA 物理地址）处的值：</p>
+<p><img data-src="pasted-image-20260320180151.png"></p>
+<p>因为 PML4 算出来是 <code>0</code>，所以直接取第一项 <code>0a00000030c47867</code>。</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">地址：</span><br><span class="line">[63] NX</span><br><span class="line">[62:52] 保留/软件位</span><br><span class="line">[51:12] 物理页框号</span><br><span class="line">[11:0] flag</span><br></pre></td></tr></table></figure>
+
+<p>页表项（PML4E &#x2F; PDPTE &#x2F; PDE &#x2F; PTE）结构：</p>
+<table>
+<thead>
+<tr>
+<th>高位：物理地址</th>
+<th>低 12 位：各种 flag</th>
+</tr>
+</thead>
+</table>
+<p>也就是说：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">entry = [物理页基址 | 标志位]</span><br><span class="line">物理地址 = entry &amp; <span class="number">0x000ffffffffff000</span></span><br></pre></td></tr></table></figure>
+
+<p>flag：</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>Present</td>
+</tr>
+<tr>
+<td>1</td>
+<td>RW</td>
+</tr>
+<tr>
+<td>2</td>
+<td>US</td>
+</tr>
+<tr>
+<td>3</td>
+<td>PWT</td>
+</tr>
+<tr>
+<td>4</td>
+<td>PCD</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Accessed</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Dirty（PTE）</td>
+</tr>
+<tr>
+<td>7</td>
+<td>PS（大页标志）</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Global</td>
+</tr>
+<tr>
+<td>9-11</td>
+<td>其他</td>
+</tr>
+</tbody></table>
+<p>继续跟进：</p>
+<p><img data-src="pasted-image-20260320181520.png"></p>
+<p>PDPT 同样为 <code>0</code>，取第一项 <code>entry -&gt; 0x0a00000110448867</code>，再次取物理地址 <code>-&gt; 0x110448000</code>。</p>
+<p><img data-src="pasted-image-20260320181912.png"></p>
+<p><code>PD = 2</code>，所以取第三项 <code>0a00000025c49867</code>，再计算出物理地址 <code>-&gt; 0x00025c49000</code>。</p>
+<p><img data-src="pasted-image-20260320182045.png"></p>
+<p><code>PT = 3</code>，取第四项，计算物理地址为 <code>0x000003105e000</code>。又因为 <code>OFFSET = 0xC6</code>，所以直接查看 <code>0x000003105e000 + 0xC6</code> 处内存。</p>
+<p><img data-src="pasted-image-20260320182516.png"></p>
+<p>对比内存可以确定找到了正确的物理地址。</p>
+<p>（软件断点会替换目标地址的第一个字节为 <code>0xCC</code>）</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>Reverse</tag>
+        <tag>Windows</tag>
+        <tag>WinDbg</tag>
+        <tag>页表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[miniVN] ezAndroid</title>
+    <url>/2025/12/23/%5BminiVN%5D%20ezAndroid/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: ezAndroid<br><strong>类型</strong>: Reverse Engineering &#x2F; Android</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>直接 jadx 打开，定位到 <code>MainActivity</code>。</p>
+<p><img data-src="image-20251207134252867.png"></p>
+<p>逻辑就是先检查 flag 的长度是否为 31、是否是 <code>VNCTF{}</code> 格式，然后把花括号内部的内容分别传进 <code>check1</code> 和 <code>check2</code>。</p>
+<p><img data-src="image-20251207134445601.png"></p>
+<p>再去 <code>value/strings.xml</code> 找到 AES 用的 key。</p>
+<p><img data-src="image-20251207134541436.png"></p>
+<p>用 CyberChef 解出第一部分。</p>
+<p><img data-src="image-20251207134700960.png"></p>
+<p>从这里可以看到 <code>check2</code> 的逻辑在 so 层，解压 apk 用 IDA 打开 so 文件。</p>
+<p><img data-src="image-20251207134710357.png"></p>
+<p>发现是一个 XTEA 加密，key 已经给出了：<code>Th1sIsAn3asyChal</code>。</p>
+<p><img data-src="image-20251207134901393.png"></p>
+<p><img data-src="image-20251207135007174.png"></p>
+<p>再通过交叉引用找到 delta 的值。</p>
+<p><img data-src="image-20251207135036412.png"></p>
+<p>写出解密脚本解出第二部分。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">u32</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x &amp; <span class="number">0xFFFFFFFF</span></span><br><span class="line"></span><br><span class="line">keyy = [<span class="number">0x73316854</span>, <span class="number">0x6E417349</span>, <span class="number">0x79736133</span>, <span class="number">0x6C616843</span>]</span><br><span class="line"></span><br><span class="line">enc_v1, enc_v2 = <span class="number">0xAD05217D</span>, <span class="number">0xF7C0C3E2</span></span><br><span class="line"></span><br><span class="line">delta = <span class="number">1743291877</span></span><br><span class="line"></span><br><span class="line">sum_ = u32(delta * <span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">v1, v2 = enc_v1, enc_v2</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line">    v2 = u32(v2 - ((keyy[(sum_ &gt;&gt; <span class="number">8</span>) &amp; <span class="number">3</span>] + sum_) ^ (v1 + ((v1 &gt;&gt; <span class="number">5</span>) ^ (<span class="number">4</span> * v1)))))</span><br><span class="line">    v1 = u32(v1 - ((keyy[sum_ &amp; <span class="number">3</span>] + sum_) ^ (v2 + ((v2 &gt;&gt; <span class="number">6</span>) ^ (<span class="number">8</span> * v2)))))</span><br><span class="line">    sum_ = u32(sum_ - delta)</span><br><span class="line"></span><br><span class="line">flag_bytes = struct.pack(<span class="string">&#x27;&lt;II&#x27;</span>, v1, v2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;bytes:&#x27;</span>, flag_bytes)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;hex  :&#x27;</span>, flag_bytes.<span class="built_in">hex</span>())</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;utf-8:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="keyword">except</span> UnicodeDecodeError:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;latin1:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;latin-1&#x27;</span>))</span><br><span class="line"><span class="comment"># nd_xt3a!</span></span><br></pre></td></tr></table></figure>
+
+<p>最终得到完整 flag：<code>VNCTF{u_Know_@ndro1d_And_xt3a!}</code></p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>XTEA</tag>
+        <tag>Android</tag>
+        <tag>AES</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[miniVN] VSnake</title>
     <url>/2025/12/23/%5BminiVN%5D%20VSnake/</url>
     <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: VSnake<br><strong>类型</strong>: Reverse Engineering</p>
@@ -364,44 +500,9 @@
         <tag>Reverse</tag>
         <tag>RC4</tag>
         <tag>XTEA</tag>
+        <tag>AES</tag>
         <tag>MD5</tag>
         <tag>爆破</tag>
-        <tag>AES</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[miniVN] ezAndroid</title>
-    <url>/2025/12/23/%5BminiVN%5D%20ezAndroid/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: ezAndroid<br><strong>类型</strong>: Reverse Engineering &#x2F; Android</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>直接 jadx 打开，定位到 <code>MainActivity</code>。</p>
-<p><img data-src="image-20251207134252867.png"></p>
-<p>逻辑就是先检查 flag 的长度是否为 31、是否是 <code>VNCTF{}</code> 格式，然后把花括号内部的内容分别传进 <code>check1</code> 和 <code>check2</code>。</p>
-<p><img data-src="image-20251207134445601.png"></p>
-<p>再去 <code>value/strings.xml</code> 找到 AES 用的 key。</p>
-<p><img data-src="image-20251207134541436.png"></p>
-<p>用 CyberChef 解出第一部分。</p>
-<p><img data-src="image-20251207134700960.png"></p>
-<p>从这里可以看到 <code>check2</code> 的逻辑在 so 层，解压 apk 用 IDA 打开 so 文件。</p>
-<p><img data-src="image-20251207134710357.png"></p>
-<p>发现是一个 XTEA 加密，key 已经给出了：<code>Th1sIsAn3asyChal</code>。</p>
-<p><img data-src="image-20251207134901393.png"></p>
-<p><img data-src="image-20251207135007174.png"></p>
-<p>再通过交叉引用找到 delta 的值。</p>
-<p><img data-src="image-20251207135036412.png"></p>
-<p>写出解密脚本解出第二部分。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">u32</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x &amp; <span class="number">0xFFFFFFFF</span></span><br><span class="line"></span><br><span class="line">keyy = [<span class="number">0x73316854</span>, <span class="number">0x6E417349</span>, <span class="number">0x79736133</span>, <span class="number">0x6C616843</span>]</span><br><span class="line"></span><br><span class="line">enc_v1, enc_v2 = <span class="number">0xAD05217D</span>, <span class="number">0xF7C0C3E2</span></span><br><span class="line"></span><br><span class="line">delta = <span class="number">1743291877</span></span><br><span class="line"></span><br><span class="line">sum_ = u32(delta * <span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">v1, v2 = enc_v1, enc_v2</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line">    v2 = u32(v2 - ((keyy[(sum_ &gt;&gt; <span class="number">8</span>) &amp; <span class="number">3</span>] + sum_) ^ (v1 + ((v1 &gt;&gt; <span class="number">5</span>) ^ (<span class="number">4</span> * v1)))))</span><br><span class="line">    v1 = u32(v1 - ((keyy[sum_ &amp; <span class="number">3</span>] + sum_) ^ (v2 + ((v2 &gt;&gt; <span class="number">6</span>) ^ (<span class="number">8</span> * v2)))))</span><br><span class="line">    sum_ = u32(sum_ - delta)</span><br><span class="line"></span><br><span class="line">flag_bytes = struct.pack(<span class="string">&#x27;&lt;II&#x27;</span>, v1, v2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;bytes:&#x27;</span>, flag_bytes)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;hex  :&#x27;</span>, flag_bytes.<span class="built_in">hex</span>())</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;utf-8:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="keyword">except</span> UnicodeDecodeError:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;latin1:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;latin-1&#x27;</span>))</span><br><span class="line"><span class="comment"># nd_xt3a!</span></span><br></pre></td></tr></table></figure>
-
-<p>最终得到完整 flag：<code>VNCTF{u_Know_@ndro1d_And_xt3a!}</code></p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>XTEA</tag>
-        <tag>AES</tag>
-        <tag>Android</tag>
       </tags>
   </entry>
 </search>

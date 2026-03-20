@@ -6,7 +6,7 @@
   <link href="https://zhouhang9527.github.io/atom.xml" rel="self"/>
   
   <link href="https://zhouhang9527.github.io/"/>
-  <updated>2025-12-23T10:23:54.853Z</updated>
+  <updated>2026-03-20T11:31:28.058Z</updated>
   <id>https://zhouhang9527.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>手动根据 VA(虚拟地址) 查找对应 PA(物理地址)</title>
+    <link href="https://zhouhang9527.github.io/2026/03/20/va-to-pa-walk/"/>
+    <id>https://zhouhang9527.github.io/2026/03/20/va-to-pa-walk/</id>
+    <published>2026-03-20T11:07:02.000Z</published>
+    <updated>2026-03-20T11:31:28.058Z</updated>
+    
+    
+    <summary type="html">一次结合 IDA 与 WinDbg，手动根据 VA 逐级走页表并定位 PA 的实操记录。</summary>
+    
+    
+    
+    <category term="reverse" scheme="https://zhouhang9527.github.io/categories/reverse/"/>
+    
+    
+    <category term="Reverse" scheme="https://zhouhang9527.github.io/tags/reverse/"/>
+    
+    <category term="Windows" scheme="https://zhouhang9527.github.io/tags/windows/"/>
+    
+    <category term="WinDbg" scheme="https://zhouhang9527.github.io/tags/windbg/"/>
+    
+    <category term="页表" scheme="https://zhouhang9527.github.io/tags/%E9%A1%B5%E8%A1%A8/"/>
+    
+  </entry>
   
   <entry>
     <title>[miniVN] VSnake</title>
@@ -39,11 +64,11 @@
     
     <category term="XTEA" scheme="https://zhouhang9527.github.io/tags/xtea/"/>
     
+    <category term="AES" scheme="https://zhouhang9527.github.io/tags/aes/"/>
+    
     <category term="MD5" scheme="https://zhouhang9527.github.io/tags/md5/"/>
     
     <category term="爆破" scheme="https://zhouhang9527.github.io/tags/%E7%88%86%E7%A0%B4/"/>
-    
-    <category term="AES" scheme="https://zhouhang9527.github.io/tags/aes/"/>
     
   </entry>
   
@@ -97,9 +122,9 @@
     
     <category term="XTEA" scheme="https://zhouhang9527.github.io/tags/xtea/"/>
     
-    <category term="AES" scheme="https://zhouhang9527.github.io/tags/aes/"/>
-    
     <category term="Android" scheme="https://zhouhang9527.github.io/tags/android/"/>
+    
+    <category term="AES" scheme="https://zhouhang9527.github.io/tags/aes/"/>
     
   </entry>
   
