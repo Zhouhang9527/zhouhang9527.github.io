@@ -459,12 +459,8 @@
   }
 
   function boot() {
-    [0, 120, 320].forEach(function (delay) {
-      setTimeout(function () {
-        initializeEngagement().catch(function () {
-          // keep silent
-        });
-      }, delay);
+    initializeEngagement().catch(function () {
+      // keep silent
     });
 
     document.addEventListener('pjax:complete', function () {
