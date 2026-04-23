@@ -1,6 +1,3 @@
-if (!window.__ginkaPageEffectsBound) {
-  window.__ginkaPageEffectsBound = true;
-
 (function () {
   var originTitle = document.title;
   var titleTime;
@@ -417,4 +414,3 @@ if (!window.__ginkaPageEffectsBound) {
     init();
   }
 })();
-}

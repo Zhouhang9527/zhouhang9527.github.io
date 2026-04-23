@@ -459,8 +459,12 @@
   }
 
   function boot() {
-    initializeEngagement().catch(function () {
-      // keep silent
+    [0, 120, 320].forEach(function (delay) {
+      setTimeout(function () {
+        initializeEngagement().catch(function () {
+          // keep silent
+        });
+      }, delay);
     });
 
     document.addEventListener('pjax:complete', function () {
