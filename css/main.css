@@ -1269,7 +1269,7 @@ pre code {
   transition: all 0.2s ease-in-out;
 }
 .links-of-author a::before {
-  background: #e58bff;
+  background: #ff18ff;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
@@ -2875,6 +2875,8 @@ body.is-opening-preparing::before {
   background: rgba(245,248,252,0.75);
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
+  transform: translateZ(0);
+  will-change: opacity;
 }
 .ginka-opening {
   position: fixed;
@@ -2883,6 +2885,9 @@ body.is-opening-preparing::before {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  contain: paint;
+  isolation: isolate;
+  will-change: opacity;
   transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), visibility 1s step-end;
 }
 .ginka-opening.is-visible {
@@ -2899,8 +2904,11 @@ body.is-opening-preparing::before {
   background: rgba(245,248,252,0.75);
   backdrop-filter: blur(16px) saturate(145%);
   -webkit-backdrop-filter: blur(16px) saturate(145%);
+  transform: translate3d(0, 0, 0);
   transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
+  backface-visibility: hidden;
+  contain: paint;
 }
 .ginka-opening__curtain--top {
   top: 0;
@@ -2964,10 +2972,10 @@ body.is-opening-preparing::before {
   opacity: 0.72;
 }
 .ginka-opening.is-curtain-open .ginka-opening__curtain--top {
-  transform: translateY(-103%);
+  transform: translate3d(0, -103%, 0);
 }
 .ginka-opening.is-curtain-open .ginka-opening__curtain--bottom {
-  transform: translateY(103%);
+  transform: translate3d(0, 103%, 0);
 }
 .ginka-opening.is-curtain-open .ginka-opening__seam {
   opacity: 0;

@@ -123,28 +123,6 @@
       </tags>
   </entry>
   <entry>
-    <title>[NSSCTF 2025 秋招赛] Ultimate Packer for eXecutables</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DUltimate%20Packer%20for%20eXecutables/</url>
-    <content><![CDATA[<h3 id="题目四-Ultimate-Packer-for-eXecutables"><a href="#题目四-Ultimate-Packer-for-eXecutables" class="headerlink" title="题目四:Ultimate Packer for eXecutables"></a>题目四:Ultimate Packer for eXecutables</h3><p>DIE 显示样本被 UPX 压缩，还提示入口信息异常。</p>
-<p><img data-src="pasted-image-20251104182310.png"></p>
-<p>直接 <code>upx -d</code> 会报错，因为作者把头部签名改掉了。</p>
-<p><img data-src="pasted-image-20251104182334.png"></p>
-<p>用 010 Editor 打开，手工把 <code>UPX!</code> 对应的几个字节覆写回来。</p>
-<p><img data-src="pasted-image-20251104182708.png"></p>
-<p>保存后重新 <code>upx -d</code> 就能顺利脱壳。后续流程：把修复后的二进制丢进 IDA，跟代码逻辑写解密脚本即可。注意程序中有 <code>input * 122</code> 这种会溢出的运算，所以脚本里采用遍历可打印字符、逐字节模 256 验证，避免直接倒推导致结果不对。</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>IDA Pro</tag>
-        <tag>UPX</tag>
-        <tag>脱壳</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>[NSSCTF 2025 秋招赛] debuggggg</title>
     <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Ddebuggggg/</url>
     <content><![CDATA[<h3 id="题目五-debuggggg"><a href="#题目五-debuggggg" class="headerlink" title="题目五: debuggggg"></a>题目五: debuggggg</h3><p>样本是个 Linux 可执行文件，<code>main</code> 里读取输入后调用若干校验函数。</p>
@@ -183,6 +161,46 @@
       </tags>
   </entry>
   <entry>
+    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] ez_tea<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="题目八-ez-tea"><a href="#题目八-ez-tea" class="headerlink" title="题目八:ez_tea"></a>题目八:ez_tea</h3><p>程序执行前会先弹对话框提示“检测到调试器”，随后直接退出。查 API 引用时能看到 <code>MessageBox</code> 和常见的 <code>IsDebuggerPresent</code> 等函数，锁定反调试模块后，把入口 patch 成 <code>ret</code> 就能让程序安静下来。</p>
+<p>绕过之后继续动调，发现读入的 flag 先被简单混淆，再走了一遍改造过常量的 TEA。把加密块和新的 key dump 出来，照旧写脚本倒着执行 —— 每轮扣掉 <code>delta</code>、处理高位低位、循环 32 次。最后把混淆操作按原逻辑逆过来（按位异或&#x2F;加减）就能还原明文。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>动态调试</tag>
+        <tag>反反调试</tag>
+        <tag>TEA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] Ultimate Packer for eXecutables</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DUltimate%20Packer%20for%20eXecutables/</url>
+    <content><![CDATA[<h3 id="题目四-Ultimate-Packer-for-eXecutables"><a href="#题目四-Ultimate-Packer-for-eXecutables" class="headerlink" title="题目四:Ultimate Packer for eXecutables"></a>题目四:Ultimate Packer for eXecutables</h3><p>DIE 显示样本被 UPX 压缩，还提示入口信息异常。</p>
+<p><img data-src="pasted-image-20251104182310.png"></p>
+<p>直接 <code>upx -d</code> 会报错，因为作者把头部签名改掉了。</p>
+<p><img data-src="pasted-image-20251104182334.png"></p>
+<p>用 010 Editor 打开，手工把 <code>UPX!</code> 对应的几个字节覆写回来。</p>
+<p><img data-src="pasted-image-20251104182708.png"></p>
+<p>保存后重新 <code>upx -d</code> 就能顺利脱壳。后续流程：把修复后的二进制丢进 IDA，跟代码逻辑写解密脚本即可。注意程序中有 <code>input * 122</code> 这种会溢出的运算，所以脚本里采用遍历可打印字符、逐字节模 256 验证，避免直接倒推导致结果不对。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>IDA Pro</tag>
+        <tag>UPX</tag>
+        <tag>脱壳</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[NSSCTF 2025 秋招赛] fl-ow-er</title>
     <url>//2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dfl-ow-er/</url>
     <content><![CDATA[<h3 id="题目二-flower"><a href="#题目二-flower" class="headerlink" title="题目二:flower~"></a>题目二:fl<del>ow</del>er~</h3><p>拖进 IDA 之后直接 <code>F5</code> 会提示存在跳转陷阱，一眼望去全是经典的花指令 —— 成对的 <code>jz/jnz</code> 以及对同一地址的重复跳转。</p>
@@ -206,28 +224,29 @@
       </tags>
   </entry>
   <entry>
-    <title>[NSSCTF 2025 秋招赛] 一种很新的签到</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E4%B8%80%E7%A7%8D%E5%BE%88%E6%96%B0%E7%9A%84%E7%AD%BE%E5%88%B0/</url>
-    <content><![CDATA[<h3 id="题目一-一种很新的签到"><a href="#题目一-一种很新的签到" class="headerlink" title="题目一:一种很新的签到"></a>题目一:一种很新的签到</h3><p>先把程序丢进 DIE，确认没有装壳之后直接交给 IDA 处理。</p>
-<p><img data-src="pasted-image-20251103232546.png"></p>
-<p>IDA 里进入 <code>main</code>，按 <code>F5</code> 虽然能看到伪代码，但流程有些噪音。直接 <code>Shift+F12</code> 查看字符串表，硬编码的 flag 就明晃晃地躺在那里，抄下来提交即可。</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>IDA Pro</tag>
-        <tag>签到题</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] ez_tea<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="题目八-ez-tea"><a href="#题目八-ez-tea" class="headerlink" title="题目八:ez_tea"></a>题目八:ez_tea</h3><p>程序执行前会先弹对话框提示“检测到调试器”，随后直接退出。查 API 引用时能看到 <code>MessageBox</code> 和常见的 <code>IsDebuggerPresent</code> 等函数，锁定反调试模块后，把入口 patch 成 <code>ret</code> 就能让程序安静下来。</p>
-<p>绕过之后继续动调，发现读入的 flag 先被简单混淆，再走了一遍改造过常量的 TEA。把加密块和新的 key dump 出来，照旧写脚本倒着执行 —— 每轮扣掉 <code>delta</code>、处理高位低位、循环 32 次。最后把混淆操作按原逻辑逆过来（按位异或&#x2F;加减）就能还原明文。</p>
+    <title>[miniVN] Crackme!</title>
+    <url>/2025/12/23/%5BminiVN%5D%20Crackme/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: Crackme!<br><strong>类型</strong>: Reverse Engineering</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>IDA 打开，<code>Shift + F12</code> 定位主逻辑，动调发现有反调试。这里用的是类似“单步调试手动脱壳”的方式过反调试（<code>F8</code> 步过 call，如果程序结束就用 <code>F7</code> 步进）。这道题还有 TLS，但最开始发现不影响正常动调就没管。</p>
+<p><img data-src="image-20251207140040939.png"></p>
+<p>一步一步调试最终找到反调试部分。</p>
+<p><img data-src="image-20251207140424189.png"></p>
+<p>调试状态下旗帜位非零，所以只需要将 <code>jz</code> 改为 <code>jmp</code> 就能绕过这个反调试，之后就能顺利进入主逻辑了（但是不知道为什么在主函数内部下断点也会结束程序，只能下在 call 主函数那里，再 <code>F7</code> 步进）。</p>
+<p><img data-src="image-20251207140452802.png"></p>
+<p>没有长度检验，随便输入看看加密后输入值有没有什么变化。可以看到输入值存放在：</p>
+<p><img data-src="image-20251207140829533.png"></p>
+<p>在 <code>memcmp</code> 处下断点发现其实过程中输入值并没有发生改变，结合 hint：<code>memcmp</code> 函数被 hook 了，可知真正的加密逻辑在 <code>memcmp</code> 内部（其实看 string 加交叉引用也能找到）。步进进入真正的加密函数。</p>
+<p><img data-src="image-20251207141629305.png"></p>
+<p>分析可以知道是一个简单的 RC4。我们可以直接把最后用来检验的密文 patch 进 <code>ss_x0011111111111111111111111</code>，发现最后解出来的 flag 后八个字符有错，并且继续步进直到输出 <code>Wrong,Try again.</code> 中途也没有发生改变，只能猜测是有另一个反调试函数对密文进行了修改。</p>
+<p><img data-src="image-20251207141833075.png"></p>
+<p>在密文处下一个硬件写入断点，重新运行。</p>
+<p><img data-src="image-20251207142101279.png"></p>
+<p>成功定位到，可以猜测检测到正在调试时，<code>sub_7FF6F366157F()</code> 返回值为非零值。</p>
+<p><img data-src="image-20251207142253797.png"></p>
+<p>发现流程图跳转比较复杂，修改逻辑比较简单：直接照着 else 把 <code>sub</code> 改为 <code>add</code>，<code>28</code> 改为 <code>32</code>。</p>
+<p>再次把密文过一遍 RC4，可以看到 flag 已经解出。</p>
+<p><img data-src="image-20251207142906375.png"></p>
+<p>最终 flag：<code>VNCTF{0h_y0u3_4r3_Be5t^_^}</code></p>
 ]]></content>
       <categories>
         <category>reverse</category>
@@ -236,8 +255,9 @@
         <tag>CTF</tag>
         <tag>Reverse</tag>
         <tag>动态调试</tag>
-        <tag>反反调试</tag>
-        <tag>TEA</tag>
+        <tag>反调试</tag>
+        <tag>RC4</tag>
+        <tag>Patch</tag>
       </tags>
   </entry>
   <entry>
@@ -266,6 +286,23 @@
       </tags>
   </entry>
   <entry>
+    <title>[NSSCTF 2025 秋招赛] 一种很新的签到</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E4%B8%80%E7%A7%8D%E5%BE%88%E6%96%B0%E7%9A%84%E7%AD%BE%E5%88%B0/</url>
+    <content><![CDATA[<h3 id="题目一-一种很新的签到"><a href="#题目一-一种很新的签到" class="headerlink" title="题目一:一种很新的签到"></a>题目一:一种很新的签到</h3><p>先把程序丢进 DIE，确认没有装壳之后直接交给 IDA 处理。</p>
+<p><img data-src="pasted-image-20251103232546.png"></p>
+<p>IDA 里进入 <code>main</code>，按 <code>F5</code> 虽然能看到伪代码，但流程有些噪音。直接 <code>Shift+F12</code> 查看字符串表，硬编码的 flag 就明晃晃地躺在那里，抄下来提交即可。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>IDA Pro</tag>
+        <tag>签到题</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！</title>
     <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E6%9D%A5%E4%BA%86%E5%97%B7%EF%BC%8C%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9%EF%BC%81/</url>
     <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
@@ -281,8 +318,8 @@
         <tag>Reverse</tag>
         <tag>Base64</tag>
         <tag>TEA</tag>
-        <tag>加密算法</tag>
         <tag>RC4</tag>
+        <tag>加密算法</tag>
         <tag>XTEA</tag>
       </tags>
   </entry>
@@ -330,43 +367,6 @@
         <tag>MD5</tag>
         <tag>爆破</tag>
         <tag>AES</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[miniVN] Crackme!</title>
-    <url>/2025/12/23/%5BminiVN%5D%20Crackme/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: Crackme!<br><strong>类型</strong>: Reverse Engineering</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>IDA 打开，<code>Shift + F12</code> 定位主逻辑，动调发现有反调试。这里用的是类似“单步调试手动脱壳”的方式过反调试（<code>F8</code> 步过 call，如果程序结束就用 <code>F7</code> 步进）。这道题还有 TLS，但最开始发现不影响正常动调就没管。</p>
-<p><img data-src="image-20251207140040939.png"></p>
-<p>一步一步调试最终找到反调试部分。</p>
-<p><img data-src="image-20251207140424189.png"></p>
-<p>调试状态下旗帜位非零，所以只需要将 <code>jz</code> 改为 <code>jmp</code> 就能绕过这个反调试，之后就能顺利进入主逻辑了（但是不知道为什么在主函数内部下断点也会结束程序，只能下在 call 主函数那里，再 <code>F7</code> 步进）。</p>
-<p><img data-src="image-20251207140452802.png"></p>
-<p>没有长度检验，随便输入看看加密后输入值有没有什么变化。可以看到输入值存放在：</p>
-<p><img data-src="image-20251207140829533.png"></p>
-<p>在 <code>memcmp</code> 处下断点发现其实过程中输入值并没有发生改变，结合 hint：<code>memcmp</code> 函数被 hook 了，可知真正的加密逻辑在 <code>memcmp</code> 内部（其实看 string 加交叉引用也能找到）。步进进入真正的加密函数。</p>
-<p><img data-src="image-20251207141629305.png"></p>
-<p>分析可以知道是一个简单的 RC4。我们可以直接把最后用来检验的密文 patch 进 <code>ss_x0011111111111111111111111</code>，发现最后解出来的 flag 后八个字符有错，并且继续步进直到输出 <code>Wrong,Try again.</code> 中途也没有发生改变，只能猜测是有另一个反调试函数对密文进行了修改。</p>
-<p><img data-src="image-20251207141833075.png"></p>
-<p>在密文处下一个硬件写入断点，重新运行。</p>
-<p><img data-src="image-20251207142101279.png"></p>
-<p>成功定位到，可以猜测检测到正在调试时，<code>sub_7FF6F366157F()</code> 返回值为非零值。</p>
-<p><img data-src="image-20251207142253797.png"></p>
-<p>发现流程图跳转比较复杂，修改逻辑比较简单：直接照着 else 把 <code>sub</code> 改为 <code>add</code>，<code>28</code> 改为 <code>32</code>。</p>
-<p>再次把密文过一遍 RC4，可以看到 flag 已经解出。</p>
-<p><img data-src="image-20251207142906375.png"></p>
-<p>最终 flag：<code>VNCTF{0h_y0u3_4r3_Be5t^_^}</code></p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>动态调试</tag>
-        <tag>RC4</tag>
-        <tag>反调试</tag>
-        <tag>Patch</tag>
       </tags>
   </entry>
   <entry>
