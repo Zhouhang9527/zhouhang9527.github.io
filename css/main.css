@@ -1,4 +1,4 @@
-@import '_colors';
+@import _colors;
 html {
   line-height: 1.15; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
@@ -1269,7 +1269,7 @@ pre code {
   transition: all 0.2s ease-in-out;
 }
 .links-of-author a::before {
-  background: #ff18ff;
+  background: #9de2ff;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
