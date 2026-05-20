@@ -1,0 +1,342 @@
+<!-- 全局页面特效 -->
+<style>
+/* 页面加载动画 */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main-inner {
+  animation: pageEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 卡片悬停效果 */
+.post-block {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.post-block:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.post-block::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(91, 155, 213, 0.05) 0%, rgba(126, 184, 230, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.post-block:hover::before {
+  opacity: 1;
+}
+
+/* 链接点击波纹效果 */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+a {
+  position: relative;
+  overflow: hidden;
+}
+
+a::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(91, 155, 213, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+a:active::after {
+  width: 200px;
+  height: 200px;
+  opacity: 0;
+  transition: 0s;
+}
+
+/* 滚动渐入动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.post-block,
+.sidebar-inner,
+.menu-item {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.post-block:nth-child(1) { animation-delay: 0.1s; }
+.post-block:nth-child(2) { animation-delay: 0.2s; }
+.post-block:nth-child(3) { animation-delay: 0.3s; }
+.post-block:nth-child(4) { animation-delay: 0.4s; }
+.post-block:nth-child(5) { animation-delay: 0.5s; }
+
+/* 按钮点击反馈 */
+button, .btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active, .btn:active {
+  transform: scale(0.95);
+}
+
+/* 图片懒加载渐入 */
+img {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+img.loaded {
+  animation: imageLoad 0.6s ease;
+}
+
+@keyframes imageLoad {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* 代码块悬停效果 */
+.highlight {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.highlight::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #5b9bd5, #7eb8e6, #5b9bd5);
+  background-size: 200% 200%;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+  animation: gradientShift 3s ease infinite;
+}
+
+.highlight:hover::before {
+  opacity: 0.1;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 侧边栏滑入 */
+.sidebar {
+  animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 目录项悬停 */
+.post-toc li a {
+  transition: all 0.3s ease;
+  position: relative;
+  padding-left: 8px;
+}
+
+.post-toc li a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: linear-gradient(180deg, #5b9bd5 0%, #7eb8e6 100%);
+  transition: height 0.3s ease;
+  border-radius: 2px;
+}
+
+.post-toc li a:hover::before,
+.post-toc li a.active::before {
+  height: 100%;
+}
+
+/* 分页按钮特效 */
+.pagination .page-number,
+.pagination .extend {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.pagination .page-number::before,
+.pagination .extend::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.pagination .page-number:hover::before,
+.pagination .extend:hover::before {
+  left: 100%;
+}
+
+/* 返回顶部按钮旋转 */
+.back-to-top {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.back-to-top:hover {
+  transform: translateY(-5px) rotate(360deg);
+}
+
+/* 标签云动画 */
+.tag-cloud a {
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.tag-cloud a:hover {
+  transform: scale(1.1) rotate(5deg);
+  color: #5b9bd5 !important;
+}
+
+/* 阅读进度条动画 */
+.reading-progress-bar {
+  height: 3px;
+  background: linear-gradient(90deg, #5b9bd5 0%, #7eb8e6 50%, #5b9bd5 100%);
+  background-size: 200% 100%;
+  animation: progressGradient 3s linear infinite;
+  box-shadow: 0 0 10px rgba(91, 155, 213, 0.5);
+}
+
+@keyframes progressGradient {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* 搜索框聚焦效果 */
+.search-input {
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  box-shadow: 0 0 0 3px rgba(91, 155, 213, 0.2);
+  transform: scale(1.02);
+}
+
+/* 页脚渐入 */
+.footer {
+  animation: fadeInUp 0.8s ease 0.5s both;
+}
+</style>
+
+<script>
+(function() {
+  console.log('[Effects] 页面特效已加载');
+  
+  // 滚动视差效果
+  let ticking = false;
+  
+  function updateParallax() {
+    const scrolled = window.pageYOffset;
+    const parallaxElements = document.querySelectorAll('.post-block, .sidebar-panel');
+    
+    parallaxElements.forEach((el, index) => {
+      const speed = 0.05 + (index * 0.02);
+      const yPos = -(scrolled * speed);
+      el.style.transform = `translateY(${yPos}px)`;
+    });
+    
+    ticking = false;
+  }
+  
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(updateParallax);
+      ticking = true;
+    }
+  });
+  
+  // 图片加载完成添加类名
+  document.querySelectorAll('img').forEach(img => {
+    if (img.complete) {
+      img.classList.add('loaded');
+    } else {
+      img.addEventListener('load', () => {
+        img.classList.add('loaded');
+      });
+    }
+  });
+  
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href !== '#' && href !== '#top') {
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }
+    });
+  });
+})();
+</script>

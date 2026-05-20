@@ -1,0 +1,64 @@
+{
+  "name": "ginka-blog",
+  "version": "2.0.0",
+  "description": "GINKA's Personal Blog - Pwn & Reverse Engineering",
+  "private": true,
+  "author": "mm9527",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zhouhang9527/zhouhang9527.github.io.git"
+  },
+  "scripts": {
+    "dev": "hexo server --draft -p 4000",
+    "server": "hexo server -p 4000",
+    "backend": "node backend/ginka-backend-server.js",
+    "build": "hexo clean && hexo generate",
+    "deploy": "hexo clean && hexo generate && hexo deploy",
+    "clean": "hexo clean",
+    "new": "hexo new",
+    "new:reverse": "hexo new reverse",
+    "new:pwn": "hexo new pwn"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "hexo": {
+    "version": "8.0.0"
+  },
+  "dependencies": {
+    "hexo": "^8.0.0",
+    "hexo-all-minifier": "^0.5.7",
+    "hexo-deployer-git": "^4.0.0",
+    "hexo-generator-archive": "^2.0.0",
+    "hexo-generator-baidu-sitemap": "^0.1.9",
+    "hexo-generator-category": "^2.0.0",
+    "hexo-generator-feed": "^3.0.0",
+    "hexo-generator-index": "^4.0.0",
+    "hexo-generator-searchdb": "^1.5.0",
+    "hexo-generator-sitemap": "^3.0.1",
+    "hexo-generator-tag": "^2.0.0",
+    "hexo-helper-live2d": "^3.1.1",
+    "hexo-lazyload-image": "^1.1.3",
+    "hexo-next-giscus": "^1.3.0",
+    "hexo-renderer-ejs": "^2.0.0",
+    "hexo-renderer-marked": "^7.0.0",
+    "hexo-renderer-pug": "^3.0.0",
+    "hexo-renderer-stylus": "^3.0.1",
+    "hexo-server": "^3.0.0",
+    "live2d-widget-model-wanko": "^1.0.5",
+    "pixi-live2d-display": "^0.4.0"
+  },
+  "keywords": [
+    "hexo",
+    "blog",
+    "reverse-engineering",
+    "pwn",
+    "ctf",
+    "security"
+  ]
+}
+
+
+

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标签数量验证</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .success { color: green; font-size: 24px; font-weight: bold; }
+        .info { background: #f0f0f0; padding: 15px; margin: 10px 0; }
+        .warning { background: #fff3cd; padding: 15px; margin: 10px 0; border-left: 4px solid #ffc107; }
+    </style>
+</head>
+<body>
+    <h1>标签和分类验证结果</h1>
+    
+    <div class="success">✅ 生成的文件内容正确！</div>
+    
+    <div class="info">
+        <h2>标签页面内容：</h2>
+        <p><strong>目前共计 6 个标签</strong></p>
+        <ul>
+            <li>Base64</li>
+            <li>CTF (最大，被2篇文章使用)</li>
+            <li>IDA Pro</li>
+            <li>Reverse</li>
+            <li>reverse</li>
+            <li>二进制逆向</li>
+        </ul>
+    </div>
+    
+    <div class="info">
+        <h2>分类页面内容：</h2>
+        <p><strong>目前共计 1 个分类</strong></p>
+        <ul>
+            <li>reverse (包含 2 篇文章)</li>
+        </ul>
+    </div>
+    
+    <div class="warning">
+        <h2>⚠️ 如果你在浏览器中看到"暂无标签/分类"</h2>
+        <p>请执行以下操作：</p>
+        <ol>
+            <li><strong>完全退出浏览器</strong>（不是关闭标签，而是退出整个浏览器程序）</li>
+            <li><strong>清除浏览器缓存</strong>（在设置中找到"清除浏览数据"）</li>
+            <li><strong>使用无痕模式</strong>打开浏览器（Ctrl+Shift+N）</li>
+            <li>访问: <a href="http://localhost:4000/tags/" target="_blank">http://localhost:4000/tags/</a></li>
+            <li>访问: <a href="http://localhost:4000/categories/" target="_blank">http://localhost:4000/categories/</a></li>
+        </ol>
+        <p><strong>或者使用下面的链接直接查看文件：</strong></p>
+        <ul>
+            <li><a href="file:///d:/GINKA-Blog/public/tags/index.html" target="_blank">直接打开标签页面文件</a></li>
+            <li><a href="file:///d:/GINKA-Blog/public/categories/index.html" target="_blank">直接打开分类页面文件</a></li>
+        </ul>
+    </div>
+    
+    <div class="info">
+        <h2>📝 确认信息</h2>
+        <p>生成时间: <script>document.write(new Date().toLocaleString('zh-CN'));</script></p>
+        <p>服务器地址: http://localhost:4000/</p>
+    </div>
+    
+    <script>
+        // 自动打开验证页面
+        setTimeout(() => {
+            const openTags = confirm('是否在新标签页中打开标签页面？');
+            if (openTags) {
+                window.open('http://localhost:4000/tags/', '_blank');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

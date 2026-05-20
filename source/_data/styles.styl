@@ -1,0 +1,1105 @@
+// ===================================================
+// GINKA Blog Custom Styles
+// ===================================================
+
+// ---------------------------------------------------------------
+// Color Scheme & Variables
+// ---------------------------------------------------------------
+$ginka-primary = #37c6c0
+$ginka-accent = #ff6b6b
+$ginka-dark = #222
+$ginka-light = #f5f5f5
+$ginka-border = #e0e0e0
+$ginka-blue = #5b9bd5
+
+// ---------------------------------------------------------------
+// Global Enhancements
+// ---------------------------------------------------------------
+body {
+  font-family: 'Noto Serif SC', serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  --selection-bg: rgba(91, 155, 213, 0.32);
+  --selection-color: #1e2a36;
+}
+
+::selection {
+  background: rgba(91, 155, 213, 0.32) !important;
+  color: #1e2a36 !important;
+  text-shadow: none !important;
+}
+
+::-moz-selection {
+  background: rgba(91, 155, 213, 0.32) !important;
+  color: #1e2a36 !important;
+  text-shadow: none !important;
+}
+
+/* 修复正文文本选择 */
+.main-inner,
+.main-inner *,
+.posts-expand,
+.posts-expand *,
+.posts-collapse,
+.posts-collapse *,
+.post-body,
+.post-body *,
+.sidebar-panel,
+.sidebar-panel *,
+.sidebar-panel-container,
+.sidebar-panel-container * {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
+
+#music-player,
+#music-player *,
+#atri-live2d-widget,
+#atri-live2d-widget *,
+.ginka-click-effect,
+.cursor-dot,
+.cursor-circle,
+figure.highlight .gutter,
+figure.highlight .gutter * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
+// ---------------------------------------------------------------
+// Opening Sequence (Frosted Intro)
+// ---------------------------------------------------------------
+body.is-opening-active,
+body.is-opening-leaving {
+  overflow: hidden !important;
+}
+
+body.is-opening-preparing::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 10019;
+  pointer-events: none;
+  background: rgba(245, 248, 252, 0.75);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.ginka-opening {
+  position: fixed;
+  inset: 0;
+  z-index: 10020;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), visibility 1s step-end;
+}
+
+.ginka-opening.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s step-start;
+}
+
+.ginka-opening__curtain {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50.2%;
+  background: rgba(245, 248, 252, 0.75);
+  backdrop-filter: blur(16px) saturate(145%);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.ginka-opening__curtain--top {
+  top: 0;
+  border-bottom: 1px solid rgba(91, 155, 213, 0.22);
+}
+
+.ginka-opening__curtain--bottom {
+  bottom: 0;
+  border-top: 1px solid rgba(91, 155, 213, 0.22);
+}
+
+.ginka-opening__seam {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(540px, 76vw);
+  height: 2px;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(90deg, rgba(91, 155, 213, 0), rgba(91, 155, 213, 0.75), rgba(91, 155, 213, 0));
+  box-shadow: 0 0 16px rgba(91, 155, 213, 0.32);
+  opacity: 0.95;
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ginka-opening__center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.98);
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: min(86vw, 760px);
+  padding: 0;
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ginka-opening.is-visible .ginka-opening__center {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.ginka-opening__avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.82);
+  box-shadow: 0 14px 40px rgba(91, 155, 213, 0.26), 0 0 0 6px rgba(255, 255, 255, 0.25);
+}
+
+.ginka-opening__title {
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  color: rgba(28, 53, 82, 0.96);
+  text-align: center;
+  text-shadow: 0 3px 16px rgba(91, 155, 213, 0.28);
+}
+
+.ginka-opening.is-center-fading .ginka-opening__center {
+  opacity: 0;
+  transform: translate(-50%, -53%) scale(0.96);
+}
+
+.ginka-opening.is-center-fading .ginka-opening__seam {
+  opacity: 0.72;
+}
+
+.ginka-opening.is-curtain-open .ginka-opening__curtain--top {
+  transform: translateY(-103%);
+}
+
+.ginka-opening.is-curtain-open .ginka-opening__curtain--bottom {
+  transform: translateY(103%);
+}
+
+.ginka-opening.is-curtain-open .ginka-opening__seam {
+  opacity: 0;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .ginka-opening,
+  .ginka-opening.is-visible {
+    transition-duration: 0.7s;
+  }
+
+  .ginka-opening__center {
+    width: min(90vw, 500px);
+    gap: 12px;
+    transition-duration: 0.35s;
+  }
+
+  .ginka-opening__avatar {
+    width: 92px;
+    height: 92px;
+  }
+
+  .ginka-opening__title {
+    font-size: clamp(20px, 4.8vw, 28px);
+    letter-spacing: 1px;
+  }
+
+  .ginka-opening__curtain {
+    transition-duration: 0.56s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ginka-opening,
+  .ginka-opening.is-visible {
+    transition: opacity 0.12s ease, visibility 0.12s step-end;
+  }
+
+  .ginka-opening__center {
+    transition: opacity 0.12s ease !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .ginka-opening__curtain {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .ginka-opening__seam {
+    transition: opacity 0.12s ease !important;
+  }
+}
+
+// ---------------------------------------------------------------
+// Smooth Page Loader
+// ---------------------------------------------------------------
+.ginka-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.42s step-end;
+}
+
+.ginka-loader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(7px) saturate(140%);
+  -webkit-backdrop-filter: blur(7px) saturate(140%);
+}
+
+.ginka-loader::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -38%;
+  width: 38%;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(91, 155, 213, 0), rgba(91, 155, 213, 0.95), rgba(126, 184, 230, 0.85));
+  box-shadow: 0 0 10px rgba(91, 155, 213, 0.35);
+  animation: ginkaLoaderSweep 1.05s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.ginka-loader.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s step-start;
+}
+
+body.is-page-loading .main-inner {
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0.78;
+}
+
+.main-inner {
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1), transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateY(0);
+}
+
+body.is-pjax-loading .main-inner {
+  opacity: 0.66;
+  transform: translateY(8px);
+}
+
+body.is-pjax-enter .main-inner {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes ginkaLoaderSweep {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(370%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ginka-loader {
+    transition: opacity 0.12s ease, visibility 0.12s step-end;
+  }
+
+  .ginka-loader::after {
+    left: 0;
+    width: 100%;
+    animation: none;
+  }
+
+  body.is-page-loading .main-inner {
+    transition: opacity 0.12s ease;
+    opacity: 0.88;
+  }
+
+  .main-inner {
+    transition: opacity 0.12s ease !important;
+    transform: none !important;
+  }
+
+  body.is-pjax-loading .main-inner,
+  body.is-pjax-enter .main-inner {
+    transform: none !important;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .ginka-loader::before {
+    backdrop-filter: blur(5px) saturate(125%);
+    -webkit-backdrop-filter: blur(5px) saturate(125%);
+  }
+
+  .ginka-loader::after {
+    height: 2px;
+    animation-duration: 1.28s;
+  }
+}
+
+.site-author-image {
+  border-radius: 50% !important;
+  padding: 2px;
+  border: 1px solid #eee;
+  transition: transform 0.5s ease-in-out;
+}
+
+.site-author-image:hover {
+  transform: rotate(360deg);
+}
+
+// /* 确保 Twikoo 容器可见 */
+// .twikoo-container {
+//   display: block !important;
+//   margin-top: 20px;
+// }
+
+// /* 淡蓝色毛玻璃透明评论区样式 */
+// .twikoo {
+//   background: rgba(224, 247, 250, 0.4) !important; /* 淡蓝色半透明背景 */
+//   backdrop-filter: blur(10px) !important; /* 毛玻璃模糊效果 */
+//   -webkit-backdrop-filter: blur(10px) !important;
+//   border-radius: 15px !important;
+//   padding: 20px !important;
+//   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15) !important;
+//   border: 1px solid rgba(255, 255, 255, 0.4) !important;
+//   margin-top: 20px;
+// }
+
+// /* 评论区输入框样式优化 */
+// .tk-input .el-textarea__inner {
+//   background: rgba(255, 255, 255, 0.6) !important;
+//   backdrop-filter: blur(5px);
+//   border: 1px solid rgba(255, 255, 255, 0.5) !important;
+//   color: #333 !important;
+// }
+
+// .tk-input .el-textarea__inner:focus {
+//   background: rgba(255, 255, 255, 0.9) !important;
+//   box-shadow: 0 0 10px rgba(55, 198, 192, 0.3) !important;
+// }
+
+// /* 评论卡片样式 */
+// .tk-comment {
+//   background: rgba(255, 255, 255, 0.3) !important;
+//   border-radius: 10px !important;
+//   padding: 10px !important;
+//   margin-bottom: 10px !important;
+//   transition: all 0.3s ease;
+// }
+
+// .tk-comment:hover {
+//   background: rgba(255, 255, 255, 0.5) !important;
+//   transform: translateY(-2px);
+// }
+
+// ---------------------------------------------------------------
+// Custom Scrollbar (Webkit)
+// ---------------------------------------------------------------
+/* 定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸 */
+::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+  background: transparent !important;
+  display: block !important;
+}
+
+/* 定义滚动条轨道 内阴影+圆角 - 确保透明以显示视频背景 */
+::-webkit-scrollbar-track {
+  background: transparent !important;
+  border-radius: 999px;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 定义滑块 内阴影+圆角 */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(126, 184, 230, 0.88), rgba(91, 155, 213, 0.88)) !important;
+  border-radius: 999px;
+  border: none !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+  min-height: 42px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(126, 184, 230, 0.95), rgba(91, 155, 213, 0.95)) !important;
+}
+
+/* 去掉顶部/底部小箭头，避免割裂感 */
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-button:single-button,
+::-webkit-scrollbar-button:vertical:decrement,
+::-webkit-scrollbar-button:vertical:increment {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Firefox scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(135, 206, 250, 0.4) transparent;
+}
+
+// ---------------------------------------------------------------
+// Sidebar & Giscus Optimizations
+// ---------------------------------------------------------------
+
+/* 侧边栏背景透明化 - 让视频背景透出来 */
+.sidebar, .sidebar-inner {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 侧边栏整体毛玻璃优化 */
+.sidebar {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.22)) !important;
+  backdrop-filter: blur(12px) saturate(135%);
+  -webkit-backdrop-filter: blur(12px) saturate(135%);
+  border-right: 1px solid rgba(255, 255, 255, 0.36);
+  box-shadow: 10px 0 30px rgba(91, 155, 213, 0.16) !important;
+  transition: left 0.42s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.sidebar-active .sidebar {
+  box-shadow: 14px 0 38px rgba(91, 155, 213, 0.22) !important;
+}
+
+/* 为侧边栏内容添加轻微磨砂层 */
+.sidebar-inner {
+  background: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(6px) saturate(125%);
+  -webkit-backdrop-filter: blur(6px) saturate(125%);
+  border-radius: 18px;
+  padding: 18px 14px 22px !important;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+}
+
+.sidebar-nav li {
+  transition: color 0.36s cubic-bezier(0.22, 1, 0.36, 1), border-bottom-color 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sidebar-nav li:hover {
+  color: rgba(91, 155, 213, 0.92);
+}
+
+.sidebar-overview-active .sidebar-nav-overview,
+.sidebar-toc-active .sidebar-nav-toc {
+  border-bottom-color: rgba(91, 155, 213, 0.62);
+  color: rgba(91, 155, 213, 0.98);
+}
+
+
+/* 隐藏侧边栏切换按钮 - 改用鼠标左侧感应触发 */
+.sidebar-toggle {
+  display: none !important;
+}
+
+/* 侧边栏滚动条玻璃化（覆盖白底轨道） */
+.sidebar,
+.sidebar-inner,
+.sidebar-panel-container,
+.sidebar-panel,
+.post-toc {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(190, 226, 248, 0.95) rgba(166, 179, 196, 0.42) !important;
+}
+
+.sidebar::-webkit-scrollbar,
+.sidebar-inner::-webkit-scrollbar,
+.sidebar-panel-container::-webkit-scrollbar,
+.sidebar-panel::-webkit-scrollbar,
+.post-toc::-webkit-scrollbar {
+  width: 9px !important;
+  height: 9px !important;
+  background: transparent !important;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.sidebar-inner::-webkit-scrollbar-track,
+.sidebar-panel-container::-webkit-scrollbar-track,
+.sidebar-panel::-webkit-scrollbar-track,
+.post-toc::-webkit-scrollbar-track {
+  background: rgba(166, 179, 196, 0.36) !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(200, 214, 230, 0.35) !important;
+  box-shadow: inset 0 0 0 1px rgba(235, 242, 248, 0.14);
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.sidebar-inner::-webkit-scrollbar-thumb,
+.sidebar-panel-container::-webkit-scrollbar-thumb,
+.sidebar-panel::-webkit-scrollbar-thumb,
+.post-toc::-webkit-scrollbar-thumb {
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, rgba(200, 231, 250, 0.96), rgba(147, 201, 236, 0.95)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+.sidebar-inner::-webkit-scrollbar-thumb:hover,
+.sidebar-panel-container::-webkit-scrollbar-thumb:hover,
+.sidebar-panel::-webkit-scrollbar-thumb:hover,
+.post-toc::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(213, 238, 252, 0.98), rgba(160, 209, 240, 0.97)) !important;
+}
+
+.sidebar::-webkit-scrollbar-button,
+.sidebar-inner::-webkit-scrollbar-button,
+.sidebar-panel-container::-webkit-scrollbar-button,
+.sidebar-panel::-webkit-scrollbar-button,
+.post-toc::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* Giscus 评论区深度适配 - 模拟"嵌入"效果 */
+.comments {
+  background: transparent !important; /* 确保外层容器透明 */
+  margin-top: 30px !important;
+  border: none !important;
+}
+
+.giscus {
+  /* 移除所有边框和背景，让 Giscus 内容直接"浮"在页面上 */
+  margin-top: 0;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  padding: 0;
+  border: none !important;
+  border-radius: 0;
+}
+
+/* 如果 Giscus 自身带有非透明背景，需要通过 iframe 内部主题控制，无法通过外部 CSS 强制去色 */
+/* 但我们可以消除外围的框框感 */
+
+
+/* 修复右侧滚动条轨道断层（顶部/底部都铺满） */
+::-webkit-scrollbar-track-piece {
+  background: transparent !important;
+  border-radius: 999px;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent !important;
+}
+
+// ---------------------------------------------------------------
+// Header Customization
+// ---------------------------------------------------------------
+.site-brand-container {
+  .site-meta {
+    .site-title {
+      font-size: 2em;
+      font-weight: 700;
+      color: $ginka-primary;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        color: $ginka-accent;
+        transform: scale(1.05);
+      }
+    }
+    
+    .site-subtitle {
+      font-size: 1em;
+      color: #666;
+      margin-top: 10px;
+      font-style: italic;
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+// Post Content Optimization
+// ---------------------------------------------------------------
+.post-body {
+  // Better paragraph spacing
+  p {
+    margin: 1.2em 0;
+    text-align: justify;
+  }
+  
+  // Enhanced headings
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 1.8em;
+    margin-bottom: 0.8em;
+    font-weight: 600;
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 60%;
+      background: linear-gradient(to bottom, #a1c4fd, #c2e9fb);
+      border-radius: 2px;
+    }
+  }
+  
+  // Enhanced blockquotes
+  blockquote {
+    border-left: 4px solid $ginka-primary;
+    background: $ginka-light;
+    padding: 15px 20px;
+    margin: 1.5em 0;
+    border-radius: 4px;
+    font-style: italic;
+    
+    p {
+      margin: 0.5em 0;
+    }
+  }
+  
+  // Better code blocks
+  // code {
+  //   background: #f6f6f6;
+  //   color: #c7254e;
+  //   padding: 2px 6px;
+  //   border-radius: 3px;
+  //   font-family: 'JetBrains Mono', 'Consolas', monospace;
+  //   font-size: 0.9em;
+  // }
+  
+  // pre {
+  //   background: #282c34;
+  //   border-radius: 8px;
+  //   padding: 15px;
+  //   overflow-x: auto;
+  //   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+  //   code {
+  //     background: transparent;
+  //     color: #abb2bf;
+  //     padding: 0;
+  //   }
+  // }
+  
+  // Enhanced links
+  a {
+    color: $ginka-primary;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: $ginka-accent;
+      border-bottom-color: $ginka-accent;
+    }
+  }
+  
+  // Better tables
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5em 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    
+    thead {
+      background: $ginka-primary;
+      color: white;
+    }
+    
+    th, td {
+      padding: 12px 15px;
+      border: 1px solid $ginka-border;
+    }
+    
+    tr {
+      transition: background 0.2s ease;
+      
+      &:hover {
+        background: $ginka-light;
+      }
+    }
+  }
+  
+  // Enhanced images
+  img {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+// Sidebar Enhancements
+// ---------------------------------------------------------------
+.sidebar {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  
+  .sidebar-inner {
+    padding: 20px;
+  }
+  
+  .site-author-name {
+    color: $ginka-dark;
+    font-weight: 600;
+    font-size: 1.2em;
+  }
+  
+  .links-of-author a {
+    color: $ginka-primary;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: $ginka-accent;
+      transform: translateX(5px);
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+// Tag Cloud Styling
+// ---------------------------------------------------------------
+.tag-cloud {
+  a {
+    display: inline-block;
+    margin: 5px;
+    padding: 5px 15px;
+    background: $ginka-light;
+    color: $ginka-dark;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: $ginka-primary;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+// Archive Page Enhancements
+// ---------------------------------------------------------------
+.posts-collapse {
+  .post-header {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      background: $ginka-primary;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(55, 198, 192, 0.2);
+    }
+  }
+  
+  .post-title {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: $ginka-accent;
+      transform: translateX(10px);
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+// Footer Customization
+// ---------------------------------------------------------------
+.footer {
+  background: $ginka-dark;
+  color: #999;
+  padding: 30px 0;
+  
+  .footer-inner {
+    text-align: center;
+  }
+  
+  a {
+    color: $ginka-primary;
+    
+    &:hover {
+      color: $ginka-accent;
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+// Scroll Bar Styling (Removed to avoid conflict)
+// ---------------------------------------------------------------
+// ::-webkit-scrollbar {
+//   width: 10px;
+//   height: 10px;
+// }
+
+// ::-webkit-scrollbar-track {
+//   background: #f1f1f1;
+//   border-radius: 10px;
+// }
+
+// ::-webkit-scrollbar-thumb {
+//   background: linear-gradient(to bottom, $ginka-primary, $ginka-accent);
+//   border-radius: 10px;
+  
+//   &:hover {
+//     background: linear-gradient(to bottom, $ginka-accent, $ginka-primary);
+//   }
+// }
+
+// ---------------------------------------------------------------
+// Loading Animation
+// ---------------------------------------------------------------
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.post, .page {
+  animation: fadeIn 0.6s ease-out;
+}
+
+// ---------------------------------------------------------------
+// GINKA 主题优化 - 阅读全文按钮
+// ---------------------------------------------------------------
+.post-button {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.post-button .btn {
+  background: rgba(91, 155, 213, 0.15) !important;
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  border: 1.5px solid rgba(91, 155, 213, 0.3) !important;
+  color: #5b9bd5 !important;
+  font-size: 14px !important;
+  padding: 10px 28px !important;
+  border-radius: 25px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 4px 15px rgba(91, 155, 213, 0.15), 
+              0 2px 8px rgba(91, 155, 213, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.post-button .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(91, 155, 213, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.post-button .btn:hover::before {
+  left: 100%;
+}
+
+.post-button .btn:hover {
+  background: rgba(91, 155, 213, 0.25) !important;
+  border-color: rgba(91, 155, 213, 0.5) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 8px 25px rgba(91, 155, 213, 0.25), 
+              0 4px 12px rgba(91, 155, 213, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+.post-button .btn:active {
+  transform: translateY(0) scale(0.98) !important;
+  box-shadow: 0 2px 8px rgba(91, 155, 213, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+// ---------------------------------------------------------------
+// Responsive Design
+// ---------------------------------------------------------------
+@media (max-width: 768px) {
+  .post-body {
+    h1, h2, h3, h4, h5, h6 {
+      &::before {
+        display: none;
+      }
+    }
+  }
+  
+  .sidebar {
+    margin-top: 20px;
+  }
+}
+
+// ---------------------------------------------------------------
+// Print Styles
+// ---------------------------------------------------------------
+@media print {
+  .sidebar, .header, .footer, .comments {
+    display: none;
+  }
+  
+  .post-body {
+    max-width: 100%;
+    
+    a {
+      color: $ginka-dark;
+      text-decoration: underline;
+    }
+  }
+}
+// ---------------------------------------------------------------
+// Visual Boost v2 (subtle)
+// ---------------------------------------------------------------
+@media (min-width: 769px) {
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 120;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.55) !important;
+    border-bottom: 1px solid rgba(91, 155, 213, 0.16);
+  }
+
+  .site-nav .menu-item a {
+    border-radius: 999px;
+    padding: 4px 10px;
+    transition: all .2s ease;
+  }
+
+  .site-nav .menu-item a:hover {
+    background: rgba(91, 155, 213, 0.12);
+  }
+
+  .main-inner.index .post-block {
+    border: 1px solid rgba(91, 155, 213, 0.16);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  }
+
+  .main-inner.index .post-block:hover {
+    transform: translateY(-3px);
+    border-color: rgba(91, 155, 213, 0.35);
+    box-shadow: 0 10px 24px rgba(91, 155, 213, 0.14);
+  }
+}
+
+.ginka-engagement {
+  margin: 8px 0 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #6f7f93;
+}
+
+.ginka-engagement .ginka-stat,
+.ginka-engagement .ginka-like-btn,
+.ginka-engagement .ginka-like-static {
+  border: 1px solid rgba(91, 155, 213, 0.28);
+  border-radius: 999px;
+  padding: 2px 10px;
+  background: rgba(91, 155, 213, 0.1);
+}
+
+.ginka-engagement--detail {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.ginka-engagement-title {
+  color: #5b9bd5;
+  font-weight: 600;
+  padding-right: 2px;
+}
+
+.ginka-engagement--card {
+  margin-left: 10px;
+}
+
+.ginka-engagement .ginka-like-btn {
+  cursor: pointer;
+  color: #4a89c8;
+  transition: all .2s ease;
+}
+
+.ginka-engagement .ginka-like-btn:hover {
+  background: rgba(91, 155, 213, 0.18);
+}
+
+.ginka-engagement .ginka-like-btn:disabled,
+.ginka-engagement.is-offline {
+  opacity: .66;
+}
+// ---------------------------------------------------------------
+// Click ripple (moved from body-end inline style)
+// ---------------------------------------------------------------
+.click-ripple {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(91, 155, 213, 0.6);
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+  z-index: 9999;
+  animation: rippleEffect 0.6s ease-out;
+}
+
+@keyframes rippleEffect {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3);
+    opacity: 0;
+  }
+}

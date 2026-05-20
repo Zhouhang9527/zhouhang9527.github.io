@@ -1,0 +1,223 @@
+<!-- 自定义光标效果 -->
+<div id="cursor-dot" class="cursor-dot"></div>
+<div id="cursor-circle" class="cursor-circle"></div>
+
+<style>
+/* 隐藏默认光标 */
+body, body * {
+  cursor: none !important;
+}
+
+/* 光标中心点 */
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #5b9bd5 0%, #7eb8e6 100%);
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10000;
+  transition: transform 0.15s ease, opacity 0.3s ease;
+  opacity: 0.9;
+  box-shadow: 0 0 10px rgba(91, 155, 213, 0.5);
+}
+
+/* 光标外圈（毛玻璃效果） */
+.cursor-circle {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(91, 155, 213, 0.3);
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.2s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+  backdrop-filter: blur(5px);
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0.8;
+  box-shadow: 0 0 20px rgba(91, 155, 213, 0.2);
+}
+
+/* 悬停在可点击元素上 */
+.cursor-dot.hover {
+  transform: scale(0.5);
+  background: linear-gradient(135deg, #7eb8e6 0%, #5b9bd5 100%);
+}
+
+.cursor-circle.hover {
+  width: 60px;
+  height: 60px;
+  border-color: rgba(126, 184, 230, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* 点击效果 */
+.cursor-dot.click {
+  transform: scale(1.5);
+  animation: clickPulse 0.5s ease;
+}
+
+.cursor-circle.click {
+  animation: clickExpand 0.5s ease;
+}
+
+@keyframes clickPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+}
+
+@keyframes clickExpand {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* 文本选择时 */
+.cursor-circle.text {
+  border-color: rgba(255, 105, 180, 0.4);
+  background: rgba(255, 105, 180, 0.1);
+}
+
+/* 移动端隐藏自定义光标 */
+@media (max-width: 768px) {
+  .cursor-dot, .cursor-circle {
+    display: none !important;
+  }
+  
+  body, body * {
+    cursor: auto !important;
+  }
+}
+
+/* 链接悬停时的特殊效果 */
+.cursor-circle.link {
+  border-color: rgba(55, 198, 192, 0.6);
+  background: linear-gradient(135deg, rgba(55, 198, 192, 0.1) 0%, rgba(91, 155, 213, 0.1) 100%);
+  box-shadow: 0 0 25px rgba(55, 198, 192, 0.3);
+}
+</style>
+
+<script>
+(function() {
+  // 移动端不启用
+  if (window.innerWidth <= 768) return;
+  
+  const dot = document.getElementById('cursor-dot');
+  const circle = document.getElementById('cursor-circle');
+  
+  let mouseX = 0, mouseY = 0;
+  let dotX = 0, dotY = 0;
+  let circleX = 0, circleY = 0;
+  
+  // 鼠标移动
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+  
+  // 平滑跟随动画
+  function animate() {
+    // 光标点快速跟随
+    dotX += (mouseX - dotX) * 0.9;
+    dotY += (mouseY - dotY) * 0.9;
+    
+    // 外圈延迟跟随
+    circleX += (mouseX - circleX) * 0.15;
+    circleY += (mouseY - circleY) * 0.15;
+    
+    dot.style.transform = `translate(${dotX - 4}px, ${dotY - 4}px)`;
+    circle.style.transform = `translate(${circleX - 20}px, ${circleY - 20}px)`;
+    
+    requestAnimationFrame(animate);
+  }
+  
+  animate();
+  
+  // 悬停效果
+  const hoverElements = document.querySelectorAll('a, button, input, textarea, select, .atri-control-btn, #music-toggle');
+  
+  function updateHoverListeners() {
+    const elements = document.querySelectorAll('a, button, input, textarea, select, [role="button"], .clickable, .atri-control-btn, #music-toggle');
+    
+    elements.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        dot.classList.add('hover');
+        circle.classList.add('hover');
+        
+        // 链接特殊效果
+        if (el.tagName === 'A') {
+          circle.classList.add('link');
+        }
+      });
+      
+      el.addEventListener('mouseleave', () => {
+        dot.classList.remove('hover');
+        circle.classList.remove('hover', 'link');
+      });
+    });
+  }
+  
+  updateHoverListeners();
+  
+  // 修复：Giscus评论区/Iframe 鼠标适配
+  // 改进策略：监听整个评论区容器(.comments)，只要鼠标进去就隐藏自定义光标
+  // 这样比单独监听 iframe 更灵敏，防止光标"卡"在边缘
+  function updateIframeHandlers() {
+    // 扩大监听范围：.comments 容器，以及常见的 iframe
+    const containers = document.querySelectorAll('.comments, .giscus, iframe, .giscus-frame');
+    
+    containers.forEach(el => {
+      // 移除旧的监听器以免重复（虽然 addEventListener 自动去重，但为了保险）
+      el.onmouseenter = () => {
+        dot.style.opacity = '0';
+        circle.style.opacity = '0';
+      };
+      
+      el.onmouseleave = () => {
+        dot.style.opacity = '0.9';
+        circle.style.opacity = '0.8';
+      };
+    });
+  }
+  
+  // 初始调用
+  updateIframeHandlers();
+  // 延迟再次调用，确保 Giscus 加载完毕后覆盖
+  setTimeout(updateIframeHandlers, 1000);
+  setTimeout(updateIframeHandlers, 3000);
+
+  // 监听DOM变化，为新添加的元素（如异步加载的评论框）添加事件
+  const observer = new MutationObserver(() => {
+    updateHoverListeners();
+    updateIframeHandlers(); // 只要有变动就重新绑定
+  });
+  
+  // 点击效果
+  document.addEventListener('mousedown', () => {
+    dot.classList.add('click');
+    circle.classList.add('click');
+    
+    setTimeout(() => {
+      dot.classList.remove('click');
+      circle.classList.remove('click');
+    }, 500);
+  });
+  
+  // 文本选择效果
+  document.addEventListener('selectstart', () => {
+    circle.classList.add('text');
+  });
+  
+  document.addEventListener('mouseup', () => {
+    setTimeout(() => {
+      circle.classList.remove('text');
+    }, 300);
+  });
+  
+  console.log('[Cursor] 自定义光标效果已启用');
+})();
+</script>

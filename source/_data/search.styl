@@ -1,0 +1,196 @@
+/* GINKA 主题优化 - 搜索界面 */
+
+/* 搜索遮罩层优化 */
+.search-pop-overlay {
+  background: rgba(91, 155, 213, 0.1) !important;
+  backdrop-filter: blur(8px) saturate(150%);
+  -webkit-backdrop-filter: blur(8px) saturate(150%);
+}
+
+.search-active .search-pop-overlay {
+  background: rgba(91, 155, 213, 0.15) !important;
+}
+
+/* 搜索弹窗优化 */
+.search-popup {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(30px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+  border: 1.5px solid rgba(91, 155, 213, 0.3) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 20px 60px rgba(91, 155, 213, 0.25),
+              0 8px 24px rgba(91, 155, 213, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  overflow: hidden;
+}
+
+/* 搜索头部优化 */
+.search-popup .search-header {
+  background: rgba(91, 155, 213, 0.08) !important;
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border-bottom: 1px solid rgba(91, 155, 213, 0.15) !important;
+  border-radius: 20px 20px 0 0 !important;
+  padding: 15px !important;
+}
+
+/* 搜索输入框优化 */
+.search-popup input.search-input {
+  color: #333 !important;
+  font-size: 16px !important;
+  padding: 8px 12px !important;
+  background: transparent !important;
+  transition: all 0.3s ease;
+}
+
+.search-popup input.search-input::placeholder {
+  color: rgba(91, 155, 213, 0.5) !important;
+}
+
+.search-popup input.search-input:focus {
+  outline: none;
+  color: #5b9bd5 !important;
+}
+
+/* 搜索图标优化 */
+.search-popup .search-icon,
+.search-popup .popup-btn-close {
+  color: #5b9bd5 !important;
+  font-size: 20px !important;
+  transition: all 0.3s ease;
+}
+
+.search-popup .popup-btn-close:hover {
+  transform: rotate(90deg) scale(1.1);
+  color: #4a8bc2 !important;
+}
+
+/* 搜索结果容器优化 */
+.search-popup .search-result-container {
+  background: transparent !important;
+  padding: 20px 30px !important;
+}
+
+/* 搜索结果列表优化 */
+.search-popup .search-result-list {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 搜索结果项优化 */
+.search-popup a.search-result-title {
+  color: #5b9bd5 !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.search-popup a.search-result-title:hover {
+  color: #4a8bc2 !important;
+  transform: translateX(5px);
+  text-shadow: 0 2px 8px rgba(91, 155, 213, 0.3);
+}
+
+.search-popup p.search-result {
+  border-bottom: 1px dashed rgba(91, 155, 213, 0.2) !important;
+  margin: 8px 0 15px !important;
+  padding: 8px 0 12px !important;
+  color: #666 !important;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+
+.search-popup p.search-result:hover {
+  background: rgba(91, 155, 213, 0.05);
+  padding-left: 10px;
+  border-radius: 8px;
+}
+
+/* 搜索关键词高亮优化 */
+mark.search-keyword {
+  background: rgba(91, 155, 213, 0.2) !important;
+  color: #5b9bd5 !important;
+  border-bottom: 2px solid #5b9bd5 !important;
+  font-weight: 600 !important;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* 搜索统计信息优化 */
+.search-stats {
+  color: #5b9bd5 !important;
+  font-size: 13px !important;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(91, 155, 213, 0.15);
+  margin-bottom: 15px;
+}
+
+/* 暗色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .search-popup {
+    background: rgba(40, 44, 52, 0.95) !important;
+    border-color: rgba(91, 155, 213, 0.4) !important;
+  }
+  
+  .search-popup .search-header {
+    background: rgba(91, 155, 213, 0.12) !important;
+    border-bottom-color: rgba(91, 155, 213, 0.25) !important;
+  }
+  
+  .search-popup input.search-input {
+    color: #e8e8e8 !important;
+  }
+  
+  .search-popup p.search-result {
+    color: #aaa !important;
+    border-bottom-color: rgba(91, 155, 213, 0.25) !important;
+  }
+  
+  .search-popup p.search-result:hover {
+    background: rgba(91, 155, 213, 0.08);
+  }
+  
+  mark.search-keyword {
+    background: rgba(91, 155, 213, 0.3) !important;
+    color: #7db4e6 !important;
+  }
+}
+
+/* 移动端适配 */
+@media (max-width: 767px) {
+  .search-popup {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+  }
+  
+  .search-popup .search-header {
+    border-radius: 0 !important;
+  }
+  
+  .search-popup .search-result-container {
+    padding: 15px 20px !important;
+  }
+}
+
+/* 滚动条优化 */
+.search-popup .search-result-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.search-popup .search-result-container::-webkit-scrollbar-track {
+  background: rgba(91, 155, 213, 0.05);
+  border-radius: 10px;
+}
+
+.search-popup .search-result-container::-webkit-scrollbar-thumb {
+  background: rgba(91, 155, 213, 0.3);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.search-popup .search-result-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(91, 155, 213, 0.5);
+}

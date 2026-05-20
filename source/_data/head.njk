@@ -1,0 +1,119 @@
+{# Custom head injection #}
+
+<!-- SEO 和性能优化增强 -->
+
+<!-- 预加载关键资源 -->
+<link rel="preload" href="/css/main.css" as="style">
+<link rel="preload" href="/js/next-boot.js" as="script">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+<!-- DNS预解析 -->
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+
+<!-- Open Graph Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GINKA的博客">
+<meta property="og:title" content="GINKA - Pwn & Reverse Engineering">
+<meta property="og:description" content="专注于逆向工程和二进制安全研究">
+<meta property="og:url" content="https://zhouhang9527.github.io">
+<meta property="og:image" content="https://zhouhang9527.github.io/images/avatar.png">
+<meta property="og:locale" content="zh_CN">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GINKA的博客">
+<meta name="twitter:description" content="专注于逆向工程和二进制安全研究">
+<meta name="twitter:image" content="https://zhouhang9527.github.io/images/avatar.png">
+
+<!-- 搜索引擎优化 -->
+<meta name="robots" content="index, follow">
+<meta name="googlebot" content="index, follow">
+<meta name="baiduspider" content="index, follow">
+<meta name="author" content="GINKA">
+<meta name="copyright" content="GINKA">
+
+<!-- 移动端优化 -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GINKA">
+<meta name="format-detection" content="telephone=no">
+
+<!-- 主题色 -->
+<meta name="theme-color" content="#37c6c0">
+<meta name="msapplication-TileColor" content="#37c6c0">
+<meta name="ginka-api-base" content="{{ theme.ginka_backend.api_base | default('') }}">
+
+<!-- 结构化数据 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "GINKA的博客",
+  "description": "专注于逆向工程和二进制安全研究",
+  "url": "https://zhouhang9527.github.io",
+  "author": {
+    "@type": "Person",
+    "name": "GINKA",
+    "email": "3050055132@qq.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "GINKA",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://zhouhang9527.github.io/images/avatar.png"
+    }
+  },
+  "inLanguage": "zh-CN",
+  "keywords": ["CTF", "Reverse Engineering", "Pwn", "Binary Security", "IDA Pro"]
+}
+</script>
+
+<style>
+/* 性能优化：图片延迟加载占位 */
+img:not([src]) {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* 减少重绘 */
+.post-block,
+.sidebar {
+  contain: layout style paint;
+}
+
+/* 字体加载优化 */
+@font-face {
+  font-family: 'system';
+  font-style: normal;
+  font-weight: 300;
+  src: local('.');
+  unicode-range: U+000-5FF;
+  font-display: swap;
+}
+</style>
+
+<!-- 性能监控脚本 -->
+<script>
+(function() {
+  if ('performance' in window) {
+    window.addEventListener('load', () => {
+      const perfData = performance.getEntriesByType('navigation')[0];
+      if (perfData) {
+        console.log('[Performance] 页面加载:', Math.round(perfData.loadEventEnd - perfData.fetchStart), 'ms');
+        console.log('[Performance] DOM解析:', Math.round(perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart), 'ms');
+      }
+    });
+  }
+})();
+</script>
+
+

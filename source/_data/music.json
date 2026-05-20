@@ -1,0 +1,25 @@
+{
+  "audio": [
+    {
+      "name": "光放て！",
+      "artist": "柳麻美",
+      "url": "/music/ginka-op-hikari-hanate.mp3",
+      "cover": "/music/ginka-op-hikari-hanate.webp",
+      "lrc": ""
+    },
+    {
+      "name": "AIR",
+      "artist": "Lia",
+      "url": "/music/air.mp3",
+      "cover": "/music/air.jpg",
+      "lrc": ""
+    },
+    {
+      "name": "夢浮橋-ユメノウキハシ-",
+      "artist": "青木陽菜",
+      "url": "/music/ginka-ed-yumeukihashi.mp3",
+      "cover": "/music/ginka-ed-yumeukihashi.jpg",
+      "lrc": ""
+    }
+  ]
+}

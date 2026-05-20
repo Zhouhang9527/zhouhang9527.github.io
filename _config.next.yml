@@ -1,0 +1,342 @@
+# ===================================================
+# NexT Theme Configuration - GINKA Blog v2.0
+# ===================================================
+# Docs: https://theme-next.js.org/docs/
+
+# ---------------------------------------------------------------
+# Theme Scheme & Appearance
+# ---------------------------------------------------------------
+scheme: Mist
+darkmode: false
+
+# ---------------------------------------------------------------
+# Site Branding
+# ---------------------------------------------------------------
+favicon:
+  small: /images/favicon.png
+  medium: /images/favicon.png
+  apple_touch_icon: /images/favicon.png
+  safari_pinned_tab: /images/favicon.png
+
+avatar:
+  url: /images/avatar.png
+  rounded: true
+  rotated: true
+  opacity: 1
+
+# ---------------------------------------------------------------
+# Site Information
+# ---------------------------------------------------------------
+site_author: GINKA
+site_subtitle: 'Pwn & Reverse Engineering'
+site_description: '专注于逆向工程和二进制安全研究'
+
+# ---------------------------------------------------------------
+# Social Links
+# ---------------------------------------------------------------
+social:
+  GitHub: https://github.com/Zhouhang9527 || fab fa-github
+  E-Mail: mailto:3050055132@qq.com || fa fa-envelope
+  #QQ: tencent://message/?uin=3050055132 || fab fa-qq
+  #Weibo: https://weibo.com/yourname || fab fa-weibo
+
+social_icons:
+  enable: true
+  icons_only: false
+  transition: true
+
+# ---------------------------------------------------------------
+# Menu Configuration
+# ---------------------------------------------------------------
+menu:
+  home: / || fa fa-home
+  archives: /archives/ || fa fa-archive
+  tags: /tags/ || fa fa-tags
+  categories: /categories/ || fa fa-th
+  links: /links/ || fa fa-link
+  about: /about/ || fa fa-user
+
+menu_settings:
+  icons: true
+  badges: true
+
+# ---------------------------------------------------------------
+# Sidebar Configuration
+# ---------------------------------------------------------------
+sidebar:
+  position: left
+  display: post
+  padding: 18
+  offset: 12
+  onmobile: false
+
+# ---------------------------------------------------------------
+# Reading Experience
+# ---------------------------------------------------------------
+# Progress bar
+back2top:
+  enable: true
+  sidebar: true
+  scrollpercent: true
+  
+reading_progress:
+  enable: true
+  position: top
+  color: "#37c6c0"
+  height: 3px
+
+# Bookmark
+bookmark:
+  enable: true
+  color: "#222"
+  save: auto
+
+# ---------------------------------------------------------------
+# Post Meta Display
+# ---------------------------------------------------------------
+post_meta:
+  item_text: true
+  created_at: true
+  updated_at:
+    enable: true
+    another_day: true
+  categories: true
+
+post_wordcount:
+  item_text: true
+  wordcount: true
+  min2read: true
+  totalcount: false
+  separated_meta: true
+
+# Symbols count time
+symbols_count_time:
+  separated_meta: true
+  item_text_total: false
+
+# ---------------------------------------------------------------
+# Footer Configuration
+# ---------------------------------------------------------------
+footer:
+  since: 2025
+  icon:
+    name: fa fa-heart
+    animated: true
+    color: "#ff0000"
+  copyright: mm9527
+  powered:
+    enable: false
+    version: false
+  beian:
+    enable: false
+
+# ---------------------------------------------------------------
+# Code Block Configuration
+# ---------------------------------------------------------------
+codeblock:
+  theme:
+    light: default
+    dark: stackoverflow-dark
+  prism:
+    light: prism
+    dark: prism-dark
+  copy_button:
+    enable: true
+    show_result: true
+    style: mac
+
+# ---------------------------------------------------------------
+# Search Configuration
+# ---------------------------------------------------------------
+local_search:
+  enable: true
+  trigger: auto
+  top_n_per_article: 1
+  unescape: false
+  preload: false
+
+# ---------------------------------------------------------------
+# Third-party Services
+# ---------------------------------------------------------------
+# Analytics (按 NexT 官方格式配置)
+baidu_analytics: 2f8738c3a09f9883ce4d440f2e3a145e
+
+google_analytics:
+  enable: false
+  id: 
+
+busuanzi_count:
+  enable: true
+  total_visitors: false
+  total_views: false
+  post_views: true
+
+# Comments
+comments:
+  style: tabs
+  active: giscus
+  storage: true
+  lazyload: false
+  nav:
+    giscus:
+      text: Load Giscus
+      order: -1
+
+giscus:
+  enable: true
+  repo: Zhouhang9527/blog-comments
+  repo_id: R_kgDORD1-mg
+  category: Announcements
+  category_id: DIC_kwDORD1-ms4C1lSK
+  mapping: pathname
+  reactions_enabled: 1
+  emit_metadata: 0
+  input_position: top
+  theme: light
+  lang: zh-CN
+  loading: lazy
+
+twikoo:
+  enable: false
+  envId: https://my-twikoo-backend.vercel.app
+  region: 
+  visitor: false
+  commentCount: true
+
+# ---------------------------------------------------------------
+# SEO Optimization
+# ---------------------------------------------------------------
+seo: true
+index_with_subtitle: true
+exturl: false
+google_site_verification:
+bing_site_verification:
+baidu_site_verification:
+
+# ---------------------------------------------------------------
+# Font Configuration
+# ---------------------------------------------------------------
+font:
+  enable: true
+  host: https://fonts.loli.net
+  global:
+    external: true
+    family: "Noto Serif SC"
+    size: 16
+  headings:
+    external: true
+    family: "Noto Serif SC"
+    size:
+  posts:
+    external: true
+    family: "Noto Serif SC"
+  codes:
+    external: true
+    family: "JetBrains Mono"
+
+# ---------------------------------------------------------------
+# Image & Media
+# ---------------------------------------------------------------
+# Fancybox
+fancybox: true
+
+# Medium Zoom
+mediumzoom: false
+
+# Lazyload
+lazyload: true
+
+# ---------------------------------------------------------------
+# Custom Files (Asset Injection)
+# ---------------------------------------------------------------
+custom_file_path:
+  head: source/_data/head.njk
+  header: source/_data/header.njk
+  # sidebar: source/_data/sidebar.njk
+  footer: source/_data/footer.njk
+  bodyEnd: source/_data/body-end.njk
+  variable: source/_data/variables.styl
+  mixin: source/_data/mixins.styl
+  style: source/_data/styles.styl
+
+# ---------------------------------------------------------------
+# Tag Cloud
+# ---------------------------------------------------------------
+tagcloud:
+  min: 12
+  max: 30
+  amount: 200
+  orderby: name
+  order: 1
+
+# ---------------------------------------------------------------
+# GitHub Banner
+# ---------------------------------------------------------------
+github_banner:
+  enable: false
+  permalink: https://github.com/Zhouhang9527
+  title: Follow me on GitHub
+
+# ---------------------------------------------------------------
+# Math Equations
+# ---------------------------------------------------------------
+math:
+  every_page: false
+  mathjax:
+    enable: false
+  katex:
+    enable: false
+
+# ---------------------------------------------------------------
+# Pjax (加速页面加载)
+# ---------------------------------------------------------------
+pjax: true
+
+# ---------------------------------------------------------------
+# Motion & Animation
+# ---------------------------------------------------------------
+motion:
+  enable: true
+  async: false
+  transition:
+    menu_item: fadeInDown
+    post_block: fadeIn
+    post_header: fadeInDown
+    post_body: fadeInDown
+    coll_header: fadeInLeft
+    sidebar: fadeInUp
+
+# ---------------------------------------------------------------
+# Performance Optimization
+# ---------------------------------------------------------------
+# Preconnect
+preconnect: true
+
+# DNS Prefetch
+dns_prefetch: true
+
+# ---------------------------------------------------------------
+# Vendors (CDN Configuration)
+# ---------------------------------------------------------------
+vendors:
+  internal: local
+  plugins: jsdelivr
+
+# ---------------------------------------------------------------
+# Advanced Settings
+# ---------------------------------------------------------------
+# Mobile device optimization
+mobile_layout_economy: true
+
+# Android Chrome address bar color
+android_chrome_color: "#222"
+
+# Custom Logo
+custom_logo:
+  enabled: false
+  image:
+# ---------------------------------------------------------------
+# GINKA Backend Bridge (Optional)
+# ---------------------------------------------------------------
+ginka_backend:
+  api_base: ''

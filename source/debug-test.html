@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ATRI 调试测试页面</title>
+  <style>
+    body {
+      margin: 20px;
+      font-family: Arial, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .test-section {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+    .test-btn {
+      background: rgba(91, 155, 213, 0.25);
+      border: 1px solid rgba(91, 155, 213, 0.5);
+      color: rgba(91, 155, 213, 0.9);
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .test-btn:hover {
+      background: rgba(91, 155, 213, 0.35);
+    }
+    #log {
+      background: #000;
+      color: #0f0;
+      padding: 10px;
+      border-radius: 4px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 ATRI 功能调试测试</h1>
+  
+  <div class="test-section">
+    <h2>1. 按钮颜色测试</h2>
+    <button class="test-btn">
+      <i class="fa fa-eye" style="color: rgba(91, 155, 213, 0.9);"></i> 这是淡蓝色吗？
+    </button>
+    <p>✓ 如果看到淡蓝色图标，说明颜色正常</p>
+  </div>
+  
+  <div class="test-section">
+    <h2>2. ATRI 对象检测</h2>
+    <button class="test-btn" onclick="checkATRI()">检查 ATRI 对象</button>
+    <button class="test-btn" onclick="checkConfig()">检查配置</button>
+    <button class="test-btn" onclick="testTalkMessages()">测试台词</button>
+  </div>
+  
+  <div class="test-section">
+    <h2>3. 音量按钮测试</h2>
+    <button class="test-btn" onclick="testVolumeBtn()">测试音量按钮</button>
+    <button class="test-btn" onclick="checkLocalStorage()">检查存储</button>
+  </div>
+  
+  <div class="test-section">
+    <h2>4. 歌词系统测试</h2>
+    <button class="test-btn" onclick="testLyrics()">测试歌词更新</button>
+    <button class="test-btn" onclick="checkTitle()">检查标题</button>
+  </div>
+  
+  <div class="test-section">
+    <h2>📋 日志输出</h2>
+    <button class="test-btn" onclick="clearLog()">清空日志</button>
+    <div id="log"></div>
+  </div>
+  
+  <script>
+    function log(msg) {
+      const logEl = document.getElementById('log');
+      const time = new Date().toLocaleTimeString();
+      logEl.innerHTML += `[${time}] ${msg}<br>`;
+      logEl.scrollTop = logEl.scrollHeight;
+      console.log(msg);
+    }
+    
+    function clearLog() {
+      document.getElementById('log').innerHTML = '';
+    }
+    
+    function checkATRI() {
+      if (typeof window.ATRI !== 'undefined') {
+        log('✅ ATRI 对象存在');
+        log('ATRI 类型: ' + typeof window.ATRI);
+        log('ATRI 方法: ' + Object.keys(window.ATRI).join(', '));
+      } else {
+        log('❌ ATRI 对象不存在！');
+      }
+    }
+    
+    function checkConfig() {
+      if (typeof window.ATRI !== 'undefined' && window.ATRI.config) {
+        log('✅ 配置对象存在');
+        const config = window.ATRI.config;
+        
+        if (config.messages && config.messages.talk) {
+          log(`✅ talk 台词数量: ${config.messages.talk.length}`);
+          config.messages.talk.forEach((msg, i) => {
+            log(`  ${i+1}. ${msg}`);
+          });
+        } else {
+          log('❌ talk 台词不存在');
+        }
+        
+        if (config.voiceVolume !== undefined) {
+          log(`✅ 语音音量配置: ${config.voiceVolume}`);
+        } else {
+          log('❌ 语音音量配置不存在');
+        }
+      } else {
+        log('❌ 配置对象不存在');
+      }
+    }
+    
+    function testTalkMessages() {
+      if (typeof window.ATRI !== 'undefined' && window.ATRI.config) {
+        const talk = window.ATRI.config.messages.talk;
+        if (talk && talk.length > 0) {
+          const randomMsg = talk[Math.floor(Math.random() * talk.length)];
+          log('🎭 随机台词: ' + randomMsg);
+          if (window.ATRI.showMessage) {
+            window.ATRI.showMessage(randomMsg, 3000);
+            log('✅ 已调用 showMessage');
+          }
+        }
+      }
+    }
+    
+    function testVolumeBtn() {
+      const volumeBtn = document.getElementById('atri-volume');
+      if (volumeBtn) {
+        log('✅ 找到音量按钮');
+        const icon = volumeBtn.querySelector('i');
+        if (icon) {
+          log('图标类名: ' + icon.className);
+          log('图标颜色: ' + icon.style.color);
+        }
+        
+        const stored = localStorage.getItem('atri_voice_volume');
+        log('存储的语音音量: ' + (stored || '无'));
+      } else {
+        log('❌ 找不到音量按钮');
+      }
+    }
+    
+    function checkLocalStorage() {
+      log('=== LocalStorage 内容 ===');
+      const keys = ['atri_voice_volume', 'music_volume', 'music_playing', 'music_current_time'];
+      keys.forEach(key => {
+        const val = localStorage.getItem(key);
+        log(`${key}: ${val || '(空)'}`);
+      });
+    }
+    
+    function testLyrics() {
+      const audio = document.getElementById('bg-music');
+      if (audio) {
+        log('✅ 找到音频元素');
+        log('当前时间: ' + audio.currentTime);
+        log('播放状态: ' + (audio.paused ? '暂停' : '播放中'));
+        log('当前标题: ' + document.title);
+      } else {
+        log('❌ 找不到音频元素');
+      }
+    }
+    
+    function checkTitle() {
+      log('当前页面标题: ' + document.title);
+    }
+    
+    // 页面加载完成后自动检测
+    window.addEventListener('load', () => {
+      log('=== 页面加载完成 ===');
+      setTimeout(() => {
+        log('延迟 2 秒后检查...');
+        checkATRI();
+      }, 2000);
+    });
+    
+    // 监听控制台错误
+    window.addEventListener('error', (e) => {
+      log('❌ JavaScript 错误: ' + e.message);
+    });
+  </script>
+  
+  <!-- 引入 Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</body>
+</html>

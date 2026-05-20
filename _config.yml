@@ -1,0 +1,212 @@
+# ===================================================
+# Hexo Configuration - GINKA Blog
+# ===================================================
+# Docs: https://hexo.io/docs/configuration.html
+
+# ---------------------------------------------------------------
+# Site Information
+# ---------------------------------------------------------------
+title: GINKA
+subtitle: 'Pwn & Reverse Engineering'
+description: '专注于逆向工程和二进制安全研究'
+keywords: 
+  - CTF
+  - Reverse Engineering
+  - Pwn
+  - Binary Security
+  - IDA Pro
+author: GINKA
+email: 3050055132@qq.com
+language: zh-CN
+timezone: Asia/Shanghai
+
+# ---------------------------------------------------------------
+# URL Configuration
+# ---------------------------------------------------------------
+url: https://zhouhang9527.github.io
+root: /
+permalink: :year/:month/:day/:title/
+permalink_defaults:
+pretty_urls:
+  trailing_index: true
+  trailing_html: true
+
+# ---------------------------------------------------------------
+# Directory Structure
+# ---------------------------------------------------------------
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+
+# ---------------------------------------------------------------
+# Skip Rendering (Asset Protection)
+# ---------------------------------------------------------------
+skip_render:
+  - 'css/**'
+  - 'js/**'
+  - 'fonts/**'
+  - 'images/**'
+  - 'live2d/**'
+  - 'music/**/*.mp3'
+  - 'music/**/*.flac'
+  - 'music/**/*.ogg'
+  - 'music/**/*.m4a'
+  - 'music/**/*.wav'
+
+# ---------------------------------------------------------------
+# Writing Configuration
+# ---------------------------------------------------------------
+new_post_name: :title.md
+default_layout: post
+titlecase: false
+external_link:
+  enable: true
+  field: site
+  exclude: ''
+filename_case: 1
+render_drafts: false
+post_asset_folder: true
+relative_link: false
+future: true
+
+# ---------------------------------------------------------------
+# Markdown Rendering
+# ---------------------------------------------------------------
+marked:
+  gfm: true
+  pedantic: false
+  breaks: true
+  smartLists: true
+  smartypants: true
+  modifyAnchors: 0
+  autolink: true
+  sanitizeUrl: false
+  headerIds: true
+  anchorAlias: false
+  lazyload: false
+  prependRoot: false
+  postAsset: false
+  external_link:
+    enable: false
+    exclude: []
+    nofollow: false
+
+# ---------------------------------------------------------------
+# Code Highlighting
+# ---------------------------------------------------------------
+highlight:
+  enable: true
+  line_number: true
+  auto_detect: true
+  tab_replace: '  '
+  wrap: true
+  hljs: false
+  exclude_languages: []
+  
+prismjs:
+  enable: false
+  preprocess: true
+  line_number: true
+  tab_replace: ''
+
+# ---------------------------------------------------------------
+# Pagination
+# ---------------------------------------------------------------
+index_generator:
+  path: ''
+  per_page: 10
+  order_by: -date
+  
+archive_generator:
+  per_page: 20
+  yearly: true
+  monthly: true
+  daily: false
+  
+tag_generator:
+  per_page: 10
+
+# ---------------------------------------------------------------
+# Theme Configuration
+# ---------------------------------------------------------------
+theme: next
+
+# ---------------------------------------------------------------
+# Live2D Configuration (Disabled - Using Custom)
+# ---------------------------------------------------------------
+live2d:
+  enable: false
+
+# ---------------------------------------------------------------
+# Search Configuration
+# ---------------------------------------------------------------
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html
+  limit: 10000
+
+# ---------------------------------------------------------------
+# Deployment Configuration
+# ---------------------------------------------------------------
+deploy:
+  type: git
+  repo: https://github.com/Zhouhang9527/zhouhang9527.github.io.git
+  branch: main
+  message: "Site updated: {{ now('YYYY-MM-DD HH:mm:ss') }}"
+
+# ---------------------------------------------------------------
+# Extensions & Plugins
+# ---------------------------------------------------------------
+# All plugin configurations go here
+
+# ---------------------------------------------------------------
+# Optimization Plugins Configuration
+# ---------------------------------------------------------------
+
+# Hexo All Minifier
+all_minifier: true
+silent: true
+js_minifier:
+  enable: true
+  mangle: true
+  compress: {}
+css_minifier:
+  enable: true
+html_minifier:
+  enable: true
+  removeComments: true
+  collapseWhitespace: true
+  caseSensitive: true
+  minifyJS: true
+  minifyCSS: true
+
+# Hexo Generator Sitemap
+sitemap:
+  path: sitemap.xml
+
+baidusitemap:
+  path: baidusitemap.xml
+
+# Hexo Generator Feed
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content:
+  content_limit: 140
+  content_limit_delim: ' '
+  order_by: -date
+  autodiscovery: true
+
+# Hexo Lazyload Image
+lazyload:
+  enable: false
+  onlypost: false
+  loadingImg: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50' preserveAspectRatio='xMidYMid meet'%3E%3Cpath fill='%23ccc' d='M25,5A20,20,0,1,0,45,25,20,20,0,0,0,25,5Zm0,36A16,16,0,1,1,41,25,16,16,0,0,1,25,41Z'/%3E%3Cpath fill='%23333' d='M25,5A20,20,0,0,1,45,25H41A16,16,0,0,0,25,9Z'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 25 25' to='360 25 25' dur='1s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E"
