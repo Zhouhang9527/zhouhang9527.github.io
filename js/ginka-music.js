@@ -18,7 +18,7 @@
       single: { label: '单曲循环', icon: 'fa-repeat' },
       shuffle: { label: '随机播放', icon: 'fa-random' }
     };
-    const PRE_PLAY_LYRIC_TEXT = '我希望平静 然后幸福';
+    const PRE_PLAY_LYRIC_TEXT = '加载中...';
     const AUTO_GAIN_TARGET_RMS = 0.126;
     const AUTO_GAIN_MIN = 0.62;
     const AUTO_GAIN_MAX = 1.45;
