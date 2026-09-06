@@ -264,6 +264,7 @@
     }
   
     function updatePlayIcon(isPlaying) {
+      musicRoot.classList.toggle('is-playing', isPlaying);
       icon.classList.remove('fa-play', 'fa-pause', 'fa-circle-notch', 'fa-spin');
       if (isPlaying) icon.classList.add('fa-pause');
       else icon.classList.add('fa-play');
@@ -464,6 +465,7 @@
     }
   
     function setHidden(hidden, persist) {
+      musicRoot.classList.toggle('is-expanded', !hidden);
       if (hidden) {
         playerMain.style.display = 'none';
         miniBtn.style.display = 'flex';
@@ -473,8 +475,8 @@
         miniBtn.style.display = 'none';
       }
       if (lyricsPanel) {
-        lyricsPanel.classList.remove('is-hidden');
-        lyricsPanel.setAttribute('aria-hidden', 'false');
+        lyricsPanel.classList.toggle('is-hidden', hidden);
+        lyricsPanel.setAttribute('aria-hidden', hidden ? 'true' : 'false');
       }
       if (persist !== false) {
         localStorage.setItem(STORAGE.hidden, hidden ? 'true' : 'false');
@@ -1146,7 +1148,7 @@
       : DEFAULT_MUSIC_VOLUME;
     currentPlayMode = normalizePlayMode(localStorage.getItem(STORAGE.playMode));
     const wasPlaying = localStorage.getItem(STORAGE.playing) === 'true';
-    const wasHidden = localStorage.getItem(STORAGE.hidden) === 'true';
+    const wasHidden = localStorage.getItem(STORAGE.hidden) !== 'false';
     const wasPlaylistExpanded = localStorage.getItem(STORAGE.playlistExpanded) === 'true';
     hasStartedPlayback = !audio.paused;
   

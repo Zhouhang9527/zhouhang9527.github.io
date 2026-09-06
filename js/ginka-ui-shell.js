@@ -660,7 +660,7 @@
   }
 
   function boot() {
-    bindSidebarAutoCollapse();
+    // The reading drawer is opened and closed explicitly, so the TOC stays put.
     bindAmbientParticles();
     bindPjaxHelpers();
     bindHomeNavFix();
