@@ -7,6 +7,13 @@
     var toggle = document.querySelector('.sidebar-toggle');
     var open = document.body.classList.contains('sidebar-active');
     if (sidebar) { sidebar.inert = !open; sidebar.setAttribute('aria-hidden', String(!open)); }
+    if (open && sidebar) {
+      sidebar.querySelectorAll('[data-sidebar-src]').forEach(function (img) {
+        img.src = img.getAttribute('data-sidebar-src');
+        img.removeAttribute('data-sidebar-src');
+      });
+      if (!window.__ginkaMusicBooted && typeof window.GINKA_BOOT_MUSIC === 'function') window.GINKA_BOOT_MUSIC();
+    }
     if (toggle) toggle.setAttribute('aria-expanded', String(open));
   }
   function closeDrawer() {
@@ -18,7 +25,7 @@
     var toggle = document.querySelector('.sidebar-toggle');
     if (toggle) {
       toggle.tabIndex = 0;
-      toggle.setAttribute('aria-label', '打开导航与文章目录');
+      toggle.setAttribute('aria-label', '打开导航、音乐与文章目录');
       toggle.setAttribute('aria-controls', 'journal-sidebar');
     }
     document.querySelectorAll('.sidebar-nav li').forEach(function (tab) { tab.tabIndex = 0; tab.setAttribute('role', 'button'); });
@@ -53,7 +60,7 @@
     if (sidebar && document.body.classList.contains('sidebar-active') && sidebar.contains(target)) {
       if (event.key === 'Escape') { event.preventDefault(); closeDrawer(); }
       if (event.key === 'Tab') {
-        var nodes = Array.from(sidebar.querySelectorAll('a[href],button,[tabindex="0"]')).filter(function (node) { return node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden'; });
+        var nodes = Array.from(sidebar.querySelectorAll('a[href],button,input,select,textarea,[tabindex="0"]')).filter(function (node) { return !node.disabled && !node.closest('[inert]') && node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden'; });
         var first = nodes[0], last = nodes[nodes.length - 1];
         if (event.shiftKey && target === first) { event.preventDefault(); last.focus(); }
         else if (!event.shiftKey && target === last) { event.preventDefault(); first.focus(); }

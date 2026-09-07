@@ -465,6 +465,8 @@
     }
   
     function setHidden(hidden, persist) {
+      // The sidebar owns visibility; keep the controls expanded inside it.
+      if (musicRoot.closest('#journal-sidebar')) hidden = false;
       musicRoot.classList.toggle('is-expanded', !hidden);
       if (hidden) {
         playerMain.style.display = 'none';
@@ -515,6 +517,7 @@
         musicArtist.textContent = `${music.artist} / ${music.album}`;
       }
       if (musicCover) {
+        musicCover.removeAttribute('data-sidebar-src');
         musicCover.src = music.cover;
         musicCover.alt = `${music.title} - ${music.artist}`;
         musicCover.onerror = function () {
@@ -1148,7 +1151,7 @@
       : DEFAULT_MUSIC_VOLUME;
     currentPlayMode = normalizePlayMode(localStorage.getItem(STORAGE.playMode));
     const wasPlaying = localStorage.getItem(STORAGE.playing) === 'true';
-    const wasHidden = localStorage.getItem(STORAGE.hidden) !== 'false';
+    const wasHidden = !musicRoot.closest('#journal-sidebar') && localStorage.getItem(STORAGE.hidden) !== 'false';
     const wasPlaylistExpanded = localStorage.getItem(STORAGE.playlistExpanded) === 'true';
     hasStartedPlayback = !audio.paused;
   
@@ -1204,6 +1207,17 @@
   function scheduleMusicBoot() {
     if (scheduled) return;
     scheduled = true;
+
+    // New listeners open the player explicitly; preserve playback restoration.
+    if (document.body.classList.contains('sidebar-active')) {
+      bootMusic();
+      return;
+    }
+    try {
+      if (localStorage.getItem('music_playing') !== 'true') return;
+    } catch (_error) {
+      return;
+    }
 
     var runtime = window.GINKA_RUNTIME;
     var requireInteraction = !!(runtime && runtime.isLowPower);

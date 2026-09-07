@@ -450,6 +450,7 @@
             }
             break;
           case 'music':
+            if (typeof window.GINKA_BOOT_MUSIC === 'function') window.GINKA_BOOT_MUSIC();
             var toggleBtn = document.getElementById('music-toggle');
             if (toggleBtn) toggleBtn.click();
             break;
@@ -595,35 +596,6 @@
     window.__ginkaSiteTimeTimer = window.setInterval(updateSiteTime, 1000);
   }
 
-  function bindBackgroundReveal() {
-    if (window.__ginkaBackgroundRevealBound) return;
-    window.__ginkaBackgroundRevealBound = true;
-
-    var bg = document.getElementById('video-background');
-    var img = bg && bg.querySelector('img');
-    if (!bg || !img) return;
-
-    function revealBackground() {
-      bg.classList.add('is-loaded');
-    }
-
-    function decodeThenReveal() {
-      if (typeof img.decode === 'function') {
-        img.decode().catch(function () {}).then(revealBackground);
-        return;
-      }
-      revealBackground();
-    }
-
-    if (img.complete && img.naturalWidth > 0) {
-      decodeThenReveal();
-      return;
-    }
-
-    img.addEventListener('load', decodeThenReveal, { once: true });
-    img.addEventListener('error', revealBackground, { once: true });
-  }
-
   function shouldLoadCanvasNest() {
     if (!/\bcanvasNest=1\b/.test(window.location.search)) return false;
     if (matches('(max-width: 768px)')) return false;
@@ -667,7 +639,6 @@
     bindContextMenu();
     bindMobileMenuFix();
     bindSiteTimeTicker();
-    bindBackgroundReveal();
     scheduleCanvasNest();
     fixMobileMenu();
   }
