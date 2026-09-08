@@ -29,12 +29,12 @@
 ### 安装
 
 ```bash
-# 克隆仓库
-git clone https://github.com/Zhouhang9527/zhouhang9527.github.io.git
+# 克隆 Hexo 源码及定制 NexT 主题
+git clone --branch hexo-source --recurse-submodules https://github.com/Zhouhang9527/zhouhang9527.github.io.git GINKA-Blog
 cd GINKA-Blog
 
 # 安装依赖
-npm install
+npm ci
 ```
 
 ### 本地预览
@@ -64,7 +64,7 @@ npm run deploy
 
 ## 构建与定制边界
 
-- `themes/next` 当前是独立 Git 记录的 NexT 主题目录，博客专用页面模板通过 `scripts/editorial-layout.js` 从主仓库 `layouts/` 覆盖到 Hexo 主题视图。
+- `themes/next` 是指向 `theme-next-ginka` 分支的 Git 子模块；克隆时使用 `--recurse-submodules`，已有工作区可执行 `git submodule update --init`。
 - 博客专用 CSS、JS、图片和页面数据优先放在 `source/`、`layouts/`、`scripts/`，减少主题子仓库内的不可重复改动。
 - `npm run build` 不清理 `public/`，用于快速增量构建；`npm run build:release` 会先清理并检查 PSD、CMO3、旧视频背景、大 TTF 和未使用高分辨率纹理没有进入发布目录。
 - CSS/JS 引用通过 `ginka_asset()` 使用内容哈希生成版本号，文件未变化时 URL 保持稳定。
