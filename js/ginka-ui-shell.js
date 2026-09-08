@@ -588,12 +588,26 @@
     }
 
     window.siteTime = updateSiteTime;
-    updateSiteTime();
 
-    if (window.__ginkaSiteTimeTimer) {
+    function stopSiteTimeTicker() {
+      if (!window.__ginkaSiteTimeTimer) return;
       clearInterval(window.__ginkaSiteTimeTimer);
+      window.__ginkaSiteTimeTimer = 0;
     }
-    window.__ginkaSiteTimeTimer = window.setInterval(updateSiteTime, 1000);
+
+    function startSiteTimeTicker() {
+      stopSiteTimeTicker();
+      updateSiteTime();
+      if (!document.hidden) {
+        window.__ginkaSiteTimeTimer = window.setInterval(updateSiteTime, 1000);
+      }
+    }
+
+    startSiteTimeTicker();
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stopSiteTimeTicker();
+      else startSiteTimeTicker();
+    });
   }
 
   function shouldLoadCanvasNest() {

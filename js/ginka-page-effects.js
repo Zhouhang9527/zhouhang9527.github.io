@@ -44,10 +44,11 @@
     var titleTimer = 0;
     var gsapApi = getGsap();
     var titleNode = document.querySelector('title');
+    var showingReaction = false;
 
     if (titleNode) {
       var titleObserver = new MutationObserver(function () {
-        if (!document.hidden) {
+        if (!document.hidden && !showingReaction) {
           originTitle = document.title;
         }
       });
@@ -56,7 +57,8 @@
 
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) {
-        document.title = '╭(°A°`)╮ 页面崩溃啦 ~';
+        showingReaction = true;
+        document.title = '>_<';
         if (gsapApi) {
           gsapApi.killTweensOf(document, 'ginkaTitleReset');
         }
@@ -64,17 +66,19 @@
         return;
       }
 
-      document.title = '(ฅ>ω<*ฅ) 噫又好啦 ~ ' + originTitle;
+      showingReaction = true;
+      document.title = '^_^';
       clearTimeout(titleTimer);
       titleTimer = setTimeout(function () {
+        showingReaction = false;
         document.title = originTitle;
-      }, 2000);
+      }, 1600);
     });
   })();
 
   (function initOpeningSequence() {
-    var OPENING_FORCE_ALWAYS = false;
-    var OPENING_VERSION = 'opening-v2-gsap';
+    var OPENING_FORCE_ALWAYS = /(?:^|[?&])ginkaOpening=1(?:&|$)/.test(window.location.search);
+    var OPENING_VERSION = 'opening-v3-focus';
     var OPENING_DATE_KEY = 'ginka:opening:last-date';
     var OPENING_VERSION_KEY = 'ginka:opening:version';
     var TITLE_TEXT = '欢迎来到mm9527的博客';
@@ -148,7 +152,10 @@
         '<div class="ginka-opening__curtain ginka-opening__curtain--bottom"></div>',
         '<div class="ginka-opening__seam"></div>',
         '<div class="ginka-opening__center">',
-        '  <img class="ginka-opening__avatar" alt="mm9527 avatar">',
+        '  <div class="ginka-opening__avatar-frame">',
+        '    <img class="ginka-opening__avatar" alt="mm9527 avatar">',
+        '  </div>',
+        '  <div class="ginka-opening__mark">GINKA // MM9527</div>',
         '  <div class="ginka-opening__title"></div>',
         '</div>'
       ].join('');
@@ -190,7 +197,7 @@
       var centerFadeOutMs = options.centerFadeOutMs;
       var curtainMs = options.curtainMs;
       var reduceMotion = options.reduceMotion;
-      var holdMs = 110;
+      var holdMs = reduceMotion ? 80 : 520;
 
       document.body.classList.add('is-opening-preparing');
       document.body.appendChild(node);
@@ -211,12 +218,12 @@
       if (!reduceMotion) {
         openingTimers.push(setTimeout(function () {
           node.classList.add('is-curtain-open');
-        }, fadeInMs + holdMs + centerFadeOutMs + 60));
+        }, fadeInMs + holdMs + Math.min(110, centerFadeOutMs * 0.35)));
       }
 
       openingTimers.push(setTimeout(function () {
         cleanupOpening(node);
-      }, reduceMotion ? (fadeInMs + centerFadeOutMs + 180) : (fadeInMs + centerFadeOutMs + curtainMs + 260)));
+      }, reduceMotion ? (fadeInMs + centerFadeOutMs + 180) : (fadeInMs + holdMs + curtainMs + 360)));
     }
 
     function runOpening() {
@@ -230,9 +237,9 @@
 
       var reduceMotion = prefersReducedMotion();
       var mobile = isTouchDevice();
-      var fadeInMs = reduceMotion ? 120 : (mobile ? 680 : 980);
-      var centerFadeOutMs = reduceMotion ? 120 : (mobile ? 320 : 460);
-      var curtainMs = reduceMotion ? 0 : (mobile ? 520 : 760);
+      var fadeInMs = reduceMotion ? 120 : (mobile ? 560 : 760);
+      var centerFadeOutMs = reduceMotion ? 120 : (mobile ? 280 : 360);
+      var curtainMs = reduceMotion ? 0 : (mobile ? 480 : 680);
       var node = createOpeningNode();
       var gsapApi = getGsap();
 
@@ -254,20 +261,35 @@
       }
 
       var center = node.querySelector('.ginka-opening__center');
+      var avatarFrame = node.querySelector('.ginka-opening__avatar-frame');
+      var mark = node.querySelector('.ginka-opening__mark');
+      var title = node.querySelector('.ginka-opening__title');
       var seam = node.querySelector('.ginka-opening__seam');
       var curtains = node.querySelectorAll('.ginka-opening__curtain');
-      var holdSeconds = reduceMotion ? 0.08 : 0.14;
+      var holdSeconds = reduceMotion ? 0.08 : 0.5;
+      var curtainStartSeconds = holdSeconds + (fadeInMs / 1000) + Math.min(0.11, (centerFadeOutMs / 1000) * 0.35);
 
+      node.classList.add('is-gsap');
       gsapApi.set(node, { autoAlpha: 1 });
       gsapApi.set(center, {
-        autoAlpha: 0,
-        yPercent: 3,
-        scale: 0.985,
+        autoAlpha: 1,
         force3D: true
       });
       gsapApi.set(seam, {
-        autoAlpha: 0.88,
+        autoAlpha: 0,
+        scaleX: 0.08,
         transformOrigin: '50% 50%'
+      });
+      gsapApi.set(avatarFrame, {
+        autoAlpha: 0,
+        scale: 0.78,
+        rotation: -5,
+        force3D: true
+      });
+      gsapApi.set([mark, title], {
+        autoAlpha: 0,
+        y: 12,
+        force3D: true
       });
       gsapApi.set(curtains, {
         yPercent: 0,
@@ -288,16 +310,25 @@
           cleanupOpening(node);
         }
       })
-        .to(center, {
-          autoAlpha: 1,
-          yPercent: 0,
-          scale: 1,
-          duration: fadeInMs / 1000
-        }, 0)
         .to(seam, {
           autoAlpha: 1,
-          duration: Math.max(0.18, fadeInMs / 1500)
-        }, 0.04)
+          scaleX: 1,
+          duration: Math.max(0.28, fadeInMs / 1800),
+          ease: 'power2.out'
+        }, 0)
+        .to(avatarFrame, {
+          autoAlpha: 1,
+          scale: 1,
+          rotation: 0,
+          duration: fadeInMs / 1000,
+          ease: 'back.out(1.35)'
+        }, 0.06)
+        .to([mark, title], {
+          autoAlpha: 1,
+          y: 0,
+          duration: Math.max(0.3, fadeInMs / 1250),
+          stagger: 0.08
+        }, 0.16)
         .add(function () {
           document.body.classList.add('is-opening-leaving');
         }, holdSeconds + (fadeInMs / 1000))
@@ -316,7 +347,7 @@
           yPercent: reduceMotion ? 0 : -103,
           duration: curtainMs / 1000,
           ease: 'power2.inOut'
-        }, reduceMotion ? '>' : '>-0.02')
+        }, reduceMotion ? '>' : curtainStartSeconds)
         .to(curtains[1], {
           yPercent: reduceMotion ? 0 : 103,
           duration: curtainMs / 1000,
@@ -459,6 +490,7 @@
     document.addEventListener('pjax:complete', function () {
       setTimeout(initReveals, 80);
     });
+    window.addEventListener('ginka:gsap-ready', initReveals, { once: true });
   })();
 
   (function initClickRipple() {
@@ -479,17 +511,12 @@
       document.body.appendChild(ripple);
 
       if (!gsapApi) {
+        ripple.classList.add('is-native');
         ripple.style.left = event.clientX + 'px';
         ripple.style.top = event.clientY + 'px';
-        ripple.style.opacity = '0.75';
-        ripple.style.transform = 'translate(-50%, -50%) scale(0)';
-        requestAnimationFrame(function () {
-          ripple.style.opacity = '0';
-          ripple.style.transform = 'translate(-50%, -50%) scale(3)';
-        });
         setTimeout(function () {
           ripple.remove();
-        }, 550);
+        }, 680);
         return;
       }
 
@@ -498,16 +525,16 @@
         top: event.clientY,
         xPercent: -50,
         yPercent: -50,
-        scale: 0,
-        autoAlpha: 0.68,
+        scale: 0.28,
+        autoAlpha: 0.82,
         force3D: true
       });
 
       gsapApi.to(ripple, {
-        scale: 3,
+        scale: 3.6,
         autoAlpha: 0,
-        duration: 0.52,
-        ease: 'power2.out',
+        duration: 0.62,
+        ease: 'power3.out',
         overwrite: 'auto',
         onComplete: function () {
           ripple.remove();

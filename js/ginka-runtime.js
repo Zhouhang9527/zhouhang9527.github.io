@@ -84,5 +84,9 @@
     scheduleBackgroundTask: scheduleBackgroundTask
   };
 
+  if (runtime.isLowPower) {
+    document.documentElement.classList.add('ginka-low-power');
+  }
+
   window.GINKA_RUNTIME = runtime;
 })();

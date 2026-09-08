@@ -134,6 +134,7 @@
     let onlineRetryForTrack = '';
     let suppressMediaError = 0;
     let playbackWanted = false;
+    let lyricMotionTimer = 0;
 
     const setRefreshLoading = (loading) => {
       if (!sourceRetryBtn) return;
@@ -248,8 +249,10 @@
       const sequence = ++playlistRequestSequence;
       const controller = new AbortController();
       const timeout = window.setTimeout(() => controller.abort(), Math.max(1000, Number(onlineConfig.timeout_ms) || 8000));
-      playlistRequest = fetch(metingUrl(playlistType, onlineConfig.playlist_id), {
-        mode: 'cors', credentials: 'omit', cache: 'no-store', signal: controller.signal
+      const playlistEndpoint = new URL(metingUrl(playlistType, onlineConfig.playlist_id));
+      if (opt.force) playlistEndpoint.searchParams.set('_refresh', String(Date.now()));
+      playlistRequest = fetch(playlistEndpoint.toString(), {
+        mode: 'cors', credentials: 'omit', cache: opt.force ? 'no-store' : 'default', signal: controller.signal
       }).then(async (response) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const payload = await response.json();
@@ -982,6 +985,11 @@
             lyricsList.style.transition = prevTransition || '';
           });
         } else {
+          lyricsList.classList.add('is-moving');
+          window.clearTimeout(lyricMotionTimer);
+          lyricMotionTimer = window.setTimeout(() => {
+            lyricsList.classList.remove('is-moving');
+          }, 480);
           lyricsList.style.transform = `translateY(${-targetOffset}px)`;
         }
       }

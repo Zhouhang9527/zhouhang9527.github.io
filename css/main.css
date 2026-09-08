@@ -1269,7 +1269,7 @@ pre code {
   transition: all 0.2s ease-in-out;
 }
 .links-of-author a::before {
-  background: #2ffb61;
+  background: #653481;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
@@ -2850,6 +2850,15 @@ body {
     --ginka-glass-soft-sat: 120%;
   }
 }
+:root.ginka-low-power {
+  --ginka-glass-strong-blur: 7px;
+  --ginka-glass-medium-blur: 5px;
+  --ginka-glass-soft-blur: 3px;
+  --ginka-glass-lite-blur: 2px;
+  --ginka-glass-strong-sat: 128%;
+  --ginka-glass-medium-sat: 120%;
+  --ginka-glass-soft-sat: 112%;
+}
 ::selection {
   background: rgba(91,155,213,0.32) !important;
   color: #1e2a36 !important;
@@ -2950,11 +2959,11 @@ body.is-opening-preparing::before {
   top: 50%;
   width: 76vw;
   height: 2px;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scaleX(0.12);
   background: linear-gradient(90deg, rgba(91,155,213,0), rgba(91,155,213,0.75), rgba(91,155,213,0));
   box-shadow: 0 0 16px rgba(91,155,213,0.32);
   opacity: 0.95;
-  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1), transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .ginka-opening__center {
   position: absolute;
@@ -2974,25 +2983,88 @@ body.is-opening-preparing::before {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
-.ginka-opening__avatar {
+.ginka-opening.is-visible .ginka-opening__seam {
+  transform: translate(-50%, -50%) scaleX(1);
+}
+.ginka-opening__avatar-frame {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.82) rotate(-4deg);
+  transition: opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1), transform 0.68s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.ginka-opening__avatar-frame::before,
+.ginka-opening__avatar-frame::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.ginka-opening__avatar-frame::before {
+  inset: 0;
+  border: 1px solid rgba(55,198,192,0.55);
+  box-shadow: 0 0 24px rgba(55,198,192,0.2);
+}
+.ginka-opening__avatar-frame::after {
+  inset: 7px;
+  border: 1px solid rgba(91,155,213,0.35);
+}
+.ginka-opening img.ginka-opening__avatar {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid rgba(255,255,255,0.82);
   box-shadow: 0 14px 40px rgba(91,155,213,0.26), 0 0 0 6px rgba(255,255,255,0.25);
+  transition: none;
+}
+.ginka-opening img.ginka-opening__avatar:hover {
+  transform: none;
+}
+.ginka-opening__mark {
+  margin-top: -4px;
+  color: rgba(48,88,112,0.72);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.38s ease 0.12s, transform 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
 }
 .ginka-opening__title {
   font-size: clamp(24px, 3vw, 34px);
   font-weight: 800;
-  letter-spacing: 1.8px;
+  letter-spacing: 0;
   color: rgba(28,53,82,0.96);
   text-align: center;
   text-shadow: 0 3px 16px rgba(91,155,213,0.28);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease 0.2s, transform 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+}
+.ginka-opening.is-visible .ginka-opening__avatar-frame,
+.ginka-opening.is-visible .ginka-opening__mark,
+.ginka-opening.is-visible .ginka-opening__title {
+  opacity: 1;
+  transform: none;
+}
+.ginka-opening.is-gsap .ginka-opening__avatar-frame,
+.ginka-opening.is-gsap .ginka-opening__mark,
+.ginka-opening.is-gsap .ginka-opening__title {
+  transition: none;
 }
 .ginka-opening.is-center-fading .ginka-opening__center {
   opacity: 0;
   transform: translate(-50%, -53%) scale(0.96);
+}
+.ginka-opening.is-center-fading .ginka-opening__avatar-frame,
+.ginka-opening.is-center-fading .ginka-opening__mark,
+.ginka-opening.is-center-fading .ginka-opening__title {
+  transition-delay: 0s;
 }
 .ginka-opening.is-center-fading .ginka-opening__seam {
   opacity: 0.72;
@@ -3016,13 +3088,17 @@ body.is-opening-preparing::before {
     gap: 12px;
     transition-duration: 0.35s;
   }
-  .ginka-opening__avatar {
+  .ginka-opening img.ginka-opening__avatar {
     width: 92px;
     height: 92px;
   }
+  .ginka-opening__avatar-frame {
+    width: 104px;
+    height: 104px;
+  }
   .ginka-opening__title {
     font-size: clamp(20px, 4.8vw, 28px);
-    letter-spacing: 1px;
+    letter-spacing: 0;
   }
   .ginka-opening__curtain {
     transition-duration: 0.56s;
@@ -3036,6 +3112,12 @@ body.is-opening-preparing::before {
   .ginka-opening__center {
     transition: opacity 0.12s ease !important;
     transform: translate(-50%, -50%) !important;
+  }
+  .ginka-opening__avatar-frame,
+  .ginka-opening__mark,
+  .ginka-opening__title {
+    transition: opacity 0.12s ease !important;
+    transform: none !important;
   }
   .ginka-opening__curtain {
     transition: none !important;
@@ -3862,15 +3944,27 @@ body ::-moz-selection {
   position: fixed;
   left: 0;
   top: 0;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: rgba(91,155,213,0.6);
+  background: rgba(224,242,255,0.22);
+  border: 1px solid rgba(126,190,232,0.82);
+  box-shadow: 0 0 0 3px rgba(151,207,242,0.18), 0 0 16px rgba(126,190,232,0.28);
   transform: translate(-50%, -50%) scale(0);
   pointer-events: none;
   z-index: 9999;
   opacity: 0;
   will-change: transform, opacity;
+}
+.click-ripple::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: rgba(181,221,247,0.82);
+}
+.click-ripple.is-native {
+  animation: rippleEffect 0.62s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 @keyframes ginkaLoaderSweep {
   0% {
@@ -3922,7 +4016,7 @@ body ::-moz-selection {
     opacity: 0.8;
   }
   100% {
-    transform: translate(-50%, -50%) scale(3);
+    transform: translate(-50%, -50%) scale(3.6);
     opacity: 0;
   }
 }

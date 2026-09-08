@@ -856,6 +856,7 @@
         const onPointerDown = (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
+          this.widget.classList.add('is-dragging');
 
           const rect = this.widget.getBoundingClientRect();
           const startX = ev.clientX;
@@ -890,6 +891,7 @@
 
           const onUp = (e) => {
             e.preventDefault();
+            this.widget.classList.remove('is-dragging');
             document.removeEventListener('pointermove', onMove, true);
             document.removeEventListener('pointerup', onUp, true);
             document.removeEventListener('pointercancel', onUp, true);
