@@ -26,8 +26,11 @@
     const MUSIC_VOICE_COOLDOWN_MS = 5000;
     const AUTO_GAIN_SAMPLE_MS = 4600;
     const AUTO_GAIN_MIN_SAMPLES = 36;
+    const PLAYLIST_CACHE_VERSION = 2;
     const STORAGE = {
       index: 'music_current_index',
+      source: 'music_current_source',
+      trackId: 'music_current_track_id',
       volume: 'music_volume',
       playing: 'music_playing',
       currentTime: 'music_currentTime',
@@ -43,58 +46,43 @@
       return base + String(path || '').replace(/^\//, '');
     };
   
-    const musicList = [
-      {
-        title: '光放て！',
-        artist: '柳麻美',
-        album: 'ATRI -My Dear Moments- (Original Soundtrack)',
-        src: assetUrl('music/ginka-op-hikari-hanate.mp3'),
-        cover: assetUrl('music/ginka-op-hikari-hanate.webp'),
-        lyricsSrc: assetUrl('music/ginka-op-hikari-hanate.lrc')
-      },
-      {
-        title: '夢浮桥',
-        artist: '青木阳菜',
-        album: 'GINKA ED',
-        src: assetUrl('music/ginka-ed-yumeukihashi.mp3'),
-        cover: assetUrl('music/ginka-ed-yumeukihashi.jpg'),
-        lyricsSrc: assetUrl('music/ginka-ed-yumeukihashi.lrc')
-      },
-      {
-        title: 'AIR',
-        artist: 'Lia',
-        album: 'AIR OST',
-        src: assetUrl('music/air.mp3'),
-        cover: assetUrl('music/air.jpg'),
-        lyricsSrc: assetUrl('music/air.lrc')
-      },
-      {
-        title: 'unhappy',
-        artist: 's0rrow',
-        album: 'Single',
-        src: encodeURI(assetUrl('music/s0rrow - unhappy.mp3')),
-        cover: assetUrl('music/unhappy.jpg'),
-        lyricsSrc: encodeURI(assetUrl('music/s0rrow - unhappy.lrc')),
-        translations: {
-          'Every day we talk a little less': '每天我们说的话都在逐渐减少',
-          'It looks like you are losing interest': '看起来你正在慢慢失去兴趣',
-          'These feelings I have for you': '这些我对你的感情',
-          'But you don\'t feel the same': '可你却没有同样的感觉',
-          'So I\'ll pack all my things': '所以我会收拾好我的一切',
-          'And go run far away': '然后逃到很远的地方',
-          'You are, you are very pretty': '你啊 你真的很漂亮',
-          'I\'m so very ugly': '而我是那么的丑陋',
-          'Will you even love me, anymore (love me)': '你会再爱我吗 哪怕一点点（爱我）',
-          'You can, you can live without me': '你可以 你可以没有我的生活着',
-          'That makes me unhappy': '那让我感到不开心',
-          'I should get a piercing through my heart': '我应该将我的心也一并刺穿',
-          'What do you even want me to be': '你究竟想要我成为什么样子',
-          'You never ever pay attention to me': '你从来从来都不愿多看我一眼',
-          'So I\'ll close my blinds in misery': '所以我拉上窗帘沉进悲伤里',
-          'And I\'ll wait for you for a couple of weeks': '然后我会一直等着你好几个星期'
-        }
-      }
-    ];
+    let musicList = [];
+    const configNode = document.getElementById('ginka-music-config');
+    let musicConfig = {};
+    try {
+      musicConfig = configNode ? JSON.parse(configNode.textContent || '{}') : {};
+    } catch (error) {
+      console.warn('[Music] 音乐配置无效。', error);
+    }
+
+    const normalizeConfiguredTrack = (track, source) => {
+      const value = track && typeof track === 'object' ? track : {};
+      const rawPath = (path) => {
+        const text = String(path || '');
+        if (!text) return '';
+        return /^https:\/\//i.test(text) ? text : assetUrl(text);
+      };
+      const configuredCover = String(value.pic || value.cover || '');
+      const configuredLyrics = String(value.lrc || '');
+      return {
+        id: String(value.id || value.url_id || value.mid || value.title || value.name || ''),
+        source: source || 'local',
+        title: String(value.title || value.name || '未知曲目'),
+        artist: String(value.artist || value.author || '未知艺术家'),
+        album: String(value.album || ''),
+        src: rawPath(value.src || value.url),
+        cover: rawPath(value.cover || value.pic) || rawPath(musicConfig.default_cover),
+        lyricsSrc: rawPath(value.lyricsSrc || value.lrc),
+        translations: value.translations && typeof value.translations === 'object' ? value.translations : undefined
+      };
+    };
+
+    const configuredLocalTracks = Array.isArray(musicConfig.local)
+      ? musicConfig.local.map((track) => normalizeConfiguredTrack(track, 'local')).filter((track) => track.id && track.src)
+      : [];
+    const localMusicList = configuredLocalTracks.map((track, index) => ({ ...track, id: String(track.id || `local-${index}`) }));
+    musicList = localMusicList;
+    const onlineConfig = musicConfig.online && typeof musicConfig.online === 'object' ? musicConfig.online : {};
     const DEFAULT_TRACK_INDEX = (() => {
       const idx = musicList.findIndex((item) => item && String(item.title || '').toLowerCase() === 'unhappy');
       return idx >= 0 ? idx : 0;
@@ -128,6 +116,7 @@
     const lyricsTrack = document.getElementById('music-lyrics-track');
     const lyricsViewport = document.getElementById('music-lyrics-viewport');
     const lyricsList = document.getElementById('music-lyrics-list');
+    const sourceRetryBtn = document.getElementById('music-source-retry');
   
     if (!audio || !toggleBtn || !icon || !timeDisplay || !progressBar || !progressContainer || !playerMain || !miniBtn) {
       console.error('[Music] 音乐播放器关键节点缺失');
@@ -135,6 +124,39 @@
     }
   
     const log = (...args) => { if (DEBUG) console.log('[Music]', ...args); };
+    const storageGet = (key) => {
+      try { return window.localStorage ? localStorage.getItem(key) : null; } catch (_error) { return null; }
+    };
+    const storageSet = (key, value) => {
+      try { if (window.localStorage) localStorage.setItem(key, String(value)); } catch (_error) {}
+    };
+    let currentSource = 'local';
+    let onlineMusicList = [];
+    let playlistRequest = null;
+    let playlistRequestSequence = 0;
+    let trackRequestSequence = 0;
+    let onlineFailureCount = 0;
+    let onlineFailedTrackIds = new Set();
+    let onlineRetryForTrack = '';
+    let suppressMediaError = 0;
+    let playbackWanted = false;
+
+    const setRefreshLoading = (loading) => {
+      if (!sourceRetryBtn) return;
+      sourceRetryBtn.classList.toggle('is-loading', !!loading);
+      sourceRetryBtn.setAttribute('aria-busy', String(!!loading));
+    };
+    const setActiveList = (source, tracks, options) => {
+      const opt = options || {};
+      const normalized = Array.isArray(tracks) ? tracks.filter((track) => track && track.id && track.src) : [];
+      if (!normalized.length) return false;
+      currentSource = source === 'online' ? 'online' : 'local';
+      musicList = normalized;
+      if (!opt.preserveTrack) currentMusicIndex = 0;
+      renderPlaylist();
+      return true;
+    };
+    const getCurrentTrack = () => musicList[normalizeIndex(currentMusicIndex)] || null;
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
     const normalizeIndex = (value) => {
       const index = Number.isFinite(value) ? Math.floor(value) : 0;
@@ -148,8 +170,161 @@
     };
     const resolveTrackCacheKey = (index) => {
       const track = musicList[normalizeIndex(index)];
-      return track && track.src ? String(track.src) : String(normalizeIndex(index));
+      return track && track.id ? `${track.source || currentSource}:${track.id}` : String(normalizeIndex(index));
     };
+
+    const metingUrl = (type, id) => {
+      const base = String(onlineConfig.api_base || '').trim();
+      if (!base || !/^https:\/\//i.test(base)) return '';
+      try {
+        const url = new URL(base, window.location.href);
+        url.searchParams.set('server', String(onlineConfig.platform || 'netease'));
+        url.searchParams.set('type', type);
+        url.searchParams.set('id', String(id));
+        return url.toString();
+      } catch (_error) { return ''; }
+    };
+
+    const secureMetingResource = (value, expectedType) => {
+      const text = String(value || '').trim();
+      if (!/^https:\/\//i.test(text)) return '';
+      try {
+        const url = new URL(text);
+        const resourceType = url.searchParams.get('type');
+        if (expectedType && resourceType && resourceType !== expectedType) return '';
+        return url.toString();
+      } catch (_error) { return ''; }
+    };
+
+    const onlineTrackId = (value) => {
+      const directId = value.id || value.url_id || value.songId || value.mid || value.song_id;
+      if (directId) return String(directId);
+      const resolver = secureMetingResource(value.url, 'url');
+      if (!resolver) return '';
+      try { return String(new URL(resolver).searchParams.get('id') || ''); } catch (_error) { return ''; }
+    };
+
+    const readCachedPlaylist = () => {
+      try {
+        const raw = storageGet('music_online_playlist_cache');
+        const cached = raw ? JSON.parse(raw) : null;
+        const ttl = Math.max(60000, Number(onlineConfig.cache_ttl_ms) || 1800000);
+        return cached && cached.version === PLAYLIST_CACHE_VERSION && Array.isArray(cached.tracks) && Date.now() - Number(cached.savedAt) < ttl
+          ? cached.tracks
+          : null;
+      } catch (_error) { return null; }
+    };
+
+    const mapOnlineTrack = (item, index) => {
+      const value = item && typeof item === 'object' ? item : {};
+      const id = onlineTrackId(value);
+      // Meting playlist responses contain signed resolver URLs. They are API
+      // endpoints, not the provider's expiring media URL, so they are safe to
+      // retain with the short-lived metadata cache.
+      const playbackUrl = secureMetingResource(value.url, 'url') || String(metingUrl('url', id) || '');
+      const configuredCover = secureMetingResource(value.pic, 'pic') || secureMetingResource(value.cover);
+      const configuredLyrics = secureMetingResource(value.lrc, 'lrc') || secureMetingResource(value.lyricsSrc);
+      if (!id || !/^https:\/\//i.test(playbackUrl)) return null;
+      return {
+        id: String(id),
+        source: 'online',
+        title: String(value.title || value.name || `在线曲目 ${index + 1}`),
+        artist: String(value.author || value.artist || '未知艺术家'),
+        album: String(value.album || ''),
+        src: playbackUrl,
+        resolverUrl: playbackUrl,
+        cover: /^https:\/\//i.test(configuredCover)
+          ? configuredCover
+          : String(musicConfig.default_cover || assetUrl('music/unhappy.jpg')),
+        lyricsSrc: /^https:\/\//i.test(configuredLyrics) ? configuredLyrics : String(metingUrl('lrc', id) || '')
+      };
+    };
+
+    async function fetchOnlinePlaylist(options) {
+      const opt = options || {};
+      const playlistType = String(onlineConfig.type || 'playlist');
+      if (!onlineConfig.enabled || !metingUrl(playlistType, onlineConfig.playlist_id)) {
+        return [];
+      }
+      if (!opt.force) {
+        const cached = readCachedPlaylist();
+        if (cached && cached.length) return cached;
+      }
+      if (playlistRequest) return playlistRequest;
+      const sequence = ++playlistRequestSequence;
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), Math.max(1000, Number(onlineConfig.timeout_ms) || 8000));
+      playlistRequest = fetch(metingUrl(playlistType, onlineConfig.playlist_id), {
+        mode: 'cors', credentials: 'omit', cache: 'no-store', signal: controller.signal
+      }).then(async (response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const payload = await response.json();
+        const items = Array.isArray(payload) ? payload : (Array.isArray(payload.data) ? payload.data : []);
+        const tracks = items.map(mapOnlineTrack).filter(Boolean);
+        if (!tracks.length) throw new Error('没有可播放的在线曲目');
+        if (sequence === playlistRequestSequence) {
+          onlineMusicList = tracks;
+          storageSet('music_online_playlist_cache', JSON.stringify({ version: PLAYLIST_CACHE_VERSION, savedAt: Date.now(), tracks }));
+        }
+        return tracks;
+      }).catch((error) => {
+        log('在线歌单不可用:', error && error.message ? error.message : error);
+        return [];
+      }).finally(() => {
+        window.clearTimeout(timeout);
+        if (sequence === playlistRequestSequence) playlistRequest = null;
+      });
+      return playlistRequest;
+    }
+
+    async function refreshOnlineTrackUrl(track) {
+      const requestId = ++trackRequestSequence;
+      const endpoint = secureMetingResource(track && (track.resolverUrl || track.src), 'url') || metingUrl('url', track && track.id);
+      if (!endpoint) return '';
+      // If the final media host has not passed CORS validation, let the media
+      // element follow the signed resolver redirect directly. Fetching it here
+      // could be blocked even though ordinary audio playback remains possible.
+      if (!onlineConfig.cors_audio_verified) {
+        const retryUrl = new URL(endpoint);
+        retryUrl.searchParams.set('_retry', String(Date.now()));
+        return requestId === trackRequestSequence ? retryUrl.toString() : '';
+      }
+      try {
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), Math.max(1000, Number(onlineConfig.timeout_ms) || 8000));
+        const response = await fetch(endpoint, { mode: 'cors', credentials: 'omit', cache: 'no-store', signal: controller.signal });
+        window.clearTimeout(timeout);
+        if (!response.ok || requestId !== trackRequestSequence) return '';
+        const type = response.headers.get('content-type') || '';
+        if (type.includes('application/json')) {
+          const payload = await response.json();
+          return String(payload.url || (payload.data && payload.data.url) || '');
+        }
+        return response.url && /^https:\/\//i.test(response.url) ? response.url : endpoint;
+      } catch (_error) { return ''; }
+    }
+
+    async function tryOnlinePlaylist(options) {
+      const opt = options || {};
+      setRefreshLoading(true);
+      const tracks = await fetchOnlinePlaylist({ force: !!opt.force });
+      setRefreshLoading(false);
+      if (!tracks.length) {
+        return false;
+      }
+      onlineMusicList = tracks;
+      // A recovered network must never cut off a local song that is already playing.
+      if (currentSource === 'local' && !audio.paused && !opt.restore) {
+        return true;
+      }
+      if (opt.activate || opt.restore) {
+        const requestedId = opt.trackId || storageGet(STORAGE.trackId);
+        const index = Math.max(0, tracks.findIndex((track) => track.id === requestedId));
+        setActiveList('online', tracks);
+        loadMusic(index, { keepTime: !!opt.keepTime });
+      }
+      return true;
+    }
     const autoGainCache = new Map();
     let masterVolume = DEFAULT_MUSIC_VOLUME;
     let autoGainFactor = 1;
@@ -252,7 +427,7 @@
     }
   
     function getStoredNumber(key, fallback) {
-      const value = Number(localStorage.getItem(key));
+      const value = Number(storageGet(key));
       return Number.isFinite(value) ? value : fallback;
     }
   
@@ -309,10 +484,10 @@
       }
   
       if (persist !== false) {
-        localStorage.setItem(STORAGE.volume, String(masterVolume));
+        storageSet(STORAGE.volume, masterVolume);
       }
       if (masterVolume > 0.01) {
-        localStorage.setItem(STORAGE.lastVolume, String(masterVolume));
+        storageSet(STORAGE.lastVolume, masterVolume);
       }
     }
   
@@ -331,7 +506,8 @@
   
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (!Ctx || !audio) return false;
-  
+      if (currentSource === 'online' && !onlineConfig.cors_audio_verified) return false;
+
       try {
         autoGainCtx = new Ctx();
         autoGainSourceNode = autoGainCtx.createMediaElementSource(audio);
@@ -436,7 +612,7 @@
       const currentIndex = PLAY_MODES.indexOf(currentPlayMode);
       const nextMode = PLAY_MODES[(currentIndex + 1) % PLAY_MODES.length];
       currentPlayMode = nextMode;
-      localStorage.setItem(STORAGE.playMode, nextMode);
+      storageSet(STORAGE.playMode, nextMode);
       updatePlayModeUI(nextMode);
     }
   
@@ -451,7 +627,7 @@
         playlistIcon.classList.add(open ? 'fa-times' : 'fa-list-ul');
       }
       if (persist !== false) {
-        localStorage.setItem(STORAGE.playlistExpanded, open ? 'true' : 'false');
+        storageSet(STORAGE.playlistExpanded, open ? 'true' : 'false');
       }
     }
   
@@ -481,7 +657,7 @@
         lyricsPanel.setAttribute('aria-hidden', hidden ? 'true' : 'false');
       }
       if (persist !== false) {
-        localStorage.setItem(STORAGE.hidden, hidden ? 'true' : 'false');
+        storageSet(STORAGE.hidden, hidden ? 'true' : 'false');
       }
     }
   
@@ -498,7 +674,7 @@
       if (!force && currentSecond === persistPlaybackState.lastSavedSecond) return;
       persistPlaybackState.lastSavedSecond = currentSecond;
       if (currentSecond > 0) {
-        localStorage.setItem(STORAGE.currentTime, String(currentSecond));
+        storageSet(STORAGE.currentTime, currentSecond);
       }
     }
     persistPlaybackState.lastSavedSecond = -1;
@@ -527,9 +703,16 @@
       }
   
       currentMusicIndex = normalized;
-      localStorage.setItem(STORAGE.index, String(normalized));
+      storageSet(STORAGE.index, normalized);
+      storageSet(STORAGE.source, music.source || currentSource);
+      storageSet(STORAGE.trackId, music.id || normalized);
   
       resetLyrics();
+      // crossOrigin must be set before src. Local media keeps the analyser path;
+      // remote media that rejects CORS still plays through the element without
+      // making the Web Audio graph a prerequisite for audible playback.
+      audio.crossOrigin = music.source === 'online' && onlineConfig.cors_audio_verified ? 'anonymous' : '';
+      suppressMediaError += 1;
       audio.src = music.src;
       audio.preload = 'metadata';
       audio.load();
@@ -546,7 +729,7 @@
           }
         }, { once: true });
       } else {
-        localStorage.setItem(STORAGE.currentTime, '0');
+        storageSet(STORAGE.currentTime, '0');
       }
   
       updateProgressUI();
@@ -561,7 +744,13 @@
         item.type = 'button';
         item.className = 'music-playlist-item';
         item.setAttribute('data-index', String(index));
-        item.innerHTML = `<span class="music-playlist-title">${music.title}</span><span class="music-playlist-meta">${music.artist}</span>`;
+        const title = document.createElement('span');
+        title.className = 'music-playlist-title';
+        title.textContent = music.title;
+        const meta = document.createElement('span');
+        meta.className = 'music-playlist-meta';
+        meta.textContent = music.artist;
+        item.append(title, meta);
   
         item.addEventListener('click', (e) => {
           e.preventDefault();
@@ -592,18 +781,23 @@
     async function attemptPlay(reason) {
       try {
         await audio.play();
+        playbackWanted = true;
         hasStartedPlayback = true;
         ensureLyricLinesRendered();
         updatePlayIcon(true);
-        localStorage.setItem(STORAGE.playing, 'true');
+        storageSet(STORAGE.playing, 'true');
         if (reason === 'toggle' || reason === 'playlist-resume' || reason === 'gesture-resume' || reason === 'restore') {
           announceMusicVoice('play', { minGapMs: 520 });
         }
         log('播放成功:', reason);
         return true;
       } catch (error) {
+        playbackWanted = false;
         updatePlayIcon(false);
-        localStorage.setItem(STORAGE.playing, 'false');
+        storageSet(STORAGE.playing, 'false');
+        if (error && error.name === 'NotAllowedError') {
+          return false;
+        }
         if (musicTitle) {
           musicTitle.textContent = musicList[currentMusicIndex] ? musicList[currentMusicIndex].title : '点击播放';
         }
@@ -613,9 +807,10 @@
     }
   
     function pausePlayback(reason) {
+      playbackWanted = false;
       audio.pause();
       updatePlayIcon(false);
-      localStorage.setItem(STORAGE.playing, 'false');
+      storageSet(STORAGE.playing, 'false');
       announceMusicVoice('pause', { minGapMs: 420 });
       log('暂停:', reason);
     }
@@ -677,7 +872,7 @@
   
     function toggleVolume() {
       if (masterVolume > 0.01) {
-        localStorage.setItem(STORAGE.lastVolume, String(masterVolume));
+        storageSet(STORAGE.lastVolume, masterVolume);
         setMasterVolume(0, true);
         return;
       }
@@ -711,6 +906,7 @@
   
     const lyricsCache = new Map();
     let lyricsLoadToken = 0;
+    let lyricsRequestController = null;
     let currentLyricIndex = -1;
     let currentLyricLines = [];
   
@@ -808,7 +1004,7 @@
       return parsed.sort((a, b) => a.time - b.time);
     }
   
-    async function resolveTrackLyrics(track) {
+    async function resolveTrackLyrics(track, signal) {
       if (!track) return [];
       const cacheKey = track.lyricsSrc || `${track.title}|${track.artist}`;
       if (lyricsCache.has(cacheKey)) {
@@ -820,7 +1016,9 @@
         resolved = track.lyrics;
       } else if (track.lyricsSrc) {
         try {
-          const response = await fetch(track.lyricsSrc, { cache: 'force-cache' });
+          const response = await fetch(track.lyricsSrc, {
+            mode: 'cors', credentials: 'omit', cache: 'force-cache', signal
+          });
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           resolved = parseLrc(await response.text());
         } catch (error) {
@@ -828,6 +1026,9 @@
         }
       }
   
+      if (!resolved.length) {
+        resolved = [{ time: 0, text: '暂无歌词' }];
+      }
       const normalized = normalizeLyricLines(resolved, track);
       lyricsCache.set(cacheKey, normalized);
       return normalized;
@@ -900,8 +1101,13 @@
       currentLyricIndex = -1;
   
       const token = ++lyricsLoadToken;
-      const lines = await resolveTrackLyrics(track);
-      if (token !== lyricsLoadToken || trackIndex !== currentMusicIndex) return;
+      if (lyricsRequestController) lyricsRequestController.abort();
+      const controller = new AbortController();
+      lyricsRequestController = controller;
+      const timeout = window.setTimeout(() => controller.abort(), Math.max(1000, Number(onlineConfig.timeout_ms) || 8000));
+      const lines = await resolveTrackLyrics(track, controller.signal);
+      window.clearTimeout(timeout);
+      if (token !== lyricsLoadToken || controller !== lyricsRequestController || trackIndex !== currentMusicIndex) return;
   
       currentLyricLines = lines;
       if (audio.paused) {
@@ -935,16 +1141,56 @@
     }
   
     let errorSkipCount = 0;
-    function handleAudioError() {
-      errorSkipCount += 1;
+    async function handleAudioError() {
+      if (suppressMediaError > 0) return;
+      const failedTrack = getCurrentTrack();
       stopAutoGainSampler();
       updatePlayIcon(false);
-      if (errorSkipCount >= musicList.length) {
-        if (musicTitle) musicTitle.textContent = '音频不可用';
-        localStorage.setItem(STORAGE.playing, 'false');
+      if (!failedTrack || !playbackWanted) return;
+
+      if (currentSource === 'online') {
+        const trackKey = `${failedTrack.source}:${failedTrack.id}`;
+        if (onlineRetryForTrack !== trackKey) {
+          onlineRetryForTrack = trackKey;
+          setRefreshLoading(true);
+          const refreshed = await refreshOnlineTrackUrl(failedTrack);
+          setRefreshLoading(false);
+          const stillCurrent = currentSource === 'online' && getCurrentTrack() && getCurrentTrack().id === failedTrack.id;
+          if (refreshed && stillCurrent) {
+            failedTrack.src = refreshed;
+            loadMusic(currentMusicIndex, { keepTime: false });
+            setLoadingIcon();
+            attemptPlay('online-url-retry');
+            return;
+          }
+        }
+
+        onlineFailedTrackIds.add(failedTrack.id);
+        onlineFailureCount += 1;
+        const allFailed = onlineFailedTrackIds.size >= musicList.length;
+        if (onlineFailureCount >= 3 || allFailed) {
+          const shouldResume = playbackWanted;
+          setActiveList('local', localMusicList);
+          loadMusic(0, { keepTime: false });
+          if (musicTitle) musicTitle.textContent = '在线不可用，已切换本地备用';
+          if (shouldResume) {
+            setLoadingIcon();
+            attemptPlay('online-fallback-local');
+          }
+          return;
+        }
+        nextMusic({ autoplay: true, ignoreMode: true, reason: 'online-error-skip' });
         return;
       }
-      nextMusic({ autoplay: true, ignoreMode: true, reason: 'error-skip' });
+
+      errorSkipCount += 1;
+      if (errorSkipCount >= musicList.length) {
+        playbackWanted = false;
+        if (musicTitle) musicTitle.textContent = '本地音频不可用';
+        storageSet(STORAGE.playing, 'false');
+        return;
+      }
+      nextMusic({ autoplay: true, ignoreMode: true, reason: 'local-error-skip' });
     }
   
     toggleBtn.addEventListener('click', (e) => {
@@ -1013,6 +1259,14 @@
         setPlaylistExpanded(opening);
       });
     }
+
+    if (sourceRetryBtn) {
+      sourceRetryBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        tryOnlinePlaylist({ force: true, activate: audio.paused && currentSource === 'local' });
+      });
+    }
   
     if (playlistPanel) {
       playlistPanel.addEventListener('click', (e) => {
@@ -1069,7 +1323,7 @@
     audio.addEventListener('play', () => {
       hasStartedPlayback = true;
       updatePlayIcon(true);
-      localStorage.setItem(STORAGE.playing, 'true');
+      storageSet(STORAGE.playing, 'true');
       applyAutoGainForTrack(currentMusicIndex);
       if (currentLyricLines.length && lyricsList && !lyricsList.querySelector('.music-lyric-main')) {
         renderLyricLines(currentLyricLines);
@@ -1079,7 +1333,6 @@
   
     audio.addEventListener('pause', () => {
       updatePlayIcon(false);
-      localStorage.setItem(STORAGE.playing, 'false');
       stopAutoGainSampler();
       setLyricLoadingState(PRE_PLAY_LYRIC_TEXT);
     });
@@ -1095,6 +1348,7 @@
   
     audio.addEventListener('loadstart', () => {
       stopAutoGainSampler();
+      if (suppressMediaError > 0) suppressMediaError -= 1;
     });
   
     audio.addEventListener('error', () => {
@@ -1103,6 +1357,8 @@
   
     audio.addEventListener('playing', () => {
       errorSkipCount = 0;
+      onlineRetryForTrack = '';
+      setRefreshLoading(false);
     });
   
     document.addEventListener('keydown', (e) => {
@@ -1134,32 +1390,37 @@
   
     window.addEventListener('pagehide', () => {
       persistPlaybackState(true);
-      localStorage.setItem(STORAGE.volume, String(masterVolume));
-      localStorage.setItem(STORAGE.playing, audio.paused ? 'false' : 'true');
+      storageSet(STORAGE.volume, masterVolume);
+      storageSet(STORAGE.playing, playbackWanted ? 'true' : 'false');
     });
   
     window.addEventListener('beforeunload', () => {
       persistPlaybackState(true);
-      localStorage.setItem(STORAGE.volume, String(masterVolume));
+      storageSet(STORAGE.volume, masterVolume);
       stopAutoGainSampler();
     });
   
-    let currentMusicIndex = normalizeIndex(getStoredNumber(STORAGE.index, DEFAULT_TRACK_INDEX));
+    const storedSource = storageGet(STORAGE.source) === 'online' ? 'online' : 'local';
+    const storedTrackId = storageGet(STORAGE.trackId);
+    const storedLocalIndex = localMusicList.findIndex((track) => track.id === storedTrackId);
+    let currentMusicIndex = storedLocalIndex >= 0
+      ? storedLocalIndex
+      : normalizeIndex(getStoredNumber(STORAGE.index, DEFAULT_TRACK_INDEX));
     const storedVolume = getStoredNumber(STORAGE.volume, NaN);
     masterVolume = Number.isFinite(storedVolume)
       ? clamp(storedVolume, 0, 1)
       : DEFAULT_MUSIC_VOLUME;
-    currentPlayMode = normalizePlayMode(localStorage.getItem(STORAGE.playMode));
-    const wasPlaying = localStorage.getItem(STORAGE.playing) === 'true';
-    const wasHidden = !musicRoot.closest('#journal-sidebar') && localStorage.getItem(STORAGE.hidden) !== 'false';
-    const wasPlaylistExpanded = localStorage.getItem(STORAGE.playlistExpanded) === 'true';
+    currentPlayMode = normalizePlayMode(storageGet(STORAGE.playMode));
+    const wasPlaying = storageGet(STORAGE.playing) === 'true';
+    const wasHidden = !musicRoot.closest('#journal-sidebar') && storageGet(STORAGE.hidden) !== 'false';
+    const wasPlaylistExpanded = storageGet(STORAGE.playlistExpanded) === 'true';
     hasStartedPlayback = !audio.paused;
   
     autoGainFactor = 1;
     applyEffectiveVolume(false);
     updatePlayModeUI(currentPlayMode);
-    localStorage.setItem(STORAGE.playMode, currentPlayMode);
-    localStorage.setItem(STORAGE.volume, String(masterVolume));
+    storageSet(STORAGE.playMode, currentPlayMode);
+    storageSet(STORAGE.volume, masterVolume);
     setHidden(wasHidden, false);
     loadMusic(currentMusicIndex, { keepTime: true });
     renderPlaylist();
@@ -1171,13 +1432,29 @@
     }
   
     let pendingAutoplay = wasPlaying;
-    if (pendingAutoplay) {
+    const resumeStoredPlayback = () => {
+      if (!pendingAutoplay) return;
       setTimeout(() => {
         setLoadingIcon();
         attemptPlay('restore').then((ok) => {
           pendingAutoplay = !ok;
         });
       }, 450);
+    };
+    if (storedSource === 'online') {
+      tryOnlinePlaylist({ restore: true, trackId: storedTrackId, keepTime: true }).then((loaded) => {
+        if (!loaded) {
+          setActiveList('local', localMusicList, { preserveTrack: true });
+          renderPlaylist();
+        }
+        resumeStoredPlayback();
+      });
+    } else if (document.body.classList.contains('sidebar-active')) {
+      // First sidebar opening is the first time a non-restoring session asks for online data.
+      tryOnlinePlaylist({ activate: !wasPlaying });
+      resumeStoredPlayback();
+    } else if (pendingAutoplay) {
+      resumeStoredPlayback();
     } else {
       updatePlayIcon(false);
     }

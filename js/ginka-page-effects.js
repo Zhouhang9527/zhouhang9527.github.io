@@ -78,6 +78,9 @@
     var OPENING_DATE_KEY = 'ginka:opening:last-date';
     var OPENING_VERSION_KEY = 'ginka:opening:version';
     var TITLE_TEXT = '欢迎来到mm9527的博客';
+    var OPENING_MAX_MS = 5200;
+    var openingTimers = [];
+    var openingTimeline = null;
 
     function getRootPath() {
       var root = window.CONFIG && typeof window.CONFIG.root === 'string' ? window.CONFIG.root : '/';
@@ -163,6 +166,13 @@
 
     function cleanupOpening(node) {
       var gsapApi = getGsap();
+      openingTimers.forEach(function (timer) { clearTimeout(timer); });
+      openingTimers = [];
+      var timeline = openingTimeline;
+      openingTimeline = null;
+      if (timeline && timeline.kill) {
+        timeline.kill();
+      }
       if (gsapApi && node) {
         gsapApi.killTweensOf(node.querySelectorAll('*'));
         gsapApi.killTweensOf(node);
@@ -176,7 +186,6 @@
     }
 
     function runOpeningFallback(node, options) {
-      var timers = [];
       var fadeInMs = options.fadeInMs;
       var centerFadeOutMs = options.centerFadeOutMs;
       var curtainMs = options.curtainMs;
@@ -194,19 +203,18 @@
         });
       });
 
-      timers.push(setTimeout(function () {
+      openingTimers.push(setTimeout(function () {
         node.classList.add('is-center-fading');
         document.body.classList.add('is-opening-leaving');
       }, fadeInMs + holdMs));
 
       if (!reduceMotion) {
-        timers.push(setTimeout(function () {
+        openingTimers.push(setTimeout(function () {
           node.classList.add('is-curtain-open');
         }, fadeInMs + holdMs + centerFadeOutMs + 60));
       }
 
-      timers.push(setTimeout(function () {
-        timers.forEach(function (timer) { clearTimeout(timer); });
+      openingTimers.push(setTimeout(function () {
         cleanupOpening(node);
       }, reduceMotion ? (fadeInMs + centerFadeOutMs + 180) : (fadeInMs + centerFadeOutMs + curtainMs + 260)));
     }
@@ -231,6 +239,9 @@
       document.body.classList.add('is-opening-preparing');
       document.body.appendChild(node);
       document.body.classList.add('is-opening-active');
+      openingTimers.push(setTimeout(function () {
+        cleanupOpening(node);
+      }, OPENING_MAX_MS));
 
       if (!gsapApi) {
         runOpeningFallback(node, {
@@ -265,12 +276,15 @@
 
       document.body.classList.remove('is-opening-preparing');
 
-      gsapApi.timeline({
+      openingTimeline = gsapApi.timeline({
         defaults: {
           ease: 'power3.out',
           overwrite: 'auto'
         },
         onComplete: function () {
+          cleanupOpening(node);
+        },
+        onInterrupt: function () {
           cleanupOpening(node);
         }
       })

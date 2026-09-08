@@ -50,7 +50,12 @@
         document.removeEventListener(eventName, start, true);
       });
       try {
-        task();
+        const result = task();
+        if (result && typeof result.catch === 'function') {
+          result.catch(function(error) {
+            console.warn(`[GINKA Runtime] ${name || 'task'} failed:`, error);
+          });
+        }
       } catch (error) {
         console.warn(`[GINKA Runtime] ${name || 'task'} failed:`, error);
       }
