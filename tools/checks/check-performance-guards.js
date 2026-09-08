@@ -22,12 +22,13 @@ const checks = [
     pass: html.includes('/css/ginka-runtime.css') && !html.includes('<style>')
   },
   {
-    name: 'loads gsap core from cdn',
-    pass: html.includes('gsap.min.js')
+    name: 'loads animation libraries outside the critical path',
+    pass: html.includes('/js/ginka-effects-loader.js') &&
+      !html.includes('src="https://cdn.jsdelivr.net/npm/gsap')
   },
   {
-    name: 'loads scrolltrigger from cdn',
-    pass: html.includes('ScrollTrigger.min.js')
+    name: 'keeps music ahead of optional animation loading',
+    pass: html.indexOf('/js/ginka-music.js') < html.indexOf('/js/ginka-effects-loader.js')
   },
   {
     name: 'loads ui shell runtime',
@@ -58,8 +59,7 @@ const checks = [
   },
   {
     name: 'loads music script without blocking parsing',
-    pass: html.includes('/js/ginka-music.js') &&
-      html.indexOf('/js/ginka-music.js') < html.indexOf('gsap.min.js')
+    pass: html.includes('/js/ginka-music.js')
   },
   {
     name: 'registers homepage music bootstrap',

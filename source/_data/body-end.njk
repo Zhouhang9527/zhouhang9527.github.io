@@ -89,11 +89,8 @@
  * 额外特效增强包
  * ================================================== -->
 
-<!-- GSAP 动效核心 -->
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
-
 <!-- 1/2/4 特效脚本已拆分到独立文件，便于维护 -->
+<script src="{{ ginka_asset('js/ginka-effects-loader.js') if ginka_asset is defined else config.root ~ 'js/ginka-effects-loader.js' }}" defer></script>
 <script src="{{ ginka_asset('js/ginka-page-effects.js') if ginka_asset is defined else config.root ~ 'js/ginka-page-effects.js' }}" defer></script>
 
 

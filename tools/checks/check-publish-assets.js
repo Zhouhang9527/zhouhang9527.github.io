@@ -42,6 +42,7 @@ const required = [
   'music/s0rrow - unhappy.mp3',
   'music/unhappy.jpg',
   'css/ginka-runtime.css',
+  'js/ginka-effects-loader.js',
   'js/ginka-music.js',
   'js/ginka-atri-loader.js'
 ];

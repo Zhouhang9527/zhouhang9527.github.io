@@ -459,6 +459,7 @@
     document.addEventListener('pjax:complete', function () {
       setTimeout(initReveals, 80);
     });
+    window.addEventListener('ginka:gsap-ready', initReveals, { once: true });
   })();
 
   (function initClickRipple() {
