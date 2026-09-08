@@ -30,7 +30,7 @@
 
 ```bash
 # 克隆 Hexo 源码及定制 NexT 主题
-git clone --branch hexo-source --recurse-submodules https://github.com/Zhouhang9527/zhouhang9527.github.io.git GINKA-Blog
+git clone --branch hexo-source --single-branch --depth 1 --recurse-submodules --shallow-submodules https://github.com/Zhouhang9527/zhouhang9527.github.io.git GINKA-Blog
 cd GINKA-Blog
 
 # 安装依赖
