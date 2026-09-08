@@ -128,6 +128,11 @@
 
         {{ partial('_partials/post/post-share.njk', {}, {cache: theme.cache.enable}) }}
 
+        {%- if not is_index %}
+          {{ partial('_partials/post-like.njk', {}, {cache: false}) }}
+          {{ partial('_partials/post-views.njk', {}, {cache: false}) }}
+        {%- endif %}
+
         {%- if theme.post_navigation and (post.prev or post.next) %}
           {%- set prev = post.prev if theme.post_navigation === 'right' else post.next %}
           {%- set next = post.next if theme.post_navigation === 'right' else post.prev %}

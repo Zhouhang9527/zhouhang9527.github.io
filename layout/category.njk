@@ -11,16 +11,58 @@
   {######################}
   {### CATEGORY BLOCK ###}
   {######################}
-  <div class="post-block">
+  <div class="post-block category-page">
     <div class="post-content">
-      <div class="collection-title">
-        <h1 class="collection-header">
-          {{- page.category }}
-          <small>{{ __('title.category') }}</small>
-        </h1>
+      <!-- 美观的分类展示 -->
+      <div class="category-section">
+        <div class="category-header">
+          <h1 class="category-title">
+            <i class="fa fa-folder"></i>
+            {{ page.category }}
+            <small class="category-subtitle">{{ __('title.category') }}</small>
+          </h1>
+          <div class="category-stats">
+            <span class="category-count">{{ page.posts.length }} 篇文章</span>
+          </div>
+        </div>
+
+        <!-- 美观的分类云 -->
+        <div class="beautiful-category-cloud">
+          {% for category in site.categories.toArray() %}
+            {% set categorySize = category.posts.length %}
+            {% if categorySize >= 5 %}
+              {% set fontSize = 24 %}
+              {% set opacity = 1.0 %}
+            {% elif categorySize >= 3 %}
+              {% set fontSize = 20 %}
+              {% set opacity = 0.9 %}
+            {% elif categorySize >= 1 %}
+              {% set fontSize = 16 %}
+              {% set opacity = 0.7 %}
+            {% else %}
+              {% set fontSize = 14 %}
+              {% set opacity = 0.6 %}
+            {% endif %}
+            <a href="{{ url_for(category.path) }}"
+               class="category-cloud-item"
+               style="font-size: {{ fontSize }}px; opacity: {{ opacity }};"
+               title="{{ category.name }} ({{ category.posts.length }} 篇文章)">
+              {{ category.name }}
+            </a>
+          {% endfor %}
+        </div>
       </div>
 
-      {{ post_template.render(page.posts) }}
+      <!-- 分类文章列表 -->
+      {% if page.posts.length > 0 %}
+        <div class="category-posts-section">
+          <h2 class="section-title">
+            <i class="fa fa-list"></i>
+            分类文章
+          </h2>
+          {{ post_template.render(page.posts) }}
+        </div>
+      {% endif %}
     </div>
   </div>
   {##########################}
@@ -34,3 +76,125 @@
 {% block sidebar %}
   {{ sidebar_template.render(false) }}
 {% endblock %}
+
+<style>
+/* 美观的分类页面样式 */
+.category-page {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+}
+
+.category-section {
+  padding: 40px;
+  text-align: center;
+}
+
+.category-header {
+  margin-bottom: 40px;
+}
+
+.category-title {
+  font-family: 'LXGW WenKai', cursive !important;
+  font-size: 2.5em !important;
+  color: #333 !important;
+  margin: 0 0 10px 0 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.category-title i {
+  color: #5b99e5 !important;
+  margin-right: 10px !important;
+}
+
+.category-subtitle {
+  color: #666 !important;
+  font-size: 0.6em !important;
+  font-weight: normal !important;
+}
+
+.category-stats {
+  margin-top: 15px;
+}
+
+.category-count {
+  background: rgba(91, 153, 229, 0.1) !important;
+  color: #5b99e5 !important;
+  padding: 5px 15px !important;
+  border-radius: 20px !important;
+  font-size: 0.9em !important;
+  border: 1px solid rgba(91, 153, 229, 0.2) !important;
+}
+
+/* 美观的分类云 */
+.beautiful-category-cloud {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 15px !important;
+  padding: 30px !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.category-cloud-item {
+  display: inline-block !important;
+  padding: 8px 16px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 25px !important;
+  color: #555 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  font-family: 'LXGW WenKai', cursive !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.category-cloud-item:hover {
+  background: rgba(91, 153, 229, 0.1) !important;
+  color: #5b99e5 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  border-color: rgba(91, 153, 229, 0.3) !important;
+}
+
+.section-title {
+  font-family: 'LXGW WenKai', cursive !important;
+  font-size: 1.8em !important;
+  color: #333 !important;
+  margin: 40px 0 20px 0 !important;
+  text-align: center !important;
+  border-bottom: 2px solid rgba(91, 153, 229, 0.2) !important;
+  padding-bottom: 10px !important;
+}
+
+.section-title i {
+  color: #5b99e5 !important;
+  margin-right: 10px !important;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .category-section {
+    padding: 20px !important;
+  }
+
+  .category-title {
+    font-size: 2em !important;
+  }
+
+  .beautiful-category-cloud {
+    gap: 10px !important;
+    padding: 20px !important;
+  }
+
+  .category-cloud-item {
+    padding: 6px 12px !important;
+    font-size: 0.9em !important;
+  }
+}
+</style>

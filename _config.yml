@@ -11,7 +11,7 @@
 
 # Allow to cache content generation.
 cache:
-  enable: true
+  enable: false
 
 # Remove unnecessary files after hexo generate.
 minify: false
@@ -738,9 +738,17 @@ utterances:
   # Available values: github-light | github-dark | preferred-color-scheme | github-dark-orange | icy-dark | dark-blue | photon-dark | boxy-light
   theme: github-light
 
-# Isso
-# For more information: https://isso-comments.de
-isso: # <data_isso>
+# Twikoo
+# For more information: https://twikoo.js.org
+twikoo:
+  enable: false
+  envId: https://my-twikoo-backend.vercel.app
+  # region: ap-shanghai  # Vercel部署不需要region
+  #path: # 文章路径，可选，不填则自动获取
+  #lang: # 语言，默认中文，可选英文(en)
+  #visitor: false # 阅读量统计，可选，默认关闭
+  #commentClassName: # 评论框自定义样式类名
+  #giscus: # 是否启用Giscus评论系统，默认关闭
 
 
 # ---------------------------------------------------------------

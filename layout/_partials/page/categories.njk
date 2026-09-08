@@ -1,8 +1,15 @@
-<div class="category-all-page">
+﻿<div class="category-all-page">
   <div class="category-all-title">
-    {{ _p('counter.categories', site.categories.length) }}
+    {%- if site.categories.length > 0 -%}
+      目前共计 {{ site.categories.length }} 个分类
+    {%- else -%}
+      暂无分类
+    {%- endif -%}
   </div>
+  {%- if site.categories.length > 0 %}
   <div class="category-all">
     {{ list_categories() }}
   </div>
+  {%- endif %}
 </div>
+

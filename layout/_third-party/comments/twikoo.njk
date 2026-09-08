@@ -1,0 +1,13 @@
+<script>
+NexT.utils.loadComments('.twikoo-container', () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js', () => {
+    twikoo.init({
+      el: '.twikoo-container',
+      envId: '{{ theme.twikoo.envId }}',
+      region: '{{ theme.twikoo.region }}',
+      path: location.pathname,
+      lang: '{{ theme.twikoo.lang | default("zh-CN") }}'
+    });
+  });
+});
+</script>

@@ -21,7 +21,7 @@ for $inject_mixin in hexo-config('injects.mixin')
 
 // Dark mode colors
 // --------------------------------------------------
-@import '_colors';
+@import _colors
 
 // Common Layer
 // --------------------------------------------------
@@ -45,3 +45,27 @@ for $inject_mixin in hexo-config('injects.mixin')
 // --------------------------------------------------
 for $inject_style in hexo-config('injects.style')
   @import $inject_style;
+
+@import "ginka_style.css";
+
+// 强制覆盖头像样式 (防止 styles.styl 加载失败)
+.site-author-image {
+  border-radius: 50% !important;
+  transition: transform 0.5s ease-in-out;
+}
+.site-author-image:hover {
+  transform: rotate(360deg);
+}
+
+// // 强制 Twikoo 样式
+// .twikoo-container {
+//   display: block !important;
+//   margin-top: 20px;
+// }
+// .twikoo {
+//   background: rgba(224, 247, 250, 0.4) !important;
+//   backdrop-filter: blur(10px) !important;
+//   -webkit-backdrop-filter: blur(10px) !important;
+//   border-radius: 15px !important;
+//   padding: 20px !important;
+// }

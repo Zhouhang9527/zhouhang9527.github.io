@@ -1,0 +1,210 @@
+{%- if page.layout === 'post' %}
+<div class="post-interaction-container">
+  <div class="post-interaction-buttons">
+    <button class="post-like-btn" data-post-path="{{ page.path }}">
+      <i class="fa fa-heart{% if page.liked %} liked{% endif %}"></i>
+      <span class="like-text">{% if page.liked %}已点赞{% else %}点赞{% endif %}</span>
+      <span class="like-count">({{ page.likes | default(0) }})</span>
+    </button>
+
+    <button class="post-dislike-btn" data-post-path="{{ page.path }}">
+      <i class="fa fa-thumbs-down"></i>
+      <span class="dislike-text">踩</span>
+      <span class="dislike-count">({{ page.dislikes | default(0) }})</span>
+    </button>
+  </div>
+
+  <!-- 小GINKA不允许点踩的提示 -->
+  <div id="ginka-dislike-warning" class="ginka-dislike-warning" style="display: none;">
+    <div class="ginka-message">
+      <p class="ginka-text">欸嘿嘿~人家才不要被踩呢！</p>
+      <p class="ginka-subtext">要对小GINKA温柔一点哦~ ♪</p>
+    </div>
+    <button class="ginka-close" type="button">✕</button>
+  </div>
+</div>
+{{- next_js('ginka-post-feedback.js', { pjax: true }) }}
+
+<style>
+.post-interaction-container {
+  text-align: center;
+  margin: 30px 0;
+  position: relative;
+}
+
+.post-interaction-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.post-like-btn, .post-dislike-btn {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  padding: 12px 24px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.post-like-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.post-dislike-btn:hover {
+  background: rgba(255, 182, 182, 0.8);
+  border-color: rgba(255, 182, 182, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 182, 182, 0.3);
+}
+
+.post-like-btn .fa-heart {
+  font-size: 16px;
+  color: #ff6b6b;
+  transition: all 0.3s ease;
+}
+
+.post-like-btn .fa-heart.liked {
+  color: #ff4757;
+  animation: heartBeat 0.6s ease-in-out;
+}
+
+.post-dislike-btn .fa-thumbs-down {
+  font-size: 16px;
+  color: #ffa8a8;
+  transition: all 0.3s ease;
+}
+
+.post-dislike-btn:hover .fa-thumbs-down {
+  color: #ff7675;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3); }
+  50% { transform: scale(1.1); }
+  75% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.like-text, .dislike-text {
+  font-weight: 500;
+}
+
+.like-count, .dislike-count {
+  color: #999;
+  font-size: 12px;
+}
+
+/* 小GINKA不允许点踩的提示样式 */
+.ginka-dislike-warning {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 10px 40px rgba(91, 153, 229, 0.3);
+  z-index: 10000;
+  max-width: 350px;
+  animation: ginkaBounce 0.5s ease-out;
+}
+
+@keyframes ginkaBounce {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.ginka-message {
+  flex: 1;
+}
+
+.ginka-text {
+  font-family: 'LXGW WenKai', cursive;
+  font-size: 16px;
+  font-weight: 600;
+  color: #5b99e5;
+  margin: 0 0 5px 0;
+}
+
+.ginka-subtext {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+  font-style: italic;
+}
+
+.ginka-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.ginka-close:hover {
+  background: rgba(91, 153, 229, 0.1);
+  color: #5b99e5;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .post-interaction-container {
+    margin: 20px 0;
+  }
+
+  .post-interaction-buttons {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .post-like-btn, .post-dislike-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  .ginka-dislike-warning {
+    flex-direction: column;
+    text-align: center;
+    max-width: 280px;
+    padding: 20px;
+  }
+
+  .ginka-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+  }
+}
+</style>
+{%- endif %}

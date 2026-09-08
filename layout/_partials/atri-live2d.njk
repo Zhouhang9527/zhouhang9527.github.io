@@ -1,0 +1,715 @@
+<!-- ATRI Live2D 增强版 - v2.0 -->
+<div id="atri-live2d-widget" style="position: fixed; right: 20px; bottom: 0; z-index: 999; pointer-events: none;">
+  <canvas id="atri-canvas" width="350" height="500"></canvas>
+  
+  <!-- ATRI 对话框 -->
+  <div id="atri-message-box" style="display: none;">
+    <div class="atri-message-content"></div>
+  </div>
+  
+  <!-- ATRI 控制面板 -->
+  <div id="atri-controls" style="display: none;">
+    <button class="atri-control-btn" id="atri-toggle" title="显示/隐藏 ATRI">
+      <i class="fa fa-eye"></i>
+    </button>
+    <button class="atri-control-btn" id="atri-photo" title="截图">
+      <i class="fa fa-camera"></i>
+    </button>
+    <button class="atri-control-btn" id="atri-home" title="回到原位">
+      <i class="fa fa-home"></i>
+    </button>
+  </div>
+</div>
+
+<!-- 加载 Live2D 库文件 - 按正确顺序加载 -->
+<!-- Cubism 2 运行时 (用于兼容性) -->
+<script src="/js/live2d-libs/live2d.min.js"></script>
+<!-- Cubism 4 核心 (用于 Cubism 3.0/4.0 模型) -->
+<script src="/js/live2d-libs/live2dcubismcore.min.js"></script>
+<!-- PixiJS 渲染引擎 -->
+<script src="/js/live2d-libs/pixi.min.js"></script>
+<!-- Live2D 显示插件 -->
+<script src="/js/live2d-libs/pixi-live2d-display.min.js"></script>
+
+<script>
+(async function() {
+  'use strict';
+  
+  // ===================================================
+  // ATRI Live2D 增强版 v2.0
+  // ===================================================
+  
+  // 配置对象
+  const CONFIG = {
+    modelPath: '/live2d/ATRI/ATRI.model3.json',
+    canvasId: 'atri-canvas',
+    width: 350,
+    height: 500,
+    scale: 0.25,
+    mobileScale: 0.18,
+    messages: {
+      welcome: ['你好呀！我是 ATRI~', '欢迎来到 GINKA 的博客！', '今天也要加油哦！'],
+      click: ['呀！不要戳我~', '嘿嘿~', '怎么了吗？', '在呢在呢~'],
+      hover: ['有什么需要帮助的吗？', '我在这里哦~'],
+      copy: ['复制成功啦！', '内容已经复制好了~'],
+      scroll: ['看到什么有趣的内容了吗？', '继续往下看吧~']
+    },
+    motionGroups: ['tap_body', 'shake', 'idle', 'flick_head'],
+    enableDrag: true,
+    enableMessage: true,
+    enableControls: true,
+    messageTimeout: 3000
+  };
+  
+  // ATRI 类
+  class ATRILive2D {
+    constructor(config) {
+      this.config = config;
+      this.app = null;
+      this.model = null;
+      this.widget = null;
+      this.canvas = null;
+      this.messageBox = null;
+      this.messageTimer = null;
+      this.isDragging = false;
+      this.dragOffset = { x: 0, y: 0 };
+      this.isVisible = true;
+      this.mouseX = 0;
+      this.mouseY = 0;
+    }
+    
+    async init() {
+      console.log('[ATRI] 初始化开始...');
+      
+      // 等待库加载
+      await this.waitForLibraries();
+      
+      // 初始化元素
+      this.initElements();
+      
+      // 创建应用
+      await this.createApp();
+      
+      // 加载模型
+      await this.loadModel();
+      
+      // 设置交互
+      this.setupInteractions();
+      
+      // 显示欢迎消息
+      this.showRandomMessage('welcome');
+      
+      console.log('[ATRI] ✓ 初始化完成！');
+    }
+    
+    waitForLibraries() {
+      return new Promise((resolve, reject) => {
+        let retryCount = 0;
+        const maxRetries = 20;
+        
+        const checkInterval = setInterval(() => {
+          retryCount++;
+          
+          if (window.PIXI && window.PIXI.live2d && window.PIXI.live2d.Live2DModel) {
+            clearInterval(checkInterval);
+            console.log('[ATRI] ✓ 库加载完成');
+            resolve();
+          } else if (retryCount >= maxRetries) {
+            clearInterval(checkInterval);
+            reject(new Error('库加载超时'));
+          }
+        }, 300);
+      });
+    }
+    
+    initElements() {
+      this.widget = document.getElementById('atri-live2d-widget');
+      this.canvas = document.getElementById(this.config.canvasId);
+      this.messageBox = document.getElementById('atri-message-box');
+      
+      if (!this.canvas) {
+        throw new Error('Canvas 元素未找到');
+      }
+      
+      // 显示控制面板
+      if (this.config.enableControls) {
+        document.getElementById('atri-controls').style.display = 'flex';
+      }
+    }
+    
+    async createApp() {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const scale = isMobile ? this.config.mobileScale : this.config.scale;
+      
+      this.app = new PIXI.Application({
+        view: this.canvas,
+        width: this.config.width,
+        height: this.config.height,
+        transparent: true,
+        backgroundAlpha: 0,
+        antialias: true,
+        resolution: window.devicePixelRatio || 1,
+        autoDensity: true
+      });
+      
+      console.log('[ATRI] PixiJS 应用创建成功');
+    }
+    
+    async loadModel() {
+      console.log('[ATRI] 开始加载模型:', this.config.modelPath);
+      
+      this.model = await window.PIXI.live2d.Live2DModel.from(this.config.modelPath, {
+        autoInteract: false,
+        autoUpdate: true
+      });
+      
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const scale = isMobile ? this.config.mobileScale : this.config.scale;
+      
+      this.model.anchor.set(0.5, 0.5);
+      this.model.scale.set(scale);
+      this.model.position.set(this.config.width / 2, this.config.height * 0.85);
+      
+      this.app.stage.addChild(this.model);
+      
+      console.log('[ATRI] ✓ 模型加载成功');
+    }
+    
+    setupInteractions() {
+      // 启用交互
+      this.model.eventMode = 'static';
+      this.model.cursor = 'pointer';
+      this.model.interactive = true;
+      this.canvas.style.pointerEvents = 'auto';
+      
+      // 点击交互
+      this.model.on('pointertap', () => this.onModelClick());
+      this.model.on('pointerdown', () => this.onModelClick());
+      
+      // 鼠标悬停
+      this.model.on('pointerover', () => this.onModelHover());
+      
+      // 鼠标跟踪
+      this.setupMouseTracking();
+      
+      // 拖拽功能
+      if (this.config.enableDrag) {
+        this.setupDragging();
+      }
+      
+      // 自动闲置动画
+      this.setupIdleAnimation();
+      
+      // 响应式调整
+      this.setupResponsive();
+      
+      // 控制按钮
+      if (this.config.enableControls) {
+        this.setupControls();
+      }
+      
+      // 页面事件
+      this.setupPageEvents();
+    }
+    
+    onModelClick() {
+      this.playRandomMotion();
+      this.showRandomMessage('click');
+    }
+    
+    onModelHover() {
+      if (this.config.enableMessage && Math.random() < 0.3) {
+        this.showRandomMessage('hover');
+      }
+    }
+    
+    playRandomMotion() {
+      if (!this.model.internalModel || !this.model.internalModel.motionManager) return;
+      
+      for (const group of this.config.motionGroups) {
+        const motions = this.model.internalModel.motionManager.definitions[group];
+        if (motions && motions.length > 0) {
+          const randomMotion = Math.floor(Math.random() * motions.length);
+          this.model.motion(group, randomMotion);
+          console.log('[ATRI] 播放动作:', group, '#' + randomMotion);
+          break;
+        }
+      }
+    }
+    
+    setupMouseTracking() {
+      document.addEventListener('mousemove', (event) => {
+        this.mouseX = event.clientX;
+        this.mouseY = event.clientY;
+      });
+      
+      this.app.ticker.add(() => {
+        if (!this.model.internalModel || !this.model.internalModel.coreModel) return;
+        
+        const centerX = window.innerWidth - this.config.width / 2 - 20;
+        const centerY = this.config.height / 2;
+        
+        const dx = (this.mouseX - centerX) / centerX;
+        const dy = (this.mouseY - centerY) / centerY;
+        
+        const maxMove = 0.5;
+        const finalDx = Math.max(-maxMove, Math.min(maxMove, dx));
+        const finalDy = Math.max(-maxMove, Math.min(maxMove, dy));
+        
+        this.model.internalModel.coreModel.setParameterValueById('ParamAngleX', finalDx * 30);
+        this.model.internalModel.coreModel.setParameterValueById('ParamAngleY', finalDy * 30);
+        this.model.internalModel.coreModel.setParameterValueById('ParamEyeBallX', finalDx);
+        this.model.internalModel.coreModel.setParameterValueById('ParamEyeBallY', finalDy);
+      });
+    }
+    
+    setupDragging() {
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+      
+      // 鼠标悬停显示可拖拽光标
+      this.canvas.addEventListener('mouseenter', () => {
+        if (!isDragging) {
+          this.canvas.style.cursor = 'move';
+        }
+      });
+      
+      this.canvas.addEventListener('mouseleave', () => {
+        if (!isDragging) {
+          this.canvas.style.cursor = 'pointer';
+        }
+      });
+      
+      this.canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        const rect = this.widget.getBoundingClientRect();
+        startX = e.clientX - rect.left;
+        startY = e.clientY - rect.top;
+        this.canvas.style.cursor = 'grabbing';
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+          const newRight = window.innerWidth - e.clientX - (this.config.width - startX);
+          const newBottom = window.innerHeight - e.clientY - (this.config.height - startY);
+          
+          // 确保不超出屏幕边界
+          const boundedRight = Math.max(0, Math.min(window.innerWidth - this.config.width, newRight));
+          const boundedBottom = Math.max(0, Math.min(window.innerHeight - this.config.height, newBottom));
+          
+          this.widget.style.right = boundedRight + 'px';
+          this.widget.style.bottom = boundedBottom + 'px';
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          this.canvas.style.cursor = 'move';
+          
+          // 保存位置到 localStorage
+          const position = {
+            right: this.widget.style.right,
+            bottom: this.widget.style.bottom
+          };
+          localStorage.setItem('atri_position', JSON.stringify(position));
+          console.log('[ATRI] 位置已保存');
+        }
+      });
+      
+      // 恢复上次保存的位置
+      const savedPosition = localStorage.getItem('atri_position');
+      if (savedPosition) {
+        try {
+          const position = JSON.parse(savedPosition);
+          this.widget.style.right = position.right;
+          this.widget.style.bottom = position.bottom;
+          console.log('[ATRI] 恢复上次位置');
+        } catch (e) {
+          console.warn('[ATRI] 无法恢复位置:', e);
+        }
+      }
+    }
+    
+    setupIdleAnimation() {
+      setInterval(() => {
+        if (!this.model.internalModel || !this.model.internalModel.motionManager) return;
+        
+        // 尝试多种可能的闲置动画名称
+        const possibleNames = ['Idle', 'idle', 'IDLE'];
+        let idleMotions = null;
+        let groupName = null;
+        
+        for (const name of possibleNames) {
+          if (this.model.internalModel.motionManager.definitions[name]) {
+            idleMotions = this.model.internalModel.motionManager.definitions[name];
+            groupName = name;
+            break;
+          }
+        }
+        
+        if (idleMotions && idleMotions.length > 0 && groupName) {
+          const randomIdle = Math.floor(Math.random() * idleMotions.length);
+          this.model.motion(groupName, randomIdle);
+          console.log('[ATRI] 自动播放闲置动画:', groupName, '#' + randomIdle);
+        }
+      }, 15000);
+    }
+    
+    setupResponsive() {
+      window.addEventListener('resize', () => {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const newScale = isMobile ? this.config.mobileScale : this.config.scale;
+        this.model.scale.set(newScale);
+      });
+    }
+    
+    setupControls() {
+      // 切换显示/隐藏
+      document.getElementById('atri-toggle').addEventListener('click', () => {
+        this.isVisible = !this.isVisible;
+        this.canvas.style.opacity = this.isVisible ? '1' : '0';
+        this.showMessage(this.isVisible ? '我回来啦~' : '我先藏起来了~');
+      });
+      
+      // 截图功能
+      document.getElementById('atri-photo').addEventListener('click', () => {
+        this.takeScreenshot();
+      });
+      
+      // 回到原位
+      document.getElementById('atri-home').addEventListener('click', () => {
+        this.widget.style.right = '20px';
+        this.widget.style.bottom = '0';
+        // 清除保存的位置
+        localStorage.removeItem('atri_position');
+        this.showMessage('好的，回到原来的位置了~');
+        console.log('[ATRI] 位置已重置');
+      });
+    }
+    
+    setupPageEvents() {
+      // 复制事件
+      document.addEventListener('copy', () => {
+        this.showRandomMessage('copy');
+      });
+      
+      // 滚动事件（节流）
+      let scrollTimer = null;
+      window.addEventListener('scroll', () => {
+        if (scrollTimer) return;
+        
+        scrollTimer = setTimeout(() => {
+          if (Math.random() < 0.1) {
+            this.showRandomMessage('scroll');
+          }
+          scrollTimer = null;
+        }, 3000);
+      });
+    }
+    
+    showMessage(text) {
+      if (!this.config.enableMessage || !this.messageBox) return;
+      
+      clearTimeout(this.messageTimer);
+      
+      const content = this.messageBox.querySelector('.atri-message-content');
+      content.textContent = text;
+      this.messageBox.style.display = 'block';
+      
+      this.messageTimer = setTimeout(() => {
+        this.messageBox.style.display = 'none';
+      }, this.config.messageTimeout);
+    }
+    
+    showRandomMessage(type) {
+      const messages = this.config.messages[type];
+      if (messages && messages.length > 0) {
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        this.showMessage(randomMessage);
+      }
+    }
+    
+    takeScreenshot() {
+      try {
+        const canvas = this.app.renderer.extract.canvas(this.app.stage);
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            console.error('[ATRI] 截图失败：无法生成图像');
+            this.showMessage('截图失败，请重试');
+            return;
+          }
+          
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'ATRI_screenshot_' + Date.now() + '.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // 延迟释放 URL 以确保下载完成
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          
+          this.showMessage('截图保存成功！');
+          console.log('[ATRI] 截图已保存');
+        }, 'image/png');
+      } catch (error) {
+        console.error('[ATRI] 截图失败:', error);
+        this.showMessage('截图失败，请重试');
+      }
+    }
+  }
+  
+  // 初始化 ATRI
+  try {
+    const atri = new ATRILive2D(CONFIG);
+    await atri.init();
+    
+    // 暴露到全局（用于调试）
+    window.ATRI = atri;
+    
+  } catch (error) {
+    console.error('[ATRI] 初始化失败:', error);
+  }
+})();
+</script>
+
+<style>
+/* ===================================================
+ * ATRI Live2D 增强样式
+ * ================================================== */
+
+#atri-live2d-widget {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  user-select: none;
+}
+
+#atri-live2d-widget:hover {
+  transform: translateY(-5px);
+}
+
+#atri-canvas {
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+  transition: opacity 0.3s ease;
+}
+
+/* 对话框样式 */
+#atri-message-box {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  animation: messageSlideIn 0.3s ease-out;
+  z-index: 1000;
+}
+
+#atri-message-box::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #764ba2;
+}
+
+.atri-message-content {
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 控制面板样式 */
+#atri-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.atri-control-btn {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.atri-control-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.atri-control-btn:active {
+  transform: scale(0.95);
+}
+
+/* 动画效果 */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes atriWave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+/* 欢迎动画 */
+#atri-canvas {
+  animation: atriEntrance 1s ease-out;
+}
+
+@keyframes atriEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  #atri-live2d-widget {
+    right: 5px !important;
+    bottom: 0 !important;
+  }
+  
+  #atri-canvas {
+    width: 200px;
+    height: 300px;
+  }
+  
+  #atri-message-box {
+    font-size: 12px;
+    padding: 8px 15px;
+    top: -70px;
+  }
+  
+  .atri-control-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+}
+
+/* 超小屏幕隐藏 */
+@media (max-width: 480px) {
+  #atri-live2d-widget {
+    display: none;
+  }
+}
+
+/* 打印时隐藏 */
+@media print {
+  #atri-live2d-widget {
+    display: none !important;
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  #atri-message-box {
+    background: linear-gradient(135deg, #434343 0%, #000000 100%);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  }
+  
+  #atri-message-box::after {
+    border-top-color: #000000;
+  }
+}
+
+/* 加载状态 */
+.atri-loading {
+  position: relative;
+}
+
+.atri-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(102, 126, 234, 0.3);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 悬停提示 */
+.atri-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.atri-control-btn:hover + .atri-tooltip {
+  opacity: 1;
+}
+
+/* 无障碍支持 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>

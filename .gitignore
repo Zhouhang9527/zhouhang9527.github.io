@@ -8,3 +8,11 @@ package-lock.json
 node_modules/
 .nyc_output/
 coverage/
+
+# Local source assets excluded from the published site.
+source/images/background.mp4
+source/images/ginka-static-background.webp
+source/fonts/*.ttf
+source/live2d/ATRI/ATRI.cmo3
+source/live2d/ATRI/ATRI.psd
+source/live2d/ATRI/ATRI.4096/

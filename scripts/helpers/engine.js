@@ -12,9 +12,8 @@ hexo.extend.helper.register('next_font', nextFont);
 hexo.extend.helper.register('next_url', nextUrl);
 
 hexo.extend.helper.register('next_inject', function(point) {
-  return this.theme.injects[point]
-    .map(item => this.partial(item.layout, item.locals, item.options))
-    .join('');
+  const slot = (this.theme.injects && this.theme.injects[point]) || [];
+  return slot.map(item => this.partial(item.layout, item.locals, item.options)).join('');
 });
 
 hexo.extend.helper.register('next_js', function(file, {

@@ -17,6 +17,7 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage"{% if theme.motion.enable %} class="use-motion"{% endif %}>
+  {{- next_inject('bodyBegin') }}
   <div class="headband"></div>
 
   <main class="main">
@@ -46,5 +47,10 @@
   {{ partial('_partials/widgets.njk', {}, {cache: theme.cache.enable}) }}
 
   {{- next_inject('bodyEnd') }}
+
+  {# ATRI Live2D is injected via bodyEnd (_data/body-end.njk). #}
+
+  {# Music player is injected via theme config (aplayer/meting). Remove partial to avoid duplicate players. #}
+
 </body>
 </html>

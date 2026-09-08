@@ -11,16 +11,60 @@
   {#################}
   {### TAG BLOCK ###}
   {#################}
-  <div class="post-block">
+  <div class="post-block tag-page">
     <div class="post-content">
-      <div class="collection-title">
-        <h1 class="collection-header">
-          {{- page.tag }}
-          <small>{{ __('title.tag') }}</small>
-        </h1>
+      <!-- 美观的标签云展示 -->
+      <div class="tag-cloud-section">
+        <div class="tag-cloud-header">
+          <h1 class="tag-title">
+            <i class="fa fa-tag"></i>
+            {{ page.tag }}
+            <small class="tag-subtitle">{{ __('title.tag') }}</small>
+          </h1>
+          <div class="tag-stats">
+            <span class="tag-count">{{ (page.posts and page.posts.length) or 0 }} 篇文章</span>
+          </div>
+        </div>
+
+        <!-- 美观的标签云 -->
+        <div class="beautiful-tag-cloud">
+          {% set allTags = (site.tags and site.tags.toArray()) or [] %}
+          {% for tag in allTags %}
+            {% set tagSize = tag.posts.length %}
+            {% if tagSize >= 5 %}
+              {% set fontSize = 24 %}
+              {% set opacity = 1.0 %}
+            {% elif tagSize >= 3 %}
+              {% set fontSize = 20 %}
+              {% set opacity = 0.9 %}
+            {% elif tagSize >= 1 %}
+              {% set fontSize = 16 %}
+              {% set opacity = 0.7 %}
+            {% else %}
+              {% set fontSize = 14 %}
+              {% set opacity = 0.6 %}
+            {% endif %}
+            <a href="{{ url_for(tag.path) }}"
+               class="tag-cloud-item"
+               style="font-size: {{ fontSize }}px; opacity: {{ opacity }};"
+               title="{{ tag.name }} ({{ tag.posts.length }} 篇文章)">
+              {{ tag.name }}
+            </a>
+          {% endfor %}
+        </div>
       </div>
 
-      {{ post_template.render(page.posts) }}
+      <!-- 标签文章列表 -->
+      {% set tagPosts = page.posts or [] %}
+      {% if tagPosts.length > 0 %}
+        <div class="tag-posts-section">
+          <h2 class="section-title">
+            <i class="fa fa-list"></i>
+            相关文章
+          </h2>
+          {{ post_template.render(tagPosts) }}
+        </div>
+      {% endif %}
     </div>
   </div>
   {#####################}
@@ -34,3 +78,125 @@
 {% block sidebar %}
   {{ sidebar_template.render(false) }}
 {% endblock %}
+
+<style>
+/* 美观的标签页面样式 */
+.tag-page {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+}
+
+.tag-cloud-section {
+  padding: 40px;
+  text-align: center;
+}
+
+.tag-cloud-header {
+  margin-bottom: 40px;
+}
+
+.tag-title {
+  font-family: 'LXGW WenKai', cursive !important;
+  font-size: 2.5em !important;
+  color: #333 !important;
+  margin: 0 0 10px 0 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.tag-title i {
+  color: #5b99e5 !important;
+  margin-right: 10px !important;
+}
+
+.tag-subtitle {
+  color: #666 !important;
+  font-size: 0.6em !important;
+  font-weight: normal !important;
+}
+
+.tag-stats {
+  margin-top: 15px;
+}
+
+.tag-count {
+  background: rgba(91, 153, 229, 0.1) !important;
+  color: #5b99e5 !important;
+  padding: 5px 15px !important;
+  border-radius: 20px !important;
+  font-size: 0.9em !important;
+  border: 1px solid rgba(91, 153, 229, 0.2) !important;
+}
+
+/* 美观的标签云 */
+.beautiful-tag-cloud {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 15px !important;
+  padding: 30px !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.tag-cloud-item {
+  display: inline-block !important;
+  padding: 8px 16px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 25px !important;
+  color: #555 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  font-family: 'LXGW WenKai', cursive !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.tag-cloud-item:hover {
+  background: rgba(91, 153, 229, 0.1) !important;
+  color: #5b99e5 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  border-color: rgba(91, 153, 229, 0.3) !important;
+}
+
+.section-title {
+  font-family: 'LXGW WenKai', cursive !important;
+  font-size: 1.8em !important;
+  color: #333 !important;
+  margin: 40px 0 20px 0 !important;
+  text-align: center !important;
+  border-bottom: 2px solid rgba(91, 153, 229, 0.2) !important;
+  padding-bottom: 10px !important;
+}
+
+.section-title i {
+  color: #5b99e5 !important;
+  margin-right: 10px !important;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .tag-cloud-section {
+    padding: 20px !important;
+  }
+
+  .tag-title {
+    font-size: 2em !important;
+  }
+
+  .beautiful-tag-cloud {
+    gap: 10px !important;
+    padding: 20px !important;
+  }
+
+  .tag-cloud-item {
+    padding: 6px 12px !important;
+    font-size: 0.9em !important;
+  }
+}
+</style>

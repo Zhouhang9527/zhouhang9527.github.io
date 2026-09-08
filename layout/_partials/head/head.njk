@@ -11,7 +11,7 @@
 {%- endif %}
 
 {%- if config.preconnect %}
-  <link rel="preload" href="{{ url_for(theme.css) }}/main.css" as="style">
+  <link rel="preload" href="{{ ginka_asset('css/main.css') }}" as="style">
 {%- endif %}
 {{ next_pre() }}
 
@@ -44,7 +44,7 @@
   <meta name="baidu-site-verification" content="{{ theme.baidu_site_verification }}">
 {%- endif %}
 
-<link rel="stylesheet" href="{{ url_for(theme.css) }}/main.css">
+<link rel="stylesheet" href="{{ ginka_asset('css/main.css') }}">
 
 {{ next_font() }}
 
@@ -57,11 +57,13 @@
 {%- if theme.fancybox %}
   {{ next_vendors('fancybox_css') }}
 {%- endif %}
-
 {%- if theme.pace.enable %}
   {{ next_vendors('pace_css') }}
   {{ next_vendors('pace_js') }}
 {%- endif %}
 
-{{ next_data('main', next_config()) }}
+<link rel="stylesheet" href="{{ ginka_asset('css/ginka_style.css') }}">
+
+<!-- NexT Configuration -->
+{{ next_data('main', next_config()) | trim }}
 {{- next_js('config.js') }}
