@@ -19,13 +19,7 @@
       shuffle: { label: '随机播放', icon: 'fa-random' }
     };
     const PRE_PLAY_LYRIC_TEXT = '加载中...';
-    const AUTO_GAIN_TARGET_RMS = 0.126;
-    const AUTO_GAIN_MIN = 0.62;
-    const AUTO_GAIN_MAX = 1.45;
-    const AUTO_GAIN_STRENGTH = 1.22;
     const MUSIC_VOICE_COOLDOWN_MS = 5000;
-    const AUTO_GAIN_SAMPLE_MS = 4600;
-    const AUTO_GAIN_MIN_SAMPLES = 36;
     const PLAYLIST_CACHE_VERSION = 2;
     const STORAGE = {
       index: 'music_current_index',
@@ -325,15 +319,19 @@
       }
       return true;
     }
-    const autoGainCache = new Map();
+
+    function activateLocalFallback(options) {
+      const opt = options || {};
+      const requestedId = opt.trackId || storageGet(STORAGE.trackId);
+      const requestedIndex = localMusicList.findIndex((track) => track.id === requestedId);
+      const index = requestedIndex >= 0 ? requestedIndex : DEFAULT_TRACK_INDEX;
+      if (!setActiveList('local', localMusicList)) return false;
+      loadMusic(index, { keepTime: !!opt.keepTime && requestedIndex >= 0 });
+      return true;
+    }
     let masterVolume = DEFAULT_MUSIC_VOLUME;
     let autoGainFactor = 1;
     let currentPlayMode = 'list';
-    let autoGainCtx = null;
-    let autoGainSourceNode = null;
-    let autoGainAnalyser = null;
-    let autoGainFrame = 0;
-    let autoGainToken = 0;
     let hasStartedPlayback = false;
     const MUSIC_VOICE_PROFILE = {
       default: {
@@ -480,7 +478,7 @@
       updateVolumeIcon(effective);
       syncVolumeSlider(masterVolume);
       if (volumeToggle) {
-        volumeToggle.title = `音量 ${Math.round(masterVolume * 100)}%（自动补偿 ${Math.round(autoGainFactor * 100)}%）`;
+        volumeToggle.title = `音量 ${Math.round(masterVolume * 100)}%`;
       }
   
       if (persist !== false) {
@@ -496,116 +494,14 @@
       applyEffectiveVolume(persist);
     }
   
-    function initAutoGainAnalyser() {
-      if (autoGainAnalyser) {
-        if (autoGainCtx && autoGainCtx.state === 'suspended') {
-          autoGainCtx.resume().catch(() => {});
-        }
-        return true;
-      }
-  
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx || !audio) return false;
-      if (currentSource === 'online' && !onlineConfig.cors_audio_verified) return false;
+    function stopAutoGainSampler() {}
 
-      try {
-        autoGainCtx = new Ctx();
-        autoGainSourceNode = autoGainCtx.createMediaElementSource(audio);
-        autoGainAnalyser = autoGainCtx.createAnalyser();
-        autoGainAnalyser.fftSize = 2048;
-        autoGainAnalyser.smoothingTimeConstant = 0.65;
-        autoGainSourceNode.connect(autoGainAnalyser);
-        autoGainAnalyser.connect(autoGainCtx.destination);
-        if (autoGainCtx.state === 'suspended') {
-          autoGainCtx.resume().catch(() => {});
-        }
-        return true;
-      } catch (error) {
-        log('自动音量分析器初始化失败:', error && error.message ? error.message : error);
-        autoGainCtx = null;
-        autoGainSourceNode = null;
-        autoGainAnalyser = null;
-        return false;
-      }
-    }
-  
-    function stopAutoGainSampler() {
-      autoGainToken += 1;
-      if (autoGainFrame) {
-        cancelAnimationFrame(autoGainFrame);
-        autoGainFrame = 0;
-      }
-    }
-  
     function applyAutoGainForTrack(trackIndex) {
-      const cacheKey = resolveTrackCacheKey(trackIndex);
-      if (autoGainCache.has(cacheKey)) {
-        autoGainFactor = autoGainCache.get(cacheKey);
-        applyEffectiveVolume(false);
-        return;
-      }
-  
+      // Keep this persistent media element on its native playback path. Routing it
+      // through Web Audio can silence later cross-origin tracks even when the URL
+      // itself is playable, and a MediaElementSource cannot be detached safely.
       autoGainFactor = 1;
       applyEffectiveVolume(false);
-  
-      if (!initAutoGainAnalyser() || !autoGainAnalyser) return;
-      if (autoGainCtx && autoGainCtx.state === 'suspended') {
-        autoGainCtx.resume().catch(() => {});
-      }
-  
-      const token = ++autoGainToken;
-      const buffer = new Float32Array(autoGainAnalyser.fftSize);
-      const startedAt = performance.now();
-      let sampleCount = 0;
-      let rmsSum = 0;
-  
-      const sample = () => {
-        if (token !== autoGainToken) return;
-        if (currentMusicIndex !== normalizeIndex(trackIndex)) return;
-        if (!autoGainAnalyser || !audio || audio.paused || audio.ended) {
-          autoGainFrame = requestAnimationFrame(sample);
-          return;
-        }
-  
-        autoGainAnalyser.getFloatTimeDomainData(buffer);
-        let squareSum = 0;
-        for (let i = 0; i < buffer.length; i += 1) {
-          squareSum += buffer[i] * buffer[i];
-        }
-  
-        const rms = Math.sqrt(squareSum / Math.max(1, buffer.length));
-        if (rms > 0.0012) {
-          rmsSum += rms;
-          sampleCount += 1;
-        }
-  
-        const elapsed = performance.now() - startedAt;
-        if (sampleCount < AUTO_GAIN_MIN_SAMPLES && elapsed < AUTO_GAIN_SAMPLE_MS) {
-          autoGainFrame = requestAnimationFrame(sample);
-          return;
-        }
-  
-        const avgRms = sampleCount ? (rmsSum / sampleCount) : 0;
-        const targetGain = avgRms > 0.0008
-          ? (() => {
-            const baseGain = AUTO_GAIN_TARGET_RMS / avgRms;
-            const strengthened = 1 + (baseGain - 1) * AUTO_GAIN_STRENGTH;
-            return clamp(strengthened, AUTO_GAIN_MIN, AUTO_GAIN_MAX);
-          })()
-          : 1;
-  
-        autoGainCache.set(cacheKey, targetGain);
-        autoGainFactor = targetGain;
-        applyEffectiveVolume(false);
-        autoGainFrame = 0;
-        log('自动音量补偿:', cacheKey, 'avgRms=', avgRms.toFixed(5), 'gain=', targetGain.toFixed(3));
-      };
-  
-      if (autoGainFrame) {
-        cancelAnimationFrame(autoGainFrame);
-        autoGainFrame = 0;
-      }
-      autoGainFrame = requestAnimationFrame(sample);
     }
   
     function cyclePlayMode() {
@@ -708,10 +604,9 @@
       storageSet(STORAGE.trackId, music.id || normalized);
   
       resetLyrics();
-      // crossOrigin must be set before src. Local media keeps the analyser path;
-      // remote media that rejects CORS still plays through the element without
-      // making the Web Audio graph a prerequisite for audible playback.
-      audio.crossOrigin = music.source === 'online' && onlineConfig.cors_audio_verified ? 'anonymous' : '';
+      // Native media playback does not require CORS. An empty crossorigin
+      // attribute still selects anonymous CORS, so remove it before assigning src.
+      audio.removeAttribute('crossorigin');
       suppressMediaError += 1;
       audio.src = music.src;
       audio.preload = 'metadata';
@@ -1422,9 +1317,7 @@
     storageSet(STORAGE.playMode, currentPlayMode);
     storageSet(STORAGE.volume, masterVolume);
     setHidden(wasHidden, false);
-    loadMusic(currentMusicIndex, { keepTime: true });
-    renderPlaylist();
-    setPlaylistExpanded(!wasHidden && wasPlaylistExpanded, false);
+    setPlaylistExpanded(false, false);
   
     if (window.innerWidth < 768 && musicInfo) {
       musicInfo.style.minWidth = '100px';
@@ -1441,22 +1334,34 @@
         });
       }, 450);
     };
-    if (storedSource === 'online') {
-      tryOnlinePlaylist({ restore: true, trackId: storedTrackId, keepTime: true }).then((loaded) => {
-        if (!loaded) {
-          setActiveList('local', localMusicList, { preserveTrack: true });
-          renderPlaylist();
-        }
-        resumeStoredPlayback();
-      });
-    } else if (document.body.classList.contains('sidebar-active')) {
-      // First sidebar opening is the first time a non-restoring session asks for online data.
-      tryOnlinePlaylist({ activate: !wasPlaying });
+    if (storedSource === 'local' && wasPlaying) {
+      // An actively playing local fallback wins restoration; warming the online
+      // cache later must not replace it mid-track.
+      activateLocalFallback({ trackId: storedTrackId, keepTime: true });
+      setPlaylistExpanded(wasPlaylistExpanded, false);
       resumeStoredPlayback();
-    } else if (pendingAutoplay) {
-      resumeStoredPlayback();
+      if (document.body.classList.contains('sidebar-active')) {
+        tryOnlinePlaylist({ force: false });
+      }
     } else {
-      updatePlayIcon(false);
+      // Online is the default source. Local files are not assigned to the audio
+      // element until this request has actually failed.
+      toggleBtn.disabled = true;
+      setLoadingIcon();
+      tryOnlinePlaylist({
+        activate: true,
+        restore: storedSource === 'online',
+        trackId: storedTrackId,
+        keepTime: storedSource === 'online'
+      }).then((loaded) => {
+        if (!loaded) {
+          activateLocalFallback({ trackId: storedTrackId, keepTime: storedSource === 'local' });
+        }
+        toggleBtn.disabled = false;
+        setPlaylistExpanded(wasPlaylistExpanded, false);
+        if (pendingAutoplay) resumeStoredPlayback();
+        else updatePlayIcon(false);
+      });
     }
   
     const resumeOnGesture = () => {
@@ -1484,38 +1389,9 @@
   function scheduleMusicBoot() {
     if (scheduled) return;
     scheduled = true;
-
-    // New listeners open the player explicitly; preserve playback restoration.
-    if (document.body.classList.contains('sidebar-active')) {
-      bootMusic();
-      return;
-    }
-    try {
-      if (localStorage.getItem('music_playing') !== 'true') return;
-    } catch (_error) {
-      return;
-    }
-
-    var runtime = window.GINKA_RUNTIME;
-    var requireInteraction = !!(runtime && runtime.isLowPower);
-    var timeout = requireInteraction ? 4200 : 2200;
-
-    if (runtime && typeof runtime.scheduleBackgroundTask === 'function') {
-      runtime.scheduleBackgroundTask('music-player', bootMusic, {
-        timeout: timeout,
-        requireInteraction: requireInteraction
-      });
-      return;
-    }
-
-    if (document.readyState === 'complete') {
-      window.setTimeout(bootMusic, requireInteraction ? 0 : 1200);
-      return;
-    }
-
-    window.addEventListener('load', function () {
-      window.setTimeout(bootMusic, requireInteraction ? 0 : 1200);
-    }, { once: true });
+    // Fetch playlist metadata alongside the page. This resolves only the active
+    // track; the rest of the online playlist is never preloaded as audio.
+    bootMusic();
   }
 
   if (document.readyState === 'loading') {
