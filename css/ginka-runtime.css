@@ -28,9 +28,7 @@
   transition-delay: 0s, 0s, 0s;
 }
 
-#atri-live2d-widget.is-ready:hover {
-  transform: translateY(-5px);
-}
+#atri-live2d-widget.is-ready:hover { transform: none; }
 
 #atri-live2d-widget.is-ready:hover,
 #atri-live2d-widget.is-dragging {
@@ -1179,3 +1177,63 @@ body #journal-sidebar .music-source-retry.is-loading .fa-refresh {
     transition-duration: 0.12s !important;
   }
 }
+
+/* ATRI: use actual canvas dimensions so dragging and hit areas match the model. */
+@media (min-width: 1200px) {
+  body #atri-live2d-widget,
+  body #atri-live2d-widget.is-ready:hover { transform: none; }
+  body #atri-live2d-widget { transition: opacity .25s, visibility .25s; }
+  body #atri-canvas { transition: filter .2s; filter: drop-shadow(0 3px 7px #29425b18); }
+  body #atri-live2d-widget:hover #atri-canvas { filter: drop-shadow(0 5px 10px #29425b28); }
+  body #atri-controls {
+    top: auto; bottom: 0; right: 0; left: 0; padding: 5px;
+    display: grid !important; grid-template-columns: repeat(4, 1fr); gap: 3px;
+    border-radius: 10px; opacity: 0; visibility: hidden;
+    transition: opacity .2s, visibility .2s;
+  }
+  body #atri-live2d-widget:hover #atri-controls,
+  body #atri-live2d-widget:focus-within #atri-controls { opacity: 1; visibility: visible; }
+  /* Keep controls keyboard reachable even while the visual panel is quiet. */
+  body #atri-controls { visibility: visible; pointer-events: none; }
+  body #atri-live2d-widget:hover #atri-controls,
+  body #atri-live2d-widget:focus-within #atri-controls { pointer-events: auto; }
+  body #atri-controls::before { border-radius: 10px; background: #f5f8fcf5; border: 1px solid #dce5ed; box-shadow: 0 3px 12px #29425b12; backdrop-filter: none; }
+  body #atri-controls .atri-control-btn {
+    width: 100% !important; height: 32px !important; min-height: 32px;
+    border: 0 !important; border-radius: 6px !important; background: transparent !important;
+    color: #557590 !important; box-shadow: none !important; font-size: 14px !important;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+    transition: background .2s !important; transform: none !important;
+  }
+  body #atri-controls .atri-control-btn:hover { background: #e4edf5 !important; }
+  body #atri-drag { touch-action: none; cursor: grab !important; }
+  body #atri-live2d-widget.is-dragging #atri-drag { cursor: grabbing !important; }
+  body #atri-message-box {
+    top: auto; bottom: calc(100% + 10px); left: 0; right: 0; transform: none;
+    width: auto; max-width: none; padding: 12px 14px; border-radius: 10px;
+    background: #f5f8fc !important; border: 1px solid #dce5ed;
+    box-shadow: 0 4px 16px #29425b10; backdrop-filter: none;
+    -webkit-backdrop-filter: none; animation: none; max-height: 100px; overflow-y: auto;
+  }
+  body #atri-message-box::after { content: none; }
+  body #atri-message-box.is-below { top: 8px; bottom: auto; }
+  body #atri-message-box .atri-message-content,
+  body #atri-message-box .atri-msg-zh { color: #425e77 !important; font-size: 13px; font-weight: 500; text-shadow: none; }
+  body #atri-message-box .atri-msg-ja { color: #6b8093 !important; font-size: 12px; font-weight: 400; text-shadow: none; }
+}
+body.sidebar-active #atri-live2d-widget,
+body.sidebar-active #atri-restore { visibility: hidden !important; pointer-events: none !important; }
+#atri-restore {
+  position: fixed; right: 20px; bottom: 64px; z-index: 50;
+  min-height: 44px; padding: 0 15px; border-radius: 10px; border: 1px solid #dce5ed;
+  background: #f5f8fc; color: #425e77; font: inherit; font-size: 12px; cursor: pointer;
+  box-shadow: 0 3px 12px #29425b10;
+}
+#atri-restore[hidden] { display: none; }
+@media (hover: none) { body #atri-controls { opacity: 1; pointer-events: auto; } }
+@media (max-width: 1199px) { #atri-restore { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  body #atri-live2d-widget, body #atri-canvas, body #atri-controls,
+  body #atri-controls .atri-control-btn { transition: none !important; animation: none !important; }
+}
+@media print { #atri-restore { display: none !important; } }
