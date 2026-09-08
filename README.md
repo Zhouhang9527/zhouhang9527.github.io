@@ -22,8 +22,8 @@
 
 ### 环境要求
 
-- Node.js >= 16.0.0
-- npm >= 8.0.0
+- Node.js >= 20.19.0
+- npm >= 10.0.0
 - Git
 
 ### 安装
@@ -42,9 +42,6 @@ npm install
 ```bash
 # 启动开发服务器
 npm run server
-
-# 或使用增强脚本
-.\scripts\deploy-enhanced.ps1 -Mode server
 ```
 
 访问 `http://localhost:4000` 预览博客
@@ -52,12 +49,25 @@ npm run server
 ### 构建部署
 
 ```bash
-# 完整构建和部署
-npm run deploy
+# 增量构建，适合日常修改文案、模板、CSS 或 JS
+npm run build
 
-# 或使用增强脚本
-.\scripts\deploy-enhanced.ps1 -Mode full
+# 干净发布构建，会清理 public 并执行发布资源检查
+npm run build:release
+
+# 独立图片缓存扫描，不会覆盖原图
+npm run optimize:images
+
+# 部署到 GitHub Pages，不会自动执行 git commit/push 主仓库
+npm run deploy
 ```
+
+## 构建与定制边界
+
+- `themes/next` 当前是独立 Git 记录的 NexT 主题目录，博客专用页面模板通过 `scripts/editorial-layout.js` 从主仓库 `layouts/` 覆盖到 Hexo 主题视图。
+- 博客专用 CSS、JS、图片和页面数据优先放在 `source/`、`layouts/`、`scripts/`，减少主题子仓库内的不可重复改动。
+- `npm run build` 不清理 `public/`，用于快速增量构建；`npm run build:release` 会先清理并检查 PSD、CMO3、旧视频背景、大 TTF 和未使用高分辨率纹理没有进入发布目录。
+- CSS/JS 引用通过 `ginka_asset()` 使用内容哈希生成版本号，文件未变化时 URL 保持稳定。
 
 ## 📁 项目结构
 
@@ -140,9 +150,9 @@ $ginka-secondary-color = #ff6b6b
 - [快速参考](QUICK_REFERENCE.md) - 常用命令速查
 
 ### ATRI Live2D 文档
-- [ATRI 使用说明](ATRI_使用说明.md) - ATRI Live2D 完整使用指南
+- [ATRI 使用说明](docs/atri/ATRI_使用说明.md) - ATRI Live2D 完整使用指南
 - [ATRI 开发文档](docs/ATRI_GUIDE.md) - ATRI 技术实现详解
-- [ATRI 快速参考](ATRI_QUICK_REFERENCE.md) - ATRI 速查表
+- [ATRI 快速参考](docs/atri/ATRI_QUICK_REFERENCE.md) - ATRI 速查表
 - [ATRI 配置文件](source/_data/atri-config.js) - 配置示例
 
 ## 🎀 ATRI Live2D 特性
@@ -164,7 +174,7 @@ window.ATRI.takeScreenshot();        // 截图
 window.ATRI.hide();                  // 隐藏
 ```
 
-详细使用方法请查看 [ATRI 使用说明](ATRI_使用说明.md)
+详细使用方法请查看 [ATRI 使用说明](docs/atri/ATRI_使用说明.md)
 
 ## 🛠 技术栈
 

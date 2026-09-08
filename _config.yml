@@ -15,7 +15,7 @@ keywords:
   - Pwn
   - Binary Security
   - IDA Pro
-author: GINKA
+author: mm9527
 email: 3050055132@qq.com
 language: zh-CN
 timezone: Asia/Shanghai
@@ -23,7 +23,7 @@ timezone: Asia/Shanghai
 # ---------------------------------------------------------------
 # URL Configuration
 # ---------------------------------------------------------------
-url: https://zhouhang9527.github.io
+url: https://www.mm9527.top
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -46,6 +46,7 @@ i18n_dir: :lang
 # Skip Rendering (Asset Protection)
 # ---------------------------------------------------------------
 skip_render:
+  - '_data/**'
   - 'css/**'
   - 'js/**'
   - 'fonts/**'
@@ -56,6 +57,18 @@ skip_render:
   - 'music/**/*.ogg'
   - 'music/**/*.m4a'
   - 'music/**/*.wav'
+
+# Files ignored by Hexo are not copied into public/. Keep editor/source assets in
+# the workspace while preventing stale payload from entering deployments.
+ignore:
+  - 'source/images/ginka-static-background.webp'
+  - 'themes/next/source/images/background.mp4'
+  - 'themes/next/source/fonts/LxgwWenKai.ttf'
+  - 'themes/next/source/fonts/OppoSans.ttf'
+  - 'themes/next/source/fonts/OppoSans-Bold.ttf'
+  - 'themes/next/source/live2d/ATRI/ATRI.cmo3'
+  - 'themes/next/source/live2d/ATRI/ATRI.psd'
+  - 'themes/next/source/live2d/ATRI/ATRI.4096/**'
 
 # ---------------------------------------------------------------
 # Writing Configuration
@@ -136,6 +149,74 @@ tag_generator:
 theme: next
 
 # ---------------------------------------------------------------
+# Music sources
+# ---------------------------------------------------------------
+# Keep credentials on a server-side Meting deployment. The browser only receives
+# a public HTTPS endpoint that has been verified for CORS and media playback.
+ginka_music:
+  default_cover: /music/unhappy.jpg
+  online:
+    enabled: true
+    # Self-hosted Meting endpoint verified for HTTPS, CORS, lyrics and ranged audio.
+    # Expected query contract: ?server=netease&type=playlist&id=5190514967
+    api_base: https://meting.mm9527.top/api
+    platform: netease
+    type: playlist
+    playlist_id: '5190514967'
+    timeout_ms: 8000
+    cache_ttl_ms: 1800000
+    # Revalidate these capabilities before replacing api_base.
+    cors_audio_verified: true
+    cors_lyrics_verified: true
+    range_verified: true
+  local:
+    - id: hikari-hanate
+      title: '光放て！'
+      artist: '柳麻美'
+      album: 'ATRI -My Dear Moments- (Original Soundtrack)'
+      src: /music/ginka-op-hikari-hanate.mp3
+      cover: /music/ginka-op-hikari-hanate.webp
+      lyricsSrc: /music/ginka-op-hikari-hanate.lrc
+    - id: yumeukihashi
+      title: '夢浮桥'
+      artist: '青木阳菜'
+      album: GINKA ED
+      src: /music/ginka-ed-yumeukihashi.mp3
+      cover: /music/ginka-ed-yumeukihashi.jpg
+      lyricsSrc: /music/ginka-ed-yumeukihashi.lrc
+    - id: air
+      title: AIR
+      artist: Lia
+      album: AIR OST
+      src: /music/air.mp3
+      cover: /music/air.jpg
+      lyricsSrc: /music/air.lrc
+    - id: unhappy
+      title: unhappy
+      artist: s0rrow
+      album: Single
+      src: '/music/s0rrow - unhappy.mp3'
+      cover: /music/unhappy.jpg
+      lyricsSrc: '/music/s0rrow - unhappy.lrc'
+      translations:
+        'Every day we talk a little less': '每天我们说的话都在逐渐减少'
+        'It looks like you are losing interest': '看起来你正在慢慢失去兴趣'
+        'These feelings I have for you': '这些我对你的感情'
+        "But you don't feel the same": '可你却没有同样的感觉'
+        "So I'll pack all my things": '所以我会收拾好我的一切'
+        'And go run far away': '然后逃到很远的地方'
+        'You are, you are very pretty': '你啊 你真的很漂亮'
+        "I'm so very ugly": '而我是那么的丑陋'
+        'Will you even love me, anymore (love me)': '你会再爱我吗 哪怕一点点（爱我）'
+        'You can, you can live without me': '你可以 你可以没有我的生活着'
+        'That makes me unhappy': '那让我感到不开心'
+        'I should get a piercing through my heart': '我应该将我的心也一并刺穿'
+        'What do you even want me to be': '你究竟想要我成为什么样子'
+        'You never ever pay attention to me': '你从来从来都不愿多看我一眼'
+        "So I'll close my blinds in misery": '所以我拉上窗帘沉进悲伤里'
+        "And I'll wait for you for a couple of weeks": '然后我会一直等着你好几个星期'
+
+# ---------------------------------------------------------------
 # Live2D Configuration (Disabled - Using Custom)
 # ---------------------------------------------------------------
 live2d:
@@ -158,7 +239,7 @@ deploy:
   type: git
   repo: https://github.com/Zhouhang9527/zhouhang9527.github.io.git
   branch: main
-  message: "Site updated: {{ now('YYYY-MM-DD HH:mm:ss') }}"
+  message: "Site updated"
 
 # ---------------------------------------------------------------
 # Extensions & Plugins
@@ -172,12 +253,16 @@ deploy:
 # Hexo All Minifier
 all_minifier: true
 silent: true
+image_minifier:
+  enable: false
 js_minifier:
   enable: true
   mangle: true
   compress: {}
 css_minifier:
   enable: true
+  exclude:
+    - '*.styl'
 html_minifier:
   enable: true
   removeComments: true

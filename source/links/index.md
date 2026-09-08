@@ -1,107 +1,30 @@
 ---
 title: 友情链接
 date: 2025-10-09 17:35:15
-type: "links"
+type: links
 comments: false
 ---
 
-# 友情链接
-
-欢迎交换友情链接！本站专注于网络安全、逆向工程等领域，如果你也从事相关领域，欢迎互换友链。
-
-## 申请友链
-
-请在评论区留言或通过邮件联系我，提供以下信息：
-- 网站名称
-- 网站地址
-- 网站描述
-- 网站图标（可选）
-
-## 我的信息
-
-- **网站名称**: GINKA
-- **网站地址**: https://Zhouhang9527.github.io
-- **网站描述**: 专注于网络安全、逆向工程、安全研究的技术博客
-- **网站图标**: https://Zhouhang9527.github.io/images/avatar.png
-
-## 友情链接
+## 朋友与学习资源
 
 <div class="links-container">
   <div class="link-card">
-    <div class="link-avatar">
-      <img src="/images/nssctf.ico" alt="NSSCTF" />
-    </div>
-    <div class="link-info">
-      <h3><a href="https://www.nssctf.cn/" target="_blank" rel="noopener">NSSCTF</a></h3>
-      <p>国内知名的网络安全技能学习平台，提供丰富的CTF题目和学习资源。</p>
-    </div>
+    <div class="link-avatar"><img src="/images/nssctf.ico" alt="NSSCTF" width="46" height="46"></div>
+    <div class="link-info"><h3><a href="https://www.nssctf.cn/" target="_blank" rel="noopener noreferrer">NSSCTF ↗</a></h3><p>CTF 练习、竞赛与学习资源。</p></div>
   </div>
 </div>
 
-<style>
-.links-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
+## 交换友链
 
-.link-card {
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(20px) saturate(1.8);
-  -webkit-backdrop-filter: blur(20px) saturate(1.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  transition: all 0.3s ease;
-  animation: fadeIn 0.8s ease-out forwards;
-}
+欢迎通过邮件联系我，附上网站名称、地址、简介和图标即可。
 
-.link-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
-}
+<a class="journal-contact-card" href="mailto:3050055132@qq.com"><strong>联系 mm9527 ↗</strong><span>3050055132@qq.com</span></a>
 
-.link-avatar {
-  width: 60px;
-  height: 60px;
-  margin-right: 20px;
-  flex-shrink: 0;
-}
+## 本站信息
 
-.link-avatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  object-fit: cover;
-}
-
-.link-info h3 {
-  margin: 0 0 8px 0;
-  font-family: 'LXGW WenKai', cursive;
-}
-
-.link-info h3 a {
-  color: #333;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.link-info h3 a:hover {
-  color: #5b99e5;
-}
-
-.link-info p {
-  margin: 0;
-  color: #666;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-</style>
+| 项目 | 信息 |
+| --- | --- |
+| 名称 | mm9527 的博客 · GINKA |
+| 地址 | https://zhouhang9527.github.io/ |
+| 简介 | CTF 题解、逆向分析与学习笔记 |
+| 图标 | https://zhouhang9527.github.io/images/avatar.png |

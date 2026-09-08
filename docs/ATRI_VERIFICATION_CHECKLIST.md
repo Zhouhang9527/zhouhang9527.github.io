@@ -669,9 +669,9 @@ ____________________
 
 ## 📞 遇到问题？
 
-1. 查看 [ATRI 使用说明](../ATRI_使用说明.md)
+1. 查看 [ATRI 使用说明](atri/ATRI_使用说明.md)
 2. 查看 [ATRI 开发文档](ATRI_GUIDE.md)
-3. 查看 [ATRI 快速参考](../ATRI_QUICK_REFERENCE.md)
+3. 查看 [ATRI 快速参考](atri/ATRI_QUICK_REFERENCE.md)
 4. 检查浏览器控制台错误
 5. 提交 Issue
 

@@ -282,10 +282,10 @@ performance: {
 
 | 文件路径 | 说明 | 行数 |
 |---------|------|-----|
-| `ATRI_使用说明.md` | 使用说明 | ~350 |
+| `docs/atri/ATRI_使用说明.md` | 使用说明 | ~350 |
 | `docs/ATRI_GUIDE.md` | 开发文档 | ~300 |
-| `ATRI_QUICK_REFERENCE.md` | 快速参考 | ~150 |
-| `source/_posts/atri-live2d-showcase.md` | 功能展示 | ~600 |
+| `docs/atri/ATRI_QUICK_REFERENCE.md` | 快速参考 | ~150 |
+| `docs/guides/atri-live2d-showcase.md` | 功能展示 | ~600 |
 
 ---
 
@@ -483,9 +483,9 @@ class ATRILive2D {
 - [pixi-live2d-display](https://github.com/guansss/pixi-live2d-display)
 
 ### 项目文档
-- [ATRI 使用说明](../ATRI_使用说明.md)
-- [ATRI 开发文档](../docs/ATRI_GUIDE.md)
-- [ATRI 快速参考](../ATRI_QUICK_REFERENCE.md)
+- [ATRI 使用说明](atri/ATRI_使用说明.md)
+- [ATRI 开发文档](ATRI_GUIDE.md)
+- [ATRI 快速参考](atri/ATRI_QUICK_REFERENCE.md)
 
 ---
 

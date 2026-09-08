@@ -1,0 +1,23 @@
+{% extends '_layout.njk' %}
+{% import '_macro/sidebar.njk' as sidebar_template with context %}
+{% block title %}{{ page.title }} | {{ title }}{% endblock %}
+{% block class %}page posts-expand journal-page{% endblock %}
+{% block content %}
+  {% set taxonomy = page.type == 'tags' or page.type == 'categories' %}
+  <header class="journal-masthead">
+    <div><a class="journal-breadcrumb" href="{{ url_for('/') }}">GINKA / mm9527</a><span class="journal-eyebrow">{% if page.type == 'tags' %}TOPICS / 主题索引{% elif page.type == 'categories' %}CATEGORIES / 内容分类{% elif page.type == 'links' %}FRIENDS / 友情链接{% else %}ABOUT / 关于博客{% endif %}</span><h1>{{ page.title | escape }}</h1><p>{% if taxonomy %}选择一个主题，继续阅读。{% elif page.type == 'links' %}一起学习，互相分享。{% else %}mm9527 的技术笔记与个人记录。{% endif %}</p></div>
+    <img src="{{ url_for('/images/ginka/reunion.webp' if page.type == 'links' else ('/images/ginka/story-street.jpg' if taxonomy else '/images/ginka/sunset.webp')) }}" alt="" width="1920" height="1141">
+  </header>
+  {% if taxonomy %}
+    <nav class="journal-page-nav" aria-label="内容索引"><a href="{{ url_for('/archives/') }}">全部文章</a><a href="{{ url_for('/tags/') }}"{% if page.type == 'tags' %} aria-current="page"{% endif %}>标签</a><a href="{{ url_for('/categories/') }}"{% if page.type == 'categories' %} aria-current="page"{% endif %}>分类</a></nav>
+    <div class="journal-taxonomy-grid">
+    {% set entries = site.tags if page.type == 'tags' else site.categories %}
+    {% for entry in entries.sort('name').toArray() %}
+      <a class="journal-taxonomy-item" href="{{ url_for(entry.path) }}"><span class="journal-taxonomy-symbol" aria-hidden="true">{{ '#' if page.type == 'tags' else '/' }}</span><h2>{{ entry.name | escape }}</h2><span>{{ entry.posts.length }} 篇文章</span><b aria-hidden="true">↗</b></a>
+    {% else %}<p class="journal-empty">暂时没有{{ '标签' if page.type == 'tags' else '分类' }}，可以先<a href="{{ url_for('/archives/') }}">浏览全部文章</a>。</p>{% endfor %}
+    </div>
+  {% else %}
+    <div class="post-block journal-static-content" lang="{{ page.lang }}"><div class="post-body">{{ page.content }}</div></div>
+  {% endif %}
+{% endblock %}
+{% block sidebar %}{{ partial('journal-sidebar.njk', {display_toc: page.toc.enable}) }}{% endblock %}

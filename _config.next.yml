@@ -27,7 +27,7 @@ avatar:
 # ---------------------------------------------------------------
 # Site Information
 # ---------------------------------------------------------------
-site_author: GINKA
+site_author: mm9527
 site_subtitle: 'Pwn & Reverse Engineering'
 site_description: '专注于逆向工程和二进制安全研究'
 
@@ -53,7 +53,7 @@ menu:
   archives: /archives/ || fa fa-archive
   tags: /tags/ || fa fa-tags
   categories: /categories/ || fa fa-th
-  links: /links/ || fa fa-link
+  友链: /links/ || fa fa-link
   about: /about/ || fa fa-user
 
 menu_settings:
@@ -65,7 +65,7 @@ menu_settings:
 # ---------------------------------------------------------------
 sidebar:
   position: left
-  display: post
+  display: hide
   padding: 18
   offset: 12
   onmobile: false
@@ -124,9 +124,7 @@ footer:
     animated: true
     color: "#ff0000"
   copyright: mm9527
-  powered:
-    enable: false
-    version: false
+  powered: false
   beian:
     enable: false
 
@@ -166,7 +164,7 @@ google_analytics:
   id: 
 
 busuanzi_count:
-  enable: true
+  enable: false
   total_visitors: false
   total_views: false
   post_views: true
@@ -176,7 +174,7 @@ comments:
   style: tabs
   active: giscus
   storage: true
-  lazyload: false
+  lazyload: true
   nav:
     giscus:
       text: Load Giscus

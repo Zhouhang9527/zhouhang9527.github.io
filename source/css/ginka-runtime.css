@@ -1,0 +1,1176 @@
+/* Runtime UI styles extracted from body-end.njk for shared browser caching. */
+
+/* ===================================================
+ * ATRI Live2D 增强样式
+ * ================================================== */
+
+/* 全局移动端优化 */
+@media (hover: none) and (pointer: coarse) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+#atri-live2d-widget {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1), transform 0.3s ease, visibility 0s linear 0.42s;
+  user-select: none;
+  /* 移动端性能优化 */
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+#atri-live2d-widget.is-ready {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s, 0s, 0s;
+}
+
+#atri-live2d-widget.is-ready:hover {
+  transform: translateY(-5px);
+}
+
+/* 移动端设备上减少或禁用 hover 效果 */
+@media (hover: none) and (pointer: coarse) {
+  #atri-live2d-widget:hover {
+    transform: none;
+  }
+}
+
+#atri-canvas {
+  display: block;
+  background: transparent;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+  transition: opacity 0.3s ease;
+  pointer-events: auto;
+  cursor: pointer;
+  /* 移动端触摸优化 */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  user-select: none;
+}
+
+/* 对话框样式 */
+#atri-message-box {
+  position: absolute;
+  top: -110px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(126, 184, 230, 0.22)) !important;
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  color: rgba(28, 55, 82, 0.98);
+  padding: 14px 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+  white-space: nowrap;
+  box-shadow: 0 10px 40px rgba(91, 155, 213, 0.12), 0 6px 14px rgba(0, 0, 0, 0.08), inset 0 1px 3px rgba(255, 255, 255, 0.75);
+  pointer-events: none;
+  animation: messageSlideIn 0.3s ease-out;
+  z-index: 1000;
+  max-width: min(360px, calc(100vw - 24px));
+  max-height: none;
+  overflow: visible;
+  word-wrap: break-word;
+  white-space: normal;
+  line-height: 1.55;
+}
+
+#atri-message-box::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid rgba(255, 255, 255, 0.78);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* 右键菜单样式 */
+/* ATRI 不再注入全站右键菜单（使用下方已写好的 custom-context-menu 逻辑） */
+
+.atri-message-content {
+  font-weight: 700;
+  color: #123250;
+  text-shadow: none;
+}
+
+.atri-msg-zh {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: #0a2843 !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.atri-msg-ja {
+  font-size: 13px;
+  color: #153b5c !important;
+  font-style: normal;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+/* 控制面板样式 */
+#atri-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 8px;
+  border-radius: 28px;
+  pointer-events: auto;
+  z-index: 1000;
+  isolation: isolate;
+}
+
+#atri-controls::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  bottom: -2px;
+  left: -2px;
+  border-radius: 28px;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.26) 0%,
+    rgba(255, 255, 255, 0.16) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  backdrop-filter: blur(10px) saturate(135%);
+  -webkit-backdrop-filter: blur(10px) saturate(135%);
+  box-shadow: 0 8px 28px rgba(91, 155, 213, 0.14);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.atri-control-btn {
+  width: 44px !important;
+  height: 44px !important;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.35) 0%, 
+    rgba(255, 255, 255, 0.15) 100%) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  border-radius: 50% !important;
+  color: rgba(91, 155, 213, 0.95) !important;
+  font-size: 17px !important;
+  cursor: pointer !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 
+              0 4px 8px rgba(0, 0, 0, 0.04),
+              inset 0 1px 2px rgba(255, 255, 255, 0.8),
+              inset 0 -1px 1px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  /* 移动端触摸优化 */
+  -webkit-tap-highlight-color: transparent !important;
+  touch-action: manipulation !important;
+  user-select: none !important;
+}
+
+.atri-control-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.3));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 50%;
+}
+
+.atri-control-btn:hover {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.45) 0%, 
+    rgba(255, 255, 255, 0.25) 100%) !important;
+  color: rgba(91, 155, 213, 1) !important;
+  transform: translateY(-3px) scale(1.08) !important;
+  box-shadow: 0 12px 32px rgba(91, 155, 213, 0.2), 
+              0 6px 16px rgba(0, 0, 0, 0.1),
+              inset 0 2px 3px rgba(255, 255, 255, 0.9),
+              inset 0 -2px 2px rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 移动端触摸反馈 - 替代 hover */
+@media (hover: none) and (pointer: coarse) {
+  .atri-control-btn:active {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.45) 0%, 
+      rgba(255, 255, 255, 0.25) 100%) !important;
+    transform: scale(0.95) !important;
+  }
+}
+
+.atri-control-btn:hover::before {
+  opacity: 1;
+}
+
+.atri-control-btn:active {
+  transform: translateY(-1px) scale(0.96) !important;
+  box-shadow: 0 4px 12px rgba(91, 155, 213, 0.15), 
+              0 2px 6px rgba(0, 0, 0, 0.08),
+              inset 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.1s ease !important;
+}
+
+/* 动画效果 */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes atriWave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+/* 欢迎动画 */
+#atri-live2d-widget.is-ready #atri-canvas {
+  animation: atriEntrance 1s ease-out;
+}
+
+@keyframes atriEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===================================================
+ * 移动端适配重构 (Responsive Design)
+ * ================================================== */
+
+/* 基础移动端优化 */
+@media (hover: none) and (pointer: coarse) {
+  /* 禁用 hover 效果，优化触摸体验 */
+  .atri-control-btn:hover { transform: none !important; box-shadow: none !important; }
+  #atri-live2d-widget:hover { transform: none !important; }
+  
+  /* 触摸反馈 */
+  .atri-control-btn:active { transform: scale(0.95) !important; background: rgba(255,255,255,0.4) !important; }
+}
+
+/* 平板设备 (Tablet: 769px - 1024px) */
+@media screen and (max-width: 1024px) and (min-width: 769px) {
+  #atri-live2d-widget { right: 10px !important; bottom: 0 !important; }
+  #atri-canvas { width: 280px !important; height: 400px !important; }
+  #atri-message-box {
+    top: -92px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    max-width: min(280px, calc(100vw - 20px));
+    font-size: 13px;
+    padding: 10px 18px;
+  }
+  .atri-control-btn { width: 38px !important; height: 38px !important; font-size: 15px !important; }
+}
+
+/* 移动设备 (Mobile: <= 768px) */
+@media screen and (max-width: 768px) {
+  /* ATRI Widget */
+  #atri-live2d-widget { right: 5px !important; bottom: 0 !important; }
+  #atri-canvas { width: 200px !important; height: 300px !important; }
+  
+  /* 消息框优化 */
+  #atri-message-box {
+    top: -74px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: auto;
+    max-width: min(230px, calc(100vw - 16px));
+    font-size: 12px;
+    padding: 8px 14px;
+    max-height: none;
+    overflow: visible;
+  }
+  
+  /* 控制按钮优化 */
+  #atri-controls { flex-wrap: wrap; max-width: 160px; gap: 6px; justify-content: flex-end; }
+  .atri-control-btn { width: 32px !important; height: 32px !important; font-size: 14px !important; margin: 0; }
+  
+  /* 音乐播放器优化 */
+  #music-player { left: 10px !important; bottom: 10px !important; max-width: calc(100vw - 220px); }
+  #music-info { max-width: 120px !important; min-width: auto !important; }
+  #music-title { font-size: 12px !important; }
+  #music-player-main { padding: 8px 12px !important; gap: 8px !important; }
+  #music-cover { width: 36px !important; height: 36px !important; }
+  #music-toggle, #music-volume-toggle, #music-hide-toggle, #music-next, #music-play-mode-toggle, #music-playlist-toggle { width: 32px !important; height: 32px !important; }
+  #music-volume-slider-wrap { width: 74px !important; height: 30px !important; }
+  #music-playlist-panel { width: min(260px, calc(100vw - 20px)); }
+  #music-lyrics-panel { width: min(260px, calc(100vw - 20px)); bottom: calc(100% + 8px); }
+}
+
+/* 小屏设备 (Small Mobile: <= 480px) */
+@media screen and (max-width: 480px) {
+  /* ATRI Widget */
+  #atri-live2d-widget { right: 0 !important; bottom: 50px !important; transform-origin: bottom right; transform: scale(0.9); }
+  #atri-canvas { width: 160px !important; height: 240px !important; }
+  
+  /* 消息框 */
+  #atri-message-box {
+    top: -62px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    max-width: min(170px, calc(100vw - 12px));
+    font-size: 11px;
+    padding: 6px 10px;
+    max-height: none;
+    overflow: visible;
+  }
+  
+  /* 控制按钮 - 竖排 */
+  #atri-controls { flex-direction: column; gap: 4px; top: 0; right: 0; }
+  .atri-control-btn { width: 28px !important; height: 28px !important; font-size: 12px !important; }
+  
+  /* 音乐播放器 - 极简模式 */
+  #music-player { bottom: 5px !important; left: 5px !important; max-width: calc(100vw - 10px); }
+  #music-info { display: none !important; } /* 隐藏信息，只留按钮 */
+  #music-player-main { padding: 6px !important; gap: 6px !important; border-radius: 20px !important; }
+  #music-cover { display: none !important; } /* 隐藏封面 */
+  #music-volume-slider-wrap { display: none !important; }
+  #music-playlist-panel { width: calc(100vw - 12px); bottom: calc(100% + 6px); }
+  #music-lyrics-panel { display: none !important; }
+  .music-playlist-items { max-height: 180px; }
+}
+
+/* 超小屏 (Tiny: <= 360px) */
+@media screen and (max-width: 360px) {
+  #atri-live2d-widget { transform: scale(0.72); transform-origin: bottom right; right: -10px !important; bottom: 36px !important; }
+  #atri-controls { transform: scale(1.08); transform-origin: top right; }
+  #music-player { max-width: 100% !important; }
+}
+
+/* 横屏模式 (Landscape) */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  #atri-live2d-widget { transform: scale(0.8); transform-origin: bottom right; right: 5px !important; bottom: -20px !important; }
+  #music-player { transform: scale(0.8); transform-origin: bottom left; left: 5px !important; bottom: 5px !important; }
+}
+
+/* 打印模式 */
+@media print {
+  #atri-live2d-widget, #music-player, #custom-cursor, #custom-cursor-trail { display: none !important; }
+}
+
+/* 打印时隐藏 */
+@media print {
+  #atri-live2d-widget,
+  #music-player {
+    display: none !important;
+  }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+  #atri-message-box {
+    background: rgba(36, 47, 60, 0.86);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    color: #bfd6ec;
+    border: 1px solid rgba(190, 219, 242, 0.24);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  #atri-message-box::after {
+    border-top-color: rgba(36, 47, 60, 0.86);
+  }
+
+  .atri-msg-zh {
+    color: #f2f9ff !important;
+    text-shadow: 0 1px 3px rgba(2, 7, 14, 0.62);
+  }
+
+  .atri-msg-ja {
+    color: #d8ecff !important;
+    text-shadow: 0 1px 2px rgba(5, 12, 22, 0.5);
+  }
+  
+  /* 暗色模式下的控制按钮 */
+  .atri-control-btn {
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.34) 0%,
+      rgba(255, 255, 255, 0.18) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-color: rgba(255, 255, 255, 0.45);
+    color: rgba(126, 184, 230, 0.98);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(91, 155, 213, 0.18);
+  }
+
+  .atri-control-btn i {
+    color: rgba(126, 184, 230, 0.98) !important;
+    text-shadow: 0 0 8px rgba(91, 155, 213, 0.28);
+  }
+  
+  .atri-control-btn:hover {
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.46) 0%,
+      rgba(255, 255, 255, 0.28) 100%);
+    color: #b7deff;
+    border-color: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 14px 34px rgba(91, 155, 213, 0.2), 0 6px 14px rgba(0, 0, 0, 0.14);
+  }
+
+  .atri-control-btn:hover i {
+    color: #b7deff !important;
+  }
+
+  #atri-controls::before {
+    background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.30) 0%,
+      rgba(255, 255, 255, 0.18) 100%);
+    border-color: rgba(255, 255, 255, 0.28);
+  }
+  
+  /* 暗色模式下的音乐播放器 */
+  #music-player-main {
+    background: rgba(255, 255, 255, 0.70) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 10px 34px rgba(91, 155, 213, 0.18), 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  }
+  
+  #music-toggle,
+  #music-volume-toggle,
+  #music-hide-toggle,
+  #music-next,
+  #music-play-mode-toggle,
+  #music-playlist-toggle,
+  #music-mini-btn {
+    background: rgba(255, 255, 255, 0.34) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border-color: rgba(255, 255, 255, 0.42) !important;
+    color: #7eb8e6 !important;
+  }
+
+  #music-toggle i,
+  #music-volume-toggle i,
+  #music-hide-toggle i,
+  #music-next i,
+  #music-play-mode-toggle i,
+  #music-playlist-toggle i,
+  #music-mini-btn i,
+  #music-icon,
+  #volume-icon,
+  #hide-icon,
+  #music-play-mode-icon,
+  #playlist-icon {
+    color: #7eb8e6 !important;
+    text-shadow: 0 0 8px rgba(91, 155, 213, 0.25);
+  }
+  
+  #music-toggle:hover,
+  #music-volume-toggle:hover,
+  #music-hide-toggle:hover,
+  #music-next:hover,
+  #music-play-mode-toggle:hover,
+  #music-playlist-toggle:hover,
+  #music-mini-btn:hover {
+    background: rgba(255, 255, 255, 0.46) !important;
+    color: #b7deff !important;
+  }
+
+  #music-toggle:hover i,
+  #music-volume-toggle:hover i,
+  #music-hide-toggle:hover i,
+  #music-next:hover i,
+  #music-play-mode-toggle:hover i,
+  #music-playlist-toggle:hover i,
+  #music-mini-btn:hover i {
+    color: #b7deff !important;
+  }
+  
+  #music-title {
+    color: #213b55 !important;
+  }
+  
+  #music-time,
+  #music-info > div:nth-child(2) {
+    color: #4f6b86 !important;
+  }
+
+  #music-volume-slider-wrap {
+    background: rgba(255, 255, 255, 0.30);
+    border-color: rgba(255, 255, 255, 0.42);
+  }
+
+  #music-volume-slider {
+    background: rgba(126, 184, 230, 0.42);
+  }
+
+  #music-volume-slider::-webkit-slider-thumb,
+  #music-volume-slider::-moz-range-thumb {
+    background: linear-gradient(145deg, #7eb8e6 0%, #b7deff 100%);
+    border-color: rgba(255, 255, 255, 0.95);
+  }
+  
+  #music-progress {
+    background: rgba(255, 255, 255, 0.22) !important;
+  }
+
+  #music-playlist-panel {
+    background: rgba(255, 255, 255, 0.82) !important;
+    border-color: rgba(255, 255, 255, 0.34) !important;
+  }
+
+  .music-playlist-item {
+    color: #2f4358 !important;
+  }
+
+  .music-playlist-item:hover {
+    background: rgba(91, 155, 213, 0.22) !important;
+  }
+
+  .music-playlist-item.is-active {
+    background: rgba(91, 155, 213, 0.32) !important;
+  }
+
+  .music-playlist-title {
+    color: #2f4358 !important;
+  }
+
+  .music-playlist-meta {
+    color: #55738f !important;
+  }
+
+  .music-playlist-header {
+    border-bottom-color: rgba(126, 184, 230, 0.34) !important;
+    color: #2f5579 !important;
+  }
+
+  #music-playlist-count {
+    background: rgba(126, 184, 230, 0.24) !important;
+    border-color: rgba(126, 184, 230, 0.4) !important;
+    color: #2f5579 !important;
+  }
+
+  #music-lyrics-panel {
+    background: linear-gradient(145deg,
+      rgba(255, 255, 255, 0.82) 0%,
+      rgba(221, 236, 251, 0.7) 100%) !important;
+    border-color: rgba(255, 255, 255, 0.42) !important;
+    box-shadow: 0 16px 40px rgba(18, 30, 48, 0.3), 0 8px 20px rgba(91, 155, 213, 0.24) !important;
+  }
+
+  #music-lyrics-track {
+    color: #274663 !important;
+  }
+
+  .music-lyric-line {
+    color: rgba(39, 70, 99, 0.8) !important;
+  }
+
+  .music-lyric-trans {
+    color: rgba(71, 103, 136, 0.9) !important;
+  }
+
+  .music-lyric-line.is-active {
+    color: #1f5d95 !important;
+    text-shadow: 0 0 10px rgba(91, 155, 213, 0.2) !important;
+  }
+}
+
+/* 音乐播放器按钮优化 */
+#music-toggle:hover,
+#music-volume-toggle:hover,
+#music-hide-toggle:hover,
+#music-next:hover,
+#music-play-mode-toggle:hover,
+#music-playlist-toggle:hover {
+  background: rgba(255, 255, 255, 0.4) !important;
+  transform: scale(1.05);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+#music-toggle:active,
+#music-volume-toggle:active,
+#music-hide-toggle:active,
+#music-next:active,
+#music-play-mode-toggle:active,
+#music-playlist-toggle:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
+}
+
+#music-mini-btn:hover {
+  background: rgba(255, 255, 255, 0.4) !important;
+  transform: scale(1.05);
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+#music-mini-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* 加载状态 */
+.atri-loading {
+  position: relative;
+}
+
+.atri-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(91, 155, 213, 0.3);
+  border-top-color: #5b9bd5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 悬停提示 */
+.atri-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.atri-control-btn:hover + .atri-tooltip {
+  opacity: 1;
+}
+
+/* 无障碍支持 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 音乐播放器按钮hover效果 */
+#music-toggle:hover,
+#music-volume-toggle:hover,
+#music-hide-toggle:hover,
+#music-next:hover,
+#music-play-mode-toggle:hover,
+#music-playlist-toggle:hover,
+#music-mini-btn:hover {
+  background: rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 移动端触摸反馈 */
+@media (hover: none) and (pointer: coarse) {
+  #music-toggle:active,
+  #music-volume-toggle:active,
+  #music-hide-toggle:active,
+  #music-next:active,
+  #music-play-mode-toggle:active,
+  #music-playlist-toggle:active,
+  #music-mini-btn:active {
+    background: rgba(255, 255, 255, 0.4) !important;
+    transform: scale(0.92) !important;
+  }
+}
+
+#music-toggle:active,
+#music-volume-toggle:active,
+#music-hide-toggle:active,
+#music-next:active,
+#music-play-mode-toggle:active,
+#music-playlist-toggle:active,
+#music-mini-btn:active {
+  transform: scale(0.95);
+}
+
+#music-player-main {
+  background: linear-gradient(145deg,
+    rgba(255, 255, 255, 0.94) 0%,
+    rgba(233, 244, 255, 0.88) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(18px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(165%) !important;
+  box-shadow: 0 16px 36px rgba(91, 155, 213, 0.2), 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+#music-player-main:hover {
+  box-shadow: 0 16px 40px rgba(91, 155, 213, 0.23), 0 8px 18px rgba(0, 0, 0, 0.1) !important;
+}
+
+#music-player[data-ginka-music-state="deferred"] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none !important;
+  transform: translate3d(0, 10px, 0);
+}
+
+#music-player[data-ginka-music-state="ready"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translate3d(0, 0, 0);
+}
+
+#music-title {
+  color: #284560 !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+#music-time,
+#music-info > div:nth-child(2) {
+  color: #4a6682 !important;
+  font-weight: 500;
+}
+
+#music-toggle,
+#music-volume-toggle,
+#music-hide-toggle,
+#music-next,
+#music-play-mode-toggle,
+#music-playlist-toggle,
+#music-mini-btn {
+  background: rgba(255, 255, 255, 0.62) !important;
+  border-color: rgba(154, 196, 232, 0.4) !important;
+  color: #3b7ab2 !important;
+}
+
+#music-toggle i,
+#music-volume-toggle i,
+#music-hide-toggle i,
+#music-next i,
+#music-play-mode-toggle i,
+#music-playlist-toggle i,
+#music-mini-btn i,
+#music-icon,
+#volume-icon,
+#hide-icon,
+#music-play-mode-icon,
+#playlist-icon {
+  color: #3b7ab2 !important;
+}
+
+/* 音乐播放器移动端样式优化 */
+#music-player * {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+#music-progress {
+  touch-action: none;
+}
+
+#music-volume-slider-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(154, 196, 232, 0.4);
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  box-shadow: 0 2px 8px rgba(91, 155, 213, 0.1);
+  flex-shrink: 0;
+}
+
+#music-volume-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(91, 155, 213, 0.28);
+  outline: none;
+  cursor: pointer;
+}
+
+#music-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: linear-gradient(145deg, #5b9bd5 0%, #7eb8e6 100%);
+  box-shadow: 0 2px 7px rgba(59, 122, 178, 0.32);
+}
+
+#music-volume-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(91, 155, 213, 0.28);
+}
+
+#music-volume-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: linear-gradient(145deg, #5b9bd5 0%, #7eb8e6 100%);
+  box-shadow: 0 2px 7px rgba(59, 122, 178, 0.32);
+}
+
+#music-play-mode-toggle.is-active {
+  background: rgba(126, 184, 230, 0.36) !important;
+  border-color: rgba(91, 155, 213, 0.56) !important;
+  box-shadow: 0 6px 14px rgba(91, 155, 213, 0.2) !important;
+}
+
+.music-lyric-main {
+  font-size: 14px;
+  line-height: 1.48;
+  font-weight: 600;
+  color: inherit;
+}
+
+.music-lyric-trans {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.42;
+  color: rgba(61, 96, 128, 0.85);
+  font-weight: 500;
+}
+
+#music-playlist-panel {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 12px);
+  width: min(320px, calc(100vw - 24px));
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  transform: translateY(10px);
+  transition: max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease, transform 0.32s ease;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  background: linear-gradient(145deg,
+    rgba(255, 255, 255, 0.93) 0%,
+    rgba(232, 244, 255, 0.88) 100%);
+  backdrop-filter: blur(20px) saturate(175%);
+  -webkit-backdrop-filter: blur(20px) saturate(175%);
+  box-shadow: 0 16px 34px rgba(91, 155, 213, 0.18), 0 10px 20px rgba(0, 0, 0, 0.12);
+  z-index: 52;
+}
+
+#music-playlist-panel.is-open {
+  max-height: 280px;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.music-playlist-header {
+  padding: 10px 12px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5b9bd5;
+  border-bottom: 1px solid rgba(91, 155, 213, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.music-playlist-header > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#music-playlist-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(91, 155, 213, 0.22);
+  background: rgba(91, 155, 213, 0.12);
+  color: #5b9bd5;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.music-playlist-items {
+  max-height: 232px;
+  overflow-y: auto;
+  padding: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91, 155, 213, 0.5) transparent;
+}
+
+.music-playlist-items::-webkit-scrollbar {
+  width: 6px;
+}
+
+.music-playlist-items::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(126, 184, 230, 0.8), rgba(91, 155, 213, 0.8));
+}
+
+.music-playlist-items::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.music-playlist-item {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  color: #2f4358;
+  text-align: left;
+  padding: 9px 11px;
+  margin: 3px 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: background-color 0.28s ease, border-color 0.28s ease, transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+.music-playlist-item:hover {
+  background: rgba(91, 155, 213, 0.18);
+  border-color: rgba(91, 155, 213, 0.24);
+  transform: translateY(-1px) translateX(1px);
+  box-shadow: 0 8px 18px rgba(91, 155, 213, 0.14);
+}
+
+.music-playlist-item.is-active {
+  background: linear-gradient(135deg, rgba(91, 155, 213, 0.3), rgba(126, 184, 230, 0.22));
+  border-color: rgba(91, 155, 213, 0.42);
+  box-shadow: 0 10px 22px rgba(91, 155, 213, 0.2);
+}
+
+.music-playlist-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2f4358;
+}
+
+.music-playlist-meta {
+  font-size: 11px;
+  color: #55738f;
+}
+
+body #journal-sidebar .music-source-retry {
+  margin-right: 7px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid rgba(91, 155, 213, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.55);
+  color: #386d99 !important;
+  font-size: 12px;
+  line-height: 24px;
+  text-align: center;
+  cursor: pointer;
+}
+
+body #journal-sidebar .music-source-retry:hover,
+body #journal-sidebar .music-source-retry:focus-visible {
+  background: rgba(91, 155, 213, 0.16);
+}
+
+body #journal-sidebar .music-source-retry.is-loading .fa-refresh {
+  animation: fa-spin 1s infinite linear;
+}
+
+#music-lyrics-panel {
+  position: fixed;
+  left: 16px;
+  bottom: 124px;
+  width: 220px;
+  max-width: calc(100vw - 24px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  background: linear-gradient(145deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(232, 244, 255, 0.9) 100%);
+  backdrop-filter: blur(20px) saturate(175%);
+  -webkit-backdrop-filter: blur(20px) saturate(175%);
+  box-shadow: 0 16px 34px rgba(91, 155, 213, 0.18), 0 9px 18px rgba(0, 0, 0, 0.12);
+  padding: 10px 10px 10px;
+  transition: opacity 0.32s ease, transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 42;
+}
+
+#music-lyrics-panel.is-hidden {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.music-lyrics-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: rgba(59, 122, 178, 0.95);
+  font-size: 12px;
+}
+
+#music-lyrics-track {
+  font-weight: 700;
+  color: #2c465f;
+  white-space: normal;
+  line-height: 1.35;
+  overflow: hidden;
+  max-height: 2.7em;
+}
+
+#music-lyrics-viewport {
+  position: relative;
+  height: 170px;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+}
+
+#music-lyrics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transform: translateY(0);
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.music-lyric-line {
+  color: rgba(48, 68, 88, 0.82);
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+  padding-left: 2px;
+  transition: color 0.32s ease, opacity 0.32s ease, transform 0.32s ease, text-shadow 0.32s ease;
+  opacity: 0.78;
+  transform: scale(0.98);
+  font-weight: 500;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.music-lyric-line.is-near {
+  opacity: 0.92;
+  transform: scale(1);
+}
+
+.music-lyric-line.is-dim {
+  opacity: 0.54;
+}
+
+.music-lyric-line.is-active {
+  color: #1f5d95;
+  opacity: 1;
+  transform: scale(1.01);
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(91, 155, 213, 0.2);
+}
+
+@media screen and (max-width: 1280px) {
+  #music-lyrics-panel {
+    left: 10px;
+    bottom: 116px;
+    width: 196px;
+  }
+
+  #music-lyrics-viewport {
+    height: 156px;
+  }
+}
+
+@media screen and (max-width: 1060px) {
+  #music-lyrics-panel {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #music-lyrics-panel {
+    width: min(220px, calc(100vw - 20px));
+    bottom: calc(100% + 10px);
+    padding: 8px 10px 10px;
+  }
+
+  #music-lyrics-viewport {
+    height: 120px;
+  }
+
+  .music-lyric-line {
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  #music-lyrics-panel {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #music-playlist-panel,
+  #music-lyrics-panel,
+  #music-lyrics-list,
+  .music-playlist-item,
+  .music-lyric-line {
+    transition-duration: 0.12s !important;
+  }
+}
+

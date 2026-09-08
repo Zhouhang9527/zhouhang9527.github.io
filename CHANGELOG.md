@@ -42,10 +42,10 @@
   - 灵活的样式自定义
 
 - **文档完善**
-  - [ATRI 使用说明](ATRI_使用说明.md) - 完整使用指南
+  - [ATRI 使用说明](docs/atri/ATRI_使用说明.md) - 完整使用指南
   - [ATRI 开发文档](docs/ATRI_GUIDE.md) - 技术实现详解
-  - [ATRI 快速参考](ATRI_QUICK_REFERENCE.md) - 速查表
-  - [ATRI 功能展示](source/_posts/atri-live2d-showcase.md) - 博客文章
+  - [ATRI 快速参考](docs/atri/ATRI_QUICK_REFERENCE.md) - 速查表
+  - [ATRI 功能展示](docs/guides/atri-live2d-showcase.md) - 历史展示文档
 
 ### 改进 🔧
 - 优化 ATRI 性能表现

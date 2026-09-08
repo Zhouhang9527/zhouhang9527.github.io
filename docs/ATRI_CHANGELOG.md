@@ -104,12 +104,12 @@
 
 | 文档名称 | 文件路径 | 说明 |
 |---------|---------|------|
-| ATRI 使用说明 | `ATRI_使用说明.md` | 完整用户指南 |
+| ATRI 使用说明 | `docs/atri/ATRI_使用说明.md` | 完整用户指南 |
 | ATRI 开发文档 | `docs/ATRI_GUIDE.md` | 技术实现详解 |
-| ATRI 快速参考 | `ATRI_QUICK_REFERENCE.md` | 速查表 |
+| ATRI 快速参考 | `docs/atri/ATRI_QUICK_REFERENCE.md` | 速查表 |
 | ATRI 功能总结 | `docs/ATRI_FEATURE_SUMMARY.md` | 功能总结 |
 | ATRI 验证清单 | `docs/ATRI_VERIFICATION_CHECKLIST.md` | 测试清单 |
-| ATRI 功能展示 | `source/_posts/atri-live2d-showcase.md` | 博客文章 |
+| ATRI 功能展示 | `docs/guides/atri-live2d-showcase.md` | 历史展示文档 |
 
 #### 🐛 问题修复
 

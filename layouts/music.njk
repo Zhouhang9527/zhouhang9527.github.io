@@ -1,0 +1,85 @@
+<!-- 背景音乐播放器 -->
+<div id="music-player" class="is-expanded" data-ginka-music-state="deferred" aria-label="音乐播放器">
+  <script id="ginka-music-config" type="application/json">{{ config.ginka_music | dump | safe }}</script>
+  <h2 class="journal-music-heading">随身听 <span>MUSIC</span></h2>
+  <audio id="bg-music" preload="none">您的浏览器不支持音频播放</audio>
+  
+  <!-- 播放器主体 -->
+  <div id="music-player-main">
+    <!-- 音乐封面 -->
+    <div id="music-cover">
+      <img data-sidebar-src="{{ config.root }}music/unhappy.jpg" alt="unhappy - s0rrow">
+    </div>
+    
+    <!-- 播放/暂停按钮 -->
+    <button id="music-toggle" title="播放/暂停">
+      <i class="fa fa-play" id="music-icon"></i>
+    </button>
+    
+    <!-- 音乐信息 -->
+    <div id="music-info">
+      <div class="music-info-row">
+        <span id="music-title">unhappy</span>
+        <span id="music-time">0:00 / 0:00</span>
+      </div>
+      <div class="music-artist">s0rrow / Single</div>
+      <div id="music-progress">
+        <div id="music-progress-bar"></div>
+      </div>
+    </div>
+    
+    <!-- 音量控制按钮 -->
+    <button id="music-volume-toggle" title="音量">
+      <i class="fa fa-volume-up" id="volume-icon"></i>
+    </button>
+
+    <div id="music-volume-slider-wrap" title="调节音量">
+      <input id="music-volume-slider" type="range" min="0" max="100" step="1" value="88" aria-label="音乐音量">
+    </div>
+    
+    <!-- 隐藏/显示按钮 -->
+    <button id="music-hide-toggle" title="隐藏播放器">
+      <i class="fa fa-chevron-down" id="hide-icon"></i>
+    </button>
+    
+    <!-- 下一首按钮 -->
+    <button id="music-next" title="下一首">
+      <i class="fa fa-step-forward"></i>
+    </button>
+
+    <button id="music-play-mode-toggle" title="播放模式：按列表">
+      <i class="fa fa-list-ol" id="music-play-mode-icon"></i>
+    </button>
+
+    <!-- 展开式播放列表 -->
+    <button id="music-playlist-toggle" title="播放列表">
+      <i class="fa fa-list-ul" id="playlist-icon"></i>
+    </button>
+  </div>
+
+  <div id="music-playlist-panel" aria-hidden="true">
+    <div class="music-playlist-header">
+      <span><i class="fa fa-list-ul"></i> 播放列表</span>
+      <span><button type="button" id="music-source-retry" class="music-source-retry" title="刷新在线歌单" aria-label="刷新在线歌单" aria-busy="false"><i class="fa fa-refresh" aria-hidden="true"></i></button><span id="music-playlist-count">0 首</span></span>
+    </div>
+    <div id="music-playlist-items" class="music-playlist-items"></div>
+  </div>
+
+  <div id="music-lyrics-panel" aria-live="polite">
+    <div class="music-lyrics-header">
+      <i class="fa fa-closed-captioning"></i>
+      <span id="music-lyrics-track">歌词加载中...</span>
+    </div>
+    <div id="music-lyrics-viewport">
+      <div id="music-lyrics-list">
+        <div class="music-lyric-line is-active"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 迷你模式按钮（隐藏时显示） -->
+  <button id="music-mini-btn" title="显示播放器">
+    <i class="fa fa-music"></i>
+  </button>
+</div>
+

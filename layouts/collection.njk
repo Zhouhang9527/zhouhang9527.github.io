@@ -1,0 +1,22 @@
+{% extends '_layout.njk' %}
+{% import '_macro/sidebar.njk' as sidebar_template with context %}
+{% block title %}{{ page.tag or page.category or '文章归档' }} | {{ title }}{% endblock %}
+{% block class %}journal-collection{% endblock %}
+{% block content %}
+  {% set collection_name = page.tag or page.category or '文章归档' %}
+  <header class="journal-masthead">
+    <div><a class="journal-breadcrumb" href="{{ url_for('/') }}">GINKA / mm9527</a><span class="journal-eyebrow">{{ 'TOPIC / 标签' if page.tag else ('CATEGORY / 分类' if page.category else 'ARCHIVE / 时间归档') }}</span><h1>{{ collection_name | escape }}</h1><p>{% if page.tag or page.category %}与这个主题相关的文章。{% else %}按时间整理的题解、分析与学习笔记。{% endif %}</p></div>
+    <img src="{{ url_for('/images/ginka/ocean.webp') }}" alt="" width="1000" height="562">
+  </header>
+  <nav class="journal-page-nav" aria-label="内容索引"><a href="{{ url_for('/archives/') }}">全部文章</a><a href="{{ url_for('/tags/') }}">按标签浏览</a><a href="{{ url_for('/categories/') }}">按分类浏览</a><span>{{ page.posts.length }} 篇 / 本页</span></nav>
+  <section class="journal-archive-list" aria-label="文章列表">
+    {% set previous_year = '' %}
+    {% for post in page.posts.toArray() %}
+      {% set year = date(post.date, 'YYYY') %}
+      {% if year != previous_year %}<h2 class="journal-archive-year">{{ year }}<span>YEAR / 年</span></h2>{% set previous_year = year %}{% endif %}
+      <article class="journal-archive-row"><time datetime="{{ date(post.date, 'YYYY-MM-DD') }}">{{ date(post.date, 'MM.DD') }}</time><div><h3><a href="{{ url_for(post.path) }}">{{ post.title | escape }}</a></h3><p>{{ truncate(strip_html(post.description or post.excerpt or ''), {length: 100, omission: '…'}) | escape }}</p></div><span aria-hidden="true">↗</span></article>
+    {% else %}<p class="journal-empty">这个主题还没有文章。</p>{% endfor %}
+  </section>
+  {% include '_partials/pagination.njk' %}
+{% endblock %}
+{% block sidebar %}{{ partial('journal-sidebar.njk', {display_toc: false}) }}{% endblock %}

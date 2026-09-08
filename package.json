@@ -12,17 +12,27 @@
   "scripts": {
     "dev": "hexo server --draft -p 4000",
     "server": "hexo server -p 4000",
+    "preview": "npm run build:clean && hexo server -p 4000",
     "backend": "node backend/ginka-backend-server.js",
-    "build": "hexo clean && hexo generate",
-    "deploy": "hexo clean && hexo generate && hexo deploy",
+    "build": "hexo generate",
+    "build:clean": "hexo clean && hexo generate",
+    "build:release": "hexo clean && hexo generate && npm run check:publish-assets",
+    "optimize:images": "node tools/optimize-images.js",
+    "check": "npm run check:perf && npm run check:inline && npm run check:publish-assets && npm run check:music-sources",
+    "check:perf": "node tools/checks/check-performance-guards.js",
+    "check:inline": "node tools/checks/check-inline-scripts.js",
+    "check:publish-assets": "node tools/checks/check-publish-assets.js",
+    "check:music-sources": "node tools/checks/check-music-sources.js",
+    "check:browser": "node tools/checks/browser-regression.js",
+    "deploy": "npm run build:release && hexo deploy",
     "clean": "hexo clean",
     "new": "hexo new",
     "new:reverse": "hexo new reverse",
     "new:pwn": "hexo new pwn"
   },
   "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=8.0.0"
+    "node": ">=20.19.0",
+    "npm": ">=10.0.0"
   },
   "hexo": {
     "version": "8.0.0"

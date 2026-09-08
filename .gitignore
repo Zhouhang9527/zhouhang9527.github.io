@@ -1,10 +1,30 @@
 .DS_Store
 Thumbs.db
-db.json
-*.log
+
+# Dependencies and generated Hexo output
 node_modules/
 public/
 .deploy*/
+db.json
 _multiconfig.yml
 data/post-stats.json
+
+# Local editor/runtime state
+.vscode/
+.playwright-mcp/
+.tmp_run/
+_archive/
+*.log
+.tmp_*
+.tmp-*
+*-deploy.tar.gz
+
+# Local verification screenshots
+*_verify_*.png
+atri-debug-current.png
+atri-performance-verify.png
+online-atri-debug.png
+lyrics-preview.png
+transition-check*.png
+editorial-*-final.jpeg
 

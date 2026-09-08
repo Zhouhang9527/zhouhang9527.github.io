@@ -1,0 +1,17 @@
+{% extends '_layout.njk' %}
+{% import '_macro/sidebar.njk' as sidebar_template with context %}
+
+{% block title %}{{ page.title }} | {{ title }}{% endblock %}
+
+{% block class %}post posts-expand{% endblock %}
+
+{% block content %}
+  <nav class="journal-reading-nav" aria-label="阅读导航"><a href="{{ url_for('/') }}">GINKA / mm9527</a><span>READING / 技术笔记</span><a href="{{ url_for('/archives/') }}">返回归档 ↗</a></nav>
+
+  {{ partial('_macro/post.njk', {post: page}) }}
+
+{% endblock %}
+
+{% block sidebar %}
+  {{ partial('journal-sidebar.njk', {display_toc: page.toc.enable}) }}
+{% endblock %}
