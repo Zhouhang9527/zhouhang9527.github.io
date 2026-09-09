@@ -9,6 +9,7 @@ const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const packageJson = JSON.parse(read('package.json'));
 const config = read('_config.next.yml');
 const head = read('source/_data/head.njk');
+const debugPage = read('source/debug-test.html');
 const effects = read('source/js/ginka-effects-loader.js');
 const shell = read('source/js/ginka-ui-shell.js');
 
@@ -88,6 +89,8 @@ assert.doesNotMatch(head, /cdn\.jsdelivr\.net|fonts\.googleapis\.com|fonts\.loli
 assert.doesNotMatch(head, /\burl_for\s*\(/);
 assert.match(head, /\/vendor\/fonts\/noto-serif-sc\/wght\.css/);
 assert.match(head, /\/vendor\/fonts\/jetbrains-mono\/wght\.css/);
+assert.doesNotMatch(debugPage, /cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net/);
+assert.match(debugPage, /\/vendor\/@fortawesome\/fontawesome-free\/7\.0\.0\/css\/all\.min\.css/);
 assert.doesNotMatch(effects, /cdn\.jsdelivr\.net/);
 assert.match(effects, /\/vendor\/gsap\/3\.12\.5\//);
 assert.doesNotMatch(shell, /cdn\.jsdelivr\.net\/npm\/canvas-nest/);
