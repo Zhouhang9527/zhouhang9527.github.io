@@ -544,7 +544,7 @@
     if (document.querySelector('script[data-ginka-canvas-nest]')) return;
 
     var script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js';
+    script.src = '/vendor/canvas-nest/1.0.1/canvas-nest.min.js';
     script.setAttribute('color', '91,155,213');
     script.setAttribute('opacity', '0.5');
     script.setAttribute('zIndex', '-1');
