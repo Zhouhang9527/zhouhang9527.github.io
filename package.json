@@ -18,12 +18,13 @@
     "build:clean": "hexo clean && hexo generate",
     "build:release": "hexo clean && hexo generate && npm run check:publish-assets",
     "optimize:images": "node tools/optimize-images.js",
-    "check": "npm run check:perf && npm run check:inline && npm run check:publish-assets && npm run check:music-sources && npm run check:cloudflare-purge",
+    "check": "npm run check:perf && npm run check:inline && npm run check:publish-assets && npm run check:music-sources && npm run check:cloudflare-purge && npm run check:local-assets",
     "check:perf": "node tools/checks/check-performance-guards.js",
     "check:inline": "node tools/checks/check-inline-scripts.js",
     "check:publish-assets": "node tools/checks/check-publish-assets.js",
     "check:music-sources": "node tools/checks/check-music-sources.js",
     "check:cloudflare-purge": "node tools/checks/cloudflare-purge-regression.js",
+    "check:local-assets": "node tools/checks/local-assets-regression.js",
     "check:browser": "node tools/checks/browser-regression.js",
     "cache:purge": "node tools/deploy/purge-cloudflare-cache.js",
     "deploy": "npm run build:release && hexo deploy && npm run cache:purge",
@@ -71,5 +72,4 @@
     "security"
   ]
 }
-
 
