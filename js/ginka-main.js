@@ -69,6 +69,24 @@
   };
 
   // ---------------------------------------------------------------
+  // Idle navigation prefetch: warm only same-origin pages after the user pauses.
+  // ---------------------------------------------------------------
+  const IdlePrefetch = {
+    init: function() {
+      if (!('requestIdleCallback' in window) || navigator.connection?.saveData) return;
+      const urls = ['/archives/', '/tags/', '/categories/', '/links/', '/about/'];
+      const run = () => urls.forEach((url, index) => setTimeout(() => {
+        if (document.querySelector(`link[rel="prefetch"][href="${url}"]`)) return;
+        const link = document.createElement('link');
+        link.rel = 'prefetch'; link.as = 'document'; link.href = url;
+        document.head.appendChild(link);
+      }, index * 900));
+      window.requestIdleCallback(run, { timeout: 5000 });
+    }
+  };
+  IdlePrefetch.init();
+
+  // ---------------------------------------------------------------
   // Reading Progress Bar
   // ---------------------------------------------------------------
   const ReadingProgress = {
