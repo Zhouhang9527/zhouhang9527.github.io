@@ -216,21 +216,21 @@ baidu_site_verification:
 # ---------------------------------------------------------------
 font:
   enable: true
-  host: https://fonts.loli.net
+  host: https://www.mm9527.top
   global:
-    external: true
-    family: "Noto Serif SC"
+    external: false
+    family: "Noto Serif SC Variable"
     size: 16
   headings:
-    external: true
-    family: "Noto Serif SC"
+    external: false
+    family: "Noto Serif SC Variable"
     size:
   posts:
-    external: true
-    family: "Noto Serif SC"
+    external: false
+    family: "Noto Serif SC Variable"
   codes:
-    external: true
-    family: "JetBrains Mono"
+    external: false
+    family: "JetBrains Mono Variable"
 
 # ---------------------------------------------------------------
 # Image & Media
@@ -318,7 +318,8 @@ dns_prefetch: true
 # ---------------------------------------------------------------
 vendors:
   internal: local
-  plugins: jsdelivr
+  plugins: custom
+  custom_cdn_url: "/vendor/${npm_name}/${version}/${minified}"
 
 # ---------------------------------------------------------------
 # Advanced Settings

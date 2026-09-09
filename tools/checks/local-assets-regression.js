@@ -83,7 +83,9 @@ assert.ok(
 assert.match(config, /vendors:\s*[\s\S]*?plugins:\s*custom/);
 assert.match(config, /custom_cdn_url:\s*["']?\/vendor\/\$\{npm_name\}\/\$\{version\}\/\$\{minified\}/);
 assert.doesNotMatch(config, /host:\s*https:\/\/fonts\./);
+assert.match(config, /font:\s*[\s\S]*?host:\s*https:\/\/www\.mm9527\.top/);
 assert.doesNotMatch(head, /cdn\.jsdelivr\.net|fonts\.googleapis\.com|fonts\.loli\.net/);
+assert.doesNotMatch(head, /\burl_for\s*\(/);
 assert.match(head, /\/vendor\/fonts\/noto-serif-sc\/wght\.css/);
 assert.match(head, /\/vendor\/fonts\/jetbrains-mono\/wght\.css/);
 assert.doesNotMatch(effects, /cdn\.jsdelivr\.net/);

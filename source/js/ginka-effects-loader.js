@@ -4,7 +4,7 @@
   if (window.__ginkaEffectsLoaderInstalled) return;
   window.__ginkaEffectsLoaderInstalled = true;
 
-  const CDN_ROOT = 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/';
+  const ASSET_ROOT = '/vendor/gsap/3.12.5/';
 
   function loadScript(name) {
     return new Promise(function (resolve, reject) {
@@ -16,7 +16,7 @@
       }
 
       const script = document.createElement('script');
-      script.src = CDN_ROOT + name;
+      script.src = ASSET_ROOT + name;
       script.async = true;
       script.crossOrigin = 'anonymous';
       script.dataset.ginkaEffect = name;
