@@ -1231,9 +1231,42 @@ body.sidebar-active #atri-restore { visibility: hidden !important; pointer-event
 }
 #atri-restore[hidden] { display: none; }
 @media (hover: none) { body #atri-controls { opacity: 1; pointer-events: auto; } }
-@media (max-width: 1199px) { #atri-restore { display: none; } }
+@media (max-width: 1199px) {
+  #atri-restore {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    right: 14px;
+    bottom: 18px;
+    min-height: 42px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: rgba(245, 248, 252, .94);
+    color: #376b8b;
+    box-shadow: 0 6px 18px rgba(41, 66, 91, .16);
+    backdrop-filter: blur(8px);
+  }
+  #atri-restore::before { content: '✦'; color: #6b9fae; }
+}
+@media (max-width: 480px) {
+  #atri-restore { right: 12px; bottom: 12px; min-height: 40px; font-size: 11px; }
+}
 @media (prefers-reduced-motion: reduce) {
   body #atri-live2d-widget, body #atri-canvas, body #atri-controls,
   body #atri-controls .atri-control-btn { transition: none !important; animation: none !important; }
 }
 @media print { #atri-restore { display: none !important; } }
+
+/* Clear, labeled controls for the ATRI panel. */
+#atri-controls .atri-control-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 38px; }
+#atri-controls .atri-control-btn span { font-size: 10px; line-height: 1; }
+#atri-controls .atri-control-btn i { color: inherit !important; }
+#atri-controls .atri-control-btn:focus-visible { outline: 3px solid #80adcb !important; outline-offset: 2px; }
+#atri-controls .atri-control-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 14px rgba(57,125,169,.18); }
+#atri-controls .atri-control-btn:active { transform: scale(.94); }
+#atri-controls .atri-control-btn.is-active { background: #dcecf5 !important; color: #2f769f !important; }
+#atri-controls .atri-control-btn span { pointer-events: none; }
+@media (max-width: 767px) {
+  #atri-controls .atri-control-btn span { display: none; }
+  #atri-controls .atri-control-btn { min-width: 40px; min-height: 40px; }
+}

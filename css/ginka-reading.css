@@ -1,5 +1,8 @@
 /* Markdown and article interactions. Code layout tables are not content tables. */
 body .post-body { overflow-wrap: anywhere; text-align: start; }
+.journal-post-meta { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 18px; color: var(--journal-muted); font-size: 12px; }
+.journal-post-meta span { padding: 5px 10px; border: 1px solid var(--journal-line); border-radius: 999px; background: var(--journal-surface-soft); }
+.journal-post-meta time { font-family: Consolas, monospace; color: #426f90; }
 body .post-body p { margin: 0 0 1.2em; text-align: start; }
 body .post-body :is(h1,h2,h3,h4,h5,h6) { line-height: 1.55; scroll-margin-top: 32px; }
 body .post-body :is(h2,h3,h4) { margin-bottom: .75em; }
@@ -43,7 +46,7 @@ body .post-body .journal-code figure.highlight .code { padding-left: 14px; paddi
 body .post-body .journal-code figure.highlight pre { white-space: pre; overflow-wrap: normal; word-break: normal; }
 body .post-body .journal-code .table-container { margin: 0; }
 body .post-body .journal-code .code-lang, body .post-body .journal-code .copy-btn { display: none; }
-body .journal-copy, body .journal-feedback-actions button { font: inherit; font-size: 13px; min-height: 44px; padding: 8px 14px; border: 1px solid var(--journal-line) !important; border-radius: var(--journal-radius-control); background: var(--journal-surface) !important; color: #425e77 !important; box-shadow: none !important; transform: none !important; cursor: pointer; }
+body #music-player button, body .search-popup button, body .journal-copy, body .journal-feedback-actions button { font: inherit; font-size: 13px; min-height: 44px; padding: 8px 14px; border: 1px solid var(--journal-line) !important; border-radius: var(--journal-radius-control); background: var(--journal-surface) !important; color: #425e77 !important; box-shadow: none !important; transform: none !important; cursor: pointer; }
 body .journal-copy:hover, body .journal-feedback-actions button:hover { background: #e0ebf4 !important; }
 body .journal-copy:disabled { cursor: wait; opacity: .65; }
 .journal-copy-buffer { position: fixed; top: 0; left: -9999px; }

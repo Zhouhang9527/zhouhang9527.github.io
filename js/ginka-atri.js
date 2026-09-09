@@ -737,6 +737,8 @@ window.__ginkaAtriReady = (async function () {
           e.preventDefault();
           e.stopPropagation();
           this.setVisible(false);
+          toggleBtn.setAttribute('aria-pressed', 'true');
+          toggleBtn.classList.add('is-active');
         });
       }
 

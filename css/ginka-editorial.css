@@ -264,3 +264,52 @@ body summary:focus-visible { outline: 3px solid #80adcb; outline-offset: 2px; bo
   body .main-inner { width: 100% !important; margin: 0 !important; }
   body .post-block { border: 0 !important; padding: 0 !important; box-shadow: none; }
 }
+
+/* Final polish: calm surfaces, clearer hierarchy, and resilient interactions. */
+:root {
+  --journal-focus: #2f769f;
+  --journal-glow: rgba(57, 125, 169, .14);
+}
+body { text-rendering: optimizeLegibility; }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -3;
+  background: radial-gradient(circle at 10% 0%, rgba(255,255,255,.72), transparent 34%),
+              radial-gradient(circle at 90% 15%, rgba(196,218,232,.24), transparent 30%);
+}
+body .header { border-bottom: 1px solid rgba(214,224,233,.72); }
+body .header .menu-item a,
+body .header .popup-trigger,
+.journal-actions a,
+.journal-entry-tags a,
+.journal-read { transition: color .2s ease, background-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+body .header .menu-item a:hover,
+body .header .popup-trigger:hover { box-shadow: 0 3px 12px var(--journal-glow); }
+.journal-entry { position: relative; }
+.journal-entry::after { content: ''; position: absolute; left: 0; bottom: -1px; width: 0; height: 2px; background: var(--journal-blue); transition: width .25s ease; }
+.journal-entry:hover::after { width: 56px; }
+.journal-entry h3 a { text-decoration-color: transparent; text-decoration-thickness: 2px; text-underline-offset: 4px; transition: color .2s, text-decoration-color .2s; }
+.journal-entry h3 a:hover { text-decoration-color: currentColor; }
+body .post-body a { text-decoration-thickness: 1px; text-underline-offset: 3px; }
+body .post-body hr { border: 0; border-top: 1px solid var(--journal-line); margin: 2.2em 0; }
+body .post-body :is(input, textarea, select):focus-visible { outline: 3px solid var(--journal-focus); outline-offset: 2px; }
+@media (max-width: 600px) {
+  body .main-inner, body .main-inner.ginka-home { width: calc(100% - 24px) !important; }
+  body header.header { width: calc(100% - 24px); }
+  .journal-chapters { grid-template-columns: repeat(3, 1fr); }
+  .journal-chapters a { justify-content: center; text-align: center; }
+  .journal-section-heading { align-items: flex-end; }
+  .journal-section-heading > a { min-height: 44px; display: inline-flex; align-items: center; }
+  body .post-block { padding: 22px 16px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
+@media (prefers-contrast: more) {
+  body, body .column { color: #172636; }
+  body a { text-decoration: underline; }
+  .journal-entry, .journal-profile, body .post-block { border-color: #7890a4 !important; }
+}

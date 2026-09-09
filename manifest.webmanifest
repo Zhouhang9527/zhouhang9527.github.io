@@ -1,0 +1,10 @@
+{
+  "name": "GINKA · Pwn & Reverse Engineering",
+  "short_name": "GINKA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#eef0f5",
+  "theme_color": "#eef0f5",
+  "lang": "zh-CN",
+  "icons": [{"src":"/images/favicon.png","sizes":"192x192","type":"image/png","purpose":"any maskable"}]
+}

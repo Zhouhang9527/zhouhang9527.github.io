@@ -126,7 +126,20 @@
     });
   }
 
+  function initReadingStats() {
+    document.querySelectorAll('[data-reading-stats]').forEach(node => {
+      const body = node.closest('.post')?.querySelector('.post-body');
+      const text = (node.dataset.readingText || body?.textContent || '').replace(/\s+/g, ' ').trim();
+      const chinese = (text.match(/[\u4e00-\u9fff]/g) || []).length;
+      const latin = (text.match(/[A-Za-z0-9_]+/g) || []).length;
+      const count = chinese + latin;
+      const minutes = Math.max(1, Math.ceil(count / 420));
+      node.textContent = `约 ${minutes} 分钟 · ${count} 字`;
+    });
+  }
+
   function boot() {
+    initReadingStats();
     if (tableObserver) tableObserver.disconnect();
     tableObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(entries => entries.forEach(entry => entry.target._ginkaTableUpdate?.())) : null;
     document.querySelectorAll('.post-body').forEach(body => {
