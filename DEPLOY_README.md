@@ -170,3 +170,19 @@ npm run cache:purge
 
 如果凭据缺失、网络异常或 Cloudflare API 拒绝请求，脚本只显示警告并返回成功，
 已经完成的 GitHub Pages 部署仍会保留。
+
+## 本地第三方静态资源
+
+页面使用的 Anime.js、PJAX、Fancybox、Font Awesome、Lozad、GSAP、Canvas Nest
+和字体已经改为随博客同域发布。依赖版本由 `package-lock.json` 锁定，Hexo 构建时
+会自动从 `node_modules` 生成 `/vendor/` 下的文件，不需要手工下载或提交压缩包。
+
+新检出的源码在构建前必须先安装依赖：
+
+```powershell
+npm ci
+npm run build:release
+```
+
+Meting 音乐接口、百度统计、普通外链以及 ATRI 大体积语音兜底仍保留外部访问；
+它们不属于页面关键静态依赖。
