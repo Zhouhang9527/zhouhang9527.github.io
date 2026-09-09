@@ -18,6 +18,7 @@ _archive/
 .tmp_*
 .tmp-*
 *-deploy.tar.gz
+.worktrees/
 
 # Local verification screenshots
 *_verify_*.png
