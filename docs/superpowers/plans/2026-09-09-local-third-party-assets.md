@@ -4,7 +4,7 @@
 
 **Goal:** Serve all page-critical third-party JavaScript, CSS, icons, and fonts from `www.mm9527.top` while preserving dynamic external services and optional ATRI voice fallbacks.
 
-**Architecture:** Pin the exact npm packages that match NexT 8.25.0, let `@next-theme/plugins` publish NexT vendor files under `/lib/`, and use one small Hexo generator to publish GSAP, Canvas Nest, and Fontsource WOFF2 files under `/vendor/`. Source loaders and font links use same-origin paths; a regression check enforces the contract against both source and generated output.
+**Architecture:** Pin only the packages used by the current NexT configuration and use one small Hexo generator to publish theme dependencies, GSAP, Canvas Nest, and Fontsource WOFF2 files under `/vendor/`. NexT's custom vendor URL template and source loaders use same-origin paths; a regression check enforces the contract against both source and generated output. The full `@next-theme/plugins` bundle is intentionally avoided because it installs hundreds of unused packages, including deprecated transitive dependencies.
 
 **Tech Stack:** Hexo 8, NexT 8.25.0, Node.js CommonJS, npm lockfile, `@next-theme/plugins`, GSAP, Canvas Nest, Fontsource variable WOFF2.
 
@@ -15,7 +15,7 @@
 - Create `tools/checks/local-assets-regression.js`: source and generated-output contract checks.
 - Create `scripts/local-vendor-assets.js`: publish a strict manifest of npm-owned files through Hexo routes.
 - Modify `package.json` and `package-lock.json`: pin packages and wire the new check.
-- Modify `_config.next.yml`: switch NexT plugin vendors to local and stop remote font generation.
+- Modify `_config.next.yml`: switch NexT plugin vendors to the same-origin custom template and stop remote font generation.
 - Modify `source/_data/head.njk`: load local font CSS and remove obsolete CDN connection hints.
 - Modify `source/js/ginka-effects-loader.js`: load GSAP and ScrollTrigger from `/vendor/`.
 - Modify `source/js/ginka-ui-shell.js`: load Canvas Nest from `/vendor/`.
@@ -47,12 +47,11 @@ const head = read('source/_data/head.njk');
 const effects = read('source/js/ginka-effects-loader.js');
 const shell = read('source/js/ginka-ui-shell.js');
 
-assert.equal(packageJson.dependencies['@next-theme/plugins'], '8.25.0');
 assert.equal(packageJson.dependencies.gsap, '3.12.5');
 assert.equal(packageJson.dependencies['canvas-nest.js'], '1.0.1');
 assert.equal(packageJson.dependencies['@fontsource-variable/noto-serif-sc'], '5.3.0');
 assert.equal(packageJson.dependencies['@fontsource-variable/jetbrains-mono'], '5.3.0');
-assert.match(config, /vendors:\s*[\s\S]*?plugins:\s*local/);
+assert.match(config, /vendors:\s*[\s\S]*?plugins:\s*custom/);
 assert.doesNotMatch(config, /host:\s*https:\/\/fonts\./);
 assert.doesNotMatch(head, /cdn\.jsdelivr\.net|fonts\.googleapis\.com|fonts\.loli\.net/);
 assert.match(head, /\/vendor\/fonts\/noto-serif-sc\/wght\.css/);
@@ -104,10 +103,10 @@ git commit -m "test: specify local third-party assets"
 Run:
 
 ```powershell
-npm install --save-exact @next-theme/plugins@8.25.0 gsap@3.12.5 canvas-nest.js@1.0.1 @fontsource-variable/noto-serif-sc@5.3.0 @fontsource-variable/jetbrains-mono@5.3.0
+npm install --save-exact animejs@3.2.1 @next-theme/pjax@0.6.0 @fancyapps/ui@5.0.31 @fortawesome/fontawesome-free@7.0.0 lozad@1.16.0 animate.css@3.1.1 gsap@3.12.5 canvas-nest.js@1.0.1 @fontsource-variable/noto-serif-sc@5.3.0 @fontsource-variable/jetbrains-mono@5.3.0
 ```
 
-Expected: `package.json` and `package-lock.json` record all five exact versions.
+Expected: `package.json` and `package-lock.json` record all ten exact versions without installing `@next-theme/plugins`.
 
 - [ ] **Step 2: Extend the regression check for the publishing manifest**
 
@@ -116,6 +115,13 @@ Add assertions before implementing the generator:
 ```js
 const generator = read('scripts/local-vendor-assets.js');
 for (const expected of [
+  'animejs/lib/anime.min.js',
+  '@next-theme/pjax/pjax.min.js',
+  '@fancyapps/ui/dist/fancybox/fancybox.umd.js',
+  '@fortawesome/fontawesome-free/css/all.min.css',
+  'lozad/dist/lozad.min.js',
+  'hexo-generator-searchdb/dist/search.js',
+  'animate.css/animate.min.css',
   'gsap/dist/gsap.min.js',
   'gsap/dist/ScrollTrigger.min.js',
   'canvas-nest.js/dist/canvas-nest.min.js',
@@ -141,6 +147,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const staticAssets = [
+  ['vendor/animejs/3.2.1/lib/anime.min.js', 'animejs/lib/anime.min.js'],
+  ['vendor/@next-theme/pjax/0.6.0/pjax.min.js', '@next-theme/pjax/pjax.min.js'],
+  ['vendor/@fancyapps/ui/5.0.31/dist/fancybox/fancybox.umd.js', '@fancyapps/ui/dist/fancybox/fancybox.umd.js'],
+  ['vendor/@fancyapps/ui/5.0.31/dist/fancybox/fancybox.css', '@fancyapps/ui/dist/fancybox/fancybox.css'],
+  ['vendor/lozad/1.16.0/dist/lozad.min.js', 'lozad/dist/lozad.min.js'],
+  ['vendor/hexo-generator-searchdb/1.5.0/dist/search.js', 'hexo-generator-searchdb/dist/search.js'],
+  ['vendor/animate.css/3.1.1/animate.min.css', 'animate.css/animate.min.css'],
   ['vendor/gsap/3.12.5/gsap.min.js', 'gsap/dist/gsap.min.js'],
   ['vendor/gsap/3.12.5/ScrollTrigger.min.js', 'gsap/dist/ScrollTrigger.min.js'],
   ['vendor/canvas-nest/1.0.1/canvas-nest.min.js', 'canvas-nest.js/dist/canvas-nest.min.js']
@@ -167,6 +180,7 @@ function fontRoutes(name, packageName) {
 
 hexo.extend.generator.register('local-vendor-assets', () => [
   ...staticAssets.map(([route, source]) => routeFile(route, source)),
+  ...referencedCssRoutes('vendor/@fortawesome/fontawesome-free/7.0.0/css/all.min.css', '@fortawesome/fontawesome-free/css/all.min.css'),
   ...fontRoutes('noto-serif-sc', '@fontsource-variable/noto-serif-sc'),
   ...fontRoutes('jetbrains-mono', '@fontsource-variable/jetbrains-mono')
 ]);
@@ -207,7 +221,7 @@ git commit -m "build: publish pinned local vendor assets"
 
 - [ ] **Step 1: Switch NexT vendors and fonts**
 
-Set `vendors.plugins: local`. Keep font families but disable NexT's external Google-font stylesheet generation:
+Set `vendors.plugins: custom` with a same-origin template. Keep font families but disable NexT's external Google-font stylesheet generation:
 
 ```yaml
 font:
@@ -228,7 +242,8 @@ font:
 
 vendors:
   internal: local
-  plugins: local
+  plugins: custom
+  custom_cdn_url: "/vendor/${npm_name}/${version}/${minified}"
 ```
 
 - [ ] **Step 2: Replace connection hints with local font stylesheets**
