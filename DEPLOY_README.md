@@ -145,3 +145,28 @@ hexo deploy  # 需要配置 _config.yml 的 deploy 选项
   - 添加 build.ps1 (PowerShell 构建脚本)
   - 确保 UTF-8 编码支持
   - 添加错误处理和进度显示
+
+## Cloudflare 部署后缓存清理
+
+生产部署成功后，`npm run deploy` 和 `deploy.bat` 的生产部署选项会尝试清理
+`mm9527.top` 与 `www.mm9527.top` 的 Cloudflare 缓存。Meting 子域名不会被
+清理。
+
+在 Cloudflare 中创建仅限 `mm9527.top`、权限为 `Cache Purge` 的 API Token，
+并从域名 Overview 页面复制 Zone ID。将它们保存为本机环境变量：
+
+```powershell
+$env:CLOUDFLARE_API_TOKEN = Read-Host 'Cloudflare API Token'
+$env:CLOUDFLARE_ZONE_ID = Read-Host 'Cloudflare Zone ID'
+```
+
+以上命令只设置当前 PowerShell 会话。不要把 Token 写入仓库、脚本或提交记录。
+
+可以单独测试清理命令：
+
+```powershell
+npm run cache:purge
+```
+
+如果凭据缺失、网络异常或 Cloudflare API 拒绝请求，脚本只显示警告并返回成功，
+已经完成的 GitHub Pages 部署仍会保留。
