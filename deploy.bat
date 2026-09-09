@@ -13,8 +13,8 @@ echo.
 echo  [1] 本地测试 (清理 + 生成 + 启动)
 echo  [2] 仅生成 (不清理，快速生成)
 echo  [3] 清理缓存
-echo  [4] 部署到 GitHub Pages
-echo  [5] 完整流程 (清理 + 生成 + 部署)
+echo  [4] 部署到 GitHub Pages + 清理 Cloudflare 缓存
+echo  [5] 完整流程 (清理 + 生成 + 部署 + CDN 清理)
 echo  [6] 仅启动本地服务器
 echo  [0] 退出
 echo.
@@ -116,6 +116,11 @@ if errorlevel 1 (
     pause
     goto MENU
 )
+echo 正在清理 Cloudflare 博客缓存...
+call npm run cache:purge
+if errorlevel 1 (
+    echo ⚠ Cloudflare 缓存清理命令异常，GitHub Pages 部署已保留。
+)
 echo.
 echo ✓ 部署完成！
 echo.
@@ -128,12 +133,12 @@ echo ═════════════════════════
 echo  完整部署流程
 echo ════════════════════════════════════════
 echo.
-echo [1/3] 强制清理...
+echo [1/4] 强制清理...
 rd /s /q public 2>nul
 if exist db.json del /f /q db.json 2>nul
 echo ✓ 清理完成！
 echo.
-echo [2/3] 生成静态文件...
+echo [2/4] 生成静态文件...
 call hexo generate
 if errorlevel 1 (
     echo ✗ 生成失败！
@@ -142,12 +147,18 @@ if errorlevel 1 (
 )
 echo ✓ 生成完成！
 echo.
-echo [3/3] 部署到 GitHub Pages...
+echo [3/4] 部署到 GitHub Pages...
 call hexo deploy
 if errorlevel 1 (
     echo ✗ 部署失败！
     pause
     goto MENU
+)
+echo.
+echo [4/4] 清理 Cloudflare 博客缓存...
+call npm run cache:purge
+if errorlevel 1 (
+    echo ⚠ Cloudflare 缓存清理命令异常，GitHub Pages 部署已保留。
 )
 echo.
 echo ✓ 完整部署流程完成！

@@ -1,6 +1,7 @@
 'use strict';
 
 const assert = require('assert');
+const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
@@ -131,6 +132,29 @@ const run = async () => {
   });
   assert.strictEqual(cli.status, 0, cli.stderr || cli.stdout);
   assert.match(`${cli.stdout}\n${cli.stderr}`, /warning|警告/i);
+
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.resolve(__dirname, '../../package.json'), 'utf8')
+  );
+  assert.strictEqual(
+    packageJson.scripts['cache:purge'],
+    'node tools/deploy/purge-cloudflare-cache.js'
+  );
+  assert.match(
+    packageJson.scripts.deploy,
+    /hexo deploy && npm run cache:purge$/
+  );
+  assert.match(packageJson.scripts.check, /npm run check:cloudflare-purge/);
+
+  const deployBatch = fs.readFileSync(
+    path.resolve(__dirname, '../../deploy.bat'),
+    'utf8'
+  );
+  assert.strictEqual(
+    (deployBatch.match(/call npm run cache:purge/g) || []).length,
+    2,
+    'both production batch deployment paths must purge Cloudflare'
+  );
 
   console.log('PASS Cloudflare cache purge regression checks');
 };
