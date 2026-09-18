@@ -123,24 +123,6 @@
       </tags>
   </entry>
   <entry>
-    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] ez_tea<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="题目八-ez-tea"><a href="#题目八-ez-tea" class="headerlink" title="题目八:ez_tea"></a>题目八:ez_tea</h3><p>程序执行前会先弹对话框提示“检测到调试器”，随后直接退出。查 API 引用时能看到 <code>MessageBox</code> 和常见的 <code>IsDebuggerPresent</code> 等函数，锁定反调试模块后，把入口 patch 成 <code>ret</code> 就能让程序安静下来。</p>
-<p>绕过之后继续动调，发现读入的 flag 先被简单混淆，再走了一遍改造过常量的 TEA。把加密块和新的 key dump 出来，照旧写脚本倒着执行 —— 每轮扣掉 <code>delta</code>、处理高位低位、循环 32 次。最后把混淆操作按原逻辑逆过来（按位异或&#x2F;加减）就能还原明文。</p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>动态调试</tag>
-        <tag>反反调试</tag>
-        <tag>TEA</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>[NSSCTF 2025 秋招赛] Ultimate Packer for eXecutables</title>
     <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DUltimate%20Packer%20for%20eXecutables/</url>
     <content><![CDATA[<h3 id="题目四-Ultimate-Packer-for-eXecutables"><a href="#题目四-Ultimate-Packer-for-eXecutables" class="headerlink" title="题目四:Ultimate Packer for eXecutables"></a>题目四:Ultimate Packer for eXecutables</h3><p>DIE 显示样本被 UPX 压缩，还提示入口信息异常。</p>
@@ -196,8 +178,26 @@
         <tag>CTF</tag>
         <tag>Reverse</tag>
         <tag>动态调试</tag>
-        <tag>反反调试</tag>
         <tag>Linux</tag>
+        <tag>反反调试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[NSSCTF 2025 秋招赛] ez_tea</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5Dez_tea/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] ez_tea<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><h3 id="题目八-ez-tea"><a href="#题目八-ez-tea" class="headerlink" title="题目八:ez_tea"></a>题目八:ez_tea</h3><p>程序执行前会先弹对话框提示“检测到调试器”，随后直接退出。查 API 引用时能看到 <code>MessageBox</code> 和常见的 <code>IsDebuggerPresent</code> 等函数，锁定反调试模块后，把入口 patch 成 <code>ret</code> 就能让程序安静下来。</p>
+<p>绕过之后继续动调，发现读入的 flag 先被简单混淆，再走了一遍改造过常量的 TEA。把加密块和新的 key dump 出来，照旧写脚本倒着执行 —— 每轮扣掉 <code>delta</code>、处理高位低位、循环 32 次。最后把混淆操作按原逻辑逆过来（按位异或&#x2F;加减）就能还原明文。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>动态调试</tag>
+        <tag>反反调试</tag>
+        <tag>TEA</tag>
       </tags>
   </entry>
   <entry>
@@ -224,6 +224,23 @@
       </tags>
   </entry>
   <entry>
+    <title>[NSSCTF 2025 秋招赛] 一种很新的签到</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E4%B8%80%E7%A7%8D%E5%BE%88%E6%96%B0%E7%9A%84%E7%AD%BE%E5%88%B0/</url>
+    <content><![CDATA[<h3 id="题目一-一种很新的签到"><a href="#题目一-一种很新的签到" class="headerlink" title="题目一:一种很新的签到"></a>题目一:一种很新的签到</h3><p>先把程序丢进 DIE，确认没有装壳之后直接交给 IDA 处理。</p>
+<p><img data-src="pasted-image-20251103232546.png"></p>
+<p>IDA 里进入 <code>main</code>，按 <code>F5</code> 虽然能看到伪代码，但流程有些噪音。直接 <code>Shift+F12</code> 查看字符串表，硬编码的 flag 就明晃晃地躺在那里，抄下来提交即可。</p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>IDA Pro</tag>
+        <tag>签到题</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！</title>
     <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E6%9D%A5%E4%BA%86%E5%97%B7%EF%BC%8C%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E5%A4%A7%E6%9D%82%E7%83%A9%EF%BC%81/</url>
     <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: [NSSCTF 2025 秋招赛] 来了嗷，常见加密大杂烩！<br><strong>类型</strong>: Reverse Engineering<br><strong>难度</strong>: 中等</p>
@@ -245,11 +262,18 @@
       </tags>
   </entry>
   <entry>
-    <title>[NSSCTF 2025 秋招赛] 一种很新的签到</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E4%B8%80%E7%A7%8D%E5%BE%88%E6%96%B0%E7%9A%84%E7%AD%BE%E5%88%B0/</url>
-    <content><![CDATA[<h3 id="题目一-一种很新的签到"><a href="#题目一-一种很新的签到" class="headerlink" title="题目一:一种很新的签到"></a>题目一:一种很新的签到</h3><p>先把程序丢进 DIE，确认没有装壳之后直接交给 IDA 处理。</p>
-<p><img data-src="pasted-image-20251103232546.png"></p>
-<p>IDA 里进入 <code>main</code>，按 <code>F5</code> 虽然能看到伪代码，但流程有些噪音。直接 <code>Shift+F12</code> 查看字符串表，硬编码的 flag 就明晃晃地躺在那里，抄下来提交即可。</p>
+    <title>[NSSCTF 2025 秋招赛] 哈基米</title>
+    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E5%93%88%E5%9F%BA%E7%B1%B3/</url>
+    <content><![CDATA[<h3 id="题目三-哈基米"><a href="#题目三-哈基米" class="headerlink" title="题目三:哈基米"></a>题目三:哈基米</h3><p>附件是一个 exe，拖进 DIE 一眼就能看出是 PyInstaller 打包。</p>
+<p><img data-src="pasted-image-20251104110246.png"></p>
+<p>直接用 <code>pyinstxtractor</code> 解包，能拿到一堆 <code>pyc</code> 文件。</p>
+<p><img data-src="pasted-image-20251104110649.png"></p>
+<p>在生成的 <code>pyi</code> 清单里能看到目标运行时是 Python 3.8。</p>
+<p><img data-src="pasted-image-20251104110755.png"></p>
+<p>因此反编译时选 <code>uncompyle6</code>（或仓库里的 <code>Exe-decompiling</code>），优先把 <code>HJM.pyc</code> 还原。</p>
+<p><img data-src="pasted-image-20251104113113.png"></p>
+<p>伪代码里引用了另一个模块里的 <code>CHARS1</code>。顺着路径继续反编译，就能得到生成表的逻辑。把那段代码抄进自己的脚本，按原算法恢复字母表，再和密文做一遍同样的处理即可拿到 flag。</p>
+<p><img data-src="pasted-image-20251104133841.png"></p>
 ]]></content>
       <categories>
         <category>reverse</category>
@@ -257,8 +281,9 @@
       <tags>
         <tag>CTF</tag>
         <tag>Reverse</tag>
-        <tag>IDA Pro</tag>
-        <tag>签到题</tag>
+        <tag>PyInstaller</tag>
+        <tag>Python反编译</tag>
+        <tag>pycdc</tag>
       </tags>
   </entry>
   <entry>
@@ -296,66 +321,6 @@
         <tag>RC4</tag>
         <tag>反调试</tag>
         <tag>Patch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[NSSCTF 2025 秋招赛] 哈基米</title>
-    <url>/2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5D%E5%93%88%E5%9F%BA%E7%B1%B3/</url>
-    <content><![CDATA[<h3 id="题目三-哈基米"><a href="#题目三-哈基米" class="headerlink" title="题目三:哈基米"></a>题目三:哈基米</h3><p>附件是一个 exe，拖进 DIE 一眼就能看出是 PyInstaller 打包。</p>
-<p><img data-src="pasted-image-20251104110246.png"></p>
-<p>直接用 <code>pyinstxtractor</code> 解包，能拿到一堆 <code>pyc</code> 文件。</p>
-<p><img data-src="pasted-image-20251104110649.png"></p>
-<p>在生成的 <code>pyi</code> 清单里能看到目标运行时是 Python 3.8。</p>
-<p><img data-src="pasted-image-20251104110755.png"></p>
-<p>因此反编译时选 <code>uncompyle6</code>（或仓库里的 <code>Exe-decompiling</code>），优先把 <code>HJM.pyc</code> 还原。</p>
-<p><img data-src="pasted-image-20251104113113.png"></p>
-<p>伪代码里引用了另一个模块里的 <code>CHARS1</code>。顺着路径继续反编译，就能得到生成表的逻辑。把那段代码抄进自己的脚本，按原算法恢复字母表，再和密文做一遍同样的处理即可拿到 flag。</p>
-<p><img data-src="pasted-image-20251104133841.png"></p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>PyInstaller</tag>
-        <tag>Python反编译</tag>
-        <tag>pycdc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[miniVN] ezAndroid</title>
-    <url>/2025/12/23/%5BminiVN%5D%20ezAndroid/</url>
-    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: ezAndroid<br><strong>类型</strong>: Reverse Engineering &#x2F; Android</p>
-<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>直接 jadx 打开，定位到 <code>MainActivity</code>。</p>
-<p><img data-src="image-20251207134252867.png"></p>
-<p>逻辑就是先检查 flag 的长度是否为 31、是否是 <code>VNCTF{}</code> 格式，然后把花括号内部的内容分别传进 <code>check1</code> 和 <code>check2</code>。</p>
-<p><img data-src="image-20251207134445601.png"></p>
-<p>再去 <code>value/strings.xml</code> 找到 AES 用的 key。</p>
-<p><img data-src="image-20251207134541436.png"></p>
-<p>用 CyberChef 解出第一部分。</p>
-<p><img data-src="image-20251207134700960.png"></p>
-<p>从这里可以看到 <code>check2</code> 的逻辑在 so 层，解压 apk 用 IDA 打开 so 文件。</p>
-<p><img data-src="image-20251207134710357.png"></p>
-<p>发现是一个 XTEA 加密，key 已经给出了：<code>Th1sIsAn3asyChal</code>。</p>
-<p><img data-src="image-20251207134901393.png"></p>
-<p><img data-src="image-20251207135007174.png"></p>
-<p>再通过交叉引用找到 delta 的值。</p>
-<p><img data-src="image-20251207135036412.png"></p>
-<p>写出解密脚本解出第二部分。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">u32</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x &amp; <span class="number">0xFFFFFFFF</span></span><br><span class="line"></span><br><span class="line">keyy = [<span class="number">0x73316854</span>, <span class="number">0x6E417349</span>, <span class="number">0x79736133</span>, <span class="number">0x6C616843</span>]</span><br><span class="line"></span><br><span class="line">enc_v1, enc_v2 = <span class="number">0xAD05217D</span>, <span class="number">0xF7C0C3E2</span></span><br><span class="line"></span><br><span class="line">delta = <span class="number">1743291877</span></span><br><span class="line"></span><br><span class="line">sum_ = u32(delta * <span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">v1, v2 = enc_v1, enc_v2</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line">    v2 = u32(v2 - ((keyy[(sum_ &gt;&gt; <span class="number">8</span>) &amp; <span class="number">3</span>] + sum_) ^ (v1 + ((v1 &gt;&gt; <span class="number">5</span>) ^ (<span class="number">4</span> * v1)))))</span><br><span class="line">    v1 = u32(v1 - ((keyy[sum_ &amp; <span class="number">3</span>] + sum_) ^ (v2 + ((v2 &gt;&gt; <span class="number">6</span>) ^ (<span class="number">8</span> * v2)))))</span><br><span class="line">    sum_ = u32(sum_ - delta)</span><br><span class="line"></span><br><span class="line">flag_bytes = struct.pack(<span class="string">&#x27;&lt;II&#x27;</span>, v1, v2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;bytes:&#x27;</span>, flag_bytes)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;hex  :&#x27;</span>, flag_bytes.<span class="built_in">hex</span>())</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;utf-8:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="keyword">except</span> UnicodeDecodeError:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;latin1:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;latin-1&#x27;</span>))</span><br><span class="line"><span class="comment"># nd_xt3a!</span></span><br></pre></td></tr></table></figure>
-
-<p>最终得到完整 flag：<code>VNCTF{u_Know_@ndro1d_And_xt3a!}</code></p>
-]]></content>
-      <categories>
-        <category>reverse</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>Reverse</tag>
-        <tag>XTEA</tag>
-        <tag>Android</tag>
-        <tag>AES</tag>
       </tags>
   </entry>
   <entry>
@@ -399,9 +364,9 @@
         <tag>Reverse</tag>
         <tag>RC4</tag>
         <tag>XTEA</tag>
-        <tag>AES</tag>
         <tag>MD5</tag>
         <tag>爆破</tag>
+        <tag>AES</tag>
       </tags>
   </entry>
   <entry>
@@ -503,6 +468,77 @@
         <tag>Windows</tag>
         <tag>WinDbg</tag>
         <tag>页表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[miniVN] ezAndroid</title>
+    <url>/2025/12/23/%5BminiVN%5D%20ezAndroid/</url>
+    <content><![CDATA[<h2 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h2><p><strong>题目名称</strong>: ezAndroid<br><strong>类型</strong>: Reverse Engineering &#x2F; Android</p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>直接 jadx 打开，定位到 <code>MainActivity</code>。</p>
+<p><img data-src="image-20251207134252867.png"></p>
+<p>逻辑就是先检查 flag 的长度是否为 31、是否是 <code>VNCTF{}</code> 格式，然后把花括号内部的内容分别传进 <code>check1</code> 和 <code>check2</code>。</p>
+<p><img data-src="image-20251207134445601.png"></p>
+<p>再去 <code>value/strings.xml</code> 找到 AES 用的 key。</p>
+<p><img data-src="image-20251207134541436.png"></p>
+<p>用 CyberChef 解出第一部分。</p>
+<p><img data-src="image-20251207134700960.png"></p>
+<p>从这里可以看到 <code>check2</code> 的逻辑在 so 层，解压 apk 用 IDA 打开 so 文件。</p>
+<p><img data-src="image-20251207134710357.png"></p>
+<p>发现是一个 XTEA 加密，key 已经给出了：<code>Th1sIsAn3asyChal</code>。</p>
+<p><img data-src="image-20251207134901393.png"></p>
+<p><img data-src="image-20251207135007174.png"></p>
+<p>再通过交叉引用找到 delta 的值。</p>
+<p><img data-src="image-20251207135036412.png"></p>
+<p>写出解密脚本解出第二部分。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">u32</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x &amp; <span class="number">0xFFFFFFFF</span></span><br><span class="line"></span><br><span class="line">keyy = [<span class="number">0x73316854</span>, <span class="number">0x6E417349</span>, <span class="number">0x79736133</span>, <span class="number">0x6C616843</span>]</span><br><span class="line"></span><br><span class="line">enc_v1, enc_v2 = <span class="number">0xAD05217D</span>, <span class="number">0xF7C0C3E2</span></span><br><span class="line"></span><br><span class="line">delta = <span class="number">1743291877</span></span><br><span class="line"></span><br><span class="line">sum_ = u32(delta * <span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">v1, v2 = enc_v1, enc_v2</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line">    v2 = u32(v2 - ((keyy[(sum_ &gt;&gt; <span class="number">8</span>) &amp; <span class="number">3</span>] + sum_) ^ (v1 + ((v1 &gt;&gt; <span class="number">5</span>) ^ (<span class="number">4</span> * v1)))))</span><br><span class="line">    v1 = u32(v1 - ((keyy[sum_ &amp; <span class="number">3</span>] + sum_) ^ (v2 + ((v2 &gt;&gt; <span class="number">6</span>) ^ (<span class="number">8</span> * v2)))))</span><br><span class="line">    sum_ = u32(sum_ - delta)</span><br><span class="line"></span><br><span class="line">flag_bytes = struct.pack(<span class="string">&#x27;&lt;II&#x27;</span>, v1, v2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;bytes:&#x27;</span>, flag_bytes)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;hex  :&#x27;</span>, flag_bytes.<span class="built_in">hex</span>())</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;utf-8:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="keyword">except</span> UnicodeDecodeError:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;latin1:&#x27;</span>, flag_bytes.decode(<span class="string">&#x27;latin-1&#x27;</span>))</span><br><span class="line"><span class="comment"># nd_xt3a!</span></span><br></pre></td></tr></table></figure>
+
+<p>最终得到完整 flag：<code>VNCTF{u_Know_@ndro1d_And_xt3a!}</code></p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Reverse</tag>
+        <tag>XTEA</tag>
+        <tag>AES</tag>
+        <tag>Android</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>学习通 Android 梆梆加固动态脱壳分析</title>
+    <url>/2026/09/18/%E5%AD%A6x%E9%80%9A-%E6%A2%86%E6%A2%86%E4%BC%81%E4%B8%9A%E7%89%88%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<h3 id="attachBaseContent"><a href="#attachBaseContent" class="headerlink" title="attachBaseContent"></a>attachBaseContent</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">String</span> <span class="variable">APPNAME</span> <span class="operator">=</span> <span class="string">&quot;com.chaoxing.mobile.AppApplication&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">attachBaseContext</span><span class="params">(Context context)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">int</span>[] iArr = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">0</span>];</span><br><span class="line">            H.sApp = <span class="built_in">this</span>;  </span><br><span class="line">            H.sAppInfo = context.getApplicationInfo(); </span><br><span class="line">            H.load(H.sAppInfo); </span><br><span class="line">            mBootStrapApplication = <span class="built_in">this</span>;  </span><br><span class="line">            <span class="built_in">super</span>.attachBaseContext(context); </span><br><span class="line">            doAttach(<span class="built_in">this</span>, H.APPNAME); </span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception ex1) &#123; </span><br><span class="line">            <span class="keyword">throw</span> ex1; </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="H-load"><a href="#H-load" class="headerlink" title="H.load"></a>H.load</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">String</span> <span class="variable">X86_LIBRARY</span> <span class="operator">=</span> <span class="string">&quot;DexHelper-x86&quot;</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">String</span> <span class="variable">ARM_LIBRARY</span> <span class="operator">=</span> <span class="string">&quot;DexHelper&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">load</span><span class="params">(ApplicationInfo applicationInfo)</span> <span class="keyword">throws</span> Exception &#123;  </span><br><span class="line">        <span class="keyword">try</span> &#123;  </span><br><span class="line">            <span class="type">int</span>[] iArr = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">0</span>]; </span><br><span class="line">            <span class="keyword">synchronized</span> (isLoaded) &#123;  </span><br><span class="line">                <span class="keyword">if</span> (!isLoaded.booleanValue()) &#123;  </span><br><span class="line">                    <span class="keyword">try</span> &#123;  </span><br><span class="line">                        System.loadLibrary(isNeedLoadX86() ? X86_LIBRARY : ARM_LIBRARY);  </span><br><span class="line">                    &#125; <span class="keyword">catch</span> (Throwable unused) &#123;  </span><br><span class="line">                        loadLib(applicationInfo);  </span><br><span class="line">                    &#125;  </span><br><span class="line">                    isLoaded = Boolean.TRUE;  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125; </span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception ex1) &#123;  </span><br><span class="line">            <span class="keyword">throw</span> ex1;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="AW-doAttach"><a href="#AW-doAttach" class="headerlink" title="AW.doAttach"></a>AW.doAttach</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">doAttach</span><span class="params">(Application application, String str)</span> <span class="keyword">throws</span> Exception &#123; </span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">int</span>[] iArr = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">if</span> (TextUtils.isEmpty(str) || H.ORI_AW_NAME.equals(str)) &#123;  </span><br><span class="line">                <span class="keyword">return</span>;  </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="type">Context</span> <span class="variable">baseContext</span> <span class="operator">=</span> application.getBaseContext();</span><br><span class="line">                Class&lt;?&gt; clsLoadClass = application.getClassLoader().loadClass(str);</span><br><span class="line">                <span class="keyword">if</span> (realApplication == <span class="literal">null</span>) &#123;</span><br><span class="line">                    realApplication = (Application) clsLoadClass.newInstance();</span><br><span class="line">                &#125;</span><br><span class="line">                H.invokeMethod(Application.class, realApplication, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;baseContext&#125;, <span class="string">&quot;attach&quot;</span>, Context.class);</span><br><span class="line">                H.invokeMethod(baseContext.getClass(), baseContext, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;realApplication&#125;, <span class="string">&quot;setOuterContext&quot;</span>, Context.class);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception ex1) &#123;</span><br><span class="line">            <span class="keyword">throw</span> ex1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Oncreate"><a href="#Oncreate" class="headerlink" title="Oncreate"></a>Oncreate</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] iArr = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">0</span>];</span><br><span class="line">        <span class="built_in">super</span>.onCreate();</span><br><span class="line">        hook(<span class="built_in">this</span>, H.APPNAME);</span><br><span class="line">        replaceApplicationContext(<span class="built_in">this</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception ex1) &#123;</span><br><span class="line">        <span class="keyword">throw</span> ex1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="hook"><a href="#hook" class="headerlink" title="hook"></a>hook</h3><figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">void</span> hook(Application application, String str) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">int</span>[] iArr = <span class="keyword">new</span> <span class="type">int</span>[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">if</span> (TextUtils.isEmpty(str) || H.ORI_AW_NAME.equals(str)) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Context baseContext = application.getBaseContext();</span><br><span class="line">                Class&lt;?&gt; clsLoadClass = application.getClassLoader().loadClass(str);</span><br><span class="line">                if (realApplication == null) &#123;</span><br><span class="line">                    realApplication = (Application) clsLoadClass.newInstance();</span><br><span class="line">                &#125;  </span><br><span class="line">                hn(baseContext, application);  </span><br><span class="line">            &#125; catch (Exception e) &#123; </span><br><span class="line">                e.printStackTrace();  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125; catch (Exception ex1) &#123;  </span><br><span class="line">            throw ex1;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="DexHelper"><a href="#DexHelper" class="headerlink" title="DexHelper"></a>DexHelper</h3><p>静态Dex里没有<code>AppApplication</code>，结合壳代码最终需要通过<code>H.APPNAME</code>加载真实 Application，因此推测该类不在当前可见的静态Dex中，而是在<code>H.load</code>触发的<code>libDexHelper.so</code>相关流程中被解密并加载。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> H = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;com.secneo.apkwrapper.H&quot;</span>);</span><br><span class="line">  H[<span class="string">&quot;load&quot;</span>].<span class="property">implementation</span> = <span class="keyword">function</span> (<span class="params">applicationInfo</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`H.load is called: applicationInfo=<span class="subst">$&#123;applicationInfo&#125;</span>`</span>);</span><br><span class="line">    <span class="variable language_">this</span>[<span class="string">&quot;load&quot;</span>](applicationInfo);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>尝试hook<code>load</code>来dump解密后的so,但是都崩溃了应该是被检测了<br>发现:</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">application</span> <span class="attr">android:name</span>=<span class="string">&quot;com.secneo.apkwrapper.AW&quot;</span></span></span><br><span class="line"><span class="tag"> <span class="attr">android:appComponentFactory</span>=<span class="string">&quot;com.secneo.apkwrapper.AP&quot;</span></span></span><br></pre></td></tr></table></figure>
+
+<p><code>appComponentFactory</code>会参与 Application 创建前的 ClassLoader 初始化，因此这里的<code>H.load()</code>比常规的 Application 生命周期更早执行。这也是前面直接 Hook <code>Application</code> 相关代码容易错过关键初始化的原因。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> ClassLoader <span class="title function_">instantiateClassLoader</span><span class="params">(ClassLoader classLoader, ApplicationInfo applicationInfo)</span> <span class="keyword">throws</span> Exception &#123;  </span><br><span class="line">        <span class="keyword">try</span> &#123;  </span><br><span class="line">            <span class="type">int</span>[] iArr = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">0</span>];  </span><br><span class="line">            H.sAppInfo = applicationInfo;  </span><br><span class="line">            H.load(applicationInfo);  </span><br><span class="line">            <span class="keyword">if</span> (a()) &#123;  </span><br><span class="line">                <span class="type">AppComponentFactory</span> <span class="variable">appComponentFactoryA</span> <span class="operator">=</span> a(classLoader);  </span><br><span class="line">                a(appComponentFactoryA);  </span><br><span class="line">                <span class="keyword">if</span> (appComponentFactoryA != <span class="literal">null</span>) &#123; </span><br><span class="line">                    <span class="keyword">return</span> appComponentFactoryA.instantiateClassLoader(classLoader, applicationInfo);  </span><br><span class="line">                &#125; </span><br><span class="line">            &#125;  </span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">super</span>.instantiateClassLoader(classLoader, applicationInfo);  </span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception ex1) &#123;  </span><br><span class="line">            <span class="keyword">throw</span> ex1;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>在这里同样有<code>H.load(applicationInfo)</code>，所以在进入真正的<code>application</code>之前就已经加载了<code>libDexHelper.so</code>。从启动顺序来看，梆梆把关键初始化前置到了<code>AppComponentFactory</code>这一层。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> libdl = <span class="title class_">Process</span>.<span class="title function_">getModuleByName</span>(<span class="string">&quot;libdl.so&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> android_dlopen_ext =</span><br><span class="line">    libdl.<span class="title function_">getExportByName</span>(<span class="string">&quot;android_dlopen_ext&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;[+] android_dlopen_ext = &quot;</span> + android_dlopen_ext);</span><br><span class="line"></span><br><span class="line"><span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(android_dlopen_ext, &#123;</span><br><span class="line">    <span class="title function_">onEnter</span>(<span class="params">args</span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">path</span> = <span class="literal">null</span>;</span><br><span class="line">  </span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">path</span> = args[<span class="number">0</span>].<span class="title function_">isNull</span>()</span><br><span class="line">                ? <span class="string">&quot;&lt;null&gt;&quot;</span></span><br><span class="line">                : args[<span class="number">0</span>].<span class="title function_">readUtf8String</span>();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">path</span> = <span class="string">&quot;&lt;read error&gt;&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;[+] android_dlopen_ext: &quot;</span> + <span class="variable language_">this</span>.<span class="property">path</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">onLeave</span>(<span class="params">retval</span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">            <span class="string">&quot;[+] return = &quot;</span> + retval +</span><br><span class="line">            <span class="string">&quot; path = &quot;</span> + <span class="variable language_">this</span>.<span class="property">path</span></span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>hook android_dlopen_ext:</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">[+] android_dlopen_ext = 0x7429683100</span><br><span class="line">Spawned `com.chaoxing.mobile`. Resuming main thread!                    </span><br><span class="line">[+] android_dlopen_ext: libframework-connectivity-tiramisu-jni.so</span><br><span class="line">[+] return = 0x7849f7fa10aed27d path = libframework-connectivity-tiramisu-jni.so</span><br><span class="line">[Pixel 6 Pro::com.chaoxing.mobile ]-&gt; [+] android_dlopen_ext: /data/app/~~y--ERQseOoZ4gT7zjIRrkQ==/com.chaoxing.mobile-Pyz5Pps6RKL4jofLPOptlQ==/oat/arm64/base.odex</span><br><span class="line">[+] return = 0x35d016cb395d5237 path = /data/app/~~y--ERQseOoZ4gT7zjIRrkQ==/com.chaoxing.mobile-Pyz5Pps6RKL4jofLPOptlQ==/oat/arm64/base.odex</span><br><span class="line">[+] android_dlopen_ext: /data/app/~~y--ERQseOoZ4gT7zjIRrkQ==/com.chaoxing.mobile-Pyz5Pps6RKL4jofLPOptlQ==/lib/arm64/libDexHelper.so</span><br><span class="line">[Pixel 6 Pro::com.chaoxing.mobile ]-&gt;</span><br><span class="line">[+] return = 0x3cacae38c9b7db03 path = /data/app/~~y--ERQseOoZ4gT7zjIRrkQ==/com.chaoxing.mobile-Pyz5Pps6RKL4jofLPOptlQ==/lib/arm64/libDexHelper.so</span><br><span class="line">[Pixel 6 Pro::com.chaoxing.mobile ]-&gt; [+] android_dlopen_ext: /data/app/~~y--ERQseOoZ4gT7zjIRrkQ==/com.chaoxing.mobile-Pyz5Pps6RKL4jofLPOptlQ==/lib/arm64/libsecuritylib.so</span><br><span class="line">[+] return = 0x7b3292d2786f6929 path = /data/app/~~y--ERQseOoZ4gT7zjIRrkQ==/com.chaoxing.mobile-Pyz5Pps6RKL4jofLPOptlQ==/lib/arm64/libsecuritylib.so</span><br><span class="line">[+] android_dlopen_ext: /data/app/~~y--ERQseOoZ4gT7zjIRrkQ==/com.chaoxing.mobile-Pyz5Pps6RKL4jofLPOptlQ==/lib/arm64/libfntvcrash.so</span><br><span class="line">[+] return = 0xc4781e5ea3314127 path = /data/app/~~y--ERQseOoZ4gT7zjIRrkQ==/com.chaoxing.mobile-Pyz5Pps6RKL4jofLPOptlQ==/lib/arm64/libfntvcrash.so</span><br><span class="line">[+] android_dlopen_ext: /data/app/~~y--ERQseOoZ4gT7zjIRrkQ==/com.chaoxing.mobile-Pyz5Pps6RKL4jofLPOptlQ==/lib/arm64/libencrypt.so</span><br><span class="line">[+] return = 0xda48029a6d4882bf path = /data/app/~~y--ERQseOoZ4gT7zjIRrkQ==/com.chaoxing.mobile-Pyz5Pps6RKL4jofLPOptlQ==/lib/arm64/libencrypt.so</span><br><span class="line">[+] android_dlopen_ext: /data/app/~~gW7tl_GztTveQyL6ONBIcg==/com.google.android.webview-tOjsU4DoT8xkEh6_kthI_w==/oat/arm64/WebViewGoogle.odex</span><br><span class="line">[+] return = 0xb957d79e56fe7c0f path = /data/app/~~gW7tl_GztTveQyL6ONBIcg==/com.google.android.webview-tOjsU4DoT8xkEh6_kthI_w==/oat/arm64/WebViewGoogle.odex</span><br><span class="line">[+] android_dlopen_ext: libmonochrome.so</span><br><span class="line">[+] return = 0x96230e168d80941f path = libmonochrome.so</span><br><span class="line">[+] android_dlopen_ext: /data/app/~~gW7tl_GztTveQyL6ONBIcg==/com.google.android.webview-tOjsU4DoT8xkEh6_kthI_w==/WebViewGoogle.apk!/lib/arm64-v8a/libmonochrome.so</span><br><span class="line">[+] return = 0x96230e168d80941f path = /data/app/~~gW7tl_GztTveQyL6ONBIcg==/com.google.android.webview-tOjsU4DoT8xkEh6_kthI_w==/WebViewGoogle.apk!/lib/arm64-v8a/libmonochrome.so</span><br><span class="line">[+] android_dlopen_ext: /system/lib64/libwebviewchromium_plat_support.so</span><br><span class="line">[+] return = 0xca8b58656cf49151 path = /system/lib64/libwebviewchromium_plat_support.so</span><br><span class="line">[+] android_dlopen_ext: /data/app/~~y--ERQseOoZ4gT7zjIRrkQ==/com.chaoxing.mobile-Pyz5Pps6RKL4jofLPOptlQ==/lib/arm64/libmsaoaidsec.so</span><br></pre></td></tr></table></figure>
+<p>实际退出位置在<code>libmsaoaidsec.so</code> OAID 安全库在 dlopen 的构造函数里自杀式 SIGSEGV</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">android_dlopen_ext</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="type">const</span> <span class="type">char</span> *filename,</span></span><br><span class="line"><span class="params">    <span class="type">int</span> flags,</span></span><br><span class="line"><span class="params">    <span class="type">const</span> android_dlextinfo *extinfo</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+<p>通过<code>frida</code>attach hook<code>android_dlopen_ext</code>并在 onEnter中将<code>filename</code>指针指向改为一个已加载的官方库路径,就可以实现使<code>android_dlopen_ext</code>不崩溃正常返回handle的同时绕过<code>libmsaoaidsec.so</code>的加载</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> cheatPath = <span class="title class_">Memory</span>.<span class="title function_">allocUtf8String</span>(</span><br><span class="line">    <span class="string">&quot;/system/lib64/libc.so&quot;</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> libdl = <span class="title class_">Process</span>.<span class="title function_">getModuleByName</span>(<span class="string">&quot;libdl.so&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> android_dlopen_ext =</span><br><span class="line">    libdl.<span class="title function_">getExportByName</span>(<span class="string">&quot;android_dlopen_ext&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(android_dlopen_ext, &#123;</span><br><span class="line">  <span class="title function_">onEnter</span>(<span class="params">args</span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">path</span> = args[<span class="number">0</span>].<span class="title function_">isNull</span>()</span><br><span class="line">                ? <span class="string">&quot;&lt;null&gt;&quot;</span></span><br><span class="line">                : args[<span class="number">0</span>].<span class="title function_">readUtf8String</span>();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">path</span> = <span class="string">&quot;&lt;read error&gt;&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(<span class="variable language_">this</span>.<span class="property">path</span>&amp;&amp;<span class="variable language_">this</span>.<span class="property">path</span>.<span class="title function_">indexOf</span>(<span class="string">&quot;libmsaoaidsec.so&quot;</span>)!==-<span class="number">1</span>)&#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Block:&quot;</span>+<span class="variable language_">this</span>.<span class="property">path</span>);</span><br><span class="line">            args[<span class="number">0</span>]=cheatPath;</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">blocked</span> = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">......&#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>dump 内存中的<code>libDexHelper.so</code>并修复后继续分析。最终将重点定位到<code>JNI_OnLoad</code>，随后通过运行时验证确认 Dex 会出现在匿名内存中，因此没有继续硬跟混淆严重的具体解密函数，而是直接在<code>JNI_OnLoad</code>返回后扫描内存中的 Dex Magic 并 Dump。<br><img data-src="Pasted%20image%2020260919001349.png" alt="Dump result"><br>成功拿到真实application:<code>com.chaoxing.mobile.AppApplication</code></p>
+]]></content>
+      <categories>
+        <category>reverse</category>
+      </categories>
+      <tags>
+        <tag>Reverse</tag>
+        <tag>脱壳</tag>
+        <tag>Android</tag>
+        <tag>Frida</tag>
+        <tag>梆梆</tag>
       </tags>
   </entry>
 </search>
