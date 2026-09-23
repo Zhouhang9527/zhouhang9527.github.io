@@ -6,7 +6,7 @@
   <link href="https://www.mm9527.top/atom.xml" rel="self"/>
   
   <link href="https://www.mm9527.top/"/>
-  <updated>2026-09-18T16:55:54.763Z</updated>
+  <updated>2026-09-23T12:23:48.474Z</updated>
   <id>https://www.mm9527.top/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://www.mm9527.top/2026/09/18/%E5%AD%A6x%E9%80%9A-%E6%A2%86%E6%A2%86%E4%BC%81%E4%B8%9A%E7%89%88%E5%88%86%E6%9E%90/"/>
     <id>https://www.mm9527.top/2026/09/18/%E5%AD%A6x%E9%80%9A-%E6%A2%86%E6%A2%86%E4%BC%81%E4%B8%9A%E7%89%88%E5%88%86%E6%9E%90/</id>
     <published>2026-09-18T15:50:00.000Z</published>
-    <updated>2026-09-18T16:55:54.763Z</updated>
+    <updated>2026-09-23T12:23:48.474Z</updated>
     
     
     <summary type="html">一次针对学习通 Android APK 的梆梆加固动态分析，从 AppComponentFactory、libDexHelper.so 到 JNI_OnLoad，最终通过扫描匿名内存成功 Dump 出真实 Dex。</summary>
@@ -48,7 +48,7 @@
     <link href="https://www.mm9527.top/2026/03/20/va-to-pa-walk/"/>
     <id>https://www.mm9527.top/2026/03/20/va-to-pa-walk/</id>
     <published>2026-03-20T11:07:02.000Z</published>
-    <updated>2026-03-20T11:31:28.058Z</updated>
+    <updated>2026-09-18T17:20:53.563Z</updated>
     
     
     <summary type="html">一次结合 IDA 与 WinDbg，手动根据 VA 逐级走页表并定位 PA 的实操记录。</summary>
@@ -91,11 +91,11 @@
     
     <category term="XTEA" scheme="https://www.mm9527.top/tags/xtea/"/>
     
+    <category term="AES" scheme="https://www.mm9527.top/tags/aes/"/>
+    
     <category term="MD5" scheme="https://www.mm9527.top/tags/md5/"/>
     
     <category term="爆破" scheme="https://www.mm9527.top/tags/%E7%88%86%E7%A0%B4/"/>
-    
-    <category term="AES" scheme="https://www.mm9527.top/tags/aes/"/>
     
   </entry>
   
@@ -149,9 +149,9 @@
     
     <category term="XTEA" scheme="https://www.mm9527.top/tags/xtea/"/>
     
-    <category term="AES" scheme="https://www.mm9527.top/tags/aes/"/>
-    
     <category term="Android" scheme="https://www.mm9527.top/tags/android/"/>
+    
+    <category term="AES" scheme="https://www.mm9527.top/tags/aes/"/>
     
   </entry>
   
@@ -232,11 +232,11 @@
     
     <category term="Reverse" scheme="https://www.mm9527.top/tags/reverse/"/>
     
+    <category term="动态调试" scheme="https://www.mm9527.top/tags/%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/"/>
+    
     <category term="Unity" scheme="https://www.mm9527.top/tags/unity/"/>
     
     <category term="IL2CPP" scheme="https://www.mm9527.top/tags/il2cpp/"/>
-    
-    <category term="动态调试" scheme="https://www.mm9527.top/tags/%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/"/>
     
   </entry>
   
@@ -340,9 +340,9 @@
     
     <category term="Reverse" scheme="https://www.mm9527.top/tags/reverse/"/>
     
-    <category term="花指令" scheme="https://www.mm9527.top/tags/%E8%8A%B1%E6%8C%87%E4%BB%A4/"/>
-    
     <category term="IDA Pro" scheme="https://www.mm9527.top/tags/ida-pro/"/>
+    
+    <category term="花指令" scheme="https://www.mm9527.top/tags/%E8%8A%B1%E6%8C%87%E4%BB%A4/"/>
     
     <category term="异或解密" scheme="https://www.mm9527.top/tags/%E5%BC%82%E6%88%96%E8%A7%A3%E5%AF%86/"/>
     
@@ -392,9 +392,9 @@
     
     <category term="Reverse" scheme="https://www.mm9527.top/tags/reverse/"/>
     
-    <category term="花指令" scheme="https://www.mm9527.top/tags/%E8%8A%B1%E6%8C%87%E4%BB%A4/"/>
-    
     <category term="IDA Pro" scheme="https://www.mm9527.top/tags/ida-pro/"/>
+    
+    <category term="花指令" scheme="https://www.mm9527.top/tags/%E8%8A%B1%E6%8C%87%E4%BB%A4/"/>
     
     <category term="异或解密" scheme="https://www.mm9527.top/tags/%E5%BC%82%E6%88%96%E8%A7%A3%E5%AF%86/"/>
     
@@ -419,9 +419,9 @@
     
     <category term="Reverse" scheme="https://www.mm9527.top/tags/reverse/"/>
     
-    <category term="IDA Pro" scheme="https://www.mm9527.top/tags/ida-pro/"/>
-    
     <category term="Base64" scheme="https://www.mm9527.top/tags/base64/"/>
+    
+    <category term="IDA Pro" scheme="https://www.mm9527.top/tags/ida-pro/"/>
     
   </entry>
   
