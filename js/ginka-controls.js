@@ -54,7 +54,9 @@
   }
   document.addEventListener('click', function (event) {
     if (event.target.closest('.journal-sidebar-close')) closeDrawer();
+    if (event.target.classList.contains('sidebar-dimmer')) closeDrawer();
     if (event.target.closest('.sidebar-toggle')) {
+      window.dispatchEvent(new Event(document.body.classList.contains('sidebar-active') ? 'sidebar:hide' : 'sidebar:show'));
       window.requestAnimationFrame(function () {
         syncDrawer();
         // CSS transitions can defer visibility for the first rendered frame.
@@ -99,7 +101,9 @@
       if (progress) progress.setAttribute('aria-valuenow', String(Math.round(audio.duration ? audio.currentTime / audio.duration * 100 : 0)));
     });
   }
+  window.addEventListener('sidebar:show', function () { document.body.classList.add('sidebar-active'); syncDrawer(); });
+  window.addEventListener('sidebar:hide', function () { document.body.classList.remove('sidebar-active'); syncDrawer(); });
   document.addEventListener('pjax:success', setup);
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  if (document.readyState === 'loading' && !document.body) document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 })();

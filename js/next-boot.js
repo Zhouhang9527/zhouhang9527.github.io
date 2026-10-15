@@ -1,1 +1,49 @@
-NexT.boot={},NexT.boot.registerEvents=function(){NexT.utils.registerScrollPercent(),NexT.utils.registerCanIUseTag(),NexT.utils.updateFooterPosition(),document.querySelector(".site-nav-toggle .toggle").addEventListener("click",e=>{e.currentTarget.classList.toggle("toggle-close");e=document.querySelector(".site-nav");e&&(e.style.setProperty("--scroll-height",e.scrollHeight+"px"),document.body.classList.toggle("site-nav-on"))}),document.querySelectorAll(".sidebar-nav li").forEach((e,t)=>{e.addEventListener("click",()=>{NexT.utils.activateSidebarPanel(t)})}),window.addEventListener("hashchange",()=>{var e=location.hash;""===e||e.match(/%\S{2}/)||document.querySelector(`.tabs ul.nav-tabs li a[href="${e}"]`)?.click()}),window.addEventListener("tabs:click",e=>{NexT.utils.registerCodeblock(e.target)})},NexT.boot.refresh=function(){CONFIG.prism&&window.Prism.highlightAll(),CONFIG.mediumzoom&&window.mediumZoom(".post-body :not(a) > img, .post-body > img",{background:"var(--content-bg-color)"}),CONFIG.lazyload&&window.lozad(".post-body img").observe(),CONFIG.pangu&&(window.requestIdleCallback||(window.requestIdleCallback=function(e){e({didTimeout:!1,timeRemaining:()=>100})}),[...document.getElementsByTagName("main")].forEach(e=>window.pangu.spacingNode(e))),CONFIG.exturl&&NexT.utils.registerExtURL(),NexT.utils.wrapTableWithBox(),NexT.utils.registerCodeblock(),NexT.utils.registerTabsTag(),NexT.utils.registerActiveMenuItem(),NexT.utils.registerLangSelect(),NexT.utils.registerSidebarTOC(),NexT.utils.registerPostReward(),NexT.utils.registerVideoIframe()},NexT.boot.motion=function(){CONFIG.motion.enable&&NexT.motion.integrator.add(NexT.motion.middleWares.header).add(NexT.motion.middleWares.sidebar).add(NexT.motion.middleWares.postList).add(NexT.motion.middleWares.footer).bootstrap(),NexT.utils.updateSidebarPosition()},document.addEventListener("DOMContentLoaded",()=>{NexT.boot.registerEvents(),NexT.boot.refresh(),NexT.boot.motion()});
+/* Idempotent theme integration also works when a CDN proxies load events. */
+(function () {
+  'use strict';
+  const utils = NexT.utils;
+  NexT.boot = {
+    registerEvents() {
+      utils.registerScrollPercent();
+      utils.registerCanIUseTag();
+      utils.updateFooterPosition();
+      document.querySelector('.site-nav-toggle .toggle')?.addEventListener('click', event => {
+        event.currentTarget.classList.toggle('toggle-close');
+        const nav = document.querySelector('.site-nav');
+        nav?.style.setProperty('--scroll-height', nav.scrollHeight + 'px');
+        document.body.classList.toggle('site-nav-on');
+      });
+      document.querySelectorAll('.sidebar-nav li').forEach((tab, index) => {
+        tab.addEventListener('click', () => utils.activateSidebarPanel(index));
+      });
+      window.addEventListener('hashchange', () => {
+        if (!location.hash || /%\S{2}/.test(location.hash)) return;
+        document.querySelector('.tabs ul.nav-tabs li a[href="' + CSS.escape(location.hash) + '"]')?.click();
+      });
+      window.addEventListener('tabs:click', event => utils.registerCodeblock(event.target));
+    },
+    refresh() {
+      const root = document.getElementById('main-content');
+      if (!root || root.dataset.ginkaThemeReady) return;
+      root.dataset.ginkaThemeReady = '1';
+      if (CONFIG.exturl) utils.registerExtURL();
+      utils.wrapTableWithBox();
+      utils.registerCodeblock();
+      utils.registerTabsTag();
+      utils.registerActiveMenuItem();
+      utils.registerLangSelect();
+      utils.registerSidebarTOC();
+      utils.registerPostReward();
+      utils.registerVideoIframe();
+      document.dispatchEvent(new Event('page:loaded'));
+    },
+    motion() { utils.updateSidebarPosition(); },
+    start() {
+      if (window.__ginkaThemeBooted) return;
+      window.__ginkaThemeBooted = true;
+      NexT.boot.registerEvents(); NexT.boot.refresh(); NexT.boot.motion();
+    }
+  };
+  if (document.getElementById('main-content')) NexT.boot.start();
+  else document.addEventListener('DOMContentLoaded', NexT.boot.start, { once: true });
+})();

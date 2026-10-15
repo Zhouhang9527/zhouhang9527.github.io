@@ -34,5 +34,5 @@
     } catch (_) { if (link.isConnected) location.assign(link.href); }
   }, true);
   document.addEventListener('page:loaded', prepare);
-  if (document.readyState !== 'loading') prepare();
+  if (document.readyState !== 'loading' || document.body) prepare();
 })();

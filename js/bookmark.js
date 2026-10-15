@@ -1,4 +1,6 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initGinkaBookmark() {
+  if (window.__ginkaBookmarkReady) return;
+  window.__ginkaBookmarkReady = true;
   const button = document.querySelector('.book-mark-link');
   if (!button) return;
   const memory = new Map();
@@ -43,4 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('pjax:send', save);
   }
   document.addEventListener('ginka:reading-ready', restore);
-});
+}
+if (document.body) initGinkaBookmark();
+else document.addEventListener('DOMContentLoaded', initGinkaBookmark, { once: true });

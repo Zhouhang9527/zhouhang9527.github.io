@@ -264,6 +264,6 @@
   });
   document.addEventListener('pjax:complete', scheduleBoot);
   document.addEventListener('page:loaded', scheduleBoot);
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleBoot, { once: true });
+  if (document.readyState === 'loading' && !document.body) document.addEventListener('DOMContentLoaded', scheduleBoot, { once: true });
   else scheduleBoot();
 })();

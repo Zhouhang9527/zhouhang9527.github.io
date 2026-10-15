@@ -170,5 +170,5 @@ function initGinkaSearch() {
   search.highlightSearchWords(document.querySelector('.post-body'));
   if (CONFIG.localsearch.preload) load();
 }
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initGinkaSearch, { once: true });
+if (document.readyState === 'loading' && !document.body) document.addEventListener('DOMContentLoaded', initGinkaSearch, { once: true });
 else initGinkaSearch();

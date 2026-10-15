@@ -255,6 +255,33 @@ async (page) => {
     });
   } finally { await lateContext.close(); }
 
+  const proxyContext = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1440, height: 1000 } });
+  await proxyContext.addInitScript(() => {
+    // Model a CDN loader that virtualizes readiness and withholds load events.
+    Object.defineProperty(document, 'readyState', { configurable: true, get: () => 'loading' });
+    const documentAdd = document.addEventListener.bind(document);
+    document.addEventListener = (type, ...args) => { if (type !== 'DOMContentLoaded') documentAdd(type, ...args); };
+    const windowAdd = window.addEventListener.bind(window);
+    window.addEventListener = (type, ...args) => { if (type !== 'load') windowAdd(type, ...args); };
+  });
+  const proxyPage = await proxyContext.newPage();
+  proxyPage.setDefaultTimeout(7000);
+  try {
+    await check('CDN readiness proxies cannot disable navigation, search or reading', async () => {
+      await proxyPage.goto(origin + '/');
+      await proxyPage.locator('.sidebar-toggle').click();
+      await proxyPage.waitForFunction(() => document.activeElement.matches('.journal-sidebar-close'));
+      await proxyPage.keyboard.press('Escape');
+      await proxyPage.keyboard.press('Control+k');
+      await proxyPage.locator('.search-input').fill('Android');
+      const result = proxyPage.locator('.search-result-title').first();
+      await result.waitFor(); await result.click();
+      await proxyPage.locator('.journal-code').first().waitFor();
+      return await proxyPage.locator('.journal-related-card').count() === 3
+        && await proxyPage.evaluate(() => document.readyState === 'loading' && window.__ginkaThemeBooted && window.__ginkaReadingBound);
+    });
+  } finally { await proxyContext.close(); }
+
   const offlineContext = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const offlinePage = await offlineContext.newPage();
   offlinePage.setDefaultTimeout(10000);

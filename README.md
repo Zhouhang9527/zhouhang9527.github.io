@@ -84,3 +84,6 @@ Cloudflare 的 Rocket Loader 会改变脚本执行时机。构建器按照
 [官方说明](https://developers.cloudflare.com/speed/optimization/content/rocket-loader/ignore-javascripts/)
 给可执行脚本及其依赖添加位于 `src` 之前的 `data-cfasync="false"`，保留原生 `defer` 顺序。
 搜索也支持脚本在页面就绪后到达，且重复加载不会重复绑定。
+
+核心组件还直接检查实际 DOM 是否可用，不依赖 CDN 虚拟的文档就绪状态。主题启动幂等，
+侧栏由公共控制器管理，离线注册在空闲时执行；浏览器检查包含这一代理环境回归场景。

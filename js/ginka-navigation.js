@@ -47,6 +47,6 @@
 
   function boot() { syncMenu(); initTopics(); }
   document.addEventListener('pjax:complete', boot);
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+  if (document.readyState === 'loading' && !document.body) document.addEventListener('DOMContentLoaded', boot, { once: true });
   else boot();
 })();

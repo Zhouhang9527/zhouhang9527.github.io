@@ -33,7 +33,7 @@
   }
 
   function runOnLoad(task) {
-    if (document.readyState === 'complete') {
+    if (document.readyState === 'complete' || document.body) {
       task();
       return;
     }
@@ -121,4 +121,7 @@
   }
 
   window.GINKA_RUNTIME = runtime;
+  if ('serviceWorker' in navigator) {
+    scheduleBackgroundTask('service-worker', () => navigator.serviceWorker.register('/sw.js').catch(() => {}), { timeout: 1800 });
+  }
 })();

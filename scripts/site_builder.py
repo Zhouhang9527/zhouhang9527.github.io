@@ -98,7 +98,7 @@ def version_assets(source):
         path = ROOT / asset.lstrip('/')
         digest = hashlib.sha256(path.read_bytes()).hexdigest()[:10]
         return '"' + asset + '?v=' + digest + '"'
-    return re.sub(r'"(/(?:css/[^"?]+\.css|js/(?:ginka-[^"?]+|bookmark|third-party/(?:fancybox|search/local-search))\.js))(?:\?v=[a-z0-9]+)?"', replace, source)
+    return re.sub(r'"(/(?:css/[^"?]+\.css|js/(?:ginka-[^"?]+|bookmark|next-boot|third-party/(?:fancybox|search/local-search))\.js))(?:\?v=[a-z0-9]+)?"', replace, source)
 
 
 def preserve_script_order(source):

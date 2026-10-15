@@ -41,7 +41,7 @@
     window.addEventListener('ginka:gsap-ready', schedule);
     document.addEventListener('pjax:send', cleanup);
     document.addEventListener('pjax:complete', schedule);
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule, { once: true });
+    if (document.readyState === 'loading' && !document.body) document.addEventListener('DOMContentLoaded', schedule, { once: true });
     else schedule();
   })();
 
@@ -97,7 +97,7 @@
       });
     }
 
-    if (document.readyState === 'loading') {
+    if (document.readyState === 'loading' && !document.body) {
       document.addEventListener('DOMContentLoaded', optimizeImages, { once: true });
     } else {
       optimizeImages();
