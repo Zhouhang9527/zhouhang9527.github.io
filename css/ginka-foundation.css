@@ -1,0 +1,23 @@
+/* Project defaults are owned here instead of repeated inline theme overrides. */
+*, *::before, *::after { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body { margin: 0; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; }
+button, summary, [role="button"] { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+img { max-width: 100%; }
+::selection { background: #c4dfef; color: #213d53; text-shadow: none; }
+body.sidebar-active { padding-left: 0; }
+body.sidebar-active .footer-fixed { left: 0; }
+.sidebar, .sidebar-inner, .post-toc, .journal-table-scroll { scrollbar-width: thin; scrollbar-color: #a2b8ca transparent; }
+.sidebar-inner { border: 0; background: transparent; }
+.main-inner, .post-body { user-select: text; }
+body .journal-sidebar-close { transform: none; box-shadow: none; }
+body .sidebar-inner .animated { animation: none; }
+body .post-block, body .post-header, body .post-body, body .comments, body .pagination { visibility: visible; }
+body .footer { opacity: 1; }
+body .book-mark-link { color: #91a8bb; opacity: .65; }
+body .book-mark-link:hover { opacity: 1; }
+body:has(.ginka-home) .book-mark-link { display: none; }
+:root { --ginka-glass-soft-blur: 0px; --ginka-glass-medium-sat: 100%; }
+@media print { .column, .sidebar, .sidebar-dimmer, .sidebar-toggle { display: none !important; } }

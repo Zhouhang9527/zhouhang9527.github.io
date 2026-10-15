@@ -1,0 +1,11 @@
+{
+  "observationMs": 3500,
+  "mobileMaxBytes": 750000,
+  "desktopMaxBytes": 1000000,
+  "maxScriptBytes": 220000,
+  "maxRequests": 50,
+  "maxCls": 0.1,
+  "iconCssMaxBytes": 16000,
+  "iconFontMaxBytes": 16000,
+  "deferredPathPatterns": ["/live2d/", "/js/live2d-libs/", "/js/ginka-atri.js", "/voice-config.json", "/js/ginka-music.js", "/vendor/@fancyapps/", "/vendor/gsap/"]
+}

@@ -166,89 +166,6 @@
     });
   }
 
-  var particleInterval = 0;
-  var particleCleanupTimers = [];
-
-  function shouldEnableParticles() {
-    return !isLowPower() && !isReducedMotion() && !isTouchOnly();
-  }
-
-  function clearParticleTimers() {
-    while (particleCleanupTimers.length) {
-      clearTimeout(particleCleanupTimers.pop());
-    }
-  }
-
-  function trimParticles() {
-    document.querySelectorAll('.page-particle').forEach(function (node) {
-      node.remove();
-    });
-  }
-
-  function createParticle() {
-    if (document.hidden || !shouldEnableParticles()) return;
-
-    var particle = document.createElement('div');
-    particle.className = 'page-particle';
-    particle.style.left = Math.random() * 100 + '%';
-    particle.style.width = (Math.random() * 9 + 5) + 'px';
-    particle.style.height = particle.style.width;
-    particle.style.background = 'radial-gradient(circle, rgba(' +
-      (Math.random() > 0.5 ? '102, 126, 234' : '118, 75, 162') +
-      ', 0.35), transparent)';
-    particle.style.borderRadius = '50%';
-    particle.style.animationDelay = Math.random() * 6 + 's';
-    particle.style.animationDuration = (Math.random() * 4 + 7) + 's';
-    document.body.appendChild(particle);
-
-    particleCleanupTimers.push(window.setTimeout(function () {
-      particle.remove();
-    }, 12500));
-  }
-
-  function stopParticles(clearNodes) {
-    if (particleInterval) {
-      clearInterval(particleInterval);
-      particleInterval = 0;
-    }
-    clearParticleTimers();
-    if (clearNodes) trimParticles();
-  }
-
-  function startParticles() {
-    stopParticles(false);
-    if (!shouldEnableParticles() || document.hidden) return;
-
-    createParticle();
-    particleCleanupTimers.push(window.setTimeout(createParticle, 900));
-    particleInterval = window.setInterval(createParticle, 6500);
-  }
-
-  function bindAmbientParticles() {
-    if (window.__ginkaParticlesBound) return;
-    window.__ginkaParticlesBound = true;
-
-    scheduleBackgroundTask('ambient-particles', startParticles, {
-      timeout: 2600
-    });
-
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) {
-        stopParticles(true);
-        return;
-      }
-      startParticles();
-    });
-
-    window.addEventListener('pagehide', function () {
-      stopParticles(true);
-    });
-
-    document.addEventListener('pjax:complete', function () {
-      startParticles();
-    });
-  }
-
   function playPjaxVoiceHint() {
     var atri = window.ATRI;
     if (!atri) return;
@@ -325,6 +242,10 @@
     }
 
     document.addEventListener('contextmenu', function (event) {
+      if (event.shiftKey || event.target.closest('a, pre, code, input, textarea, [contenteditable="true"]') || String(window.getSelection() || '').trim()) {
+        closeMenu();
+        return;
+      }
       event.preventDefault();
       contextMenu.style.display = 'block';
 
@@ -567,7 +488,6 @@
 
   function boot() {
     // The reading drawer is opened and closed explicitly, so the TOC stays put.
-    bindAmbientParticles();
     bindPjaxHelpers();
     bindHomeNavFix();
     bindContextMenu();

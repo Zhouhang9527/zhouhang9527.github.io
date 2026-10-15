@@ -1,0 +1,19 @@
+{
+  "name": "ginka-blog-quality",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Development checks for the published GINKA static blog",
+  "scripts": {
+    "build": "python scripts/build-site.py",
+    "check:build": "python scripts/build-site.py --check",
+    "build:images": "python scripts/build-images.py",
+    "dev": "python -m http.server 4173 --bind 127.0.0.1",
+    "test": "node --test tests/*.test.cjs",
+    "check:assets": "python scripts/update-assets.py --check",
+    "check:syntax": "node scripts/check-syntax.cjs",
+    "check": "npm test && npm run check:assets && npm run check:syntax",
+    "test:browser": "node scripts/run-browser-checks.cjs"
+  },
+  "engines": { "node": ">=22" },
+  "devDependencies": { "playwright": "1.64.1" }
+}

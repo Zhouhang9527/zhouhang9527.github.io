@@ -8,6 +8,7 @@
   var promise = null;
   var injected = new Map();
   var LOAD_TIMEOUT_MS = 10000;
+  var userRequested = false;
   var restore = document.createElement('button');
   restore.id = 'atri-restore';
   restore.type = 'button';
@@ -22,15 +23,17 @@
   }
 
   function canLoad() {
-    return window.innerWidth >= 1200 && !document.hidden && !isCollapsed();
+    return window.innerWidth >= 1200 && !document.hidden && !isCollapsed()
+      && (userRequested || (runtime && runtime.hasInteracted && !runtime.isLowPower));
   }
 
   function syncEntry() {
-    restore.hidden = window.innerWidth < 1200 || (!isCollapsed() && state !== 'error');
+    restore.hidden = window.innerWidth < 1200 || (!isCollapsed() && state !== 'error' && !(runtime && runtime.isLowPower && state === 'idle'));
     restore.disabled = state === 'loading';
     restore.textContent = state === 'error' ? 'ATRI · 重试' : 'ATRI · 唤回';
   }
   restore.addEventListener('click', function () {
+    userRequested = true;
     try { localStorage.setItem('atri_collapsed', '0'); } catch (_) {}
     if (window.ATRI) window.ATRI.setVisible(true);
     else start({ retry: true });
@@ -161,7 +164,7 @@
   if (runtime) {
     runtime.scheduleBackgroundTask('atri-widget', start, {
       timeout: 2400,
-      requireInteraction: runtime.isLowPower
+      requireInteraction: true
     });
   } else if (document.readyState === 'complete') {
     window.setTimeout(start, 0);

@@ -1,0 +1,5 @@
+# Local preview and browser verification output
+.playwright-mcp/
+__pycache__/
+node_modules/
+.artifacts/

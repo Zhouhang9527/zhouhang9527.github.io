@@ -1,6 +1,17 @@
-body {
-  margin-top: 2rem;
+body { margin-top: 0; }
+/* Static reading must stay visible when the JS transition layer never boots. */
+body .main-inner {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  animation: none !important;
 }
+body .header li.menu-item-search,
+.sidebar-toggle,
+.sidebar-dimmer,
+.book-mark-link,
+.popup-trigger,
+.noscript-warning { display: none !important; }
 .use-motion .menu-item,
 .use-motion .sidebar,
 .use-motion .sidebar-inner,

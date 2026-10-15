@@ -2,6 +2,10 @@
   'use strict';
 
   if (window.GINKA_RUNTIME) return;
+  const assets = new Map();
+  let hasInteracted = false;
+  const interactionEvents = ['pointerdown', 'keydown', 'touchstart', 'wheel'];
+  interactionEvents.forEach(event => document.addEventListener(event, () => { hasInteracted = true; }, { once: true, capture: true, passive: true }));
 
   function hasMatchMedia(query) {
     try {
@@ -40,14 +44,22 @@
     const opt = options || {};
     const timeout = Math.max(300, Number(opt.timeout) || 1800);
     const requireInteraction = !!opt.requireInteraction;
-    const interactionEvents = ['pointerdown', 'keydown', 'touchstart'];
     let started = false;
+    let scheduled = false;
 
     function start() {
       if (started) return;
+      if (document.hidden) {
+        document.addEventListener('visibilitychange', function resume() {
+          if (document.hidden) return;
+          document.removeEventListener('visibilitychange', resume);
+          start();
+        });
+        return;
+      }
       started = true;
       interactionEvents.forEach((eventName) => {
-        document.removeEventListener(eventName, start, true);
+        document.removeEventListener(eventName, enqueue, true);
       });
       try {
         const result = task();
@@ -61,27 +73,47 @@
       }
     }
 
-    if (requireInteraction) {
-      interactionEvents.forEach((eventName) => {
-        document.addEventListener(eventName, start, { capture: true, once: true });
+    function enqueue() {
+      if (scheduled || started) return;
+      scheduled = true;
+      interactionEvents.forEach(event => document.removeEventListener(event, enqueue, true));
+      runOnLoad(function () {
+        if ('requestIdleCallback' in window) window.requestIdleCallback(start, { timeout: timeout });
+        else window.setTimeout(start, Math.min(timeout, 300));
       });
-      return start;
     }
-
-    runOnLoad(function () {
-      if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(start, { timeout: timeout });
-        return;
-      }
-      window.setTimeout(start, Math.min(timeout, 1200));
-    });
+    if (requireInteraction && !hasInteracted) interactionEvents.forEach(event => document.addEventListener(event, enqueue, { capture: true, once: true, passive: true }));
+    else enqueue();
 
     return start;
   }
 
+  function loadAsset(path, type) {
+    const url = new URL(path, location.href).href;
+    if (assets.has(url)) return assets.get(url);
+    const promise = new Promise((resolve, reject) => {
+      const node = document.createElement(type === 'script' ? 'script' : 'link');
+      const timeout = setTimeout(() => fail(new Error('Timed out loading ' + path)), 15000);
+      function fail(error) {
+        clearTimeout(timeout); node.onload = node.onerror = null;
+        node.remove(); assets.delete(url); reject(error);
+      }
+      node.onload = () => { clearTimeout(timeout); node.onload = node.onerror = null; resolve(node); };
+      node.onerror = () => fail(new Error('Unable to load ' + path));
+      if (type === 'script') { node.src = url; node.async = true; }
+      else { node.rel = 'stylesheet'; node.href = url; }
+      document.head.appendChild(node);
+    });
+    assets.set(url, promise);
+    return promise;
+  }
+
   const runtime = {
     isLowPower: isLowPowerDevice(),
-    scheduleBackgroundTask: scheduleBackgroundTask
+    scheduleBackgroundTask: scheduleBackgroundTask,
+    get hasInteracted() { return hasInteracted; },
+    loadScript: path => loadAsset(path, 'script'),
+    loadStylesheet: path => loadAsset(path, 'style')
   };
 
   if (runtime.isLowPower) {

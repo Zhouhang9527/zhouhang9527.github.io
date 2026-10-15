@@ -9,10 +9,12 @@
     if (sidebar) { sidebar.inert = !open; sidebar.setAttribute('aria-hidden', String(!open)); }
     if (open && sidebar) {
       sidebar.querySelectorAll('[data-sidebar-src]').forEach(function (img) {
+        if (img.dataset.sidebarSizes) { img.sizes = img.dataset.sidebarSizes; img.removeAttribute('data-sidebar-sizes'); }
+        if (img.dataset.sidebarSrcset) { img.srcset = img.dataset.sidebarSrcset; img.removeAttribute('data-sidebar-srcset'); }
         img.src = img.getAttribute('data-sidebar-src');
         img.removeAttribute('data-sidebar-src');
       });
-      if (!window.__ginkaMusicBooted && typeof window.GINKA_BOOT_MUSIC === 'function') window.GINKA_BOOT_MUSIC();
+      if (!window.__ginkaMusicBooted && typeof window.GINKA_LOAD_MUSIC === 'function') window.GINKA_LOAD_MUSIC().catch(() => {});
     }
     if (toggle) toggle.setAttribute('aria-expanded', String(open));
   }
@@ -20,6 +22,16 @@
     window.dispatchEvent(new Event('sidebar:hide'));
     var toggle = document.querySelector('.sidebar-toggle');
     if (toggle) toggle.focus({ preventScroll: true });
+  }
+  function focusDrawerWhenVisible(attempts) {
+    if (!document.body.classList.contains('sidebar-active')) return;
+    var close = document.querySelector('.journal-sidebar-close');
+    if (!close) return;
+    if (getComputedStyle(close).visibility === 'visible') {
+      close.focus({ preventScroll: true });
+    } else if (attempts < 30) {
+      window.requestAnimationFrame(function () { focusDrawerWhenVisible(attempts + 1); });
+    }
   }
   function setup() {
     var toggle = document.querySelector('.sidebar-toggle');
@@ -45,10 +57,8 @@
     if (event.target.closest('.sidebar-toggle')) {
       window.requestAnimationFrame(function () {
         syncDrawer();
-        if (document.body.classList.contains('sidebar-active')) {
-          var close = document.querySelector('.journal-sidebar-close');
-          if (close) close.focus({ preventScroll: true });
-        }
+        // CSS transitions can defer visibility for the first rendered frame.
+        focusDrawerWhenVisible(0);
       });
     }
     if (event.target.closest('.sidebar a') && window.innerWidth < 768) closeDrawer();
@@ -57,8 +67,10 @@
     var target = event.target;
     if ((event.key === 'Enter' || event.key === ' ') && target.matches('.sidebar-toggle, .sidebar-nav li')) { event.preventDefault(); target.click(); }
     var sidebar = document.querySelector('.sidebar');
+    if (event.key === 'Escape' && document.body.classList.contains('sidebar-active')) {
+      event.preventDefault(); closeDrawer(); return;
+    }
     if (sidebar && document.body.classList.contains('sidebar-active') && sidebar.contains(target)) {
-      if (event.key === 'Escape') { event.preventDefault(); closeDrawer(); }
       if (event.key === 'Tab') {
         var nodes = Array.from(sidebar.querySelectorAll('a[href],button,input,select,textarea,[tabindex="0"]')).filter(function (node) { return !node.disabled && !node.closest('[inert]') && node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden'; });
         var first = nodes[0], last = nodes[nodes.length - 1];

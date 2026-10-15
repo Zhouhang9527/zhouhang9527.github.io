@@ -1351,29 +1351,3 @@
     document.addEventListener('pointerdown', resumeOnGesture, { capture: true, once: true });
   };
 })();
-
-(function () {
-  'use strict';
-
-  var scheduled = false;
-
-  function bootMusic() {
-    if (window.__ginkaMusicBooted) return;
-    if (typeof window.GINKA_BOOT_MUSIC !== 'function') return;
-    window.GINKA_BOOT_MUSIC();
-  }
-
-  function scheduleMusicBoot() {
-    if (scheduled) return;
-    scheduled = true;
-    // Fetch playlist metadata alongside the page. This resolves only the active
-    // track; the rest of the online playlist is never preloaded as audio.
-    bootMusic();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', scheduleMusicBoot, { once: true });
-  } else {
-    scheduleMusicBoot();
-  }
-})();

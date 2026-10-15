@@ -1,0 +1,308 @@
+{
+  "performance": {
+    "capturedAt": "2026-10-15T20:42:04.713Z",
+    "observationMs": 3500,
+    "cache": "fresh browser context; service worker blocked",
+    "passed": true,
+    "results": [
+      {
+        "width": 390,
+        "metrics": {
+          "cls": 0,
+          "lcp": 232,
+          "longTasks": 0
+        },
+        "requests": 40,
+        "bytes": 390308,
+        "scriptBytes": 140375,
+        "resourcePaths": [
+          "/css/next-base.css",
+          "/css/ginka-foundation.css",
+          "/css/ginka-icons.css",
+          "/js/config.js",
+          "/js/third-party/analytics/baidu-analytics.js",
+          "/vendor/animejs/3.2.1/lib/anime.min.js",
+          "/vendor/@next-theme/pjax/0.6.0/pjax.min.js",
+          "/js/utils.js",
+          "/js/next-boot.js",
+          "/js/sidebar.js",
+          "/js/bookmark.js",
+          "/js/pjax.js",
+          "/js/ginka-search-core.js",
+          "/vendor/hexo-generator-searchdb/1.5.0/dist/search.js",
+          "/js/third-party/search/local-search.js",
+          "/js/third-party/fancybox.js",
+          "/vendor/fonts/jetbrains-mono/wght.css",
+          "/css/ginka-editorial.css",
+          "/css/ginka-pages.css",
+          "/css/ginka-reading.css",
+          "/css/ginka-runtime.css",
+          "/images/ginka/responsive/hero-silver-640.webp",
+          "/js/third-party/comments/giscus.js",
+          "/js/ginka-runtime.js",
+          "/js/ginka-reading.js",
+          "/js/ginka-atri-loader.js",
+          "/js/ginka-controls.js",
+          "/js/ginka-ui-shell.js",
+          "/js/ginka-effects-loader.js",
+          "/js/ginka-music-loader.js",
+          "/js/ginka-page-effects.js",
+          "/js/ginka-performance-monitor.js",
+          "/js/ginka-navigation.js",
+          "/images/ginka/header-logo.png",
+          "/images/ginka/butterfly.png",
+          "/vendor/ginka-icons/fa-solid-900-subset.woff2",
+          "/vendor/ginka-icons/fa-brands-400-subset.woff2",
+          "/images/avatar.jpg",
+          "/images/favicon.jpg",
+          "/vendor/web-vitals/6.2.3/web-vitals.iife.js"
+        ],
+        "navigation": [
+          {
+            "dom": 192.60000000149012,
+            "load": 241.90000000596046
+          }
+        ],
+        "errors": [],
+        "checks": {
+          "payload": true,
+          "scripts": true,
+          "requests": true,
+          "layoutShift": true,
+          "deferredFeatures": true,
+          "pageErrors": true
+        }
+      },
+      {
+        "width": 1440,
+        "metrics": {
+          "cls": 0.022978605640552662,
+          "lcp": 268,
+          "longTasks": 0
+        },
+        "requests": 41,
+        "bytes": 458070,
+        "scriptBytes": 140375,
+        "resourcePaths": [
+          "/css/next-base.css",
+          "/css/ginka-foundation.css",
+          "/css/ginka-icons.css",
+          "/js/config.js",
+          "/vendor/animejs/3.2.1/lib/anime.min.js",
+          "/js/third-party/analytics/baidu-analytics.js",
+          "/vendor/@next-theme/pjax/0.6.0/pjax.min.js",
+          "/js/sidebar.js",
+          "/js/utils.js",
+          "/js/next-boot.js",
+          "/js/bookmark.js",
+          "/js/pjax.js",
+          "/js/ginka-search-core.js",
+          "/vendor/hexo-generator-searchdb/1.5.0/dist/search.js",
+          "/js/third-party/search/local-search.js",
+          "/js/third-party/fancybox.js",
+          "/vendor/fonts/jetbrains-mono/wght.css",
+          "/css/ginka-editorial.css",
+          "/css/ginka-pages.css",
+          "/css/ginka-reading.css",
+          "/css/ginka-runtime.css",
+          "/images/ginka/responsive/hero-silver-1440.webp",
+          "/js/third-party/comments/giscus.js",
+          "/js/ginka-runtime.js",
+          "/js/ginka-reading.js",
+          "/js/ginka-atri-loader.js",
+          "/js/ginka-ui-shell.js",
+          "/js/ginka-controls.js",
+          "/js/ginka-effects-loader.js",
+          "/js/ginka-music-loader.js",
+          "/js/ginka-page-effects.js",
+          "/js/ginka-performance-monitor.js",
+          "/js/ginka-navigation.js",
+          "/images/ginka/header-logo.png",
+          "/images/ginka/butterfly.png",
+          "/vendor/ginka-icons/fa-solid-900-subset.woff2",
+          "/vendor/ginka-icons/fa-brands-400-subset.woff2",
+          "/images/avatar.jpg",
+          "/images/ginka/responsive/story-scene-960.webp",
+          "/vendor/web-vitals/6.2.3/web-vitals.iife.js",
+          "/images/favicon.jpg"
+        ],
+        "navigation": [
+          {
+            "dom": 206.39999999850988,
+            "load": 482.1000000014901
+          }
+        ],
+        "errors": [],
+        "checks": {
+          "payload": true,
+          "scripts": true,
+          "requests": true,
+          "layoutShift": true,
+          "deferredFeatures": true,
+          "pageErrors": true
+        }
+      }
+    ]
+  },
+  "regressions": {
+    "passed": true,
+    "results": [
+      {
+        "name": "320px menu label fits and the drawer works by keyboard",
+        "passed": true
+      },
+      {
+        "name": "320px / has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "320px /tags/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "320px /archives/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "320px /2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DCodeRunner/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "390px menu label fits and the drawer works by keyboard",
+        "passed": true
+      },
+      {
+        "name": "390px / has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "390px /tags/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "390px /archives/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "390px /2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DCodeRunner/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "768px menu label fits and the drawer works by keyboard",
+        "passed": true
+      },
+      {
+        "name": "768px / has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "768px /tags/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "768px /archives/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "768px /2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DCodeRunner/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "1440px menu label fits and the drawer works by keyboard",
+        "passed": true
+      },
+      {
+        "name": "1440px / has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "1440px /tags/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "1440px /archives/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "1440px /2025/11/05/%5BNSSCTF%202025%20%E7%A7%8B%E6%8B%9B%E8%B5%9B%5DCodeRunner/ has no horizontal overflow",
+        "passed": true
+      },
+      {
+        "name": "gallery stays deferred until an image is opened",
+        "passed": true
+      },
+      {
+        "name": "code can be scrolled with a keyboard",
+        "passed": true
+      },
+      {
+        "name": "code copying and repeated page initialization stay correct",
+        "passed": true
+      },
+      {
+        "name": "long code expands and wrapping keeps the complete source intact",
+        "passed": true
+      },
+      {
+        "name": "reading positions survive a reload",
+        "passed": true
+      },
+      {
+        "name": "search opens by keyboard and keeps focus inside the dialog",
+        "passed": true
+      },
+      {
+        "name": "tag filtering and reset work after PJAX navigation",
+        "passed": true
+      },
+      {
+        "name": "page scripts produce no uncaught errors",
+        "passed": true
+      },
+      {
+        "name": "the not found page offers a working way back",
+        "passed": true
+      },
+      {
+        "name": "music loading failures can be retried",
+        "passed": true
+      },
+      {
+        "name": "search index errors show a working retry action",
+        "passed": true
+      },
+      {
+        "name": "desktop features load once after interaction and preserve readable content",
+        "passed": true
+      },
+      {
+        "name": "native context menus remain available on links and code",
+        "passed": true
+      },
+      {
+        "name": "quiet effects preserve reading and reveal articles after scrolling",
+        "passed": true
+      },
+      {
+        "name": "desktop contents follow the current chapter",
+        "passed": true
+      },
+      {
+        "name": "mobile selects a smaller illustration and preloads it only once",
+        "passed": true
+      },
+      {
+        "name": "search safely highlights literal markup and shows dates and topics",
+        "passed": true
+      },
+      {
+        "name": "cached articles remain styled and readable offline",
+        "passed": true
+      },
+      {
+        "name": "article contents and images work with JavaScript disabled",
+        "passed": true
+      }
+    ]
+  }
+}

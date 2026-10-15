@@ -4,6 +4,12 @@
   window.__ginkaReadingBound = true;
   const memory = new Map();
   let tableObserver;
+  let bootFrame = 0;
+  let sectionHeadings = [];
+  let sectionLinks = [];
+  let outlineFrame = 0;
+  let wrapCode = false;
+  try { wrapCode = localStorage.getItem('ginka:wrap-code') === '1'; } catch (_) { /* Optional preference. */ }
 
   async function copyText(text) {
     if (navigator.clipboard && window.isSecureContext) {
@@ -84,6 +90,37 @@
       shell.className = 'journal-code';
       block.before(shell);
       shell.append(toolbar, block);
+      shell.dataset.wrap = String(wrapCode);
+      const wrap = document.createElement('button');
+      wrap.type = 'button'; wrap.className = 'journal-code-wrap';
+      wrap.textContent = '自动换行'; wrap.setAttribute('aria-pressed', String(wrapCode));
+      wrap.addEventListener('click', () => {
+        wrapCode = !wrapCode;
+        try { localStorage.setItem('ginka:wrap-code', wrapCode ? '1' : '0'); } catch (_) { /* Session still works. */ }
+        document.querySelectorAll('.journal-code').forEach(region => {
+          region.dataset.wrap = String(wrapCode);
+          region.querySelector('.journal-code-wrap')?.setAttribute('aria-pressed', String(wrapCode));
+        });
+      });
+      toolbar.insertBefore(wrap, button);
+      const lines = text.split('\n').length;
+      if (lines > 40) {
+        const expand = document.createElement('button');
+        expand.type = 'button'; expand.className = 'journal-code-expand';
+        expand.setAttribute('aria-expanded', 'false');
+        shell.dataset.collapsed = 'true';
+        block.id ||= 'journal-code-' + body.querySelectorAll('.journal-code').length;
+        expand.setAttribute('aria-controls', block.id);
+        expand.textContent = `展开全部代码 · ${lines} 行`;
+        expand.addEventListener('click', () => {
+          const expanded = shell.dataset.collapsed === 'true';
+          shell.dataset.collapsed = String(!expanded);
+          expand.setAttribute('aria-expanded', String(expanded));
+          expand.textContent = expanded ? '收起长代码' : `展开全部代码 · ${lines} 行`;
+          if (!expanded && shell.getBoundingClientRect().top < 0) shell.scrollIntoView({ block: 'start', behavior: 'instant' });
+        });
+        shell.appendChild(expand);
+      }
     });
   }
 
@@ -129,12 +166,64 @@
   function initReadingStats() {
     document.querySelectorAll('[data-reading-stats]').forEach(node => {
       const body = node.closest('.post')?.querySelector('.post-body');
-      const text = (node.dataset.readingText || body?.textContent || '').replace(/\s+/g, ' ').trim();
-      const chinese = (text.match(/[\u4e00-\u9fff]/g) || []).length;
-      const latin = (text.match(/[A-Za-z0-9_]+/g) || []).length;
-      const count = chinese + latin;
+      if (!node.dataset.readingCount) {
+        const source = body?.cloneNode(true);
+        source?.querySelectorAll('.journal-code-toolbar, .journal-heading-link, .copy-btn, .code-lang, .gutter').forEach(element => element.remove());
+        const text = (node.dataset.readingText || source?.textContent || '').replace(/\s+/g, ' ').trim();
+        const chinese = (text.match(/[\u4e00-\u9fff]/g) || []).length;
+        const latin = (text.match(/[A-Za-z0-9_]+/g) || []).length;
+        node.dataset.readingCount = String(chinese + latin);
+      }
+      const count = Number(node.dataset.readingCount);
       const minutes = Math.max(1, Math.ceil(count / 420));
       node.textContent = `约 ${minutes} 分钟 · ${count} 字`;
+    });
+  }
+
+  function updateOutline() {
+    outlineFrame = 0;
+    if (!sectionHeadings.length) return;
+    let active = sectionHeadings[0];
+    for (const heading of sectionHeadings) {
+      if (heading.getBoundingClientRect().top > 140) break;
+      active = heading;
+    }
+    for (const link of sectionLinks) {
+      if (decodeURIComponent(link.hash.slice(1)) === active.id) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    }
+  }
+
+  function initOutline() {
+    sectionHeadings = []; sectionLinks = [];
+    const toc = document.querySelector('.post .journal-article-toc nav');
+    if (!toc) return;
+    let outline = document.querySelector('.journal-outline');
+    if (!outline) {
+      outline = document.createElement('nav');
+      outline.className = 'journal-outline'; outline.setAttribute('aria-label', '本页章节');
+      const title = document.createElement('p'); title.textContent = '本页目录';
+      outline.append(title, toc.querySelector('ol').cloneNode(true));
+      document.querySelector('.main-inner').appendChild(outline);
+    }
+    sectionLinks = [...document.querySelectorAll('.journal-article-toc nav a, .journal-outline a')];
+    sectionHeadings = [...toc.querySelectorAll('a')].map(link => document.getElementById(decodeURIComponent(link.hash.slice(1)))).filter(Boolean);
+    updateOutline();
+  }
+
+  function initCodeScroll(body) {
+    body.querySelectorAll('.journal-code .table-container, .journal-code > pre').forEach(region => {
+      region.setAttribute('role', 'region');
+      region.setAttribute('aria-label', '代码，内容超出时可使用左右方向键滚动');
+      const update = () => {
+        if (region.scrollWidth > region.clientWidth + 1) region.tabIndex = 0;
+        else region.removeAttribute('tabindex');
+      };
+      update();
+      region._ginkaTableUpdate = update;
+      tableObserver?.observe(region);
+      const table = region.querySelector('table');
+      if (table) { table._ginkaTableUpdate = update; tableObserver?.observe(table); }
     });
   }
 
@@ -145,6 +234,7 @@
     document.querySelectorAll('.post-body').forEach(body => {
       initTables(body);
       initCode(body);
+      initCodeScroll(body);
       body.querySelectorAll('h2[id], h3[id], h4[id]').forEach(heading => {
         if (heading.querySelector('.journal-heading-link')) return;
         const link = document.createElement('a');
@@ -156,11 +246,24 @@
       });
     });
     document.querySelectorAll('.journal-feedback').forEach(initFeedback);
+    initOutline();
+    document.dispatchEvent(new Event('ginka:reading-ready'));
+  }
+  function scheduleBoot() {
+    cancelAnimationFrame(bootFrame);
+    // NexT adds table wrappers during its own page handlers. Enhance those last.
+    bootFrame = requestAnimationFrame(() => { bootFrame = 0; boot(); });
   }
   window.addEventListener('storage', () => document.querySelectorAll('.journal-feedback').forEach(panel => panel._syncLike?.()));
-  document.addEventListener('pjax:send', () => tableObserver?.disconnect());
-  document.addEventListener('pjax:complete', boot);
-  document.addEventListener('page:loaded', boot);
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
-  else boot();
+  window.addEventListener('scroll', () => {
+    if (!outlineFrame && sectionHeadings.length) outlineFrame = requestAnimationFrame(updateOutline);
+  }, { passive: true });
+  document.addEventListener('pjax:send', () => {
+    cancelAnimationFrame(bootFrame); cancelAnimationFrame(outlineFrame); outlineFrame = 0;
+    sectionHeadings = []; sectionLinks = []; tableObserver?.disconnect();
+  });
+  document.addEventListener('pjax:complete', scheduleBoot);
+  document.addEventListener('page:loaded', scheduleBoot);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleBoot, { once: true });
+  else scheduleBoot();
 })();
