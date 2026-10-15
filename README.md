@@ -79,6 +79,8 @@ GitHub Pages 现有来源是 `main` 分支根目录，自定义域名保存在 `
 发布前构建并完成检查，然后提交源文件、生成页面和资源，推送到该分支。
 `.nojekyll` 让 Pages 直接发布预生成文件，不再二次处理文章代码。
 发布后核对 Pages 构建提交和线上 `site-version.json`，再检查首页、文章与搜索。
+若启用了 CDN 页面缓存，Pages 完成后运行 `npm run deploy:purge` 刷新本站页面地址。
+该步骤从本地环境读取现有 Cloudflare 凭据，先核对域名，只刷新博客页面与索引，凭据不写入仓库。
 
 Cloudflare 的 Rocket Loader 会改变脚本执行时机。构建器按照
 [官方说明](https://developers.cloudflare.com/speed/optimization/content/rocket-loader/ignore-javascripts/)

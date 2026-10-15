@@ -1,6 +1,6 @@
 {
   "performance": {
-    "capturedAt": "2026-10-15T20:56:09.786Z",
+    "capturedAt": "2026-10-15T21:01:51.883Z",
     "observationMs": 3500,
     "cache": "fresh browser context; service worker blocked",
     "passed": true,
@@ -9,28 +9,28 @@
         "width": 390,
         "metrics": {
           "cls": 0,
-          "lcp": 224,
-          "longTasks": 132
+          "lcp": 228,
+          "longTasks": 0
         },
         "requests": 39,
-        "bytes": 390369,
+        "bytes": 390502,
         "scriptBytes": 140440,
         "resourcePaths": [
           "/css/next-base.css",
           "/css/ginka-foundation.css",
           "/css/ginka-icons.css",
-          "/js/config.js",
           "/js/third-party/analytics/baidu-analytics.js",
+          "/js/config.js",
+          "/vendor/@next-theme/pjax/0.6.0/pjax.min.js",
+          "/vendor/animejs/3.2.1/lib/anime.min.js",
           "/js/next-boot.js",
           "/js/utils.js",
-          "/vendor/animejs/3.2.1/lib/anime.min.js",
-          "/vendor/@next-theme/pjax/0.6.0/pjax.min.js",
           "/js/bookmark.js",
           "/js/pjax.js",
-          "/js/ginka-search-core.js",
-          "/js/third-party/fancybox.js",
           "/vendor/hexo-generator-searchdb/1.5.0/dist/search.js",
+          "/js/ginka-search-core.js",
           "/js/third-party/search/local-search.js",
+          "/js/third-party/fancybox.js",
           "/vendor/fonts/jetbrains-mono/wght.css",
           "/css/ginka-editorial.css",
           "/css/ginka-pages.css",
@@ -41,8 +41,8 @@
           "/js/ginka-runtime.js",
           "/js/ginka-reading.js",
           "/js/ginka-atri-loader.js",
-          "/js/ginka-controls.js",
           "/js/ginka-ui-shell.js",
+          "/js/ginka-controls.js",
           "/js/ginka-music-loader.js",
           "/js/ginka-effects-loader.js",
           "/js/ginka-page-effects.js",
@@ -58,8 +58,8 @@
         ],
         "navigation": [
           {
-            "dom": 179.79999999701977,
-            "load": 574.1000000014901
+            "dom": 186.5,
+            "load": 322.3999999985099
           }
         ],
         "errors": [],
@@ -76,11 +76,11 @@
         "width": 1440,
         "metrics": {
           "cls": 0,
-          "lcp": 212,
-          "longTasks": 0
+          "lcp": 224,
+          "longTasks": 141
         },
         "requests": 40,
-        "bytes": 458131,
+        "bytes": 458264,
         "scriptBytes": 140440,
         "resourcePaths": [
           "/css/next-base.css",
@@ -88,17 +88,17 @@
           "/css/ginka-icons.css",
           "/js/config.js",
           "/js/third-party/analytics/baidu-analytics.js",
-          "/js/next-boot.js",
           "/vendor/@next-theme/pjax/0.6.0/pjax.min.js",
-          "/js/utils.js",
           "/vendor/animejs/3.2.1/lib/anime.min.js",
-          "/vendor/hexo-generator-searchdb/1.5.0/dist/search.js",
-          "/js/pjax.js",
+          "/js/next-boot.js",
+          "/js/utils.js",
           "/js/bookmark.js",
-          "/js/third-party/search/local-search.js",
+          "/js/pjax.js",
+          "/vendor/hexo-generator-searchdb/1.5.0/dist/search.js",
           "/js/ginka-search-core.js",
-          "/js/third-party/fancybox.js",
+          "/js/third-party/search/local-search.js",
           "/vendor/fonts/jetbrains-mono/wght.css",
+          "/js/third-party/fancybox.js",
           "/css/ginka-editorial.css",
           "/css/ginka-pages.css",
           "/css/ginka-reading.css",
@@ -106,15 +106,15 @@
           "/images/ginka/responsive/hero-silver-1440.webp",
           "/js/third-party/comments/giscus.js",
           "/js/ginka-runtime.js",
-          "/js/ginka-atri-loader.js",
           "/js/ginka-reading.js",
+          "/js/ginka-atri-loader.js",
           "/js/ginka-controls.js",
           "/js/ginka-ui-shell.js",
           "/js/ginka-music-loader.js",
           "/js/ginka-effects-loader.js",
           "/js/ginka-page-effects.js",
-          "/js/ginka-performance-monitor.js",
           "/js/ginka-navigation.js",
+          "/js/ginka-performance-monitor.js",
           "/images/ginka/header-logo.png",
           "/images/ginka/butterfly.png",
           "/vendor/ginka-icons/fa-solid-900-subset.woff2",
@@ -126,8 +126,8 @@
         ],
         "navigation": [
           {
-            "dom": 188.70000000298023,
-            "load": 248.10000000149012
+            "dom": 198.59999999403954,
+            "load": 254.5
           }
         ],
         "errors": [],
