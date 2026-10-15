@@ -20,6 +20,9 @@ test('one layout builds all pages without losing article code or page metadata',
     assert.ok(output.includes(source.metadata), page.output + ': missing metadata');
     assert.ok(!/<link[^>]+(?:ginka_style\.css|\/css\/main\.css|\/animate\.css\/)/.test(output), page.output);
     assert.ok(!output.includes('src="/js/motion.js"'), page.output);
+    for (const [script] of output.matchAll(/<script\b[^>]*src="[^"]+"[^>]*>/g)) {
+      assert.ok(script.indexOf('data-cfasync="false"') > 0 && script.indexOf('data-cfasync="false"') < script.indexOf('src='), page.output + ': native defer order');
+    }
   }
 });
 

@@ -101,6 +101,18 @@ def version_assets(source):
     return re.sub(r'"(/(?:css/[^"?]+\.css|js/(?:ginka-[^"?]+|bookmark|third-party/(?:fancybox|search/local-search))\.js))(?:\?v=[a-z0-9]+)?"', replace, source)
 
 
+def preserve_script_order(source):
+    replacements = []
+    for node in HTMLRanges(source).nodes:
+        if node.tag != 'script' or node.attrs.get('type', 'text/javascript') not in {'text/javascript', 'application/javascript', 'module'}:
+            continue
+        tag = source[node.start:node.open_end]
+        if 'data-cfasync=' not in tag:
+            # Cloudflare requires this before src, including all dependencies.
+            replacements.append((node.start, node.open_end, tag.replace('<script', '<script data-cfasync="false"', 1)))
+    return replace_ranges(source, replacements)
+
+
 def build(check=False):
     layout = (SOURCE / 'templates/layout.html').read_text('utf-8')
     sidebar = (SOURCE / 'templates/sidebar.html').read_text('utf-8')
@@ -130,7 +142,7 @@ def build(check=False):
             hero = next(node for node in HTMLRanges(result).nodes if node.attrs.get('class') == 'journal-hero-art')
             preload = '<link rel="preload" as="image" href="/images/ginka/hero-silver.webp" fetchpriority="high" imagesrcset="' + hero.attrs['srcset'] + '" imagesizes="' + hero.attrs['sizes'] + '">'
             result = result.replace('</head>', preload + '</head>')
-        generated[item['output']] = version_assets(result).encode()
+        generated[item['output']] = preserve_script_order(version_assets(result)).encode()
     index = [{key: value for key, value in article.items() if key != 'content'} for article in articles]
     generated['article-index.json'] = (json.dumps(index, ensure_ascii=False, separators=(',', ':')) + '\n').encode()
     search = ET.Element('search', {'format': 'text'})

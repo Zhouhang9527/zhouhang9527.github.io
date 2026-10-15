@@ -1,6 +1,8 @@
 /* Search stays available across PJAX navigation and failed requests. */
-document.addEventListener('DOMContentLoaded', () => {
+function initGinkaSearch() {
+  if (window.__ginkaSearchReady) return;
   if (!CONFIG.path) return;
+  window.__ginkaSearchReady = true;
   const search = new LocalSearch({ path: CONFIG.path, ...CONFIG.localsearch });
   const overlay = document.querySelector('.search-pop-overlay');
   const dialog = overlay.querySelector('.search-popup');
@@ -167,4 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   search.highlightSearchWords(document.querySelector('.post-body'));
   if (CONFIG.localsearch.preload) load();
-});
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initGinkaSearch, { once: true });
+else initGinkaSearch();

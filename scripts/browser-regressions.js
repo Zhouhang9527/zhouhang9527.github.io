@@ -238,6 +238,23 @@ async (page) => {
     });
   } finally { await responsiveContext.close(); }
 
+  const lateContext = await browser.newContext({ serviceWorkers: 'block', reducedMotion: 'reduce' });
+  const latePage = await lateContext.newPage();
+  try {
+    await check('search initializes once when its script arrives after page readiness', async () => {
+      await lateContext.route('**/js/third-party/search/local-search.js?*', route => route.fulfill({ contentType: 'application/javascript', body: '' }));
+      await latePage.goto(origin + '/');
+      const source = await latePage.locator('script[src*="third-party/search/local-search.js"]').getAttribute('src');
+      await lateContext.unroute('**/js/third-party/search/local-search.js?*');
+      await latePage.addScriptTag({ url: origin + source });
+      await latePage.addScriptTag({ url: origin + source });
+      await latePage.keyboard.press('Control+k');
+      await latePage.locator('.search-input').fill('Android');
+      await latePage.locator('.search-result-title').first().waitFor();
+      return await latePage.locator('.journal-search-status').count() === 1;
+    });
+  } finally { await lateContext.close(); }
+
   const offlineContext = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const offlinePage = await offlineContext.newPage();
   offlinePage.setDefaultTimeout(10000);
