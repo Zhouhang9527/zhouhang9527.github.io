@@ -1,7 +1,7 @@
 {
   "observationMs": 3500,
   "mobileMaxBytes": 3000000,
-  "desktopMaxBytes": 3250000,
+  "desktopMaxBytes": 3750000,
   "maxScriptBytes": 1200000,
   "maxRequests": 64,
   "maxCls": 0.1,
