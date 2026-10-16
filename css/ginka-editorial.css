@@ -193,7 +193,6 @@ body summary:focus-visible { outline: 3px solid #80adcb; outline-offset: 2px; bo
   body .header .journal-mobile-links .menu-item a { display: flex; width: 100%; }
 }
 @media (min-width: 1200px) { body #atri-live2d-widget { transform: none; } }
-@media (max-width: 1199px) { body #atri-live2d-widget:not(.is-user-enabled) { display: none !important; } }
 @media (max-width: 900px) {
   body header.header { gap: 15px; }
   body .header .menu-item a { padding: 7px 8px !important; }

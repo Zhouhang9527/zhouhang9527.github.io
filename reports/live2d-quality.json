@@ -1,6 +1,6 @@
 {
   "performance": {
-    "capturedAt": "2026-10-16T08:40:40.935Z",
+    "capturedAt": "2026-10-16T09:45:13.504Z",
     "observationMs": 3500,
     "cache": "fresh browser context; service worker blocked",
     "passed": true,
@@ -10,20 +10,20 @@
         "metrics": {
           "cls": 0,
           "lcp": 480,
-          "longTasks": 0
+          "longTasks": 467
         },
-        "requests": 39,
-        "bytes": 392418,
-        "scriptBytes": 140892,
+        "requests": 48,
+        "bytes": 2685573,
+        "scriptBytes": 1105959,
         "resourcePaths": [
           "/css/next-base.css",
           "/css/ginka-foundation.css",
           "/css/ginka-icons.css",
           "/js/config.js",
           "/js/third-party/analytics/baidu-analytics.js",
+          "/vendor/animejs/3.2.1/lib/anime.min.js",
           "/vendor/@next-theme/pjax/0.6.0/pjax.min.js",
           "/js/utils.js",
-          "/vendor/animejs/3.2.1/lib/anime.min.js",
           "/js/next-boot.js",
           "/js/bookmark.js",
           "/js/pjax.js",
@@ -41,8 +41,8 @@
           "/js/ginka-runtime.js",
           "/js/ginka-reading.js",
           "/js/ginka-atri-loader.js",
-          "/js/ginka-controls.js",
           "/js/ginka-ui-shell.js",
+          "/js/ginka-controls.js",
           "/js/ginka-music-loader.js",
           "/js/ginka-effects-loader.js",
           "/js/ginka-page-effects.js",
@@ -53,13 +53,22 @@
           "/vendor/ginka-icons/fa-solid-900-subset.woff2",
           "/vendor/ginka-icons/fa-brands-400-subset.woff2",
           "/images/avatar.jpg",
+          "/js/live2d-libs/live2d.min.js",
+          "/js/live2d-libs/live2dcubismcore.min.js",
+          "/js/live2d-libs/pixi.min.js",
           "/vendor/web-vitals/6.2.3/web-vitals.iife.js",
-          "/images/favicon.jpg"
+          "/js/live2d-libs/pixi-live2d-display.min.js",
+          "/js/ginka-atri.js",
+          "/live2d/ATRI/ATRI.model3.json",
+          "/images/favicon.jpg",
+          "/live2d/ATRI/ATRI.2048/texture_00.png",
+          "/live2d/ATRI/ATRI.moc3",
+          "/live2d/ATRI/ATRI.physics3.json"
         ],
         "navigation": [
           {
-            "dom": 343.8999999910593,
-            "load": 462.79999999701977
+            "dom": 406.30000001192093,
+            "load": 664.1000000089407
           }
         ],
         "errors": [],
@@ -76,12 +85,12 @@
         "width": 1440,
         "metrics": {
           "cls": 0,
-          "lcp": 388,
-          "longTasks": 0
+          "lcp": 372,
+          "longTasks": 209
         },
-        "requests": 40,
-        "bytes": 460180,
-        "scriptBytes": 140892,
+        "requests": 50,
+        "bytes": 3058931,
+        "scriptBytes": 1105959,
         "resourcePaths": [
           "/css/next-base.css",
           "/css/ginka-foundation.css",
@@ -89,15 +98,15 @@
           "/js/config.js",
           "/js/third-party/analytics/baidu-analytics.js",
           "/vendor/animejs/3.2.1/lib/anime.min.js",
-          "/vendor/@next-theme/pjax/0.6.0/pjax.min.js",
           "/js/utils.js",
+          "/vendor/@next-theme/pjax/0.6.0/pjax.min.js",
           "/js/next-boot.js",
           "/js/bookmark.js",
-          "/js/ginka-search-core.js",
-          "/vendor/hexo-generator-searchdb/1.5.0/dist/search.js",
           "/js/pjax.js",
-          "/js/third-party/fancybox.js",
+          "/vendor/hexo-generator-searchdb/1.5.0/dist/search.js",
+          "/js/ginka-search-core.js",
           "/js/third-party/search/local-search.js",
+          "/js/third-party/fancybox.js",
           "/vendor/fonts/jetbrains-mono/wght.css",
           "/css/ginka-editorial.css",
           "/css/ginka-pages.css",
@@ -109,8 +118,8 @@
           "/js/ginka-reading.js",
           "/js/ginka-atri-loader.js",
           "/js/ginka-ui-shell.js",
-          "/js/ginka-controls.js",
           "/js/ginka-music-loader.js",
+          "/js/ginka-controls.js",
           "/js/ginka-effects-loader.js",
           "/js/ginka-page-effects.js",
           "/js/ginka-performance-monitor.js",
@@ -121,13 +130,23 @@
           "/vendor/ginka-icons/fa-brands-400-subset.woff2",
           "/images/avatar.jpg",
           "/images/ginka/responsive/story-scene-960.webp",
+          "/js/live2d-libs/live2d.min.js",
           "/vendor/web-vitals/6.2.3/web-vitals.iife.js",
-          "/images/favicon.jpg"
+          "/js/live2d-libs/live2dcubismcore.min.js",
+          "/js/live2d-libs/pixi.min.js",
+          "/js/live2d-libs/pixi-live2d-display.min.js",
+          "/js/ginka-atri.js",
+          "/live2d/ATRI/ATRI.model3.json",
+          "/live2d/ATRI/ATRI.moc3",
+          "/live2d/ATRI/ATRI.2048/texture_00.png",
+          "/images/favicon.jpg",
+          "/live2d/ATRI/ATRI.physics3.json",
+          "/voice-config.json"
         ],
         "navigation": [
           {
-            "dom": 348.5,
-            "load": 498.40000000596046
+            "dom": 348.09999999403954,
+            "load": 563.2999999970198
           }
         ],
         "errors": [],
@@ -270,7 +289,7 @@
         "passed": true
       },
       {
-        "name": "desktop features load once after interaction and preserve readable content",
+        "name": "ATRI loads without interaction while music and effects stay deferred",
         "passed": true
       },
       {
@@ -298,7 +317,7 @@
         "passed": true
       },
       {
-        "name": "small screens can explicitly enable ATRI and use its panel without hover",
+        "name": "small screens automatically show ATRI and its controls without a feature switch",
         "passed": true
       },
       {

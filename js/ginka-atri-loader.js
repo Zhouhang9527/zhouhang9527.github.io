@@ -10,7 +10,6 @@
   var promise = null;
   var injected = new Map();
   var LOAD_TIMEOUT_MS = 10000;
-  var userRequested = false;
   var restore = document.createElement('button');
   restore.id = 'atri-restore';
   restore.type = 'button';
@@ -25,20 +24,16 @@
   }
 
   function canLoad() {
-    return (window.innerWidth >= 1200 || userRequested) && !document.hidden && !isCollapsed()
-      && (userRequested || (runtime && runtime.hasInteracted && !runtime.isLowPower));
+    return !document.hidden && !isCollapsed();
   }
 
   function syncEntry() {
-    restore.hidden = state === 'ready' && !isCollapsed() && (window.innerWidth >= 1200 || userRequested);
+    restore.hidden = state !== 'error' && !isCollapsed();
     restore.disabled = state === 'loading';
     restore.textContent = state === 'loading' ? 'ATRI · 加载中…' : state === 'error' ? 'ATRI · 重试' : state === 'ready' ? 'ATRI · 唤回' : '开启 ATRI';
     restore.setAttribute('aria-busy', String(state === 'loading'));
   }
   restore.addEventListener('click', function () {
-    userRequested = true;
-    window.GINKA_ATRI_LOADER.userRequested = true;
-    document.getElementById('atri-live2d-widget').classList.add('is-user-enabled');
     try { localStorage.setItem('atri_collapsed', '0'); } catch (_) {}
     if (state === 'ready' && window.ATRI) window.ATRI.setVisible(true);
     else start({ retry: true });
@@ -160,7 +155,6 @@
 
   window.GINKA_ATRI_LOADER = {
     state: state,
-    userRequested: false,
     error: null,
     start: start,
     retry: retry
@@ -170,9 +164,9 @@
   if (runtime) {
     runtime.scheduleBackgroundTask('atri-widget', start, {
       timeout: 2400,
-      requireInteraction: true
+      requireInteraction: false
     });
-  } else if (document.readyState === 'complete') {
+  } else if (document.readyState === 'complete' || document.body) {
     window.setTimeout(start, 0);
   } else {
     window.addEventListener('load', start, { once: true });

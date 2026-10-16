@@ -165,9 +165,10 @@ async (page) => {
   const desktopErrors = [];
   desktopPage.on('pageerror', error => desktopErrors.push(error.message));
   try {
-    await check('desktop features load once after interaction and preserve readable content', async () => {
+    await check('ATRI loads without interaction while music and effects stay deferred', async () => {
       await desktopPage.goto(origin + '/');
-      const deferred = await desktopPage.evaluate(() => !window.gsap && window.GINKA_ATRI_LOADER.state === 'idle');
+      await desktopPage.waitForFunction(() => window.GINKA_ATRI_LOADER.state === 'ready' && window.ATRI.isReady, null, { timeout: 35000 });
+      const deferred = await desktopPage.evaluate(() => !window.gsap && !GINKA_RUNTIME.hasInteracted && !document.getElementById('atri-tools-toggle'));
       await desktopPage.locator('.sidebar-toggle').click();
       await desktopPage.waitForFunction(() => document.activeElement.matches('.journal-sidebar-close'));
       await desktopPage.waitForFunction(() => !!window.ScrollTrigger && !!window.__ginkaMusicBooted);
@@ -179,7 +180,8 @@ async (page) => {
     });
     await check('ATRI renders visible pixels before enabling its companion controls', async () => {
       await desktopPage.keyboard.press('Escape');
-      await desktopPage.locator('#atri-tools-toggle').click();
+      await desktopPage.waitForFunction(() => ATRI.app.stage.renderable);
+      await desktopPage.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       return await desktopPage.evaluate(() => {
         const pixels = ATRI.app.renderer.extract.pixels(ATRI.app.stage);
         let visible = 0;
@@ -258,8 +260,7 @@ async (page) => {
   });
   try {
     await check('slow ATRI textures keep voice, welcome and controls disabled until the model is drawn', async () => {
-      await atriPage.goto(origin + '/');
-      await atriPage.locator('#atri-restore').click();
+      await atriPage.goto(origin + '/', { waitUntil: 'domcontentloaded' });
       for (let count = 0; !textureRequested && count < 100; count++) await atriPage.waitForTimeout(50);
       const waiting = textureRequested && await atriPage.evaluate(() => GINKA_ATRI_LOADER.state === 'loading'
         && !window.ATRI && !window.atri?.voicePlayer && !document.querySelector('#atri-live2d-widget').classList.contains('is-ready')
@@ -268,8 +269,7 @@ async (page) => {
       await atriPage.waitForFunction(() => GINKA_ATRI_LOADER.state === 'ready' && ATRI.isReady, null, { timeout: 35000 });
       return waiting;
     });
-    await check('small screens can explicitly enable ATRI and use its panel without hover', async () => {
-      await atriPage.locator('#atri-tools-toggle').click();
+    await check('small screens automatically show ATRI and its controls without a feature switch', async () => {
       const fits = await atriPage.evaluate(() => {
         const widget = ATRI.widget.getBoundingClientRect();
         const canvas = ATRI.canvas.getBoundingClientRect();
@@ -285,7 +285,6 @@ async (page) => {
       for (const viewport of [{ width: 320, height: 844 }, { width: 768, height: 360 }, { width: 1024, height: 768 }]) {
         await atriPage.setViewportSize(viewport);
         await atriPage.waitForTimeout(400);
-        await atriPage.locator('#atri-tools-toggle').click();
         smallFits = smallFits && await atriPage.evaluate(() => {
           const rect = ATRI.widget.getBoundingClientRect();
           const canvas = ATRI.canvas.getBoundingClientRect();
@@ -295,7 +294,7 @@ async (page) => {
         });
         await atriPage.keyboard.press('Escape');
       }
-      return fits && smallFits && photo.suggestedFilename().endsWith('.png') && await atriPage.locator('#atri-controls').isHidden();
+      return fits && smallFits && photo.suggestedFilename().endsWith('.png') && await atriPage.locator('#atri-controls').isVisible();
     });
   } finally { releaseTexture(); await atriContext.close(); }
 
@@ -309,11 +308,9 @@ async (page) => {
   try {
     await check('a failed ATRI model can retry into a working model and single control handlers', async () => {
       await atriRetry.goto(origin + '/');
-      await atriRetry.locator('#atri-restore').click();
       await atriRetry.waitForFunction(() => GINKA_ATRI_LOADER.state === 'error');
       await atriRetry.getByRole('button', { name: 'ATRI · 重试', exact: true }).click();
       await atriRetry.waitForFunction(() => GINKA_ATRI_LOADER.state === 'ready' && ATRI.isReady, null, { timeout: 35000 });
-      await atriRetry.locator('#atri-tools-toggle').click();
       await atriRetry.locator('#atri-volume').click();
       const muted = await atriRetry.evaluate(() => localStorage.getItem('atri_voice_volume') === '0');
       await atriRetry.locator('#atri-volume').click();

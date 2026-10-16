@@ -19,10 +19,11 @@ window.__ginkaAtriReady = (async function () {
     isMobile: () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768,
     
     getConfig: function() {
-      const width = Math.round(Math.max(160, Math.min(220, (window.innerWidth - 920) / 2 - 24, window.innerHeight * .28)));
+      const besideOutline = window.innerWidth >= 1440 && document.querySelector('.journal-outline');
+      const width = besideOutline ? 160 : Math.round(Math.max(160, Math.min(220, (window.innerWidth - 920) / 2 - 24, window.innerHeight * .28)));
       const height = Math.min(Math.round(width * 10 / 7), Math.max(100, window.innerHeight - 220));
       return { width, height, scale: .25,
-        messageTimeout: 3600, hidden: window.innerWidth < 1200 && !window.GINKA_ATRI_LOADER?.userRequested };
+        messageTimeout: 3600, hidden: false };
 
     }
   };
@@ -71,7 +72,6 @@ window.__ginkaAtriReady = (async function () {
       this.model = null;
       this.isReady = false;
       this.disposed = false;
-      this._events = new AbortController();
 
       this.voiceConfig = null;
       this.voicePlayer = null;
@@ -494,6 +494,7 @@ window.__ginkaAtriReady = (async function () {
       this.app.renderer.render(this.app.stage);
       this._visibilityHandler();
       this.isReady = true;
+      document.getElementById('atri-controls').hidden = false;
       if (this.canAnimate()) {
         this._setAppRunning(true);
       }
@@ -532,6 +533,7 @@ window.__ginkaAtriReady = (async function () {
         }, 300);
       };
       window.addEventListener('resize', this._resizeHandler);
+      document.addEventListener('page:loaded', this._resizeHandler);
     }
 
     updateLayout() {
@@ -747,22 +749,6 @@ window.__ginkaAtriReady = (async function () {
 
     setupControls() {
       const ensureElement = (id) => document.getElementById(id);
-      const tools = ensureElement('atri-tools-toggle');
-      const panel = ensureElement('atri-controls');
-      tools.addEventListener('click', () => {
-        const open = tools.getAttribute('aria-expanded') !== 'true';
-        tools.setAttribute('aria-expanded', String(open));
-        panel.hidden = !open;
-        this.widget.classList.toggle('is-tools-open', open);
-        this.keepWidgetInViewport();
-      }, { signal: this._events.signal });
-      this.widget.addEventListener('keydown', event => {
-        if (event.key !== 'Escape') return;
-        tools.setAttribute('aria-expanded', 'false');
-        panel.hidden = true;
-        this.widget.classList.remove('is-tools-open');
-        tools.focus();
-      }, { signal: this._events.signal });
 
       const toggleBtn = ensureElement('atri-toggle');
       if (toggleBtn) {
@@ -1312,10 +1298,10 @@ window.__ginkaAtriReady = (async function () {
     dispose() {
       this.disposed = true;
       this.isReady = false;
-      this._events.abort();
       if (this.widget) this.widget.classList.remove('is-ready');
       clearTimeout(this._resizeTimer);
       if (this._resizeHandler) window.removeEventListener('resize', this._resizeHandler);
+      if (this._resizeHandler) document.removeEventListener('page:loaded', this._resizeHandler);
       if (this._bodyObserver) this._bodyObserver.disconnect();
       if (this.voicePlayer) this.voicePlayer.pause();
       this.stopTalkingFace();
@@ -1380,9 +1366,7 @@ window.__ginkaAtriReady = (async function () {
       widget.classList.remove('is-ready');
       // A fresh canvas and controls discard listeners left by an interrupted load.
       for (const element of widget.querySelectorAll('canvas, button')) element.replaceWith(element.cloneNode(true));
-      widget.classList.remove('is-tools-open');
       document.getElementById('atri-controls').hidden = true;
-      document.getElementById('atri-tools-toggle').setAttribute('aria-expanded', 'false');
     }
     const atri = new ATRILive2D(CONFIG);
     await atri.init();

@@ -260,7 +260,7 @@
 
 /* 欢迎动画 */
 #atri-live2d-widget.is-ready #atri-canvas {
-  animation: atriEntrance 1s ease-out;
+  animation: none;
 }
 
 @keyframes atriEntrance {
@@ -1262,15 +1262,11 @@ body.sidebar-active #atri-restore { visibility: hidden !important; pointer-event
   #atri-controls .atri-control-btn { min-width: 40px; min-height: 40px; }
 }
 
-/* Explicit controls stay usable without hover and never cover the model. */
-body #atri-live2d-widget { padding-bottom: 44px; box-sizing: content-box; transform: none; }
-body #atri-live2d-widget.is-tools-open { padding-bottom: 140px; }
-#atri-tools-toggle {
-  position: absolute; bottom: 0; right: 0; min-height: 40px; padding: 0 14px;
-  border: 1px solid #dce5ed; border-radius: 10px; background: #f5f8fc;
-  color: #425e77; font: inherit; font-size: 12px; cursor: pointer;
+/* Controls appear with the ready model and never cover its canvas. */
+@media (min-width: 1440px) {
+  body:has(.journal-outline) #atri-live2d-widget { left: 12px; right: auto !important; }
 }
-body #atri-live2d-widget.is-tools-open #atri-tools-toggle { bottom: 98px; }
+body #atri-live2d-widget { padding-bottom: 106px; box-sizing: content-box; transform: none; }
 body #atri-controls {
   top: auto; bottom: 0; left: 0; right: 0; padding: 5px;
   display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px;
@@ -1287,7 +1283,6 @@ body #atri-controls .atri-control-btn {
 }
 body #atri-controls .atri-control-btn span { display: inline; }
 body #atri-controls .atri-control-btn:hover { background: #e4edf5 !important; }
-body #atri-tools-toggle:focus-visible { outline: 3px solid #80adcb; outline-offset: 2px; }
 @media (max-width: 1199px) {
   body #atri-restore { bottom: 76px; }
   body #atri-live2d-widget { right: 14px !important; }
