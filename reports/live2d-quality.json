@@ -1,6 +1,6 @@
 {
   "performance": {
-    "capturedAt": "2026-10-16T09:45:13.504Z",
+    "capturedAt": "2026-10-16T09:51:41.129Z",
     "observationMs": 3500,
     "cache": "fresh browser context; service worker blocked",
     "passed": true,
@@ -9,8 +9,8 @@
         "width": 390,
         "metrics": {
           "cls": 0,
-          "lcp": 480,
-          "longTasks": 467
+          "lcp": 456,
+          "longTasks": 178
         },
         "requests": 48,
         "bytes": 2685573,
@@ -22,16 +22,16 @@
           "/js/config.js",
           "/js/third-party/analytics/baidu-analytics.js",
           "/vendor/animejs/3.2.1/lib/anime.min.js",
+          "/js/next-boot.js",
           "/vendor/@next-theme/pjax/0.6.0/pjax.min.js",
           "/js/utils.js",
-          "/js/next-boot.js",
           "/js/bookmark.js",
           "/js/pjax.js",
           "/vendor/hexo-generator-searchdb/1.5.0/dist/search.js",
           "/js/ginka-search-core.js",
           "/js/third-party/search/local-search.js",
-          "/js/third-party/fancybox.js",
           "/vendor/fonts/jetbrains-mono/wght.css",
+          "/js/third-party/fancybox.js",
           "/css/ginka-editorial.css",
           "/css/ginka-pages.css",
           "/css/ginka-reading.css",
@@ -53,22 +53,22 @@
           "/vendor/ginka-icons/fa-solid-900-subset.woff2",
           "/vendor/ginka-icons/fa-brands-400-subset.woff2",
           "/images/avatar.jpg",
+          "/images/favicon.jpg",
           "/js/live2d-libs/live2d.min.js",
+          "/vendor/web-vitals/6.2.3/web-vitals.iife.js",
           "/js/live2d-libs/live2dcubismcore.min.js",
           "/js/live2d-libs/pixi.min.js",
-          "/vendor/web-vitals/6.2.3/web-vitals.iife.js",
           "/js/live2d-libs/pixi-live2d-display.min.js",
           "/js/ginka-atri.js",
           "/live2d/ATRI/ATRI.model3.json",
-          "/images/favicon.jpg",
-          "/live2d/ATRI/ATRI.2048/texture_00.png",
           "/live2d/ATRI/ATRI.moc3",
+          "/live2d/ATRI/ATRI.2048/texture_00.png",
           "/live2d/ATRI/ATRI.physics3.json"
         ],
         "navigation": [
           {
-            "dom": 406.30000001192093,
-            "load": 664.1000000089407
+            "dom": 382.6000000089407,
+            "load": 392.20000000298023
           }
         ],
         "errors": [],
@@ -85,8 +85,8 @@
         "width": 1440,
         "metrics": {
           "cls": 0,
-          "lcp": 372,
-          "longTasks": 209
+          "lcp": 424,
+          "longTasks": 184
         },
         "requests": 50,
         "bytes": 3058931,
@@ -98,9 +98,9 @@
           "/js/config.js",
           "/js/third-party/analytics/baidu-analytics.js",
           "/vendor/animejs/3.2.1/lib/anime.min.js",
-          "/js/utils.js",
           "/vendor/@next-theme/pjax/0.6.0/pjax.min.js",
           "/js/next-boot.js",
+          "/js/utils.js",
           "/js/bookmark.js",
           "/js/pjax.js",
           "/vendor/hexo-generator-searchdb/1.5.0/dist/search.js",
@@ -118,8 +118,8 @@
           "/js/ginka-reading.js",
           "/js/ginka-atri-loader.js",
           "/js/ginka-ui-shell.js",
-          "/js/ginka-music-loader.js",
           "/js/ginka-controls.js",
+          "/js/ginka-music-loader.js",
           "/js/ginka-effects-loader.js",
           "/js/ginka-page-effects.js",
           "/js/ginka-performance-monitor.js",
@@ -130,6 +130,7 @@
           "/vendor/ginka-icons/fa-brands-400-subset.woff2",
           "/images/avatar.jpg",
           "/images/ginka/responsive/story-scene-960.webp",
+          "/images/favicon.jpg",
           "/js/live2d-libs/live2d.min.js",
           "/vendor/web-vitals/6.2.3/web-vitals.iife.js",
           "/js/live2d-libs/live2dcubismcore.min.js",
@@ -139,14 +140,13 @@
           "/live2d/ATRI/ATRI.model3.json",
           "/live2d/ATRI/ATRI.moc3",
           "/live2d/ATRI/ATRI.2048/texture_00.png",
-          "/images/favicon.jpg",
           "/live2d/ATRI/ATRI.physics3.json",
           "/voice-config.json"
         ],
         "navigation": [
           {
-            "dom": 348.09999999403954,
-            "load": 563.2999999970198
+            "dom": 388.3999999910593,
+            "load": 396.29999999701977
           }
         ],
         "errors": [],

@@ -29,6 +29,7 @@ const server = http.createServer((request, response) => {
   try {
     browser = await chromium.launch({ headless: true, ...(process.env.GINKA_BROWSER_CHANNEL ? { channel: process.env.GINKA_BROWSER_CHANNEL } : {}) });
     const page = await browser.newPage();
+    await page.route('https://hm.baidu.com/**', route => route.fulfill({ status: 204, body: '' }));
     await page.goto(`http://127.0.0.1:${server.address().port}/`);
     const load = name => vm.runInNewContext('(' + fs.readFileSync(path.join(__dirname, name), 'utf8') + ')', { URL, Date });
     const performanceReport = await load('browser-audit.js')(page);

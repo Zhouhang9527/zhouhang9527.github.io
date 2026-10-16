@@ -3,11 +3,17 @@ async (page) => {
   const origin = new URL(page.url()).origin;
   const results = [];
   const browser = page.context().browser();
+  async function newContext(options) {
+    const context = await browser.newContext(options);
+    // Local UI checks must not wait for the external analytics service.
+    await context.route('https://hm.baidu.com/**', route => route.fulfill({ status: 204, body: '' }));
+    return context;
+  }
   async function check(name, run) {
     try { const passed = await run(); results.push({ name, passed: passed !== false }); }
     catch (error) { results.push({ name, passed: false, error: error.message }); }
   }
-  const context = await browser.newContext({ serviceWorkers: 'block', reducedMotion: 'reduce' });
+  const context = await newContext({ serviceWorkers: 'block', reducedMotion: 'reduce' });
   const p = await context.newPage();
   p.setDefaultTimeout(7000);
   const errors = [];
@@ -120,7 +126,7 @@ async (page) => {
     });
   } finally { await context.close(); }
 
-  const retryContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
+  const retryContext = await newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
   let attempts = 0;
   await retryContext.route('**/js/ginka-music.js?*', async route => {
     attempts++;
@@ -140,7 +146,7 @@ async (page) => {
     });
   } finally { await retryContext.close(); }
 
-  const searchContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
+  const searchContext = await newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
   let searchAttempts = 0;
   await searchContext.route('**/search.xml', async route => {
     if (++searchAttempts === 1) await route.fulfill({ status: 503, body: 'temporarily unavailable' });
@@ -159,7 +165,7 @@ async (page) => {
     });
   } finally { await searchContext.close(); }
 
-  const desktop = await browser.newContext({ viewport: { width: 1440, height: 1000 }, serviceWorkers: 'block' });
+  const desktop = await newContext({ viewport: { width: 1440, height: 1000 }, serviceWorkers: 'block' });
   const desktopPage = await desktop.newPage();
   desktopPage.setDefaultTimeout(10000);
   const desktopErrors = [];
@@ -248,7 +254,7 @@ async (page) => {
     });
   } finally { await desktop.close(); }
 
-  const atriContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
+  const atriContext = await newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
   const atriPage = await atriContext.newPage();
   let releaseTexture;
   const textureGate = new Promise(resolve => { releaseTexture = resolve; });
@@ -298,7 +304,7 @@ async (page) => {
     });
   } finally { releaseTexture(); await atriContext.close(); }
 
-  const atriRetryContext = await browser.newContext({ viewport: { width: 1440, height: 1000 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
+  const atriRetryContext = await newContext({ viewport: { width: 1440, height: 1000 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
   let modelAttempts = 0;
   await atriRetryContext.route('**/live2d/ATRI/ATRI.model3.json?*', async route => {
     if (++modelAttempts === 1) await route.fulfill({ status: 503, body: 'temporarily unavailable' });
@@ -319,7 +325,7 @@ async (page) => {
     });
   } finally { await atriRetryContext.close(); }
 
-  const responsiveContext = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, serviceWorkers: 'block' });
+  const responsiveContext = await newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, serviceWorkers: 'block' });
   const responsive = await responsiveContext.newPage();
   try {
     await check('mobile selects a smaller illustration and preloads it only once', async () => {
@@ -343,7 +349,7 @@ async (page) => {
     });
   } finally { await responsiveContext.close(); }
 
-  const lateContext = await browser.newContext({ serviceWorkers: 'block', reducedMotion: 'reduce' });
+  const lateContext = await newContext({ serviceWorkers: 'block', reducedMotion: 'reduce' });
   const latePage = await lateContext.newPage();
   try {
     await check('search initializes once when its script arrives after page readiness', async () => {
@@ -360,7 +366,7 @@ async (page) => {
     });
   } finally { await lateContext.close(); }
 
-  const proxyContext = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 1440, height: 1000 } });
+  const proxyContext = await newContext({ serviceWorkers: 'block', viewport: { width: 1440, height: 1000 } });
   await proxyContext.addInitScript(() => {
     // Model a CDN loader that virtualizes readiness and withholds load events.
     Object.defineProperty(document, 'readyState', { configurable: true, get: () => 'loading' });
@@ -387,7 +393,7 @@ async (page) => {
     });
   } finally { await proxyContext.close(); }
 
-  const offlineContext = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const offlineContext = await newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const offlinePage = await offlineContext.newPage();
   offlinePage.setDefaultTimeout(10000);
   try {
@@ -406,7 +412,7 @@ async (page) => {
     });
   } finally { await offlineContext.setOffline(false); await offlineContext.close(); }
 
-  const nojsContext = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
+  const nojsContext = await newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
   const nojsPage = await nojsContext.newPage();
   nojsPage.setDefaultTimeout(7000);
   try {

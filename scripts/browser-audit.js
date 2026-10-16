@@ -9,6 +9,7 @@ async (page) => {
       viewport: { width, height: 1000 }, serviceWorkers: 'block'
     });
     const testPage = await context.newPage();
+    await context.route('https://hm.baidu.com/**', route => route.fulfill({ status: 204, body: '' }));
     const errors = [];
     testPage.on('pageerror', error => errors.push(error.message));
     await testPage.addInitScript(() => {
