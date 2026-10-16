@@ -58,7 +58,7 @@ test('long articles have a complete contents list with valid heading targets', (
 test('shared asset versions match their file content on every page', () => {
   const assets = ['css/ginka-editorial.css', 'css/ginka-pages.css', 'css/ginka-reading.css', 'css/ginka-icons.css', 'css/noscript.css',
     'js/bookmark.js', 'js/ginka-reading.js', 'js/ginka-navigation.js', 'js/ginka-runtime.js',
-    'js/ginka-controls.js', 'js/ginka-ui-shell.js', 'js/ginka-atri-loader.js', 'js/ginka-effects-loader.js', 'js/ginka-page-effects.js',
+    'js/ginka-controls.js', 'js/ginka-ui-shell.js', 'js/ginka-atri-loader.js', 'js/ginka-atri.js', 'js/ginka-effects-loader.js', 'js/ginka-page-effects.js',
     'js/ginka-performance-monitor.js', 'js/ginka-music-loader.js', 'js/ginka-music.js',
     'js/third-party/fancybox.js', 'js/third-party/search/local-search.js'];
   for (const asset of assets) {

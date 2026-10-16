@@ -2,6 +2,8 @@
   'use strict';
 
   var runtime = window.GINKA_RUNTIME;
+  var entryScript = document.querySelector('script[data-atri-src]');
+  var entryPath = entryScript && entryScript.dataset.atriSrc || '/js/ginka-atri.js';
   var root = (window.CONFIG && window.CONFIG.root) || '/';
   var base = root.endsWith('/') ? root : root + '/';
   var state = 'idle';
@@ -23,19 +25,22 @@
   }
 
   function canLoad() {
-    return window.innerWidth >= 1200 && !document.hidden && !isCollapsed()
+    return (window.innerWidth >= 1200 || userRequested) && !document.hidden && !isCollapsed()
       && (userRequested || (runtime && runtime.hasInteracted && !runtime.isLowPower));
   }
 
   function syncEntry() {
-    restore.hidden = window.innerWidth < 1200 || (!isCollapsed() && state !== 'error' && !(runtime && runtime.isLowPower && state === 'idle'));
+    restore.hidden = state === 'ready' && !isCollapsed() && (window.innerWidth >= 1200 || userRequested);
     restore.disabled = state === 'loading';
-    restore.textContent = state === 'error' ? 'ATRI · 重试' : 'ATRI · 唤回';
+    restore.textContent = state === 'loading' ? 'ATRI · 加载中…' : state === 'error' ? 'ATRI · 重试' : state === 'ready' ? 'ATRI · 唤回' : '开启 ATRI';
+    restore.setAttribute('aria-busy', String(state === 'loading'));
   }
   restore.addEventListener('click', function () {
     userRequested = true;
+    window.GINKA_ATRI_LOADER.userRequested = true;
+    document.getElementById('atri-live2d-widget').classList.add('is-user-enabled');
     try { localStorage.setItem('atri_collapsed', '0'); } catch (_) {}
-    if (window.ATRI) window.ATRI.setVisible(true);
+    if (state === 'ready' && window.ATRI) window.ATRI.setVisible(true);
     else start({ retry: true });
     syncEntry();
   });
@@ -125,17 +130,17 @@
           'js/live2d-libs/live2dcubismcore.min.js',
           'js/live2d-libs/pixi.min.js',
           'js/live2d-libs/pixi-live2d-display.min.js',
-          'js/ginka-atri.js'
+          entryPath
         ]) {
           if (!canLoad()) { setState('idle'); promise = null; return false; }
           await loadScript(path);
         }
         await window.__ginkaAtriReady;
-        if (!window.ATRI || !window.ATRI.model) throw new Error('ATRI model unavailable');
+        if (!window.ATRI || !window.ATRI.isReady) throw new Error('ATRI model unavailable');
         setState('ready');
         return true;
       } catch (error) {
-        var entryUrl = normalizeUrl('js/ginka-atri.js');
+        var entryUrl = normalizeUrl(entryPath);
         var entry = injected.get(entryUrl);
         if (entry) entry.remove();
         injected.delete(entryUrl);
@@ -155,6 +160,7 @@
 
   window.GINKA_ATRI_LOADER = {
     state: state,
+    userRequested: false,
     error: null,
     start: start,
     retry: retry

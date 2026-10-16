@@ -20,8 +20,9 @@ window.__ginkaAtriReady = (async function () {
     
     getConfig: function() {
       const width = Math.round(Math.max(160, Math.min(220, (window.innerWidth - 920) / 2 - 24, window.innerHeight * .28)));
-      return { width, height: Math.round(width * 10 / 7), scale: .25,
-        messageTimeout: 3600, hidden: window.innerWidth < 1200 };
+      const height = Math.min(Math.round(width * 10 / 7), Math.max(100, window.innerHeight - 220));
+      return { width, height, scale: .25,
+        messageTimeout: 3600, hidden: window.innerWidth < 1200 && !window.GINKA_ATRI_LOADER?.userRequested };
 
     }
   };
@@ -68,6 +69,9 @@ window.__ginkaAtriReady = (async function () {
 
       this.app = null;
       this.model = null;
+      this.isReady = false;
+      this.disposed = false;
+      this._events = new AbortController();
 
       this.voiceConfig = null;
       this.voicePlayer = null;
@@ -177,7 +181,7 @@ window.__ginkaAtriReady = (async function () {
     }
 
     canAnimate() {
-      return this.isVisible && !document.hidden && !DeviceManager.getConfig().hidden &&
+      return !this.disposed && this.isVisible && !document.hidden && !DeviceManager.getConfig().hidden &&
         !document.body.classList.contains('sidebar-active');
     }
 
@@ -450,12 +454,10 @@ window.__ginkaAtriReady = (async function () {
 
     async init() {
       if (!this.widget || !this.canvas) {
-        console.error('[ATRI] 缺少容器或 canvas');
-        return;
+        throw new Error('ATRI container unavailable');
       }
       if (!window.PIXI || !window.PIXI.live2d) {
-        console.error('[ATRI] Live2D 依赖未加载（PIXI / pixi-live2d-display）');
-        return;
+        throw new Error('ATRI rendering dependencies unavailable');
       }
 
       // 恢复上次拖拽位置
@@ -480,11 +482,18 @@ window.__ginkaAtriReady = (async function () {
       }
 
       await this.loadModel();
+      if (this.disposed) throw new Error('ATRI initialization cancelled');
       this.setupControls();
       this.setupCanvasEvents();
       this.setupResponsiveHandler();
       this.setupVisibilityLifecycle();
       this.updateLayout();
+      // Draw once before exposing the widget, its controls or welcome message.
+      this.model.update(0);
+      this.app.stage.renderable = true;
+      this.app.renderer.render(this.app.stage);
+      this._visibilityHandler();
+      this.isReady = true;
       if (this.canAnimate()) {
         this._setAppRunning(true);
       }
@@ -498,7 +507,7 @@ window.__ginkaAtriReady = (async function () {
       const requireInteraction = !!(runtime && runtime.isLowPower);
       const timeout = requireInteraction ? 4000 : 1600;
       const start = () => {
-        this.initVoicePlayer().catch(function () {
+        this.ensureVoicePlayer().catch(function () {
           // keep silent
         });
       };
@@ -634,14 +643,20 @@ window.__ginkaAtriReady = (async function () {
     }
 
     async loadModel() {
+      let timeout;
       try {
         console.log('[ATRI] 加载模型:', this.config.modelPath);
         // 改成手动 tick：避免共享 ticker 与本地 Pixi app 双重更新时间线。
         // 这样可以减少全局刷新链压力，也更容易在页面隐藏/小屏时统一暂停。
-        this.model = await PIXI.live2d.Live2DModel.from(this.config.modelPath, {
+        const loading = PIXI.live2d.Live2DModel.from(this.config.modelPath, {
           autoUpdate: false,
           autoInteract: false
         });
+        loading.then(model => { if (this.disposed) model.destroy(); }, () => {});
+        this.model = await Promise.race([loading, new Promise((_, reject) => {
+          timeout = setTimeout(() => reject(new Error('ATRI model loading timed out')), 30000);
+        })]);
+        if (this.disposed) throw new Error('ATRI initialization cancelled');
         this.app.stage.addChild(this.model);
         this.attachModelTicker();
 
@@ -660,6 +675,8 @@ window.__ginkaAtriReady = (async function () {
       } catch (e) {
         console.error('[ATRI] 模型加载失败:', e);
         throw e;
+      } finally {
+        clearTimeout(timeout);
       }
     }
 
@@ -730,6 +747,22 @@ window.__ginkaAtriReady = (async function () {
 
     setupControls() {
       const ensureElement = (id) => document.getElementById(id);
+      const tools = ensureElement('atri-tools-toggle');
+      const panel = ensureElement('atri-controls');
+      tools.addEventListener('click', () => {
+        const open = tools.getAttribute('aria-expanded') !== 'true';
+        tools.setAttribute('aria-expanded', String(open));
+        panel.hidden = !open;
+        this.widget.classList.toggle('is-tools-open', open);
+        this.keepWidgetInViewport();
+      }, { signal: this._events.signal });
+      this.widget.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') return;
+        tools.setAttribute('aria-expanded', 'false');
+        panel.hidden = true;
+        this.widget.classList.remove('is-tools-open');
+        tools.focus();
+      }, { signal: this._events.signal });
 
       const toggleBtn = ensureElement('atri-toggle');
       if (toggleBtn) {
@@ -753,9 +786,10 @@ window.__ginkaAtriReady = (async function () {
 
       const talkBtn = ensureElement('atri-talk');
       if (talkBtn) {
-        talkBtn.addEventListener('click', (e) => {
+        talkBtn.addEventListener('click', async (e) => {
           e.preventDefault();
           e.stopPropagation();
+          await this.ensureVoicePlayer();
           if (this.voiceConfig && this.voiceConfig.enabled) {
             this.playVoice('talk');
           } else {
@@ -852,7 +886,8 @@ window.__ginkaAtriReady = (async function () {
       const volumeBtn = ensureElement('atri-volume');
       if (volumeBtn) {
         // 默认语音音量稍微降低一点（用户反馈偏大声）
-        let voiceVolume = parseFloat(localStorage.getItem('atri_voice_volume') || '0.55');
+        let voiceVolume = 0.55;
+        try { voiceVolume = parseFloat(localStorage.getItem('atri_voice_volume') || '0.55'); } catch (_) {}
         const updateIcon = (vol) => {
           const icon = volumeBtn.querySelector('i');
           if (!icon) return;
@@ -880,7 +915,7 @@ window.__ginkaAtriReady = (async function () {
           }
 
           updateIcon(voiceVolume);
-          localStorage.setItem('atri_voice_volume', String(voiceVolume));
+          try { localStorage.setItem('atri_voice_volume', String(voiceVolume)); } catch (_) {}
           this.setVoiceVolume(voiceVolume);
         });
       }
@@ -1124,6 +1159,12 @@ window.__ginkaAtriReady = (async function () {
       this.performParameterGesture('bright', { duration: 950 });
     }
 
+    ensureVoicePlayer() {
+      if (this.voicePlayer) return Promise.resolve();
+      if (!this._voicePromise) this._voicePromise = this.initVoicePlayer().finally(() => { this._voicePromise = null; });
+      return this._voicePromise;
+    }
+
     async initVoicePlayer() {
       try {
         const cdnConfigUrls = [
@@ -1146,7 +1187,7 @@ window.__ginkaAtriReady = (async function () {
 
         for (const url of tryUrls) {
           try {
-            const resp = await fetch(url, { cache: 'no-cache' });
+            const resp = await fetch(url, { cache: 'no-cache', signal: AbortSignal.timeout(5000) });
             if (!resp.ok) continue;
             cfg = await resp.json();
             loadedFrom = url;
@@ -1156,6 +1197,7 @@ window.__ginkaAtriReady = (async function () {
           }
         }
 
+        if (this.disposed) return;
         if (!cfg) {
           console.warn('[ATRI Voice] 配置加载失败（CDN/本地均不可用），语音禁用');
           return;
@@ -1176,7 +1218,8 @@ window.__ginkaAtriReady = (async function () {
         // CDN 语音用于 WebAudio 分析口型，需要 CORS
         try { this.voicePlayer.crossOrigin = 'anonymous'; } catch (_) {}
         // 默认音量稍微降低一点（用户反馈偏大声）
-        const storedVol = parseFloat(localStorage.getItem('atri_voice_volume') || String(this.voiceConfig.volume || '0.55'));
+        let storedVol = Number(this.voiceConfig.volume || .55);
+        try { storedVol = parseFloat(localStorage.getItem('atri_voice_volume') || String(storedVol)); } catch (_) {}
         this.voicePlayer.volume = Number.isFinite(storedVol) ? storedVol : 0.55;
         this.voiceConfig.volume = this.voicePlayer.volume;
 
@@ -1267,6 +1310,10 @@ window.__ginkaAtriReady = (async function () {
 
 
     dispose() {
+      this.disposed = true;
+      this.isReady = false;
+      this._events.abort();
+      if (this.widget) this.widget.classList.remove('is-ready');
       clearTimeout(this._resizeTimer);
       if (this._resizeHandler) window.removeEventListener('resize', this._resizeHandler);
       if (this._bodyObserver) this._bodyObserver.disconnect();
@@ -1331,6 +1378,11 @@ window.__ginkaAtriReady = (async function () {
     const widget = document.getElementById('atri-live2d-widget');
     if (widget) {
       widget.classList.remove('is-ready');
+      // A fresh canvas and controls discard listeners left by an interrupted load.
+      for (const element of widget.querySelectorAll('canvas, button')) element.replaceWith(element.cloneNode(true));
+      widget.classList.remove('is-tools-open');
+      document.getElementById('atri-controls').hidden = true;
+      document.getElementById('atri-tools-toggle').setAttribute('aria-expanded', 'false');
     }
     const atri = new ATRILive2D(CONFIG);
     await atri.init();
@@ -1343,6 +1395,8 @@ window.__ginkaAtriReady = (async function () {
   } catch (e) {
     if (window.atri) window.atri.dispose();
     console.error('[ATRI] 初始化失败:', e);
+    window.ATRI = null;
+    throw e;
   } finally {
     window.__ginkaAtriBooting = false;
   }

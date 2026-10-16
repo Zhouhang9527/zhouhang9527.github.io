@@ -171,11 +171,43 @@ async (page) => {
       await desktopPage.locator('.sidebar-toggle').click();
       await desktopPage.waitForFunction(() => document.activeElement.matches('.journal-sidebar-close'));
       await desktopPage.waitForFunction(() => !!window.ScrollTrigger && !!window.__ginkaMusicBooted);
-      await desktopPage.waitForFunction(() => ['ready', 'error'].includes(window.GINKA_ATRI_LOADER.state), {}, { timeout: 20000 });
+      await desktopPage.waitForFunction(() => window.GINKA_ATRI_LOADER.state === 'ready' && window.ATRI.isReady, {}, { timeout: 35000 });
       return deferred && desktopErrors.length === 0 && await desktopPage.evaluate(() => {
         const paths = [...document.scripts].map(script => script.src).filter(Boolean).map(src => new URL(src).pathname);
         return new Set(paths).size === paths.length && getComputedStyle(document.querySelector('.main-inner')).opacity === '1';
       });
+    });
+    await check('ATRI renders visible pixels before enabling its companion controls', async () => {
+      await desktopPage.keyboard.press('Escape');
+      await desktopPage.locator('#atri-tools-toggle').click();
+      return await desktopPage.evaluate(() => {
+        const pixels = ATRI.app.renderer.extract.pixels(ATRI.app.stage);
+        let visible = 0;
+        for (let i = 3; i < pixels.length; i += 4) if (pixels[i]) visible++;
+        const canvas = ATRI.canvas.getBoundingClientRect();
+        const panel = document.querySelector('#atri-controls').getBoundingClientRect();
+        return visible > 1000 && !document.querySelector('#atri-controls').hidden
+          && panel.top >= canvas.bottom && panel.bottom <= innerHeight;
+      });
+    });
+    await check('ATRI voice, movement, reset and restore controls respond', async () => {
+      await desktopPage.locator('#atri-volume').click();
+      const volume = await desktopPage.locator('#atri-message-box').textContent();
+      await desktopPage.locator('#atri-talk').click();
+      await desktopPage.waitForFunction(() => ATRI.voicePlayer && !!ATRI.voicePlayer.src);
+      const voice = await desktopPage.evaluate(() => !!ATRI.voiceConfig.enabled && !ATRI.voicePlayer.error);
+      await desktopPage.locator('#atri-motion').click();
+      const motion = await desktopPage.evaluate(() => ATRI._paramMotionActive || ATRI._lastInteractionAt > Date.now() - 3000);
+      const handle = await desktopPage.locator('#atri-drag').boundingBox();
+      await desktopPage.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
+      await desktopPage.mouse.down(); await desktopPage.mouse.move(handle.x - 70, handle.y - 50, { steps: 4 }); await desktopPage.mouse.up();
+      const moved = await desktopPage.evaluate(() => !!localStorage.getItem('atri_widget_pos'));
+      await desktopPage.locator('#atri-home').click();
+      const reset = await desktopPage.evaluate(() => !localStorage.getItem('atri_widget_pos'));
+      await desktopPage.locator('#atri-toggle').click();
+      await desktopPage.locator('#atri-restore').click();
+      return volume.includes('静音') && voice && motion && moved && reset
+        && await desktopPage.locator('#atri-live2d-widget').isVisible();
     });
     await check('native context menus remain available on links and code', async () => {
       await desktopPage.goto(origin + article);
@@ -213,6 +245,82 @@ async (page) => {
       return await link.getAttribute('aria-current') === 'location';
     });
   } finally { await desktop.close(); }
+
+  const atriContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
+  const atriPage = await atriContext.newPage();
+  let releaseTexture;
+  const textureGate = new Promise(resolve => { releaseTexture = resolve; });
+  let textureRequested = false;
+  await atriContext.route('**/live2d/ATRI/ATRI.2048/texture_00.png', async route => {
+    textureRequested = true;
+    await textureGate;
+    await route.continue();
+  });
+  try {
+    await check('slow ATRI textures keep voice, welcome and controls disabled until the model is drawn', async () => {
+      await atriPage.goto(origin + '/');
+      await atriPage.locator('#atri-restore').click();
+      for (let count = 0; !textureRequested && count < 100; count++) await atriPage.waitForTimeout(50);
+      const waiting = textureRequested && await atriPage.evaluate(() => GINKA_ATRI_LOADER.state === 'loading'
+        && !window.ATRI && !window.atri?.voicePlayer && !document.querySelector('#atri-live2d-widget').classList.contains('is-ready')
+        && document.querySelector('#atri-controls').hidden && getComputedStyle(document.querySelector('#atri-message-box')).display === 'none');
+      releaseTexture();
+      await atriPage.waitForFunction(() => GINKA_ATRI_LOADER.state === 'ready' && ATRI.isReady, null, { timeout: 35000 });
+      return waiting;
+    });
+    await check('small screens can explicitly enable ATRI and use its panel without hover', async () => {
+      await atriPage.locator('#atri-tools-toggle').click();
+      const fits = await atriPage.evaluate(() => {
+        const widget = ATRI.widget.getBoundingClientRect();
+        const canvas = ATRI.canvas.getBoundingClientRect();
+        const controls = document.querySelector('#atri-controls').getBoundingClientRect();
+        return widget.left >= 0 && widget.right <= innerWidth && widget.top >= 0 && widget.bottom <= innerHeight
+          && controls.top >= canvas.bottom && document.documentElement.scrollWidth === innerWidth;
+      });
+      const download = atriPage.waitForEvent('download');
+      await atriPage.locator('#atri-photo').click();
+      const photo = await download;
+      await atriPage.keyboard.press('Escape');
+      let smallFits = true;
+      for (const viewport of [{ width: 320, height: 844 }, { width: 768, height: 360 }, { width: 1024, height: 768 }]) {
+        await atriPage.setViewportSize(viewport);
+        await atriPage.waitForTimeout(400);
+        await atriPage.locator('#atri-tools-toggle').click();
+        smallFits = smallFits && await atriPage.evaluate(() => {
+          const rect = ATRI.widget.getBoundingClientRect();
+          const canvas = ATRI.canvas.getBoundingClientRect();
+          return rect.top >= 0 && rect.bottom <= innerHeight && rect.left >= 0 && rect.right <= innerWidth
+            && Math.abs(canvas.width - ATRI.config.width) < 1 && Math.abs(canvas.height - ATRI.config.height) < 1
+            && [...document.querySelectorAll('#atri-controls button')].every(button => button.scrollWidth <= button.clientWidth);
+        });
+        await atriPage.keyboard.press('Escape');
+      }
+      return fits && smallFits && photo.suggestedFilename().endsWith('.png') && await atriPage.locator('#atri-controls').isHidden();
+    });
+  } finally { releaseTexture(); await atriContext.close(); }
+
+  const atriRetryContext = await browser.newContext({ viewport: { width: 1440, height: 1000 }, serviceWorkers: 'block', reducedMotion: 'reduce' });
+  let modelAttempts = 0;
+  await atriRetryContext.route('**/live2d/ATRI/ATRI.model3.json?*', async route => {
+    if (++modelAttempts === 1) await route.fulfill({ status: 503, body: 'temporarily unavailable' });
+    else await route.continue();
+  });
+  const atriRetry = await atriRetryContext.newPage();
+  try {
+    await check('a failed ATRI model can retry into a working model and single control handlers', async () => {
+      await atriRetry.goto(origin + '/');
+      await atriRetry.locator('#atri-restore').click();
+      await atriRetry.waitForFunction(() => GINKA_ATRI_LOADER.state === 'error');
+      await atriRetry.getByRole('button', { name: 'ATRI · 重试', exact: true }).click();
+      await atriRetry.waitForFunction(() => GINKA_ATRI_LOADER.state === 'ready' && ATRI.isReady, null, { timeout: 35000 });
+      await atriRetry.locator('#atri-tools-toggle').click();
+      await atriRetry.locator('#atri-volume').click();
+      const muted = await atriRetry.evaluate(() => localStorage.getItem('atri_voice_volume') === '0');
+      await atriRetry.locator('#atri-volume').click();
+      return modelAttempts === 2 && muted && await atriRetry.evaluate(() => localStorage.getItem('atri_voice_volume') === '0.7'
+        && document.querySelectorAll('script[data-ginka-atri-src*="ginka-atri.js"]').length === 1);
+    });
+  } finally { await atriRetryContext.close(); }
 
   const responsiveContext = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, serviceWorkers: 'block' });
   const responsive = await responsiveContext.newPage();

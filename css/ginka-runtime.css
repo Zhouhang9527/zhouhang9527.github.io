@@ -290,8 +290,6 @@
 
 /* 平板设备 (Tablet: 769px - 1024px) */
 @media screen and (max-width: 1024px) and (min-width: 769px) {
-  #atri-live2d-widget { right: 10px !important; bottom: 0 !important; }
-  #atri-canvas { width: 280px !important; height: 400px !important; }
   #atri-message-box {
     top: -92px;
     left: 50%;
@@ -307,8 +305,6 @@
 /* 移动设备 (Mobile: <= 768px) */
 @media screen and (max-width: 768px) {
   /* ATRI Widget */
-  #atri-live2d-widget { right: 5px !important; bottom: 0 !important; }
-  #atri-canvas { width: 200px !important; height: 300px !important; }
   
   /* 消息框优化 */
   #atri-message-box {
@@ -343,8 +339,6 @@
 /* 小屏设备 (Small Mobile: <= 480px) */
 @media screen and (max-width: 480px) {
   /* ATRI Widget */
-  #atri-live2d-widget { right: 0 !important; bottom: 50px !important; transform-origin: bottom right; transform: scale(0.9); }
-  #atri-canvas { width: 160px !important; height: 240px !important; }
   
   /* 消息框 */
   #atri-message-box {
@@ -376,14 +370,11 @@
 
 /* 超小屏 (Tiny: <= 360px) */
 @media screen and (max-width: 360px) {
-  #atri-live2d-widget { transform: scale(0.72); transform-origin: bottom right; right: -10px !important; bottom: 36px !important; }
-  #atri-controls { transform: scale(1.08); transform-origin: top right; }
   #music-player { max-width: 100% !important; }
 }
 
 /* 横屏模式 (Landscape) */
 @media screen and (max-height: 500px) and (orientation: landscape) {
-  #atri-live2d-widget { transform: scale(0.8); transform-origin: bottom right; right: 5px !important; bottom: -20px !important; }
   #music-player { transform: scale(0.8); transform-origin: bottom left; left: 5px !important; bottom: 5px !important; }
 }
 
@@ -1269,4 +1260,42 @@ body.sidebar-active #atri-restore { visibility: hidden !important; pointer-event
 @media (max-width: 767px) {
   #atri-controls .atri-control-btn span { display: none; }
   #atri-controls .atri-control-btn { min-width: 40px; min-height: 40px; }
+}
+
+/* Explicit controls stay usable without hover and never cover the model. */
+body #atri-live2d-widget { padding-bottom: 44px; box-sizing: content-box; transform: none; }
+body #atri-live2d-widget.is-tools-open { padding-bottom: 140px; }
+#atri-tools-toggle {
+  position: absolute; bottom: 0; right: 0; min-height: 40px; padding: 0 14px;
+  border: 1px solid #dce5ed; border-radius: 10px; background: #f5f8fc;
+  color: #425e77; font: inherit; font-size: 12px; cursor: pointer;
+}
+body #atri-live2d-widget.is-tools-open #atri-tools-toggle { bottom: 98px; }
+body #atri-controls {
+  top: auto; bottom: 0; left: 0; right: 0; padding: 5px;
+  display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px;
+  opacity: 1; visibility: visible; pointer-events: auto; border-radius: 10px; max-width: none; transform: none;
+}
+body #atri-controls[hidden] { display: none !important; }
+body #atri-controls::before { border-radius: 10px; background: #f5f8fc; border: 1px solid #dce5ed; backdrop-filter: none; }
+body #atri-controls .atri-control-btn {
+  width: 100% !important; min-width: 0; height: 28px !important; min-height: 28px;
+  border: 0 !important; border-radius: 6px !important; background: transparent !important;
+  color: #557590 !important; box-shadow: none !important; font-size: 12px !important;
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important; transform: none !important;
+  padding: 0 !important; gap: 3px; white-space: nowrap;
+}
+body #atri-controls .atri-control-btn span { display: inline; }
+body #atri-controls .atri-control-btn:hover { background: #e4edf5 !important; }
+body #atri-tools-toggle:focus-visible { outline: 3px solid #80adcb; outline-offset: 2px; }
+@media (max-width: 1199px) {
+  body #atri-restore { bottom: 76px; }
+  body #atri-live2d-widget { right: 14px !important; }
+  body #atri-message-box {
+    top: auto; bottom: calc(100% + 8px); left: auto; right: 0; transform: none;
+    width: 220px; max-width: calc(100vw - 32px); padding: 10px 12px; box-sizing: border-box;
+    border-radius: 10px; background: #f5f8fc !important; border: 1px solid #dce5ed;
+    max-height: 96px; overflow-y: auto; animation: none; backdrop-filter: none;
+  }
+  body #atri-message-box::after { content: none; }
 }
