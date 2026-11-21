@@ -38,11 +38,24 @@
     button._readingResetTimer = 0;
   }
 
-  function scheduleButtonReset(button, label) {
+  function setCopyState(button, state) {
+    const paths = {
+      idle: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+      copied: '<path d="m5 12 4 4L19 6"/>',
+      failed: '<circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4h.01"/>'
+    };
+    const label = state === 'copied' ? '已复制' : state === 'failed' ? '复制失败，点击重试' : '复制代码';
+    button.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${paths[state]}</svg>`;
+    button.dataset.copyState = state;
+    button.setAttribute('aria-label', label);
+    button.title = label;
+  }
+
+  function scheduleButtonReset(button, feedback) {
     clearResetTimer(button);
     const timer = setTimeout(() => {
       resetTimers.delete(timer);
-      if (button.isConnected) button.textContent = label;
+      if (button.isConnected) { setCopyState(button, 'idle'); feedback.textContent = ''; }
       button._readingResetTimer = 0;
     }, 2500);
     button._readingResetTimer = timer;
@@ -103,16 +116,19 @@
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'journal-copy';
-      button.textContent = '复制代码';
-      button.setAttribute('aria-live', 'polite');
+      setCopyState(button, 'idle');
+      const feedback = document.createElement('span');
+      feedback.className = 'journal-visually-hidden';
+      feedback.setAttribute('role', 'status');
       button.addEventListener('click', async () => {
+        clearResetTimer(button);
         button.disabled = true;
-        try { await copyText(text); button.textContent = '已复制'; }
-        catch (_) { button.textContent = '复制失败，请手动选择'; }
+        try { await copyText(text); setCopyState(button, 'copied'); feedback.textContent = '代码已复制'; }
+        catch (_) { setCopyState(button, 'failed'); feedback.textContent = '复制失败，请手动选择代码'; }
         finally { button.disabled = false; }
-        scheduleButtonReset(button, '复制代码');
+        if (button.isConnected) scheduleButtonReset(button, feedback);
       });
-      toolbar.append(label, button);
+      toolbar.append(label, button, feedback);
       const shell = document.createElement('div');
       shell.className = 'journal-code';
       block.before(shell);
