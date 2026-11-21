@@ -8,7 +8,6 @@
     {% for node in theme.main_menu %}
       {% if node.name not in ['home', 'archives', 'about', 'position', 'display'] %}{{ menu_item.render(node) | trim }}{% endif %}
     {% endfor %}
-    <li class="menu-item menu-item-tools"><button type="button" data-journal-sidebar-open>站点工具</button></li>
     <li class="menu-item menu-item-more" hidden>
       <details class="journal-mobile-menu">
         <summary>更多 <span aria-hidden="true">⌄</span></summary>

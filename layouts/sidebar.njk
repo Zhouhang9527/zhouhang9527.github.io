@@ -1,4 +1,5 @@
 {% macro render(display_toc) %}
+  <button class="journal-sidebar-edge" type="button" data-journal-sidebar-open aria-label="打开侧栏" aria-controls="journal-sidebar" aria-expanded="false"></button>
   <aside class="sidebar" id="journal-sidebar" aria-label="站点导航与文章目录">
     <div class="journal-sidebar-cover"><img data-sidebar-src="{{ url_for('/images/ginka/profile.webp') }}" alt="" width="1920" height="1141" decoding="async"><span>GINKA / mm9527</span><button type="button" class="journal-sidebar-close" aria-label="关闭侧栏">×</button></div>
     {{ partial('journal-music.njk') }}

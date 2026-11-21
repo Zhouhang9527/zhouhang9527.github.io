@@ -18,6 +18,9 @@
       });
       if (!window.__ginkaMusicBooted && typeof window.GINKA_BOOT_MUSIC === 'function') window.GINKA_BOOT_MUSIC();
     }
+    document.querySelectorAll('[data-journal-sidebar-open]').forEach(function (opener) {
+      opener.setAttribute('aria-expanded', String(open));
+    });
     if (toggle) {
       toggle.tabIndex = 0;
       toggle.setAttribute('aria-label', '打开导航、音乐与文章目录');
@@ -126,8 +129,84 @@
     }
   });
 
+  function bindSidebarReveal() {
+    var sidebar = document.querySelector('.sidebar');
+    if (!sidebar) return;
+    var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+    var timer = 0;
+    var initialPeekPending = true;
+    var hovering = false;
+
+    function clearTimer() { window.clearTimeout(timer); timer = 0; }
+    function isOpen() { return document.body.classList.contains('sidebar-active'); }
+    function hasFocus() { return sidebar.contains(document.activeElement); }
+    function hide() {
+      clearTimer();
+      if (hasFocus()) return;
+      window.dispatchEvent(new Event('sidebar:hide'));
+      syncDrawer();
+    }
+    function hideAfter(delay) {
+      clearTimer();
+      timer = window.setTimeout(function () {
+        timer = 0;
+        if (!hovering && !hasFocus()) hide();
+      }, delay);
+    }
+    function show() {
+      clearTimer();
+      if (!isOpen()) window.dispatchEvent(new Event('sidebar:show'));
+      syncDrawer();
+    }
+    function showInitialPeek() {
+      if (!initialPeekPending || document.hidden) return;
+      initialPeekPending = false;
+      if (document.body.classList.contains('search-active') || document.documentElement.classList.contains('with-fancybox')) return;
+      show();
+      hideAfter(1500);
+    }
+    sidebar.addEventListener('pointerenter', function (event) {
+      if (event.pointerType !== 'mouse') return;
+      hovering = true;
+      clearTimer();
+    });
+    sidebar.addEventListener('pointerleave', function (event) {
+      if (event.pointerType !== 'mouse') return;
+      hovering = false;
+      if (isOpen()) hideAfter(350);
+    });
+    sidebar.addEventListener('focusin', clearTimer);
+    sidebar.addEventListener('focusout', function () {
+      if (!hovering && isOpen()) hideAfter(350);
+    });
+    document.addEventListener('pointermove', function (event) {
+      if (!finePointer.matches || event.pointerType !== 'mouse' || document.hidden || isOpen()) return;
+      if (event.clientX > 12 || event.clientX < 0 || document.body.classList.contains('search-active') || document.documentElement.classList.contains('with-fancybox')) return;
+      show();
+      hideAfter(1500);
+    }, { passive: true });
+    window.addEventListener('sidebar:show', clearTimer);
+    window.addEventListener('sidebar:hide', function () { clearTimer(); hovering = false; });
+    document.addEventListener('pjax:send', function () {
+      initialPeekPending = false;
+      clearTimer();
+      window.dispatchEvent(new Event('sidebar:hide'));
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        clearTimer();
+        hovering = false;
+        window.dispatchEvent(new Event('sidebar:hide'));
+      } else showInitialPeek();
+    });
+    window.addEventListener('pageshow', showInitialPeek);
+    window.addEventListener('pagehide', clearTimer);
+    showInitialPeek();
+  }
+
   function start() {
     setup();
+    bindSidebarReveal();
     if (!window.__ginkaControlsDrawerObserver) {
       window.__ginkaControlsDrawerObserver = new MutationObserver(syncDrawer);
       window.__ginkaControlsDrawerObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
