@@ -1,7 +1,9 @@
-{# Custom footer injection #}
-<div class="footer-custom" style="text-align: center; margin-top: 10px; font-size: 13px; color: #888;">
-  <i class="fa fa-clock-o"></i>
-  <span id="sitetime">载入运行时间...</span>
+{# The site colophon is shared by direct loads and all PJAX routes. #}
+<div class="journal-colophon">
+  <span><img src="{{ config.root }}images/ginka/butterfly.png" alt="" width="22" height="22" loading="lazy">© 2025–2026 GINKA · mm9527</span>
+  <nav aria-label="封底链接">
+    <a href="https://github.com/Zhouhang9527" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a href="{{ config.ginka_re_md_url | default('https://github.com/Zhouhang9527/re_md', true) }}" target="_blank" rel="noopener noreferrer">RE_MD</a>
+    <a href="#top" data-ginka-top>TOP ↑</a>
+  </nav>
 </div>
-
-

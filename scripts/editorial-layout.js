@@ -13,6 +13,9 @@ hexo.extend.filter.register('before_generate', function () {
     hexo.locals.invalidate();
   }
   const views = {
+    '_partials/post-like.njk': 'post-feedback.njk',
+    '_partials/post-views.njk': 'post-views.njk',
+    '_partials/header/menu.njk': 'header-menu.njk',
     'index.njk': 'home.njk',
     'archive.njk': 'collection.njk',
     'tag.njk': 'collection.njk',

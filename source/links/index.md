@@ -25,6 +25,6 @@ comments: false
 | 项目 | 信息 |
 | --- | --- |
 | 名称 | mm9527 的博客 · GINKA |
-| 地址 | https://zhouhang9527.github.io/ |
+| 地址 | https://www.mm9527.top/ |
 | 简介 | CTF 题解、逆向分析与学习笔记 |
-| 图标 | https://zhouhang9527.github.io/images/avatar.png |
+| 图标 | https://www.mm9527.top/images/avatar.png |

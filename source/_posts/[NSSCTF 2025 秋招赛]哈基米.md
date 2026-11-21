@@ -8,7 +8,7 @@ tags:
   - PyInstaller
   - Python反编译
   - pycdc
-description: NSSCTF 2025 秋招赛第三题哈基米的记录。
+description: 围绕哈基米题目所涉及的 Python 程序结构，整理分析记录。
 ---
 
 ### 题目三:哈基米

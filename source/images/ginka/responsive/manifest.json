@@ -1,0 +1,217 @@
+{
+  "/images/ginka/beach.webp": [
+    {
+      "width": 320,
+      "src": "/images/ginka/responsive/beach-320.webp",
+      "sha256": "f3c90973dbc84ad53fd6f06cea65f90891ffc57fbf9e8772ab0b7d0881e04479"
+    },
+    {
+      "width": 640,
+      "src": "/images/ginka/responsive/beach-640.webp",
+      "sha256": "8476f4e8bed0bb9c6e58176616b0ed12def7a82fb69779c5b6dd22bda273b7d9"
+    },
+    {
+      "width": 960,
+      "src": "/images/ginka/responsive/beach-960.webp",
+      "sha256": "e1fcc6c07911df4d2f6ad743a1385d1568b47f8f9f7a0492670d1547726bcecd"
+    },
+    {
+      "width": 1280,
+      "src": "/images/ginka/beach.webp",
+      "sha256": "ca14ca13c3586afb0e82a55b8ac728bc3e104f753165eef00a7abbfb93de523c"
+    }
+  ],
+  "/images/ginka/hero-silver.webp": [
+    {
+      "width": 320,
+      "src": "/images/ginka/responsive/hero-silver-320.webp",
+      "sha256": "c6f85f34411ba54a0cbbcf6073b7b771632150b8e50613bd97c1487c0b13830d"
+    },
+    {
+      "width": 640,
+      "src": "/images/ginka/responsive/hero-silver-640.webp",
+      "sha256": "10ef61f90fc84d20baf0c8678bccbe1ff179f2a1345b31467708ea482586cc0f"
+    },
+    {
+      "width": 960,
+      "src": "/images/ginka/responsive/hero-silver-960.webp",
+      "sha256": "ec02ea6cf23b342b99f3e62673e240744b46453a1e6251bdf24ec3e67bd8b7bf"
+    },
+    {
+      "width": 1440,
+      "src": "/images/ginka/responsive/hero-silver-1440.webp",
+      "sha256": "a362ec83aae9a83b999de2914cc66dea473d9ca624d0d9594fa88102edb33aa4"
+    },
+    {
+      "width": 1920,
+      "src": "/images/ginka/hero-silver.webp",
+      "sha256": "10ea7af50b0723ad189df3dca42d865f7acdc802b6b7121df4266087b8b7cf60"
+    }
+  ],
+  "/images/ginka/ocean.webp": [
+    {
+      "width": 320,
+      "src": "/images/ginka/responsive/ocean-320.webp",
+      "sha256": "22d01c665114f8cf460f40f144b3119f618db3e32a059f3285867b10e496b57e"
+    },
+    {
+      "width": 640,
+      "src": "/images/ginka/responsive/ocean-640.webp",
+      "sha256": "fa4407bb0dd66dfcd1279b01734aae15548c292edfaf145c9552b79adc4e8560"
+    },
+    {
+      "width": 960,
+      "src": "/images/ginka/responsive/ocean-960.webp",
+      "sha256": "0a08338893b52b2888d01abb7785e292f13f1b42d2c94dc3a490131acba18f25"
+    },
+    {
+      "width": 1280,
+      "src": "/images/ginka/ocean.webp",
+      "sha256": "27acc2276b50337b0c69057c8961d18fcf04135a0aad572d3237c3bc73ae8cb2"
+    }
+  ],
+  "/images/ginka/profile.webp": [
+    {
+      "width": 320,
+      "src": "/images/ginka/responsive/profile-320.webp",
+      "sha256": "f23abd418dd1f94839501005189ff787dfb7640a37cde293cba846bb7a37182a"
+    },
+    {
+      "width": 640,
+      "src": "/images/ginka/responsive/profile-640.webp",
+      "sha256": "cd357febf737c50abb0cc04c973bc35b0dd2963412c40778bd19a30a2dad418c"
+    },
+    {
+      "width": 960,
+      "src": "/images/ginka/responsive/profile-960.webp",
+      "sha256": "8d9e69ae1584555cf916bc092b1894e00c56863bc46a8c4f8715442f684218b9"
+    },
+    {
+      "width": 1280,
+      "src": "/images/ginka/profile.webp",
+      "sha256": "24b038e420267152b526a0c6a31ed9a7803ab61023f37165841c394299d71758"
+    }
+  ],
+  "/images/ginka/reunion.webp": [
+    {
+      "width": 320,
+      "src": "/images/ginka/responsive/reunion-320.webp",
+      "sha256": "6a8fa9a0af0aa928e29fc2bbe8df49c5f3c175cc130a3bec96525300d4cbda67"
+    },
+    {
+      "width": 640,
+      "src": "/images/ginka/responsive/reunion-640.webp",
+      "sha256": "c7001cff36c85245a0288cacb59b8c60fd41a1a04e7a5cfb978d106d1ed9f866"
+    },
+    {
+      "width": 960,
+      "src": "/images/ginka/responsive/reunion-960.webp",
+      "sha256": "13ca5a42e1157a51bce8453efd62cab0b194d82c93d42e4c91924e98f8ef30ee"
+    },
+    {
+      "width": 1280,
+      "src": "/images/ginka/reunion.webp",
+      "sha256": "bce1f12a62752fdc4459ce57807a589bedbef9fe72121b82311723412b15bf18"
+    }
+  ],
+  "/images/ginka/story-scene.jpg": [
+    {
+      "width": 320,
+      "src": "/images/ginka/responsive/story-scene-320.webp",
+      "sha256": "efff6f398d51226934d51cab83c0e159e0f2b30fd7e7329a83886be648c35252"
+    },
+    {
+      "width": 640,
+      "src": "/images/ginka/responsive/story-scene-640.webp",
+      "sha256": "2073bc4e64c553aa6f34f0461c3d5cee811c8e940d6e655c1d0caad4b3ec2221"
+    },
+    {
+      "width": 960,
+      "src": "/images/ginka/responsive/story-scene-960.webp",
+      "sha256": "7a592739744c8b99085cba4cc9eabb812b96c061e8891d4f9cb8a3f9de3b4f5b"
+    },
+    {
+      "width": 1000,
+      "src": "/images/ginka/story-scene.jpg",
+      "sha256": "17bd9cdf4b3ebc8b5f50b707b42fa9d424832a775c475e73560e6d3d05c15ac6"
+    }
+  ],
+  "/images/ginka/story-street.jpg": [
+    {
+      "width": 320,
+      "src": "/images/ginka/responsive/story-street-320.webp",
+      "sha256": "d20e2c5fc3c87477178108a090c8a578026336c708aff9c45c5a2a002f826b8e"
+    },
+    {
+      "width": 577,
+      "src": "/images/ginka/story-street.jpg",
+      "sha256": "aad8faca3362588a59f127dc6fe384041192a52d14d2ad7f6705e632b8738609"
+    }
+  ],
+  "/images/ginka/story-strip.jpg": [
+    {
+      "width": 320,
+      "src": "/images/ginka/responsive/story-strip-320.webp",
+      "sha256": "ad96e1bcde3fbfb8214ddaf20422707040584be68fe53ba6a9d5a52a723acd0c"
+    },
+    {
+      "width": 640,
+      "src": "/images/ginka/responsive/story-strip-640.webp",
+      "sha256": "47d81d691e310123dd3541951f14ec9f73b036e0eb0b0100d18c793c3ab3568b"
+    },
+    {
+      "width": 960,
+      "src": "/images/ginka/responsive/story-strip-960.webp",
+      "sha256": "911b61803dd8fa4aa3e24a70015733137d3b7227df6e7dccf7335bd27d1ac885"
+    },
+    {
+      "width": 1048,
+      "src": "/images/ginka/story-strip.jpg",
+      "sha256": "a8d1ea9e0bb600d4f051a4e2eef5176b2a25c4df477f474121a5f7ed40f07ef1"
+    }
+  ],
+  "/images/ginka/story-torii.jpg": [
+    {
+      "width": 320,
+      "src": "/images/ginka/responsive/story-torii-320.webp",
+      "sha256": "96be3f28043ad3b6dfdc81d6e9ddc24889dbe8ca37d6718ea2241d9105e1472d"
+    },
+    {
+      "width": 640,
+      "src": "/images/ginka/responsive/story-torii-640.webp",
+      "sha256": "c647cf81a877d3e62c6b7b8b90e35ec99a38b1914e590598e9742303e12a9dbd"
+    },
+    {
+      "width": 960,
+      "src": "/images/ginka/responsive/story-torii-960.webp",
+      "sha256": "242eb427ee48820268a122876b1cc45a2bf525ba4f34726a5b2939da34f2e21d"
+    },
+    {
+      "width": 1000,
+      "src": "/images/ginka/story-torii.jpg",
+      "sha256": "4a546d93d621de3acf3da5bf329a57372364ba69e4348a605941b511b799df75"
+    }
+  ],
+  "/images/ginka/sunset.webp": [
+    {
+      "width": 320,
+      "src": "/images/ginka/responsive/sunset-320.webp",
+      "sha256": "ca9e7f16146d0ad6e9d4578bef2b474c25990636d2977101a5e61258a3c46ed0"
+    },
+    {
+      "width": 640,
+      "src": "/images/ginka/responsive/sunset-640.webp",
+      "sha256": "d2cab25160fc72264ff6e4454c8510273a8af4dc46ba06595365eba2385ab363"
+    },
+    {
+      "width": 960,
+      "src": "/images/ginka/responsive/sunset-960.webp",
+      "sha256": "b2e4adf53c8b59fbe4a2d938e0136b17502d2980abce8ec81c49586fd64b2816"
+    },
+    {
+      "width": 1280,
+      "src": "/images/ginka/sunset.webp",
+      "sha256": "9ab16af3ce1c5926c90dbd072759cd3a303a434332100a507b6c43c3125fbe10"
+    }
+  ]
+}

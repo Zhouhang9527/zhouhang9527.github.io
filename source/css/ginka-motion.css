@@ -1,0 +1,94 @@
+/* A request-scoped page turn and a single home-only atmospheric layer. */
+html.lenis, html.lenis body { height: auto; }
+html.lenis.lenis-smooth { scroll-behavior: auto !important; }
+html.lenis-smooth :is(.search-popup, .sidebar, .journal-outline, .journal-table-scroll, .journal-code) { overscroll-behavior: contain; }
+.ginka-pjax-meter {
+  position: fixed; inset: 0 0 auto; z-index: 5000;
+  height: 2px; opacity: 0; pointer-events: none;
+}
+.ginka-pjax-meter i {
+  display: block; width: 100%; height: 100%; transform-origin: left;
+  background: linear-gradient(90deg, #87aecb, #4b85ab 78%, #b6d2e6);
+}
+.ginka-water-ring {
+  position: absolute; display: block; width: 16px; height: 16px;
+  box-sizing: border-box; border: 1px solid #c6dfed; border-radius: 50%; pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ginka-pjax-meter[data-state='loading'] { opacity: 1; }
+  .ginka-pjax-meter[data-state='loading'] i { animation: ginka-travel 1600ms var(--ease-art) both; }
+  .ginka-pjax-meter[data-state='done'] { animation: ginka-travel-done 360ms var(--ease-art) both; }
+  .ginka-pjax-leaving > :not(.journal-reading-progress) { animation: ginka-page-away 220ms var(--ease-art) both; }
+  .ginka-pjax-arriving > :not(.journal-reading-progress) { animation: ginka-page-arrive 380ms var(--ease-art); }
+  @keyframes ginka-travel { from { transform: scaleX(.08); } to { transform: scaleX(.82); } }
+  @keyframes ginka-travel-done { 0%, 25% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes ginka-page-away { to { opacity: 0; transform: translateY(6px); } }
+  @keyframes ginka-page-arrive { from { opacity: 0; transform: translateY(6px); } }
+
+  .ginka-hero-intro .hero-art { animation: ginka-focus-cover 1350ms var(--ease-art) both; }
+  .ginka-hero-intro .journal-title-mask > span { animation: ginka-type-rise 820ms var(--ease-art) 130ms both; }
+  .ginka-hero-intro .journal-title-mask + .journal-title-mask > span { animation-delay: 225ms; }
+  .ginka-hero-intro :is(.journal-hero-copy > p, .journal-actions) { animation: ginka-ink-in 680ms var(--ease-art) 440ms both; }
+  .ginka-hero-intro .journal-hero-kicker { animation: ginka-ink-in 660ms var(--ease-art) both; }
+  @keyframes ginka-focus-cover {
+    from { transform: scale(1.07); filter: blur(4px); }
+    to { transform: scale(1.02); filter: blur(0); }
+  }
+  @keyframes ginka-type-rise { from { transform: translateY(105%); } to { transform: translateY(0); } }
+  @keyframes ginka-ink-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .journal-hero-light { z-index: 1; opacity: 1; overflow: hidden; }
+  .journal-hero-light::before {
+    content: ''; position: absolute; inset: -26% 0;
+    background: linear-gradient(103deg, transparent 37%, #fbfdff7d 48%, #fbfdff 52%, transparent 63%);
+    transform: translateX(-66%); opacity: 0;
+    animation: ginka-waterlight 14s ease-in-out infinite paused;
+  }
+  .journal-hero-dust { z-index: 3; opacity: 1; }
+  .journal-hero-dust i {
+    position: absolute; inset: var(--y) auto auto var(--x);
+    width: var(--size, 3px); height: var(--size, 3px); border-radius: 50%;
+    background: #fff; box-shadow: 0 0 6px #fff9; opacity: 0;
+    animation: ginka-silver-dust var(--duration, 11s) ease-in-out var(--start) infinite paused;
+  }
+  .journal-hero-dust i:nth-child(1) { --x: 53%; --y: 67%; --start: -3s; }
+  .journal-hero-dust i:nth-child(2) { --x: 61%; --y: 38%; --start: -7s; --duration: 14s; }
+  .journal-hero-dust i:nth-child(3) { --x: 69%; --y: 76%; --start: -9s; --size: 4px; }
+  .journal-hero-dust i:nth-child(4) { --x: 76%; --y: 51%; --start: -4s; --duration: 13s; }
+  .journal-hero-dust i:nth-child(5) { --x: 84%; --y: 64%; --start: -6s; --size: 2px; }
+  .journal-hero-dust i:nth-child(6) { --x: 90%; --y: 43%; --start: -1s; --duration: 12s; }
+  .ginka-hero-playing .journal-hero-light::before, .ginka-hero-playing .journal-hero-dust i { animation-play-state: running; }
+  @keyframes ginka-waterlight {
+    0%, 23% { transform: translateX(-66%); opacity: 0; }
+    50% { opacity: .16; }
+    77%, 100% { transform: translateX(62%); opacity: 0; }
+  }
+  @keyframes ginka-silver-dust {
+    0%, 100% { transform: translate3d(0, 8px, 0); opacity: 0; }
+    34% { opacity: .55; }
+    74% { transform: translate3d(9px, -26px, 0); opacity: 0; }
+  }
+  .ginka-await-reveal:not(:focus-within) { opacity: 0; }
+  /* Leave the observer's target geometry intact; only mask the inner picture. */
+  .ginka-mat-pending:not(:focus-within) .art-viewport { clip-path: inset(0 0 100% 0); }
+  .ginka-mat-seen .art-viewport { animation: ginka-paper-unveil 980ms var(--ease-art); }
+  .ginka-mat-seen .art-slide { animation: ginka-frame-settle 980ms var(--ease-art); }
+  .ginka-mat-seen .ginka-plate-primed img { animation: ginka-plate-push 18s linear both paused; }
+  .ginka-gallery-playing .ginka-mat-seen .ginka-plate-primed.is-active img { animation-play-state: running; }
+  @keyframes ginka-paper-unveil { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+  @keyframes ginka-frame-settle { from { transform: scale(1.06); } to { transform: scale(1); } }
+  @keyframes ginka-plate-push { from { transform: scale(1); } to { transform: scale(1.045); } }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .journal-chapter-wing, .journal-wing, .atri-launcher__badge img { transform-origin: center; transition: transform 430ms var(--ease-art); }
+  .journal-chapter-grid a:is(:hover, :focus-visible) .journal-chapter-wing,
+  :is(.journal-section-heading, .journal-island-heading):hover .journal-wing,
+  .atri-launcher__badge:is(:hover, :focus-visible) img { transform: translateY(-2px) rotate(-7deg) scaleX(.86); }
+}
+@media print {
+  .ginka-pjax-meter, .journal-hero-light, .journal-hero-dust { display: none; }
+  .ginka-await-reveal, .ginka-pjax-leaving > *, .ginka-pjax-arriving > * { opacity: 1 !important; animation: none !important; }
+  .ginka-mat-pending .art-viewport, .ginka-mat-seen .art-viewport { clip-path: none !important; animation: none !important; }
+}

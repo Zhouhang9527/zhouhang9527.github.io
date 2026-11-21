@@ -4,10 +4,18 @@
 {% block class %}page posts-expand journal-page{% endblock %}
 {% block content %}
   {% set taxonomy = page.type == 'tags' or page.type == 'categories' %}
-  <header class="journal-masthead">
-    <div><a class="journal-breadcrumb" href="{{ url_for('/') }}">GINKA / mm9527</a><span class="journal-eyebrow">{% if page.type == 'tags' %}TOPICS / 主题索引{% elif page.type == 'categories' %}CATEGORIES / 内容分类{% elif page.type == 'links' %}FRIENDS / 友情链接{% else %}ABOUT / 关于博客{% endif %}</span><h1>{{ page.title | escape }}</h1><p>{% if taxonomy %}选择一个主题，继续阅读。{% elif page.type == 'links' %}一起学习，互相分享。{% else %}mm9527 的技术笔记与个人记录。{% endif %}</p></div>
-    <img src="{{ url_for('/images/ginka/reunion.webp' if page.type == 'links' else ('/images/ginka/story-street.jpg' if taxonomy else '/images/ginka/sunset.webp')) }}" alt="" width="1920" height="1141">
-  </header>
+  {% set isAboutPage = page.source == 'about/index.md' or page.path == 'about/index.html' or page.path == 'about/' %}
+  {% if isAboutPage %}
+    <header class="journal-about-banner">
+      <img src="{{ url_for('/images/ginka/sunset.webp') }}" srcset="{{ ginka_journal_srcset('/images/ginka/sunset.webp') }}" sizes="(max-width: 990px) 94vw, 920px" alt="夏日黄昏的海岛景色" width="1920" height="1141" loading="eager" fetchpriority="high" decoding="async">
+      <div class="journal-about-banner-copy"><span>ABOUT / 关于博客</span><h1>关于 mm9527</h1></div>
+    </header>
+  {% else %}
+    <header class="journal-masthead">
+      <div><a class="journal-breadcrumb" href="{{ url_for('/') }}">GINKA / mm9527</a><span class="journal-eyebrow">{% if page.type == 'tags' %}TOPICS / 主题索引{% elif page.type == 'categories' %}CATEGORIES / 内容分类{% elif page.type == 'links' %}FRIENDS / 友情链接{% else %}ABOUT / 关于博客{% endif %}</span><h1>{{ page.title | escape }}</h1><p>{% if taxonomy %}选择一个主题，继续阅读。{% elif page.type == 'links' %}一起学习，互相分享。{% else %}mm9527 的技术笔记与个人记录。{% endif %}</p></div>
+      <img src="{{ url_for('/images/ginka/reunion.webp' if page.type == 'links' else ('/images/ginka/story-street.jpg' if taxonomy else '/images/ginka/sunset.webp')) }}" alt="" width="1920" height="1141">
+    </header>
+  {% endif %}
   {% if taxonomy %}
     <nav class="journal-page-nav" aria-label="内容索引"><a href="{{ url_for('/archives/') }}">全部文章</a><a href="{{ url_for('/tags/') }}"{% if page.type == 'tags' %} aria-current="page"{% endif %}>标签</a><a href="{{ url_for('/categories/') }}"{% if page.type == 'categories' %} aria-current="page"{% endif %}>分类</a></nav>
     <div class="journal-taxonomy-grid">

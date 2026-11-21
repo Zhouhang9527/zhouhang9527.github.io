@@ -2,6 +2,9 @@ const fs = require('fs');
 
 const html = fs.readFileSync('public/index.html', 'utf8');
 const musicRuntime = fs.readFileSync('public/js/ginka-music.js', 'utf8');
+const { load } = require('cheerio');
+const $ = load(html);
+const motion = fs.readFileSync('source/js/ginka-motion.js', 'utf8');
 const legacyStyles = fs.readFileSync('public/css/ginka_style.css', 'utf8');
 
 const checks = [
@@ -22,21 +25,42 @@ const checks = [
     pass: html.includes('/css/ginka-runtime.css') && !html.includes('<style>')
   },
   {
-    name: 'loads animation libraries outside the critical path',
-    pass: html.includes('/js/ginka-effects-loader.js') &&
-      !html.includes('src="https://cdn.jsdelivr.net/npm/gsap')
+    name: 'loads one deferred local Lenis before the page motion runtime',
+    pass: $('script[defer][src^="/js/vendor/lenis.min.js"]').length === 1 &&
+      $('script[defer][src^="/js/ginka-motion.js"]').length === 1 &&
+      html.indexOf('/js/vendor/lenis.min.js') < html.indexOf('/js/ginka-motion.js')
   },
   {
-    name: 'keeps music ahead of optional animation loading',
-    pass: html.indexOf('/js/ginka-music.js') < html.indexOf('/js/ginka-effects-loader.js')
+    name: 'does not load legacy animation or a second ATRI loader',
+    pass: $('script[src*="ginka-effects-loader"], script[src*="ginka-page-effects"], script[src*="ginka-lazy-loader"], script[src*="canvas-nest"], script[src*="gsap"]').length === 0
+  },
+  {
+    name: 'gates hero motion by route and scroll visibility and leaves Lenis idle on reduced motion',
+    pass: motion.includes("matchMedia('(prefers-reduced-motion: reduce)')") && motion.includes('autoRaf: false') &&
+      motion.includes('observer.observe(hero)') && motion.includes('if (!hero) return;')
+  },
+  {
+    name: 'publishes the responsive high-priority hero and exactly three hand-selected gallery plates',
+    pass: $('.journal-hero .hero-art[loading="eager"][fetchpriority="high"][srcset*="hero-silver-640.webp"]').length === 1 &&
+      $('[data-journal-gallery] [data-fancybox="ginka-island"]').length === 3 &&
+      $('.journal-hero-dust i').length === 6
+  },
+  {
+    name: 'publishes flat navigation and removes the cover side inscription',
+    pass: $('.journal-hero-edition').length === 0 &&
+      ['tags', 'categories', 'links'].every(path => $(`.main-menu > .menu-item > a[href="/${path}/"]`).length === 1) &&
+      $('.menu-item-more[hidden] .journal-mobile-links').children().length === 0
   },
   {
     name: 'loads ui shell runtime',
     pass: html.includes('/js/ginka-ui-shell.js')
   },
   {
-    name: 'loads ATRI on demand without parser-blocking libraries',
-    pass: html.includes('/js/ginka-atri-loader.js') && !html.includes('/js/live2d-libs/')
+    name: 'loads ATRI on demand with one launcher targeting the widget',
+    pass: html.includes('/js/ginka-atri-loader.js') && !html.includes('/js/live2d-libs/') &&
+      $('#atri-launcher-shell button').length === 1 &&
+      $('#atri-launcher').attr('aria-controls') === 'atri-live2d-widget' &&
+      $('#atri-live2d-widget[hidden]').length === 1
   },
   {
     name: 'initializes scheduler before optional feature scripts',

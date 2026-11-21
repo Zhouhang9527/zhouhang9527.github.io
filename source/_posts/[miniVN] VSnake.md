@@ -10,7 +10,7 @@ tags:
   - AES
   - XTEA
   - RC4
-description: miniVN VSnake 题解，定位得分逻辑与多层加密（RC4/AES/XTEA），基于 MD5 关键值爆破果实序列。
+description: 围绕 VSnake 程序中的计分逻辑与数据变换，整理题目分析笔记。
 ---
 
 ## 题目信息

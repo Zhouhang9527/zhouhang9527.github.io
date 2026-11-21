@@ -8,7 +8,7 @@ tags:
   - UPX
   - 脱壳
   - IDA Pro
-description: NSSCTF 2025 秋招赛第四题 Ultimate Packer for eXecutables 的详细解题过程，UPX 脱壳与逆向分析。
+description: 围绕 UPX 样本的结构特征与程序行为，整理一份题目分析笔记。
 ---
 
 ### 题目四:Ultimate Packer for eXecutables

@@ -71,11 +71,7 @@
       };
     };
 
-    const configuredLocalTracks = Array.isArray(musicConfig.local)
-      ? musicConfig.local.map((track) => normalizeConfiguredTrack(track, 'local')).filter((track) => track.id && track.src)
-      : [];
-    const localMusicList = configuredLocalTracks.map((track, index) => ({ ...track, id: String(track.id || `local-${index}`) }));
-    musicList = localMusicList;
+    musicList = [];
     const onlineConfig = musicConfig.online && typeof musicConfig.online === 'object' ? musicConfig.online : {};
     const DEFAULT_TRACK_INDEX = (() => {
       const idx = musicList.findIndex((item) => item && String(item.title || '').toLowerCase() === 'unhappy');
@@ -124,7 +120,7 @@
     const storageSet = (key, value) => {
       try { if (window.localStorage) localStorage.setItem(key, String(value)); } catch (_error) {}
     };
-    let currentSource = 'local';
+    let currentSource = 'online';
     let onlineMusicList = [];
     let playlistRequest = null;
     let playlistRequestSequence = 0;
@@ -134,6 +130,7 @@
     let onlineRetryForTrack = '';
     let suppressMediaError = 0;
     let playbackWanted = false;
+    let lyricMotionTimer = 0;
 
     const setRefreshLoading = (loading) => {
       if (!sourceRetryBtn) return;
@@ -310,7 +307,7 @@
       }
       onlineMusicList = tracks;
       // A recovered network must never cut off a local song that is already playing.
-      if (currentSource === 'local' && !audio.paused && !opt.restore) {
+      if (!audio.paused && !opt.restore) {
         return true;
       }
       if (opt.activate || opt.restore) {
@@ -322,15 +319,6 @@
       return true;
     }
 
-    function activateLocalFallback(options) {
-      const opt = options || {};
-      const requestedId = opt.trackId || storageGet(STORAGE.trackId);
-      const requestedIndex = localMusicList.findIndex((track) => track.id === requestedId);
-      const index = requestedIndex >= 0 ? requestedIndex : DEFAULT_TRACK_INDEX;
-      if (!setActiveList('local', localMusicList)) return false;
-      loadMusic(index, { keepTime: !!opt.keepTime && requestedIndex >= 0 });
-      return true;
-    }
     let masterVolume = DEFAULT_MUSIC_VOLUME;
     let autoGainFactor = 1;
     let currentPlayMode = 'list';
@@ -984,6 +972,11 @@
             lyricsList.style.transition = prevTransition || '';
           });
         } else {
+          lyricsList.classList.add('is-moving');
+          window.clearTimeout(lyricMotionTimer);
+          lyricMotionTimer = window.setTimeout(() => {
+            lyricsList.classList.remove('is-moving');
+          }, 480);
           lyricsList.style.transform = `translateY(${-targetOffset}px)`;
         }
       }
@@ -1066,14 +1059,8 @@
         onlineFailureCount += 1;
         const allFailed = onlineFailedTrackIds.size >= musicList.length;
         if (onlineFailureCount >= 3 || allFailed) {
-          const shouldResume = playbackWanted;
-          setActiveList('local', localMusicList);
-          loadMusic(0, { keepTime: false });
-          if (musicTitle) musicTitle.textContent = '在线不可用，已切换本地备用';
-          if (shouldResume) {
-            setLoadingIcon();
-            attemptPlay('online-fallback-local');
-          }
+          playbackWanted = false;
+          if (musicTitle) musicTitle.textContent = '在线音乐暂时不可用，请刷新歌单';
           return;
         }
         nextMusic({ autoplay: true, ignoreMode: true, reason: 'online-error-skip' });
@@ -1297,12 +1284,9 @@
       stopAutoGainSampler();
     });
   
-    const storedSource = storageGet(STORAGE.source) === 'online' ? 'online' : 'local';
+    const storedSource = 'online';
     const storedTrackId = storageGet(STORAGE.trackId);
-    const storedLocalIndex = localMusicList.findIndex((track) => track.id === storedTrackId);
-    let currentMusicIndex = storedLocalIndex >= 0
-      ? storedLocalIndex
-      : normalizeIndex(getStoredNumber(STORAGE.index, DEFAULT_TRACK_INDEX));
+    let currentMusicIndex = 0;
     const storedVolume = getStoredNumber(STORAGE.volume, NaN);
     masterVolume = Number.isFinite(storedVolume)
       ? clamp(storedVolume, 0, 1)
@@ -1336,18 +1320,8 @@
         });
       }, 450);
     };
-    if (storedSource === 'local' && wasPlaying) {
-      // An actively playing local fallback wins restoration; warming the online
-      // cache later must not replace it mid-track.
-      activateLocalFallback({ trackId: storedTrackId, keepTime: true });
-      setPlaylistExpanded(wasPlaylistExpanded, false);
-      resumeStoredPlayback();
-      if (document.body.classList.contains('sidebar-active')) {
-        tryOnlinePlaylist({ force: false });
-      }
-    } else {
-      // Online is the default source. Local files are not assigned to the audio
-      // element until this request has actually failed.
+    {
+      // The player is online-only. Hide it when the initial playlist cannot load.
       toggleBtn.disabled = true;
       setLoadingIcon();
       tryOnlinePlaylist({
@@ -1357,7 +1331,8 @@
         keepTime: storedSource === 'online'
       }).then((loaded) => {
         if (!loaded) {
-          activateLocalFallback({ trackId: storedTrackId, keepTime: storedSource === 'local' });
+          musicRoot.style.display = 'none';
+          return;
         }
         toggleBtn.disabled = false;
         setPlaylistExpanded(wasPlaylistExpanded, false);

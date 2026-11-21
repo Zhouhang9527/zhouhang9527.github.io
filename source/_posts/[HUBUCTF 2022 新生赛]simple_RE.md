@@ -7,7 +7,7 @@ tags:
   - Reverse
   - Base64
   - IDA Pro
-description: HUBUCTF 2022 新生赛 reverse 题目 simple_RE 的详细解题过程，自定义 Base64 编码逆向分析。
+description: 记录 simple_RE 题目中自定义编码逻辑的识别与还原思路。
 ---
 
 ## 题目信息

@@ -7,7 +7,7 @@ tags:
   - Windows
   - WinDbg
   - 页表
-description: 一次结合 IDA 与 WinDbg，手动根据 VA 逐级走页表并定位 PA 的实操记录。
+description: 以 Windows 页表结构为线索，整理虚拟地址到物理地址转换的学习记录。
 ---
 
 ## 解题过程

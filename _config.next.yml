@@ -139,7 +139,7 @@ codeblock:
     light: prism
     dark: prism-dark
   copy_button:
-    enable: true
+    enable: false # Accessible copy controls are provided by ginka-reading.js.
     show_result: true
     style: mac
 

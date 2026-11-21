@@ -6,10 +6,27 @@
 {% block class %}post posts-expand{% endblock %}
 
 {% block content %}
-  <nav class="journal-reading-nav" aria-label="阅读导航"><a href="{{ url_for('/') }}">GINKA / mm9527</a><span>READING / 技术笔记</span><a href="{{ url_for('/archives/') }}">返回归档 ↗</a></nav>
+  <div class="journal-reading-progress" role="progressbar" aria-label="文章阅读进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+  <div class="journal-reading-shell">
+    <nav class="journal-reading-nav" aria-label="阅读导航"><a href="{{ url_for('/') }}">GINKA / mm9527</a><span>READING / 技术笔记</span><a href="{{ url_for('/archives/') }}">返回归档 ↗</a></nav>
 
-  {{ partial('_macro/post.njk', {post: page}) }}
+    <div class="journal-post-meta" aria-label="文章信息">
+      <span>更新于 <time datetime="{{ page.date.toISOString() }}">{{ date(page.date, 'YYYY-MM-DD') }}</time></span>
+      <span class="journal-reading-stat" data-reading-stats>阅读统计加载中…</span>
+    </div>
 
+    {{ partial('_macro/post.njk', {post: page}) }}
+
+    {% if page.toc.enable %}
+      {% set journalOutline = toc(page.content, {class: 'journal-outline-list', list_number: false, max_depth: page.toc.max_depth}) %}
+      {% if journalOutline.length > 1 %}
+        <aside class="journal-outline" aria-label="文章章节目录" data-journal-outline>
+          <p class="journal-outline-title">ON THIS PAGE · 章节</p>
+          {{ journalOutline }}
+        </aside>
+      {% endif %}
+    {% endif %}
+  </div>
 {% endblock %}
 
 {% block sidebar %}

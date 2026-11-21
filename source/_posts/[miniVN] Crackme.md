@@ -9,7 +9,7 @@ tags:
   - RC4
   - Patch
   - 动态调试
-description: miniVN Crackme! 题解，绕过反调试与 hook 的 memcmp，分析 RC4 并恢复正确密文。
+description: 记录 Crackme 题目中校验逻辑、调试观察与数据变换之间的分析关系。
 ---
 
 ## 题目信息

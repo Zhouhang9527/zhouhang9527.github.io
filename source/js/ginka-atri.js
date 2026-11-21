@@ -1,6 +1,8 @@
-(async function () {
+window.__ginkaAtriReady = (async function () {
   'use strict';
 
+  if (!document.documentElement.classList.contains('ginka-atri-home') ||
+      !document.querySelector('.journal-hero') || document.querySelector('.post')) return false;
   if (window.__ginkaAtriBooting) return;
   window.__ginkaAtriBooting = true;
 
@@ -11,6 +13,8 @@
   const siteRoot = (window.CONFIG && window.CONFIG.root) ? window.CONFIG.root : '/';
   const rootBase = (siteRoot && siteRoot.endsWith('/')) ? siteRoot : (siteRoot + '/');
   const assetUrl = (p) => rootBase + String(p).replace(/^\/+/, '');
+  const isAtriHomePage = () => document.documentElement.classList.contains('ginka-atri-home') &&
+    !!document.querySelector('.journal-hero') && !document.querySelector('.post');
 
   // ===================================================
   // 设备适配管理器
@@ -19,17 +23,11 @@
     isMobile: () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768,
     
     getConfig: function() {
-      const w = window.innerWidth;
-      // 超小屏 (<= 360px)
-      if (w <= 360) return { width: 0, height: 0, scale: 0, messageTimeout: 3000, hidden: true };
-      // 小屏手机 (<= 480px)
-      if (w <= 480) return { width: 160, height: 240, scale: 0.15, messageTimeout: 3000, hidden: false };
-      // 普通手机 (<= 768px)
-      if (w <= 768) return { width: 200, height: 300, scale: 0.18, messageTimeout: 3000, hidden: false };
-      // 平板 (<= 1024px)
-      if (w <= 1024) return { width: 280, height: 400, scale: 0.22, messageTimeout: 3500, hidden: false };
-      // 桌面端
-      return { width: 350, height: 500, scale: 0.25, messageTimeout: 4000, hidden: false };
+      const preferredWidth = Math.max(160, Math.min(220, (window.innerWidth - 920) / 2 - 24, window.innerHeight * .28));
+      const width = Math.max(1, Math.floor(Math.min(preferredWidth, window.innerWidth * .48, window.innerHeight * .5)));
+      return { width, height: Math.round(width * 10 / 7), scale: .25,
+        messageTimeout: 3600, hidden: !isAtriHomePage() };
+
     }
   };
 
@@ -56,16 +54,18 @@
       this.widget = document.getElementById('atri-live2d-widget');
       this.canvas = document.getElementById(config.canvasId);
       this.messageBox = document.getElementById('atri-message-box');
-      this.isVisible = true;
+      // Every home entry starts folded; only the explicit launcher may reveal the model.
+      this.isVisible = false;
+      this.pageEpoch = Number(window.GINKA_ATRI_PAGE_EPOCH) || 0;
       const runtime = window.GINKA_RUNTIME || {};
       this.performance = {
         lowPower: !!runtime.isLowPower,
         targetFps: runtime.isLowPower ? 30 : 60,
         talkFps: runtime.isLowPower ? 24 : 48,
         gestureFps: runtime.isLowPower ? 30 : 60,
-        idleInterval: runtime.isLowPower ? 20000 : 12000,
-        idleCooldown: runtime.isLowPower ? 24000 : 16000,
-        resolution: runtime.isLowPower ? 1 : 1.25,
+        idleInterval: runtime.isLowPower ? 60000 : 45000,
+        idleCooldown: 30000,
+        resolution: runtime.isLowPower ? 1.5 : 2,
         antialias: !runtime.isLowPower
       };
       
@@ -182,10 +182,30 @@
       } catch (_) {}
     }
 
+    canAnimate() {
+      return this.isVisible && isAtriHomePage() && !document.hidden && !DeviceManager.getConfig().hidden &&
+        !document.body.classList.contains('sidebar-active');
+    }
+
+    setVisible(visible, options) {
+      const opts = options || {};
+      this.isVisible = !!visible && isAtriHomePage() && !document.hidden;
+      try { localStorage.setItem('atri_collapsed', this.isVisible ? '0' : '1'); } catch (_) {}
+      this.updateLayout();
+      document.dispatchEvent(new Event('atri:visibility'));
+      if (this.isVisible && !opts.silentMessage) this.showMessage('我回来啦。');
+      if (this.isVisible) this.startIdleMotionLoop();
+      else this.stopIdleMotionLoop();
+      const focusTarget = opts.focus === false ? null : document.getElementById(this.isVisible ? 'atri-toggle' : 'atri-launcher');
+      if (focusTarget && focusTarget.getClientRects().length) focusTarget.focus({ preventScroll: true });
+    }
+
     setupVisibilityLifecycle() {
       if (this._visibilityHandler) return;
       this._visibilityHandler = () => {
-        if (!this.isVisible || document.hidden) {
+        if (!this.canAnimate()) {
+          if (this.voicePlayer) this.voicePlayer.pause();
+          this.hideMessage();
           this.stopTalkingFace();
           this.stopParameterGesture();
           this._setAppRunning(false);
@@ -200,6 +220,8 @@
 
       document.addEventListener('visibilitychange', this._visibilityHandler);
       this._visibilityHandler();
+      this._bodyObserver = new MutationObserver(() => this._visibilityHandler());
+      this._bodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     }
 
     stopParameterGesture() {
@@ -212,6 +234,7 @@
     }
 
     performParameterGesture(style, options) {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
       const coreModel = this._getCoreModel();
       if (!coreModel || typeof coreModel.setParameterValueById !== 'function') return false;
 
@@ -445,9 +468,6 @@
         return;
       }
 
-      // 恢复上次拖拽位置
-      this.applySavedPosition();
-
       this.app = new PIXI.Application({
         view: this.canvas,
         width: this.config.width,
@@ -471,19 +491,26 @@
       this.setupCanvasEvents();
       this.setupResponsiveHandler();
       this.setupVisibilityLifecycle();
-      if (this.isVisible && !document.hidden) {
-        this._setAppRunning(true);
+      this.updateLayout();
+      if (this.canAnimate()) this._setAppRunning(true);
+      // A PJAX or visibility transition invalidates the original launch; stay folded and silent.
+      if (this.pageEpoch !== (Number(window.GINKA_ATRI_PAGE_EPOCH) || 0) || !isAtriHomePage()) {
+        this.isVisible = false;
+        this.updateLayout();
+        return;
       }
-      this.startIdleMotionLoop();
+      // Voice assets are only considered after an explicit launcher click; never greet on load.
       this.scheduleVoiceInit();
-      this.welcomeOnce();
     }
 
     scheduleVoiceInit() {
       const runtime = window.GINKA_RUNTIME;
       const requireInteraction = !!(runtime && runtime.isLowPower);
       const timeout = requireInteraction ? 4000 : 1600;
+      const scheduledEpoch = this.pageEpoch;
       const start = () => {
+        if (!isAtriHomePage() || document.hidden ||
+            scheduledEpoch !== (Number(window.GINKA_ATRI_PAGE_EPOCH) || 0)) return;
         this.initVoicePlayer().catch(function () {
           // keep silent
         });
@@ -502,13 +529,13 @@
 
     setupResponsiveHandler() {
       // 响应窗口大小变化，调整 ATRI 位置和大小
-      let resizeTimer;
-      window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
+      this._resizeHandler = () => {
+        clearTimeout(this._resizeTimer);
+        this._resizeTimer = setTimeout(() => {
           this.updateLayout();
         }, 300);
-      });
+      };
+      window.addEventListener('resize', this._resizeHandler);
     }
 
     updateLayout() {
@@ -529,75 +556,9 @@
         this.fitModelToCanvas();
       }
       
-      this.keepWidgetInViewport();
-      
-      // 处理隐藏逻辑
-      if (config.hidden) {
-        this.widget.style.display = 'none';
-        this._setAppRunning(false);
-      } else {
-        this.widget.style.display = 'block';
-        if (this.isVisible && !document.hidden) {
-          this._setAppRunning(true);
-        }
-      }
-    }
-
-    applySavedPosition() {
-      try {
-        const raw = localStorage.getItem('atri_widget_pos');
-        if (!raw) return;
-        const pos = JSON.parse(raw);
-        if (!pos || !Number.isFinite(pos.left) || !Number.isFinite(pos.top)) {
-          localStorage.removeItem('atri_widget_pos');
-          return;
-        }
-
-        // 固定定位改为 left/top（清掉 right/bottom）
-        this.widget.style.right = '';
-        this.widget.style.bottom = '';
-        this.widget.style.left = pos.left + 'px';
-        this.widget.style.top = pos.top + 'px';
-        this.keepWidgetInViewport(true);
-      } catch (_) {
-        try { localStorage.removeItem('atri_widget_pos'); } catch (_) {}
-      }
-    }
-
-    keepWidgetInViewport(persist) {
-      if (!this.widget) return;
-
-      const rect = this.widget.getBoundingClientRect();
-      const width = rect.width || this.config.width || 260;
-      const height = rect.height || this.config.height || 360;
-      const viewportWidth = window.innerWidth || document.documentElement.clientWidth || width;
-      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || height;
-      const margin = DeviceManager.isMobile() ? 4 : 8;
-      const maxLeft = Math.max(margin, viewportWidth - width - margin);
-      const maxTop = Math.max(margin, viewportHeight - height - margin);
-      const hasLeftTop = this.widget.style.left !== '' || this.widget.style.top !== '';
-
-      if (!hasLeftTop) return;
-
-      const currentLeft = Number.isFinite(parseFloat(this.widget.style.left))
-        ? parseFloat(this.widget.style.left)
-        : rect.left;
-      const currentTop = Number.isFinite(parseFloat(this.widget.style.top))
-        ? parseFloat(this.widget.style.top)
-        : rect.top;
-      const nextLeft = Math.min(maxLeft, Math.max(margin, currentLeft));
-      const nextTop = Math.min(maxTop, Math.max(margin, currentTop));
-
-      this.widget.style.right = '';
-      this.widget.style.bottom = '';
-      this.widget.style.left = nextLeft + 'px';
-      this.widget.style.top = nextTop + 'px';
-
-      if (persist) {
-        try {
-          localStorage.setItem('atri_widget_pos', JSON.stringify({ left: nextLeft, top: nextTop }));
-        } catch (_) {}
-      }
+      this.widget.style.display = !config.hidden && this.isVisible && isAtriHomePage() ? 'block' : 'none';
+      this.widget.style.setProperty('--atri-render-width', config.width + 'px');
+      if (this._visibilityHandler) this._visibilityHandler();
     }
 
     fitModelToCanvas() {
@@ -640,93 +601,20 @@
         // 自适应缩放/定位
         this.fitModelToCanvas();
 
-        // 尝试在首次加载后触发一次动作/表情，确认渲染链路正常
-        setTimeout(() => {
-          try {
-            this.playRandomMotion();
-            if (typeof this.model.expression === 'function') this.model.expression();
-          } catch (_) {
-            // ignore
-          }
-        }, 200);
       } catch (e) {
         console.error('[ATRI] 模型加载失败:', e);
-        this.showMessage('模型加载失败：请打开控制台查看报错', 8000);
+        throw e;
       }
     }
 
     welcomeOnce() {
       setTimeout(() => {
-        // 有语音配置时：欢迎语按时间段筛选，避免晚上说早上好
-        if (this.voiceConfig && this.voiceConfig.enabled) {
-          const hour = new Date().getHours();
-          // 不是强制“必须说晚上好”，而是“排除明显错时”的问候（允许通用问候）
-          const greetingFilter = (() => {
-            const rx = {
-              morning: /(早上|早安|morning|おはよう)/i,
-              noon: /(中午|午安|noon|lunch)/i,
-              afternoon: /(下午|afternoon)/i,
-              evening: /(晚上|晚好|evening|こんばんは)/i,
-              night: /(夜深|深夜|夜晚|晚安|night|おやすみ)/i
-            };
-
-            let allow = ['morning'];
-            if (hour >= 12 && hour < 14) allow = ['noon'];
-            else if (hour >= 14 && hour < 18) allow = ['afternoon'];
-            else if (hour >= 18 && hour < 22) allow = ['evening', 'night'];
-            else if (hour >= 22 || hour < 5) allow = ['night'];
-            else if (hour >= 5 && hour < 12) allow = ['morning'];
-
-            const banned = Object.keys(rx)
-              .filter((k) => allow.indexOf(k) === -1)
-              .map((k) => rx[k]);
-
-            return (voice) => {
-              const t = ((voice && voice.text) ? String(voice.text) : '') + ' ' + ((voice && voice.ja) ? String(voice.ja) : '');
-              // 不包含时间词的通用问候会通过；包含“错时词”的会被排除
-              for (const r of banned) {
-                if (r.test(t)) return false;
-              }
-              return true;
-            };
-          })();
-
-          const categories = (this.voiceConfig && this.voiceConfig.categories) ? this.voiceConfig.categories : {};
-          const candidates = [];
-          // 优先尝试更“时间段”语义的分类名（如果作者有这样分）
-          if (hour >= 5 && hour < 9) candidates.push('morning');
-          else if (hour >= 9 && hour < 12) candidates.push('forenoon', 'morning');
-          else if (hour >= 12 && hour < 14) candidates.push('noon');
-          else if (hour >= 14 && hour < 18) candidates.push('afternoon');
-          else if (hour >= 18 && hour < 22) candidates.push('evening');
-          else candidates.push('night');
-          // 最后再用通用欢迎类
-          candidates.push('welcome', 'greet', 'hello');
-
-          for (const cat of candidates) {
-            if (categories && categories[cat] && categories[cat].length) {
-              const ok = this.playVoice(cat, {
-                filter: greetingFilter
-              });
-              if (ok) return;
-            }
-          }
-
-          // 如果没找到匹配时间段的语音，就不要强行放错的语音，退化为文本问候
-        }
-
-        // 无语音配置：退化为文本问候
-        const hour = new Date().getHours();
-        let greeting;
-        if (hour >= 5 && hour < 9) greeting = '早上好！新的一天开始啦~';
-        else if (hour >= 9 && hour < 12) greeting = '上午好！工作顺利吗？';
-        else if (hour >= 12 && hour < 14) greeting = '中午好！记得吃午饭哦~';
-        else if (hour >= 14 && hour < 18) greeting = '下午好！继续加油！';
-        else if (hour >= 18 && hour < 22) greeting = '晚上好！今天辛苦啦~';
-        else greeting = '夜深了，早点休息哦~';
-
-        this.showMessage(greeting, 5000);
-        this.playRandomMotion();
+        if (!this.canAnimate()) return;
+        try {
+          if (sessionStorage.getItem('atri_greeted')) return;
+          sessionStorage.setItem('atri_greeted', '1');
+        } catch (_) {}
+        this.showMessage('欢迎回来，慢慢看。', 3600);
       }, 1200);
     }
 
@@ -735,6 +623,8 @@
       const handleInteraction = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if (!this.canAnimate() || Date.now() - (this._lastTapAt || 0) < 1800) return;
+        this._lastTapAt = Date.now();
         this.touchInteraction('tap');
         if (this.voiceConfig && this.voiceConfig.enabled) {
           this.playVoice('click');
@@ -772,7 +662,7 @@
     attachModelTicker() {
       if (!this.app || !this.app.ticker || !this.model || this._modelTickerHandler) return;
       this._modelTickerHandler = () => {
-        if (!this.model || !this.isVisible || document.hidden) return;
+        if (!this.model || !this.canAnimate()) return;
         try {
           this.model.update(this.app.ticker.deltaMS);
         } catch (_) {
@@ -790,17 +680,9 @@
         toggleBtn.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
-          this.isVisible = !this.isVisible;
-          this.canvas.style.opacity = this.isVisible ? '1' : '0';
-          this.canvas.style.pointerEvents = this.isVisible ? 'auto' : 'none';
-          this.showMessage(this.isVisible ? '我回来啦~' : '我先藏起来了~');
-          if (this.isVisible && !document.hidden) {
-            this._setAppRunning(true);
-          } else {
-            this.stopTalkingFace();
-            this.stopParameterGesture();
-            this._setAppRunning(false);
-          }
+          this.setVisible(false);
+          toggleBtn.setAttribute('aria-pressed', 'true');
+          toggleBtn.classList.add('is-active');
         });
       }
 
@@ -835,76 +717,6 @@
           this.touchInteraction('manual');
           this.playCanonicalAtriMotion();
         });
-      }
-
-      const homeBtn = ensureElement('atri-home');
-      if (homeBtn) {
-        homeBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          localStorage.removeItem('atri_widget_pos');
-          this.widget.style.left = '';
-          this.widget.style.top = '';
-          this.widget.style.right = '20px';
-          this.widget.style.bottom = '0';
-          this.showMessage('好的，回到原来的位置了~');
-        });
-      }
-
-      const dragBtn = ensureElement('atri-drag');
-      if (dragBtn) {
-        const onPointerDown = (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-
-          const rect = this.widget.getBoundingClientRect();
-          const startX = ev.clientX;
-          const startY = ev.clientY;
-          const startLeft = rect.left;
-          const startTop = rect.top;
-
-          // 切换为 left/top 定位
-          this.widget.style.right = '';
-          this.widget.style.bottom = '';
-          this.widget.style.left = startLeft + 'px';
-          this.widget.style.top = startTop + 'px';
-
-          const vw = () => window.innerWidth || document.documentElement.clientWidth;
-          const vh = () => window.innerHeight || document.documentElement.clientHeight;
-
-          const onMove = (e) => {
-            e.preventDefault();
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-
-            const wRect = this.widget.getBoundingClientRect();
-            const maxLeft = Math.max(0, vw() - wRect.width);
-            const maxTop = Math.max(0, vh() - wRect.height);
-
-            const nextLeft = Math.max(0, Math.min(maxLeft, startLeft + dx));
-            const nextTop = Math.max(0, Math.min(maxTop, startTop + dy));
-
-            this.widget.style.left = nextLeft + 'px';
-            this.widget.style.top = nextTop + 'px';
-          };
-
-          const onUp = (e) => {
-            e.preventDefault();
-            document.removeEventListener('pointermove', onMove, true);
-            document.removeEventListener('pointerup', onUp, true);
-            document.removeEventListener('pointercancel', onUp, true);
-
-            const left = parseFloat(this.widget.style.left || '0') || 0;
-            const top = parseFloat(this.widget.style.top || '0') || 0;
-            localStorage.setItem('atri_widget_pos', JSON.stringify({ left, top }));
-          };
-
-          document.addEventListener('pointermove', onMove, true);
-          document.addEventListener('pointerup', onUp, true);
-          document.addEventListener('pointercancel', onUp, true);
-        };
-
-        dragBtn.addEventListener('pointerdown', onPointerDown);
       }
 
       const volumeBtn = ensureElement('atri-volume');
@@ -953,7 +765,7 @@
     }
 
     showMessage(text, duration) {
-      if (!this.config.enableMessage || !this.messageBox) return;
+      if (!this.config.enableMessage || !this.messageBox || !this.canAnimate()) return;
       clearTimeout(this.messageTimer);
 
       const content = this.messageBox.querySelector('.atri-message-content');
@@ -967,6 +779,7 @@
       }
 
       this.messageBox.style.display = 'block';
+      this.messageBox.classList.toggle('is-below', this.widget.getBoundingClientRect().top < 120);
       const timeout = duration || this.config.messageTimeout;
       this.messageTimer = setTimeout(() => {
         if (version !== this._messageVersion) return;
@@ -988,20 +801,14 @@
     }
 
     startIdleMotionLoop() {
-      if (this._idleMotionTimer) {
-        clearInterval(this._idleMotionTimer);
-      }
-      this._idleMotionTimer = setInterval(() => {
-        if (!this.model || !this.isVisible) return;
-        if (document.hidden) return;
-        if (this._talkingActive) return;
-        if (this.voicePlayer && !this.voicePlayer.paused) return;
-        if (Date.now() - this._lastInteractionAt < this.performance.idleCooldown) return;
+      // Deliberately disabled: only explicit canvas/button actions animate ATRI.
+      this.stopIdleMotionLoop();
+    }
 
-        const styles = ['gentle', 'think', 'gentle', 'bright'];
-        const style = styles[Math.floor(Math.random() * styles.length)];
-        this.performAtriMotion(style);
-      }, this.performance.idleInterval);
+    stopIdleMotionLoop() {
+      if (!this._idleMotionTimer) return;
+      clearInterval(this._idleMotionTimer);
+      this._idleMotionTimer = 0;
     }
 
     hasPlayableMotions() {
@@ -1035,6 +842,7 @@
     }
 
     performAtriMotion(style) {
+      if (!this.canAnimate() || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
       const profile = {
         greet: ['greet', 'hello', 'wave', 'hand', 'tapbody', 'tap', 'idle'],
         gentle: ['idle', 'normal', 'stand', 'tapbody', 'tap'],
@@ -1137,6 +945,7 @@
       }
     }
     playRandomMotion() {
+      if (!this.canAnimate() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       if (!this.hasPlayableMotions()) {
         this.performParameterGesture('gentle', { duration: 1050 });
         return;
@@ -1162,6 +971,7 @@
     }
 
     playTalkingMotion() {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       if (!this.hasPlayableMotions()) {
         this.performParameterGesture('bright', { duration: 950 });
         return;
@@ -1258,6 +1068,7 @@
     }
 
     playVoice(category, options) {
+      if (!this.canAnimate() || Date.now() - (this._lastVoiceAt || 0) < 2500) return false;
       if (!this.voiceConfig || !this.voicePlayer || !this.voiceConfig.enabled) return false;
       const voices = (this.voiceConfig.categories && this.voiceConfig.categories[category]) || [];
       if (!voices.length) {
@@ -1276,6 +1087,7 @@
       }
 
       const voice = pool[Math.floor(Math.random() * pool.length)];
+      this._lastVoiceAt = Date.now();
       const voicePath = this.voiceConfig.basePath + voice.file;
       const fallbackDuration = Math.max(1200, Number(options && options.duration) || 4000);
       const subtitlePayload = voice.ja ? { zh: voice.text, ja: voice.ja } : voice.text;
@@ -1320,6 +1132,10 @@
 
 
     dispose() {
+      clearTimeout(this._resizeTimer);
+      if (this._resizeHandler) window.removeEventListener('resize', this._resizeHandler);
+      if (this._bodyObserver) this._bodyObserver.disconnect();
+      if (this.voicePlayer) this.voicePlayer.pause();
       this.stopTalkingFace();
       this.stopParameterGesture();
       if (this._visibilityHandler) {
@@ -1390,6 +1206,7 @@
       });
     }
   } catch (e) {
+    if (window.atri) window.atri.dispose();
     console.error('[ATRI] 初始化失败:', e);
   } finally {
     window.__ginkaAtriBooting = false;

@@ -7,7 +7,7 @@ tags:
   - Reverse
   - 签到题
   - IDA Pro
-description: NSSCTF 2025 秋招赛第一题一种很新的签到的详细解题过程。
+description: 简要梳理一道入门签到题的程序行为与解题观察。
 ---
 
 ### 题目一:一种很新的签到

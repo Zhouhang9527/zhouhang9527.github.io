@@ -17,8 +17,6 @@
   pointer-events: none;
   transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1), transform 0.3s ease, visibility 0s linear 0.42s;
   user-select: none;
-  /* 移动端性能优化 */
-  will-change: transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
@@ -30,8 +28,11 @@
   transition-delay: 0s, 0s, 0s;
 }
 
-#atri-live2d-widget.is-ready:hover {
-  transform: translateY(-5px);
+#atri-live2d-widget.is-ready:hover { transform: none; }
+
+#atri-live2d-widget.is-ready:hover,
+#atri-live2d-widget.is-dragging {
+  will-change: transform;
 }
 
 /* 移动端设备上减少或禁用 hover 效果 */
@@ -1091,6 +1092,9 @@ body #journal-sidebar .music-source-retry.is-loading .fa-refresh {
   gap: 6px;
   transform: translateY(0);
   transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#music-lyrics-list.is-moving {
   will-change: transform;
 }
 
@@ -1174,3 +1178,161 @@ body #journal-sidebar .music-source-retry.is-loading .fa-refresh {
   }
 }
 
+/* ATRI launcher and minimal controls are defined in the rules below. */
+/* Clear, labeled controls for the ATRI panel. */
+#atri-controls .atri-control-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 38px; }
+#atri-controls .atri-control-btn span { font-size: 10px; line-height: 1; }
+#atri-controls .atri-control-btn i { color: inherit !important; }
+#atri-controls .atri-control-btn:focus-visible { outline: 3px solid #80adcb !important; outline-offset: 2px; }
+#atri-controls .atri-control-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 14px rgba(57,125,169,.18); }
+#atri-controls .atri-control-btn:active { transform: scale(.94); }
+#atri-controls .atri-control-btn.is-active { background: #dcecf5 !important; color: #2f769f !important; }
+#atri-controls .atri-control-btn span { pointer-events: none; }
+@media (max-width: 767px) {
+  #atri-controls .atri-control-btn span { display: none; }
+  #atri-controls .atri-control-btn { min-width: 40px; min-height: 40px; }
+}
+
+/* ATRI interaction shell: visible only when the route gate has found the real journal home. */
+#atri-launcher-shell[hidden],
+#atri-live2d-widget[hidden] { display: none !important; }
+
+#atri-launcher-shell {
+  position: fixed;
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  bottom: calc(48px + env(safe-area-inset-bottom, 0px));
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  color: var(--ink, #2d4155);
+  font-family: inherit;
+}
+
+#atri-launcher-shell button {
+  box-sizing: border-box;
+  font: inherit;
+  color: inherit !important;
+  box-shadow: none;
+  transform: none;
+  transition: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#atri-launcher-shell .atri-launcher__badge {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+#atri-launcher-shell .atri-launcher__badge:focus-visible,
+#atri-controls .atri-control-btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--blue, #6387a6) 70%, white);
+  outline-offset: 3px;
+}
+#atri-launcher-shell .atri-launcher__badge img { display: block; width: 36px; height: 36px; margin: 0; border: 0; border-radius: 0; object-fit: contain; pointer-events: none; }
+
+#atri-launcher-shell .atri-launcher__badge[aria-disabled='true'] { opacity: .64; cursor: wait; }
+#atri-launcher-shell .atri-launcher__status {
+  position: absolute;
+  inset-inline-end: 100%;
+  width: max-content;
+  max-width: calc(100vw - 84px);
+  color: #435d74;
+  font: 12px/1.5 var(--font-body, sans-serif);
+  pointer-events: none;
+}
+#atri-launcher-shell .atri-launcher__status:not(:empty) { padding: 3px 7px; border-radius: 3px; background: #f7fafc; }
+
+#atri-live2d-widget {
+  position: fixed !important;
+  right: calc(16px + env(safe-area-inset-right, 0px)) !important;
+  bottom: calc(48px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 8999 !important;
+  width: var(--atri-render-width, min(160px, 48vw)) !important;
+  transform: none;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity .2s var(--ease-art, cubic-bezier(.2,.7,.2,1));
+}
+#atri-live2d-widget.is-ready { opacity: 1; visibility: visible; }
+/* Use the renderer's logical size, rather than stretching its bitmap on small screens. */
+#atri-live2d-widget #atri-canvas { width: 100% !important; height: auto !important; object-fit: contain; filter: none; }
+#atri-live2d-widget #atri-controls { top: 8px; right: 8px; display: flex; padding: 0; gap: 0; }
+#atri-live2d-widget #atri-controls::before { content: none; }
+#atri-live2d-widget #atri-controls .atri-control-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0 !important;
+  border: 1px solid #d2dfea !important;
+  border-radius: 50% !important;
+  background: #f7fafcf5 !important;
+  color: #405c73 !important;
+  box-shadow: none !important;
+  transform: none;
+  transition: none;
+  backdrop-filter: none;
+}
+#atri-live2d-widget #atri-controls .atri-control-btn::before { content: none; }
+#atri-live2d-widget #atri-controls .atri-control-btn svg { display: block; flex: none; width: 16px; height: 16px; pointer-events: none; }
+#atri-live2d-widget #atri-message-box {
+  box-sizing: border-box;
+  z-index: 2;
+  top: auto;
+  bottom: calc(100% + 8px);
+  left: auto;
+  right: 0;
+  width: max-content;
+  max-width: min(240px, calc(100vw - 32px));
+  max-height: min(220px, 36vh);
+  overflow: auto;
+  padding: 11px 14px;
+  border: 1px solid #d3e0eb;
+  border-radius: 6px;
+  background: #f7fafcf5 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 2px 8px #20384f0a;
+  transform: none;
+  animation: none;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+#atri-live2d-widget #atri-message-box::after { content: none; }
+#atri-live2d-widget .atri-message-content { color: #29465f; font: 400 13px/1.6 var(--font-body, sans-serif); }
+#atri-live2d-widget :is(.atri-msg-zh, .atri-msg-ja) { color: #29465f !important; font: inherit; text-shadow: none; }
+#atri-live2d-widget .atri-msg-ja { margin-top: 4px; color: #536b80 !important; }
+
+html:not(.ginka-atri-home) #atri-launcher-shell,
+html:not(.ginka-atri-home) #atri-live2d-widget { display: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  #atri-launcher-shell *, #atri-live2d-widget, #atri-live2d-widget * {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+  #atri-launcher-shell .atri-launcher__badge:hover { transform: none; }
+}
+@media print {
+  #atri-launcher-shell, #atri-live2d-widget { display: none !important; }
+}
+body #atri-live2d-widget #atri-controls {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+body #atri-live2d-widget #atri-controls .atri-control-btn { pointer-events: auto !important; }

@@ -1,15 +1,19 @@
-{# Custom head injection #}
-<link rel="stylesheet" href="{{ ginka_asset('css/ginka-editorial.css') if ginka_asset is defined else config.root ~ 'css/ginka-editorial.css' }}">
-<link rel="stylesheet" href="{{ ginka_asset('css/ginka-pages.css') if ginka_asset is defined else config.root ~ 'css/ginka-pages.css' }}">
-<link rel="stylesheet" href="{{ ginka_asset('css/ginka-runtime.css') if ginka_asset is defined else config.root ~ 'css/ginka-runtime.css' }}">
-<link rel="stylesheet" href="/vendor/fonts/noto-serif-sc/wght.css">
-<link rel="stylesheet" href="/vendor/fonts/jetbrains-mono/wght.css">
+{# Project styles load in cascade order; font downloads never block text. #}
+{% set style_sheets = ['editorial', 'pages', 'reading', 'runtime', 'motion'] %}
+{% for name in style_sheets %}
+  {% set style_path = 'css/ginka-' ~ name ~ '.css' %}
+  <link rel="stylesheet" href="{{ ginka_asset(style_path) if ginka_asset is defined else config.root ~ style_path }}">
+{% endfor %}
+{# Hexo also processes data templates without the theme's url_for helper. #}
+<link rel="preload" as="style" href="{{ config.root }}vendor/fonts/noto-serif-sc/wght.css" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload" as="style" href="{{ config.root }}vendor/fonts/jetbrains-mono/wght.css" onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+  <link rel="stylesheet" href="{{ config.root }}vendor/fonts/noto-serif-sc/wght.css">
+  <link rel="stylesheet" href="{{ config.root }}vendor/fonts/jetbrains-mono/wght.css">
+</noscript>
+
 <link rel="preload" href="{{ config.root }}images/ginka/header-logo.png" as="image">
-
-<!-- SEO 和性能优化增强 -->
-
-<!-- 预加载关键资源 -->
-<link rel="preload" href="/js/next-boot.js" as="script">
+<link rel="manifest" href="{{ config.root }}manifest.webmanifest">
 {% if config.ginka_music and config.ginka_music.online and config.ginka_music.online.enabled %}
 <link rel="preconnect" href="{{ config.ginka_music.online.api_base }}" crossorigin>
 {% endif %}
@@ -19,27 +23,20 @@
 <meta property="og:image" content="{{ config.url }}/images/avatar.png">
 <meta name="twitter:image" content="{{ config.url }}/images/avatar.png">
 {% endif %}
-
-<!-- 搜索引擎优化 -->
 <meta name="robots" content="index, follow">
 <meta name="googlebot" content="index, follow">
 <meta name="baiduspider" content="index, follow">
 <meta name="author" content="mm9527">
 <meta name="copyright" content="mm9527">
-
-<!-- 移动端优化 -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="GINKA">
 <meta name="format-detection" content="telephone=no">
-
-<!-- 主题色 -->
-<meta name="theme-color" content="#37c6c0">
-<meta name="msapplication-TileColor" content="#37c6c0">
+<meta name="theme-color" content="#f3f6fa">
+<meta name="msapplication-TileColor" content="#f3f6fa">
+<meta name="color-scheme" content="light">
 <meta name="ginka-api-base" content="{{ theme.ginka_backend.api_base | default('') }}">
-
-<!-- 结构化数据 (JSON-LD) -->
 <script type="application/ld+json" data-ginka-page-meta>
 {
   "@context": "https://schema.org",
@@ -47,21 +44,9 @@
   "name": "mm9527 的博客 · GINKA",
   "description": "专注于逆向工程和二进制安全研究",
   "url": "{{ config.url }}",
-  "author": {
-    "@type": "Person",
-    "name": "mm9527",
-    "email": "3050055132@qq.com"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "GINKA",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "{{ config.url }}/images/avatar.png"
-    }
-  },
+  "author": { "@type": "Person", "name": "mm9527", "email": "3050055132@qq.com" },
+  "publisher": { "@type": "Organization", "name": "GINKA", "logo": { "@type": "ImageObject", "url": "{{ config.url }}/images/avatar.png" } },
   "inLanguage": "zh-CN",
   "keywords": ["CTF", "Reverse Engineering", "Pwn", "Binary Security", "IDA Pro"]
 }
 </script>
-

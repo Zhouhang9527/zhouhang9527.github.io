@@ -8,7 +8,7 @@ tags:
   - 花指令
   - IDA Pro
   - 异或解密
-description: NSSCTF 2025 秋招赛第二题 fl-ow-er 的记录。
+description: 记录 fl-ow-er 题目中程序结构与数据变换相关的分析线索。
 permalink: /2025/11/05/[NSSCTF 2025 秋招赛]fl-ow-er/
 ---
 

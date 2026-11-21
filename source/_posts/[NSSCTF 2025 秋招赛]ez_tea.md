@@ -8,7 +8,7 @@ tags:
   - 反反调试
   - TEA
   - 动态调试
-description: NSSCTF 2025 秋招赛第八题 ez_tea 的详细解题过程，反反调试与 TEA 解密分析。
+description: 围绕 ez_tea 题目的 TEA 相关逻辑与调试现象，梳理分析思路。
 ---
 
 ## 题目信息

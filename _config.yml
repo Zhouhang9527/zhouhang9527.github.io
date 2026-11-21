@@ -61,6 +61,8 @@ skip_render:
 # Files ignored by Hexo are not copied into public/. Keep editor/source assets in
 # the workspace while preventing stale payload from entering deployments.
 ignore:
+  - 'debug-test.html'
+  - 'js/ginka-debug-test.js'
   - 'source/images/ginka-static-background.webp'
   - 'themes/next/source/images/background.mp4'
   - 'themes/next/source/fonts/LxgwWenKai.ttf'
@@ -69,6 +71,8 @@ ignore:
   - 'themes/next/source/live2d/ATRI/ATRI.cmo3'
   - 'themes/next/source/live2d/ATRI/ATRI.psd'
   - 'themes/next/source/live2d/ATRI/ATRI.4096/**'
+  - 'live2d/README.md'
+  - 'live2d/test.html'
 
 # ---------------------------------------------------------------
 # Writing Configuration
@@ -154,7 +158,7 @@ theme: next
 # Keep credentials on a server-side Meting deployment. The browser only receives
 # a public HTTPS endpoint that has been verified for CORS and media playback.
 ginka_music:
-  default_cover: /music/unhappy.jpg
+  default_cover: https://meting.mm9527.top/music/unhappy.jpg
   online:
     enabled: true
     # Self-hosted Meting endpoint verified for HTTPS, CORS, lyrics and ranged audio.
@@ -169,53 +173,6 @@ ginka_music:
     cors_audio_verified: true
     cors_lyrics_verified: true
     range_verified: true
-  local:
-    - id: hikari-hanate
-      title: '光放て！'
-      artist: '柳麻美'
-      album: 'ATRI -My Dear Moments- (Original Soundtrack)'
-      src: /music/ginka-op-hikari-hanate.mp3
-      cover: /music/ginka-op-hikari-hanate.webp
-      lyricsSrc: /music/ginka-op-hikari-hanate.lrc
-    - id: yumeukihashi
-      title: '夢浮桥'
-      artist: '青木阳菜'
-      album: GINKA ED
-      src: /music/ginka-ed-yumeukihashi.mp3
-      cover: /music/ginka-ed-yumeukihashi.jpg
-      lyricsSrc: /music/ginka-ed-yumeukihashi.lrc
-    - id: air
-      title: AIR
-      artist: Lia
-      album: AIR OST
-      src: /music/air.mp3
-      cover: /music/air.jpg
-      lyricsSrc: /music/air.lrc
-    - id: unhappy
-      title: unhappy
-      artist: s0rrow
-      album: Single
-      src: '/music/s0rrow - unhappy.mp3'
-      cover: /music/unhappy.jpg
-      lyricsSrc: '/music/s0rrow - unhappy.lrc'
-      translations:
-        'Every day we talk a little less': '每天我们说的话都在逐渐减少'
-        'It looks like you are losing interest': '看起来你正在慢慢失去兴趣'
-        'These feelings I have for you': '这些我对你的感情'
-        "But you don't feel the same": '可你却没有同样的感觉'
-        "So I'll pack all my things": '所以我会收拾好我的一切'
-        'And go run far away': '然后逃到很远的地方'
-        'You are, you are very pretty': '你啊 你真的很漂亮'
-        "I'm so very ugly": '而我是那么的丑陋'
-        'Will you even love me, anymore (love me)': '你会再爱我吗 哪怕一点点（爱我）'
-        'You can, you can live without me': '你可以 你可以没有我的生活着'
-        'That makes me unhappy': '那让我感到不开心'
-        'I should get a piercing through my heart': '我应该将我的心也一并刺穿'
-        'What do you even want me to be': '你究竟想要我成为什么样子'
-        'You never ever pay attention to me': '你从来从来都不愿多看我一眼'
-        "So I'll close my blinds in misery": '所以我拉上窗帘沉进悲伤里'
-        "And I'll wait for you for a couple of weeks": '然后我会一直等着你好几个星期'
-
 # ---------------------------------------------------------------
 # Live2D Configuration (Disabled - Using Custom)
 # ---------------------------------------------------------------

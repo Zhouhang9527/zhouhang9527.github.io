@@ -8,7 +8,7 @@ tags:
   - Android
   - AES
   - XTEA
-description: miniVN ezAndroid 题解，jadx + so 分析，AES/XTEA 解密还原 flag。
+description: 结合 Android 应用与 Native 组件分析，梳理 ezAndroid 题目中的数据处理线索。
 ---
 
 ## 题目信息

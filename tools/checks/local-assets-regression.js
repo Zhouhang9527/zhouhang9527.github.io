@@ -9,8 +9,7 @@ const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const packageJson = JSON.parse(read('package.json'));
 const config = read('_config.next.yml');
 const head = read('source/_data/head.njk');
-const debugPage = read('source/debug-test.html');
-const effects = read('source/js/ginka-effects-loader.js');
+const body = read('source/_data/body-end.njk');
 const shell = read('source/js/ginka-ui-shell.js');
 
 for (const [name, version] of Object.entries({
@@ -87,14 +86,12 @@ assert.doesNotMatch(config, /host:\s*https:\/\/fonts\./);
 assert.match(config, /font:\s*[\s\S]*?host:\s*https:\/\/www\.mm9527\.top/);
 assert.doesNotMatch(head, /cdn\.jsdelivr\.net|fonts\.googleapis\.com|fonts\.loli\.net/);
 assert.doesNotMatch(head, /\burl_for\s*\(/);
-assert.match(head, /\/vendor\/fonts\/noto-serif-sc\/wght\.css/);
-assert.match(head, /\/vendor\/fonts\/jetbrains-mono\/wght\.css/);
-assert.doesNotMatch(debugPage, /cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net/);
-assert.match(debugPage, /\/vendor\/@fortawesome\/fontawesome-free\/7\.0\.0\/css\/all\.min\.css/);
-assert.doesNotMatch(effects, /cdn\.jsdelivr\.net/);
-assert.match(effects, /\/vendor\/gsap\/3\.12\.5\//);
-assert.doesNotMatch(shell, /cdn\.jsdelivr\.net\/npm\/canvas-nest/);
-assert.match(shell, /\/vendor\/canvas-nest\/1\.0\.1\/canvas-nest\.min\.js/);
+assert.match(head, /vendor\/fonts\/noto-serif-sc\/wght\.css/);
+assert.match(head, /vendor\/fonts\/jetbrains-mono\/wght\.css/);
+assert.match(body, /js\/vendor\/lenis\.min\.js/);
+assert.ok(read('source/js/vendor/lenis.LICENSE.txt').includes('MIT License'));
+assert.doesNotMatch(body, /ginka-effects-loader|ginka-page-effects|ginka-lazy-loader|cdn\.jsdelivr\.net/);
+assert.doesNotMatch(shell, /canvas-nest|scheduleCanvasNest/);
 
 const publicIndex = path.join(root, 'public', 'index.html');
 if (fs.existsSync(publicIndex)) {

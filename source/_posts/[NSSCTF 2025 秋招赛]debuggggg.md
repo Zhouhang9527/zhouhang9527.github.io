@@ -8,7 +8,7 @@ tags:
   - 动态调试
   - Linux
   - 反反调试
-description: "NSSCTF 2025 秋招赛第五题 debuggggg 的详细解题过程，主要记录 WSL 远程调试和 patch 技巧。"
+description: 整理 debuggggg 题目在远程调试场景中的观察与验证过程。
 ---
 
 ### 题目五: debuggggg

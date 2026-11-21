@@ -1,96 +1,41 @@
-<!-- ATRI Live2D 增强版 - v2.0 -->
-<div id="atri-live2d-widget" style="position: fixed; right: 20px; bottom: 0; z-index: 50;">
-  <canvas id="atri-canvas" width="350" height="500"></canvas>
-  
-  <!-- ATRI 对话框 -->
-  <div id="atri-message-box" style="display: none;">
+{# ATRI shell is persistent across PJAX; the loader exposes it only on the real home route with .journal-hero. #}
+<div id="atri-launcher-shell" class="atri-launcher-shell" hidden>
+  <button id="atri-launcher" class="atri-launcher__badge" type="button" aria-label="打开看板娘" aria-expanded="false" aria-controls="atri-live2d-widget" data-atri-script="{{ ginka_asset('js/ginka-atri.js') if ginka_asset is defined else config.root ~ 'js/ginka-atri.js' }}">
+    <img src="{{ ginka_asset('images/ginka/butterfly.png') if ginka_asset is defined else config.root ~ 'images/ginka/butterfly.png' }}" alt="" width="36" height="36" decoding="async">
+  </button>
+  <span id="atri-launcher-status" class="atri-launcher__status" role="status"></span>
+</div>
+
+<div id="atri-live2d-widget" role="region" aria-label="ATRI 看板娘" hidden>
+  <canvas id="atri-canvas" width="220" height="314" aria-label="ATRI 看板娘"></canvas>
+  <div id="atri-message-box" role="status" aria-live="polite" style="display:none">
     <div class="atri-message-content"></div>
   </div>
-  
-  <!-- ATRI 控制面板 -->
-  <div id="atri-controls" style="display: flex; pointer-events: auto;">
-    <button class="atri-control-btn" id="atri-toggle" title="显示/隐藏">
-      <i class="fa fa-eye" style="color: rgba(91, 155, 213, 0.9);"></i>
-    </button>
-    <button class="atri-control-btn" id="atri-photo" title="截图">
-      <i class="fa fa-camera" style="color: rgba(91, 155, 213, 0.9);"></i>
-    </button>
-    <button class="atri-control-btn" id="atri-volume" title="语音音量">
-      <i class="fa fa-volume-up" style="color: rgba(91, 155, 213, 0.9);"></i>
-    </button>
-    <button class="atri-control-btn" id="atri-talk" title="语音" aria-label="ATRI语音">
-      <i class="fa fa-comment" style="color: rgba(91, 155, 213, 0.9);"></i>
-    </button>
-    <button class="atri-control-btn" id="atri-motion" title="动作/语音" aria-label="ATRI动作语音联动">
-      <i class="fa fa-hand-paper" style="color: rgba(91, 155, 213, 0.9);"></i>
-    </button>
-    <button class="atri-control-btn" id="atri-home" title="复位">
-      <i class="fa fa-home" style="color: rgba(91, 155, 213, 0.9);"></i>
-    </button>
-    <button class="atri-control-btn" id="atri-drag" title="移动">
-      <i class="fa fa-arrows-alt" style="color: rgba(91, 155, 213, 0.9);"></i>
+  <div id="atri-controls" aria-label="ATRI 控制">
+    <button class="atri-control-btn" id="atri-toggle" type="button" title="收起看板娘" aria-label="收起看板娘">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="m4 4 8 8m0-8-8 8"/></svg>
     </button>
   </div>
 </div>
 
-<!-- Shared scheduler must execute before any optional feature. -->
 <script src="{{ ginka_asset('js/ginka-runtime.js') if ginka_asset is defined else config.root ~ 'js/ginka-runtime.js' }}" defer></script>
+<script src="{{ ginka_asset('js/ginka-reading.js') if ginka_asset is defined else config.root ~ 'js/ginka-reading.js' }}" defer></script>
 <script src="{{ ginka_asset('js/ginka-atri-loader.js') if ginka_asset is defined else config.root ~ 'js/ginka-atri-loader.js' }}" defer></script>
-
-
-
-
-
-
-
-
-
-
-
-<!-- 自定义右键菜单 -->
-<div id="custom-context-menu">
-  <div class="context-menu-item" data-action="back">
-    <i class="fa fa-arrow-left"></i>
-    <span>后退</span>
-  </div>
-  <div class="context-menu-item" data-action="forward">
-    <i class="fa fa-arrow-right"></i>
-    <span>前进</span>
-  </div>
-  <div class="context-menu-item" data-action="refresh">
-    <i class="fa fa-sync-alt"></i>
-    <span>刷新页面</span>
-  </div>
-  <div class="context-menu-divider"></div>
-  <div class="context-menu-item" data-action="home">
-    <i class="fa fa-home"></i>
-    <span>返回首页</span>
-  </div>
-  <div class="context-menu-item" data-action="top">
-    <i class="fa fa-arrow-up"></i>
-    <span>回到顶部</span>
-  </div>
-  <div class="context-menu-divider"></div>
-  <div class="context-menu-item" data-action="atri">
-    <i class="fa fa-heart"></i>
-    <span>和 ATRI 打招呼</span>
-  </div>
-  <div class="context-menu-item" data-action="music">
-    <i class="fa fa-music"></i>
-    <span>切换音乐播放</span>
-  </div>
-</div>
-
 <script src="{{ ginka_asset('js/ginka-ui-shell.js') if ginka_asset is defined else config.root ~ 'js/ginka-ui-shell.js' }}" defer></script>
 <script src="{{ ginka_asset('js/ginka-controls.js') if ginka_asset is defined else config.root ~ 'js/ginka-controls.js' }}" defer></script>
+<script src="{{ ginka_asset('js/vendor/lenis.min.js') if ginka_asset is defined else config.root ~ 'js/vendor/lenis.min.js' }}" defer></script>
+<script src="{{ ginka_asset('js/ginka-motion.js') if ginka_asset is defined else config.root ~ 'js/ginka-motion.js' }}" defer></script>
 <script src="{{ ginka_asset('js/ginka-music.js') if ginka_asset is defined else config.root ~ 'js/ginka-music.js' }}" defer></script>
+<script src="{{ ginka_asset('js/ginka-performance-monitor.js') if ginka_asset is defined else config.root ~ 'js/ginka-performance-monitor.js' }}" defer></script>
 
-<!-- ===================================================
- * 额外特效增强包
- * ================================================== -->
-
-<!-- 1/2/4 特效脚本已拆分到独立文件，便于维护 -->
-<script src="{{ ginka_asset('js/ginka-effects-loader.js') if ginka_asset is defined else config.root ~ 'js/ginka-effects-loader.js' }}" defer></script>
-<script src="{{ ginka_asset('js/ginka-page-effects.js') if ginka_asset is defined else config.root ~ 'js/ginka-page-effects.js' }}" defer></script>
-
-
+{# Keep the native context menu actions; the ATRI option was removed to avoid a second loader path. #}
+<div id="custom-context-menu">
+  <div class="context-menu-item" data-action="back"><i class="fa fa-arrow-left"></i><span>后退</span></div>
+  <div class="context-menu-item" data-action="forward"><i class="fa fa-arrow-right"></i><span>前进</span></div>
+  <div class="context-menu-item" data-action="refresh"><i class="fa fa-sync-alt"></i><span>刷新页面</span></div>
+  <div class="context-menu-divider"></div>
+  <div class="context-menu-item" data-action="home"><i class="fa fa-home"></i><span>返回首页</span></div>
+  <div class="context-menu-item" data-action="top"><i class="fa fa-arrow-up"></i><span>回到顶部</span></div>
+  <div class="context-menu-divider"></div>
+  <div class="context-menu-item" data-action="music"><i class="fa fa-music"></i><span>切换音乐播放</span></div>
+</div>

@@ -8,7 +8,7 @@ tags:
   - Unity
   - IL2CPP
   - 动态调试
-description: NSSCTF 2025 秋招赛第六题 CodeRunner 的详细解题过程，Unity IL2CPP 逆向分析。
+description: 从 Unity IL2CPP 程序结构出发，梳理 CodeRunner 题目的分析线索。
 ---
 
 ## 题目信息

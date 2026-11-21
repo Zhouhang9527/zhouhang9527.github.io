@@ -1,0 +1,27 @@
+{% import 'menu-item.njk' as menu_item with context %}
+<nav class="site-nav" aria-label="主导航">
+  <ul class="main-menu menu">
+    <li class="menu-item menu-item-home"><a href="{{ config.root }}" rel="start">首页</a></li>
+    <li class="menu-item menu-item-archives"><a href="{{ url_for('/archives/') }}" rel="section">文章归档</a></li>
+    <li class="menu-item menu-item-gallery"><a href="{{ config.root }}#ginka-scenes">岛影画廊</a></li>
+    <li class="menu-item menu-item-about"><a href="{{ url_for('/about/') }}" rel="section">关于</a></li>
+    {% for node in theme.main_menu %}
+      {% if node.name not in ['home', 'archives', 'about', 'position', 'display'] %}{{ menu_item.render(node) | trim }}{% endif %}
+    {% endfor %}
+    <li class="menu-item menu-item-tools"><button type="button" data-journal-sidebar-open>站点工具</button></li>
+    <li class="menu-item menu-item-more" hidden>
+      <details class="journal-mobile-menu">
+        <summary>更多 <span aria-hidden="true">⌄</span></summary>
+        <ul class="journal-mobile-links"></ul>
+      </details>
+    </li>
+    {% if theme.algolia_search.enable or theme.local_search.enable %}
+    <li class="menu-item menu-item-search">
+      <button type="button" class="popup-trigger" aria-label="搜索文章" aria-keyshortcuts="Control+K Meta+K">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4 4"/></svg>
+        <span>搜索</span><kbd aria-hidden="true">Ctrl K</kbd>
+      </button>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
