@@ -5,7 +5,6 @@
 {% set cover = page.current == 1 %}
 {% set index = ginka_journal_index(page.posts, site.posts, cover) %}
 {% set official = 'http://ginka.frontwing.jp/story/' %}
-{% set repo = config.ginka_re_md_url | default('https://github.com/Zhouhang9527/re_md', true) %}
 {% if cover %}
   <section class="journal-hero" aria-labelledby="journal-title">
     <div class="journal-hero-image" aria-hidden="true">
@@ -89,7 +88,6 @@
         <div class="journal-topics"><span>REVERSE</span><span>PWN</span><span>CTF</span></div>
         <div class="journal-profile-links">
           <a href="https://github.com/Zhouhang9527" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
-          <a href="{{ repo }}" target="_blank" rel="noopener noreferrer">re_md <span aria-hidden="true">↗</span></a>
         </div>
       </section>
       <figure class="journal-note journal-game-note">
