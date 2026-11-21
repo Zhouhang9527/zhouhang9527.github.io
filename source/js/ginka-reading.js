@@ -106,6 +106,36 @@
       const source = code.cloneNode(true);
       source.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
       const text = source.textContent;
+      // Hexo's table renderer keeps short lines offscreen when a long signature
+      // is scrolled sideways. Render each logical line as its own wrapping row,
+      // so its line number expands with it and no content needs horizontal panning.
+      if (block.tagName === 'FIGURE' && code.matches('td.code > pre')) {
+        const lines = Array.from(code.children).filter(node => node.matches('span.line'));
+        if (lines.length) {
+          const pre = document.createElement('pre');
+          pre.className = 'journal-code-pre';
+          const listing = document.createElement('code');
+          listing.className = 'journal-code-lines';
+          lines.forEach((line, index) => {
+            const row = document.createElement('span');
+            row.className = 'journal-code-line';
+            row.dataset.line = String(index + 1);
+            const content = document.createElement('span');
+            content.className = 'journal-code-text';
+            content.append(...Array.from(line.childNodes));
+            content.querySelectorAll('span').forEach(token => {
+              Array.from(token.classList).forEach(name => {
+                if (!name.startsWith('hljs-')) token.classList.replace(name, 'hljs-' + name);
+              });
+            });
+            row.append(content);
+            listing.append(row);
+            if (index < lines.length - 1) listing.append(document.createTextNode('\n'));
+          });
+          pre.append(listing);
+          block.replaceChildren(pre);
+        }
+      }
       const toolbar = document.createElement('div');
       toolbar.className = 'journal-code-toolbar';
       const label = document.createElement('span');
