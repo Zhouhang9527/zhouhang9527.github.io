@@ -169,6 +169,13 @@
   }
 
   function initReadingStats() {
+    const meta = document.querySelector('.journal-reading-shell .post-header .post-meta');
+    if (meta && !meta.querySelector('[data-reading-stats]')) {
+      const stats = document.createElement('span');
+      stats.className = 'post-meta-item journal-reading-stat';
+      stats.setAttribute('data-reading-stats', '');
+      meta.appendChild(stats);
+    }
     document.querySelectorAll('[data-reading-stats]').forEach(node => {
       const body = node.closest('.post')?.querySelector('.post-body');
       const text = (node.dataset.readingText || body?.textContent || '').replace(/\s+/g, ' ').trim();

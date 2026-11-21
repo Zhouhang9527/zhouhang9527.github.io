@@ -1,8 +1,5 @@
 /* Markdown and article interactions. Code layout tables are not content tables. */
 body .post-body { overflow-wrap: anywhere; text-align: start; }
-.journal-post-meta { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 18px; color: var(--journal-muted); font-size: 12px; }
-.journal-post-meta span { padding: 5px 10px; border: 1px solid var(--journal-line); border-radius: 999px; background: var(--journal-surface-soft); }
-.journal-post-meta time { font-family: Consolas, monospace; color: #426f90; }
 body .post-body p { margin: 0 0 1.2em; text-align: start; }
 body .post-body :is(h1,h2,h3,h4,h5,h6) { line-height: 1.55; scroll-margin-top: 32px; }
 body .post-body :is(h2,h3,h4) { margin-bottom: .75em; }
@@ -101,18 +98,21 @@ body .main-inner.post.posts-expand {
   column-gap: clamp(28px, 3.3vw, 44px);
   align-items: start;
 }
-.journal-reading-nav,
-.journal-post-meta { grid-column: 1 / -1; }
-.journal-reading-shell > .post-block {
+.journal-reading-nav { grid-column: 1 / -1; }
+body .main-inner.post .journal-reading-shell > .post-block {
   grid-column: 1;
-  grid-row: 3;
+  grid-row: 2;
   min-width: 0;
   box-sizing: border-box;
-  padding: 42px 44px !important;
+  /* Mist's list-post spacing must not offset the one reading-page article. */
+  margin: 0;
+  animation: none;
+  transition: none;
+  padding: 36px 44px !important;
 }
 .journal-reading-shell > .journal-outline {
   grid-column: 2;
-  grid-row: 3;
+  grid-row: 2;
   position: sticky;
   top: 96px;
   min-width: 0;
@@ -160,7 +160,20 @@ body .journal-reading-shell .post-title {
   font-family: var(--font-title, "Noto Serif SC", "Songti SC", serif);
   font-weight: 400;
   line-height: 1.5;
+  text-align: left;
 }
+body .journal-reading-shell .post-meta-container { text-align: left; }
+body .journal-reading-shell .post-meta {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 5px 16px;
+  color: #52667b;
+  font: 400 12px/1.8 var(--font-body, sans-serif);
+  text-align: left;
+}
+body .journal-reading-shell .post-meta-item::before { content: none; }
+body .journal-reading-shell .post-description { color: #52667b; font: 400 13px/1.8 var(--font-body, sans-serif); margin-top: 12px; }
 body .journal-reading-shell .post-body {
   width: 100%;
   max-width: 72ch;
@@ -244,7 +257,7 @@ body .journal-reading-shell .journal-copy { min-height: 34px; padding: 5px 11px;
 }
 @media (max-width: 767px) {
   body .main-inner.post.posts-expand { width: calc(100% - 28px) !important; }
-  .journal-reading-shell > .post-block { padding: 24px 18px !important; }
+  body .main-inner.post .journal-reading-shell > .post-block { padding: 24px 18px !important; }
   body .journal-reading-shell .post-body { font-size: 15px; }
 }
 @media (prefers-reduced-motion: reduce) {
