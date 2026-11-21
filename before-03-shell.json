@@ -1,0 +1,9 @@
+{
+  "source/_data/body-end.njk": "ca0f11319f67c0562f6bb12bd827d90499e0cb8b5753b9ae191f192c10aa03f0",
+  "source/css/ginka-pages.css": "19376daf2c4d2882cecfcb0934090553d817ddb59f72ee4b484eb5dc8d6bba91",
+  "source/css/ginka-runtime.css": "c4af42e72f343018bb3acb2019b4ffda624fe4d8e681d4a3b51a63cf15576e4d",
+  "source/js/ginka-controls.js": "f2cebcdd44f993ad6b6ea77da4b8dc875a856bf3a42b31ada5ece1f7f75d95da",
+  "source/js/ginka-ui-shell.js": "34fec09270e563e2243a2ca8c56cc9fc6db7a450ea681d8b177a811351a30ede",
+  "source/js/ginka-atri-loader.js": "54ace3b7d3ef95c38d028d848aa490d3c9e7d074ae5a589121a0a5995eb93f52",
+  "source/js/ginka-atri.js": "32384641088a624f2b994085a5f68263f7fa532d06054df33cc121d87b42b466"
+}

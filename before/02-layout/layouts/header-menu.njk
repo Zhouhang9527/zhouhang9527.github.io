@@ -1,0 +1,27 @@
+{% import 'menu-item.njk' as menu_item with context %}
+{% if theme.menu or theme.algolia_search.enable or theme.local_search.enable %}
+<nav class="site-nav" aria-label="主导航">
+  <ul class="main-menu menu">
+    {% for node in theme.main_menu %}
+      {% if node.name !== 'position' and node.name !== 'display' %}
+        {{ menu_item.render(node) | trim }}
+      {% endif %}
+    {% endfor %}
+    {% if theme.algolia_search.enable or theme.local_search.enable %}
+    <li class="menu-item menu-item-search"><button type="button" class="popup-trigger" aria-label="搜索文章"><i class="fa fa-search fa-fw" aria-hidden="true"></i> 搜索</button></li>
+    {% endif %}
+    <li class="menu-item menu-item-more">
+      <details class="journal-mobile-menu">
+        <summary>更多 <span aria-hidden="true">⌄</span></summary>
+        <ul class="journal-mobile-links">
+        {% for node in theme.main_menu %}
+          {% if node.name !== 'home' and node.name !== 'archives' and node.name !== 'position' and node.name !== 'display' %}
+            {{ menu_item.render(node) | trim }}
+          {% endif %}
+        {% endfor %}
+        </ul>
+      </details>
+    </li>
+  </ul>
+</nav>
+{% endif %}

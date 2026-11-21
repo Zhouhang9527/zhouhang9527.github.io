@@ -1,0 +1,7 @@
+{
+  "layouts/home.njk": "d95bc03a76eca8a891d5e2f8dcc7906756012cd588205f4b0257126296561609",
+  "layouts/header-menu.njk": "c03280291fa4b0a03eb2f092fb4cbe3d16a200a277f4070b24f15f9a5ab42f37",
+  "source/_data/head.njk": "797b870dc5d460ecdf3e4ea01dd43d0e3a6b68aed859dbc3c4bd380b57584efa",
+  "source/_data/footer.njk": "a66978ad6e37db87b17dcde3e91e17b7f5ab709f7fae04e7aa6d711bc1ed5c80",
+  "source/css/ginka-editorial.css": "a2f82db3dcdb6f048dbffbd995f1779260b7197b8d95f84e29fabd8a9ebb5ff7"
+}
