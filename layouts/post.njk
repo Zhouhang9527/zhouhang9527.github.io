@@ -16,7 +16,7 @@
       {% set journalOutline = toc(page.content, {class: 'journal-outline-list', list_number: false, max_depth: page.toc.max_depth}) %}
       {% if journalOutline.length > 1 %}
         <aside class="journal-outline" aria-label="文章章节目录" data-journal-outline>
-          <p class="journal-outline-title">ON THIS PAGE · 章节</p>
+          <p class="journal-outline-title">目录</p>
           {{ journalOutline }}
         </aside>
       {% endif %}
