@@ -466,3 +466,26 @@ body .post-body{font-size:var(--vn-reader-size,16px)}
  .vn-load-footer nav,.vn-load-footer [data-vn-page-numbers]{gap:2px}
  .vn-load-footer button{min-width:32px}
 }
+
+/* Original localized OPTION atlas: all seven tabs have independent normal,
+   selected and hover images. Keep accessible labels in the native buttons. */
+.vn-option[data-vn-ui-original=true] .vn-option-tabs button{background:var(--vn-tab-normal) center/100% 100% no-repeat;color:transparent}
+.vn-option[data-vn-ui-original=true] .vn-option-tabs button[aria-selected=true]{background-image:var(--vn-tab-selected);color:transparent}
+.vn-option[data-vn-ui-original=true] .vn-option-tabs button:is(:hover,:focus-visible){background-image:var(--vn-tab-hover);color:transparent}
+.vn-option[data-vn-ui-original=true] .vn-option-tabs button:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+.vn-option[data-vn-ui-original=true] .vn-option-footer :is(a,button){background:var(--vn-footer-normal) center/contain no-repeat;color:transparent!important}
+.vn-option[data-vn-ui-original=true] .vn-option-footer :is(a,button)::before{display:none}
+.vn-option[data-vn-ui-original=true] .vn-option-footer :is(a,button):is(:hover,:focus-visible){background-image:var(--vn-footer-hover)}
+.vn-panel[data-vn-screen=gallery][data-vn-ui-original=true] .vn-panel-header .vn-return{background:var(--vn-gallery-back) left center/contain no-repeat;color:transparent!important;min-height:64px}
+.vn-panel[data-vn-screen=gallery][data-vn-ui-original=true] .vn-panel-header .vn-return:is(:hover,:focus-visible){background-image:var(--vn-gallery-back-hover)}
+@media(min-width:960px){
+ .vn-option[data-vn-ui-original=true] .vn-option-header h1:is([data-vn-heading-key=display],[data-vn-heading-key=program],[data-vn-heading-key=dialog],[data-vn-heading-key=touch],[data-vn-heading-key=shortcut]){
+  background:var(--vn-heading-art) left top/contain no-repeat;color:transparent!important;height:5.78125cqw;width:42cqw;
+ }
+ .vn-option[data-vn-ui-original=true] .vn-option-header h1[data-vn-heading-key=display]{--vn-heading-art:var(--vn-heading-display);width:41.796875cqw}
+ .vn-option[data-vn-ui-original=true] .vn-option-header h1[data-vn-heading-key=program]{--vn-heading-art:var(--vn-heading-program);width:41.484375cqw}
+ .vn-option[data-vn-ui-original=true] .vn-option-header h1[data-vn-heading-key=dialog]{--vn-heading-art:var(--vn-heading-dialog);width:34.453125cqw}
+ .vn-option[data-vn-ui-original=true] .vn-option-header h1[data-vn-heading-key=touch]{--vn-heading-art:var(--vn-heading-touch);width:33.59375cqw}
+ .vn-option[data-vn-ui-original=true] .vn-option-header h1[data-vn-heading-key=shortcut]{--vn-heading-art:var(--vn-heading-shortcut);height:4.84375cqw;width:32.421875cqw}
+ .vn-option[data-vn-ui-original=true] .vn-option-footer :is(a,button){min-width:8.2cqw;height:4.6875cqw}
+}

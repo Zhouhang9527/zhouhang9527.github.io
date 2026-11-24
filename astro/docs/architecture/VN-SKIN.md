@@ -61,3 +61,6 @@ Pixel inspection of 000007ce confirmed 6073 opaque exact-magenta packing pixels,
 - 000007ad contains 589px wide horizontal record and No Data sprites. 0000079d contains English LOAD header, tab states and Back button. Crops are registered in privateUI.slices and emitted only by localhost middleware.
 - LOAD displays ten entries per page, actual recent/bookmarked/completed records first, then inactive No Data slots. Two columns × five rows on desktop are a geometry-based adaptation; precise game record ordering and positions require a reference screenshot. Mobile uses one column.
 - Gallery uses the original EXTRA base and distinct gallery heading atlas. No new music route.
+
+### OPTION original labels
+00000779 contains all seven English tab labels and three visual states, plus Back, Restore Defaults and Back to Title. The atlas is unpacked into individual keyed sprites; tab activation, focus and selection remain native controls. Five original header wordmarks are recovered from 00000741, 00000749, 00000763, 0000076a, 00000772; TEXT and SOUND headings remain text pending exact unpacking. Footer START was removed as a non-original redundant entry. Gallery Back uses the original English diamond artwork. Visual calibration remains pending a browser comparison.

@@ -11,6 +11,7 @@ function select(key:string,focus=false){
  config.querySelectorAll<HTMLButtonElement>('[data-vn-option-tab]').forEach(button=>{const selected=button.dataset.vnOptionTab===key;button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;if(selected&&focus)button.focus();});
  config.querySelectorAll<HTMLElement>('[data-vn-option-panel]').forEach(panel=>panel.hidden=panel.dataset.vnOptionPanel!==key);
  const heading=document.querySelector('[data-vn-option-heading]');if(heading)heading.textContent=key.toUpperCase();
+ const title=document.getElementById('vn-option-title');if(title){title.dataset.vnHeadingKey=key;const suffix=title.querySelector('small');if(suffix)suffix.textContent=key==='shortcut'?'List':'Setting';}
  const desc=document.querySelector('[data-vn-option-help]');if(desc)desc.textContent=help[key];
 }
 function sync(){

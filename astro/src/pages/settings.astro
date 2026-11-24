@@ -1,14 +1,19 @@
 ---
 import Layout from '../layouts/Layout.astro';
 const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
+const privateAsset=(name:string)=>`url(/__ginka_local_ui__/${name}.png)`;
+const tabSkin=(key:string)=>original?['normal','selected','hover'].map(state=>`--vn-tab-${state}:${privateAsset('optionTabs-'+key+'-'+state)}`).join(';'):undefined;
+const footerSkin=(key:string)=>original?`--vn-footer-normal:${privateAsset('optionTabs-'+key)};--vn-footer-hover:${privateAsset('optionTabs-'+key+'Hover')}`:undefined;
+const headings=['display','program','dialog','touch','shortcut'];
+const headingSkin=original?headings.map(key=>`--vn-heading-${key}:${privateAsset(key+'Labels-heading')}`).join(';'):undefined;
 const tabs=[['display','DISPLAY'],['program','PROGRAM'],['text','TEXT'],['sound','SOUND'],['dialog','DIALOG'],['touch','TOUCH'],['shortcut','SHORTCUT']];
 ---
 <Layout title="系统设置" kind="home" noindex>
  <section class="vn-stage vn-option" data-vn-screen="config" data-vn-ui-original={String(original)} style={original?'--vn-option-art:url(/__ginka_local_ui__/option.png);--vn-option-atlas:url(/__ginka_local_ui__/optionAtlas.png)':undefined} aria-labelledby="vn-option-title">
   <div class="vn-option-frame">
-   <header class="vn-option-header vn-panel-header"><h1 id="vn-option-title"><span data-vn-option-heading>DISPLAY</span> <small>Setting</small></h1><aside class="vn-option-help" aria-label="设置说明"><span>HELP WINDOW</span><p data-vn-option-help>调整画面尺寸、主题与表现方式</p></aside></header>
+   <header class="vn-option-header vn-panel-header"><h1 id="vn-option-title" data-vn-heading-key="display" style={headingSkin}><span data-vn-option-heading>DISPLAY</span> <small>Setting</small></h1><aside class="vn-option-help" aria-label="设置说明"><span>HELP WINDOW</span><p data-vn-option-help>调整画面尺寸、主题与表现方式</p></aside></header>
    <div data-vn-config hidden>
-    <nav class="vn-option-tabs" role="tablist" aria-label="系统设置">{tabs.map(([key,label],i)=><button type="button" id={'vn-tab-'+key} role="tab" aria-controls={'vn-option-'+key} aria-selected={String(i===0)} tabindex={i===0?0:-1} data-vn-option-tab={key}><strong>{label}</strong><small>Setting</small></button>)}</nav>
+    <nav class="vn-option-tabs" role="tablist" aria-label="系统设置">{tabs.map(([key,label],i)=><button type="button" id={'vn-tab-'+key} role="tab" aria-controls={'vn-option-'+key} aria-selected={String(i===0)} tabindex={i===0?0:-1} data-vn-option-tab={key} style={tabSkin(key)}><strong>{label}</strong><small>{key==='shortcut'?'List':'Setting'}</small></button>)}</nav>
     <div class="vn-option-body">
      <section id="vn-option-display" role="tabpanel" aria-labelledby="vn-tab-display" data-vn-option-panel="display">
       <div class="vn-option-grid">
@@ -47,7 +52,7 @@ const tabs=[['display','DISPLAY'],['program','PROGRAM'],['text','TEXT'],['sound'
       <div class="vn-option-grid"><fieldset><legend>菜单操作</legend><p>↑ / ↓ 选择，Enter 确认</p></fieldset><fieldset><legend>文章检索</legend><p>Ctrl / Command + K</p></fieldset><fieldset><legend>关闭弹窗</legend><p>Esc</p></fieldset></div>
      </section>
     </div>
-    <footer class="vn-option-footer"><a href="/" data-vn-mode-set="game">TITLE<small>标题</small></a><a href="/" data-vn-mode-set="game" data-vn-option-back>BACK<small>返回</small></a><button type="button" data-vn-option-default>DEFAULT<small>默认设置</small></button><a href="/archives/">START<small>阅读</small></a></footer>
+    <footer class="vn-option-footer"><button type="button" data-vn-option-default style={footerSkin('defaults')}>DEFAULT<small>默认设置</small></button><a href="/" data-vn-mode-set="game" data-vn-option-back style={footerSkin('back')}>BACK<small>返回</small></a><a href="/" data-vn-mode-set="game" style={footerSkin('title')}>TITLE<small>标题</small></a></footer>
    </div>
    <noscript><p>系统设置需要 JavaScript，<a href="/">返回标题</a></p></noscript>
   </div>

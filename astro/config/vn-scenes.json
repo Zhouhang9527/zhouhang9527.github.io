@@ -167,6 +167,42 @@
         "source": "_hxv4_hash/AF5FB0494CCF915F/0000078f_7A7CC43367975FD81263BE003D04AEEE46A7EE00B890B0F0BBFE2DAFFE052990.png",
         "width": 347,
         "height": 435
+      },
+      "optionTabs": {
+        "id": "optionTabs",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000779_AC77670650A9472944172EFB2C319A4D565488D36066229B7C2CD4B098572321.png",
+        "width": 491,
+        "height": 504
+      },
+      "displayLabels": {
+        "id": "displayLabels",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000741_21F495A0FEC290972586FC382A3552A3AAAB075F93251C121283195D419DC010.png",
+        "width": 535,
+        "height": 233
+      },
+      "programLabels": {
+        "id": "programLabels",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000749_840AD6D8A5A6FCF18B285ACC1FB7D6C2CD1C6E03B765FA0267A12163CAC6BDBA.png",
+        "width": 531,
+        "height": 197
+      },
+      "dialogLabels": {
+        "id": "dialogLabels",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000763_FCB4C2F6B876F79CA9884583809F66B0F28714C8EE0B6A2FC2967997DB229E5B.png",
+        "width": 441,
+        "height": 245
+      },
+      "touchLabels": {
+        "id": "touchLabels",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/0000076a_90222176AA8F8900CA5D0ED935C00652F21A99B475362A4569F5A5A8BFF69FA2.png",
+        "width": 430,
+        "height": 281
+      },
+      "shortcutLabels": {
+        "id": "shortcutLabels",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000772_71B2C893A1B6C13CA083F6DAFE2A5993A05A1A8EB67A957A599D1B1089169B6E.png",
+        "width": 415,
+        "height": 274
       }
     },
     "optionGeometry": {
@@ -376,7 +412,13 @@
       "loadRows",
       "loadLabels",
       "galleryLabels",
-      "galleryControls"
+      "galleryControls",
+      "optionTabs",
+      "displayLabels",
+      "programLabels",
+      "dialogLabels",
+      "touchLabels",
+      "shortcutLabels"
     ],
     "slices": {
       "loadRows": {
@@ -463,6 +505,210 @@
           0,
           230,
           128
+        ]
+      },
+      "optionTabs": {
+        "display-normal": [
+          0,
+          200,
+          162,
+          40
+        ],
+        "display-selected": [
+          0,
+          240,
+          162,
+          40
+        ],
+        "display-hover": [
+          329,
+          40,
+          162,
+          40
+        ],
+        "program-normal": [
+          0,
+          80,
+          162,
+          40
+        ],
+        "program-selected": [
+          162,
+          120,
+          162,
+          40
+        ],
+        "program-hover": [
+          324,
+          120,
+          162,
+          40
+        ],
+        "text-normal": [
+          0,
+          160,
+          162,
+          40
+        ],
+        "text-selected": [
+          167,
+          40,
+          162,
+          40
+        ],
+        "text-hover": [
+          0,
+          120,
+          162,
+          40
+        ],
+        "sound-normal": [
+          324,
+          80,
+          162,
+          40
+        ],
+        "sound-selected": [
+          162,
+          80,
+          162,
+          40
+        ],
+        "sound-hover": [
+          0,
+          280,
+          162,
+          40
+        ],
+        "dialog-normal": [
+          0,
+          320,
+          162,
+          40
+        ],
+        "dialog-selected": [
+          0,
+          360,
+          162,
+          40
+        ],
+        "dialog-hover": [
+          0,
+          400,
+          162,
+          40
+        ],
+        "touch-normal": [
+          0,
+          440,
+          162,
+          40
+        ],
+        "touch-selected": [
+          162,
+          160,
+          162,
+          40
+        ],
+        "touch-hover": [
+          324,
+          160,
+          162,
+          40
+        ],
+        "shortcut-normal": [
+          0,
+          0,
+          167,
+          40
+        ],
+        "shortcut-selected": [
+          167,
+          0,
+          167,
+          40
+        ],
+        "shortcut-hover": [
+          0,
+          40,
+          167,
+          40
+        ],
+        "back": [
+          269,
+          200,
+          105,
+          76
+        ],
+        "backHover": [
+          374,
+          200,
+          105,
+          76
+        ],
+        "defaults": [
+          162,
+          352,
+          106,
+          76
+        ],
+        "defaultsHover": [
+          162,
+          428,
+          106,
+          76
+        ],
+        "title": [
+          268,
+          428,
+          106,
+          76
+        ],
+        "titleHover": [
+          374,
+          428,
+          105,
+          76
+        ]
+      },
+      "displayLabels": {
+        "heading": [
+          0,
+          0,
+          535,
+          74
+        ]
+      },
+      "programLabels": {
+        "heading": [
+          0,
+          0,
+          531,
+          74
+        ]
+      },
+      "dialogLabels": {
+        "heading": [
+          0,
+          0,
+          441,
+          74
+        ]
+      },
+      "touchLabels": {
+        "heading": [
+          0,
+          0,
+          430,
+          74
+        ]
+      },
+      "shortcutLabels": {
+        "heading": [
+          0,
+          0,
+          415,
+          62
         ]
       }
     },

@@ -133,3 +133,7 @@ for(const [key,slices] of Object.entries(vn.privateUI.slices))for(const [name,re
  assert.ok(x>=0&&y>=0&&w>0&&h>0&&x+w<=asset.width&&y+h<=asset.height,'Atlas bounds '+key+' '+name);
 }
 console.log('PASS LOAD ten-slot layout and original sprite boundaries');
+
+for(const key of ['display','program','text','sound','dialog','touch','shortcut'])for(const state of ['normal','selected','hover'])assert.ok(vn.privateUI.slices.optionTabs[key+'-'+state],'Missing option state');
+assert.doesNotMatch(settingsHtml,/optionTabs-.*\.png|Labels-heading\.png/);
+console.log('PASS original option tabs and footer sprite contract');
