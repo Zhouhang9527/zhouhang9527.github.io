@@ -110,7 +110,8 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
-- 基线 `3a1da8f`：PBD fixture 语法修复，前轮共享逻辑 sprite 和控件坐标已提交；33cc372 CI typecheck/build 成功，36f132d CI typecheck 成功但 fixture 语法错误，已修复；当前最终 CI 未验证
-- 本轮 SAVE-02/03/05/06：独立 150 手动槽，普通/快速/最近/收藏/已读分页，SAVE 捕获真实文章和位置、LOAD 恢复、覆盖删除确认、重置及跨标签同步，新增 domain 和 smoke 测试；未实现真实缩略图、SAVE 原作 wordmark 及完整原作视觉验收
-- 私有素材 `30b43e7` 已有 title/dialogue 视频参考，其他界面和真实角色包仍未确认；未修改私有仓库
-- 本地 GitHub DNS 不通，CI 实际结果优先，TODO 未勾选；下一步检查最新 CI、修复浏览器失败，继续 PBD 批量和语音历史
+- 真实 CI：3a1da8f 的 VN CI 45462268727 typecheck/build 均已通过，浏览器安装被下一提交取消。6d2e63a 已实现独立 150 手动存档槽、确认和精确恢复，CI 尚未确认
+- 本轮 LOG-03 / CHAR-09 / AUDIO-04：voice-history.ts 与单测；BACKLOG 真实评论/原作对白分栏；只保存实际成功开始的语音 ID、时间、路径；回放/收藏/后日谈 gating 共用控制器；隐藏页暂停、清理眨眼及嘴部差分计时器。无私有包时无对白页签
+- 素材 HEAD 30b43e7，有 title/dialogue 视频参考，其余九界面未覆盖，无 verified mascot pack；未发布素材
+- 仍未实测完整浏览器和真实语音；本地 GitHub DNS 不通，必须检查新 CI 结果，相关 TODO 未勾选
+- 下一步：先让新 CI 完整运行，修复实际浏览器问题；继续全量 PBD 审计、原作控件状态/角色包接入

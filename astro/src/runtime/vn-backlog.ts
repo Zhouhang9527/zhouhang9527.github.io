@@ -3,9 +3,14 @@
 let active:HTMLElement|null=null,trigger:HTMLElement|null=null;
 let inerted:HTMLElement[]=[],previousOverflow='';
 function reduced(){return document.documentElement.dataset.vnMotion==='reduced'||matchMedia('(prefers-reduced-motion: reduce)').matches;}
+function selectHistory(log:HTMLElement,key:'comments'|'dialogue'){
+ log.querySelectorAll<HTMLElement>('[data-vn-log-panel]').forEach(el=>el.hidden=el.dataset.vnLogPanel!==key);
+ log.querySelectorAll<HTMLButtonElement>('[data-vn-log-tab]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.vnLogTab===key)));
+ log.querySelector<HTMLElement>('[data-vn-log-scrollport]')?.scrollTo({top:0,behavior:'instant'});
+}
 function close(restoreFocus=true){
  const log=active;if(!log)return;
- active=null;delete log.dataset.vnLogOpen;log.removeAttribute('role');log.removeAttribute('aria-modal');log.removeAttribute('aria-labelledby');
+ active=null;selectHistory(log,'comments');delete log.dataset.vnLogOpen;log.removeAttribute('role');log.removeAttribute('aria-modal');log.removeAttribute('aria-labelledby');
  for(const node of inerted)node.inert=false;inerted=[];
  document.documentElement.style.overflow=previousOverflow;delete document.documentElement.dataset.vnBacklogOpen;
  if(restoreFocus&&trigger?.isConnected){
@@ -16,7 +21,7 @@ function close(restoreFocus=true){
  trigger=null;
 }
 function open(log:HTMLElement,from:HTMLElement){
- if(active)return;active=log;trigger=from;
+ if(active)return;active=log;trigger=from;selectHistory(log,'comments');
  previousOverflow=document.documentElement.style.overflow;
  document.documentElement.style.overflow='hidden';document.documentElement.dataset.vnBacklogOpen='true';
  log.dataset.vnLogOpen='true';log.setAttribute('role','dialog');log.setAttribute('aria-modal','true');log.setAttribute('aria-labelledby','vn-log-title');
@@ -37,8 +42,9 @@ document.addEventListener('vn:backlog-open',event=>{
 });
 document.addEventListener('click',event=>{
  if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
- const target=(event.target as Element|null)?.closest<HTMLElement>('[data-vn-log-open],[data-vn-log-close],[data-vn-log-scroll]');
+ const target=(event.target as Element|null)?.closest<HTMLElement>('[data-vn-log-open],[data-vn-log-close],[data-vn-log-scroll],[data-vn-log-tab]');
  if(!target)return;
+ if(target.hasAttribute('data-vn-log-tab')){const log=target.closest<HTMLElement>('[data-vn-backlog]');if(log&&active===log)selectHistory(log,target.dataset.vnLogTab==='dialogue'?'dialogue':'comments');return;}
  if(target.hasAttribute('data-vn-log-open')){
   if(document.documentElement.dataset.vnMode==='reader')return;
   const log=document.querySelector<HTMLElement>('[data-vn-backlog]');if(!log)return;
@@ -57,7 +63,7 @@ document.addEventListener('keydown',event=>{
  if(!active||event.defaultPrevented)return;
  if(event.key==='Escape'){event.preventDefault();close();return;}
  if(event.key!=='Tab')return;
- const focusable=Array.from(active.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),iframe,[tabindex="0"]')).filter(node=>node.getClientRects().length&&!node.closest('[hidden]'));
+ const focusable=Array.from(active.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),iframe,[tabindex="0"]')).filter(node=>node.getClientRects().length&&!node.closest('[hidden]')&&getComputedStyle(node).visibility!=='hidden');
  const first=focusable[0],last=focusable.at(-1);if(!first||!last)return;
  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}

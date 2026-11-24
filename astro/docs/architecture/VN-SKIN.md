@@ -91,3 +91,6 @@ ATRI is unmounted and its loader is removed from the Astro layout. GINKA mascot 
 
 ### Manual save slots
 SAVE opens `/library/?mode=save` with a session-local snapshot of the actual current article, title and section-relative position. LOAD defaults to 150 independent manual slots (15 pages of ten); quick save remains a single independent blog record, recent/bookmarked/completed lists are still available. Overwrite/delete/load are confirmed; corrupt records are discarded and the same-tab restore ticket is consumed once. SAVE header currently uses readable text, not the original LOAD wordmark; no screenshot is invented. Browser and original UI verification pending.
+
+### Voiced dialogue history
+BACKLOG contains separate real comments and private original dialogue views. The dialogue tab is available only with a valid local pack; the Giscus container remains in the same DOM location and is restored on close. Only successfully started audio playback contributes a bounded history of line IDs, timestamps and route context; text is resolved from the validated private pack on demand. Afterstory gating applies to history, replay and favorites. Replay and V.SAVE use the existing voice controller, and resetting reading progress removes dialogue history. Actual voice-pack testing remains pending.

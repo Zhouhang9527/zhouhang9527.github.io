@@ -674,3 +674,14 @@ html[data-vn-motion=reduced] .ginka-mascot-portrait{animation:none}
 .vn-load[data-vn-save-mode=true] [data-vn-filter=manual]{background:none;color:inherit}
 .vn-load [data-vn-save-back]{min-height:44px}
 @media(max-width:600px){.vn-load-tabs{flex-wrap:wrap}.vn-load-tabs button{flex:1 0 28%}}
+
+/* Real comments and original voiced history are separate views of one BACKLOG. */
+[data-vn-backlog] [hidden]{display:none!important}
+.vn-log-history-tabs{display:none}
+[data-vn-log-open=true] .vn-log-history-tabs:not([hidden]){display:flex;gap:12px;padding:8px 0 14px}
+.vn-log-history-tabs button,.vn-voice-history-row button{background:transparent;border:1px solid currentColor;color:inherit;font:inherit;padding:8px 12px}
+.vn-log-history-tabs button[aria-pressed=true],.vn-voice-history-row button[aria-pressed=true]{background:#b6dff7;color:#142b42}
+.vn-voice-history-row{padding:16px 0;border-bottom:1px solid #7897af}
+.vn-voice-history-row header{display:flex;gap:16px;align-items:baseline;justify-content:space-between}
+.vn-voice-history-row p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}
+.vn-voice-history-row nav{display:flex;gap:8px}
