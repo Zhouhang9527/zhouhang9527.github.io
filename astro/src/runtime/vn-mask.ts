@@ -46,3 +46,5 @@ document.addEventListener('astro:after-swap',()=>{if(source===document.body.data
 document.addEventListener('astro:page-load',()=>{void prepare();});
 window.addEventListener('pagehide',clear);
 void prepare();
+
+export {};

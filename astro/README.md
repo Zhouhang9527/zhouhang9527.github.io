@@ -45,3 +45,6 @@ Use the real path from the scan, not the placeholder. The optional font is serve
 
 ## Original EXTRA base and transition rule (private local study)
 Set `GINKA_VN_UI_DATA` to the extracted data folder containing _hxv4_hash and run dev on localhost. The two exact paths are recorded in config/vn-scenes.json. The identified data-101 backdrop is a candidate EXTRA base, used in gallery preview; data-021 drives a grayscale threshold wipe. The 320ms timing is provisional. If the environment variable is absent, public fallback skin and CSS transition remain. No original images are copied to dist.
+
+## Island map preview
+Set GINKA_MAP_DATA to the extracted bgimage directory (the folder containing _hxv4_hash). The 1280x720 island overview variants bgimage-124/125/126 are mapped by reading completion in config/vn-scenes.json. The mapping is provisional; these are confirmed overview images, not verified original map UI or story order. The map remains functional without the private images. Use localhost only.

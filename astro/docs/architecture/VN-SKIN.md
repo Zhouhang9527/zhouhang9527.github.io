@@ -23,3 +23,6 @@ Status: functional provisional skin; original screenshot/atlas calibration pendi
 
 ## Additional game surfaces
 Search has its own route and shares the existing Pagefind loader with the search dialog. MUSIC reads the persistent audio controller and delegates controls to it; the playlist remains in the existing sidebar. BACKLOG exposes the real Giscus iframe and original pathname mapping, without inventing dialogue or introducing an iframe DOM hack. Fullscreen is an explicit browser action. Taxonomy pages use the game choices in game mode and the artbook list in reader mode.
+
+## Map
+Map screen uses original complete island overview frames bgimage-124, 125, 126 in optional private preview. Completion phase drives the selected full scene, independently of day/night theme. This is an explicitly provisional adaptation; original map overlays and scenario timing still require the UI/script archive.

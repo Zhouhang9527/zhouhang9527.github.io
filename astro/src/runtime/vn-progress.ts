@@ -1,4 +1,4 @@
-import {resolveTitleState,localTitleFrame} from '../lib/vn-scenes';
+import {resolveTitleState,localTitleFrame,resolveMapState,localMapFrame} from '../lib/vn-scenes';
 
 import {KEY,empty,isPath,parse,visit,savePosition,type Progress} from '../domain/reading-state';
 import {capturePosition,restorePosition} from './vn-reading-position';
@@ -93,7 +93,18 @@ function renderChapter(){
   link.dataset.vnRead=String(state.completed.includes(path));
  });
 }
-function refresh(){renderTitle();renderArticle(false);renderLibrary();renderChapter();}
+function renderMap(){
+ const map=document.querySelector<HTMLElement>('[data-vn-map]');if(!map)return;
+ let paths:string[]=[];try{paths=JSON.parse(map.dataset.vnPaths||'[]');}catch{}
+ const allowed=new Set(paths),count=read().completed.filter(p=>allowed.has(p)).length,state=resolveMapState(count);
+ map.dataset.vnMapPhase=state.id;map.dataset.vnMapFrame=state.frame;
+ const label=map.querySelector<HTMLElement>('[data-vn-map-count]');if(label)label.textContent='阅读记录 '+count+' / '+paths.length;
+ const art=map.querySelector<HTMLElement>('[data-vn-map-art]');
+ if(art&&map.dataset.vnMapOriginal==='true'){
+  const url=localMapFrame(state.frame);art.style.setProperty('--vn-map-frame',`url('${url}')`);
+ }
+}
+function refresh(){renderTitle();renderArticle(false);renderLibrary();renderChapter();renderMap();}
 const RESUME='ginka.vn.resume.v1';
 let current:HTMLElement|null=null, timer=0, dirty=false, pendingResume:string|null=null, restoreFrame=0;
 function flush(){
@@ -126,7 +137,7 @@ function mount(){
    restoreFrame=requestAnimationFrame(()=>{if(current===next&&next.isConnected)restorePosition(next,position);});
   }
  }else{renderArticle(false);}
- renderTitle();renderLibrary();renderChapter();
+ renderTitle();renderLibrary();renderChapter();renderMap();
 }
 document.addEventListener('click',event=>{
  if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;

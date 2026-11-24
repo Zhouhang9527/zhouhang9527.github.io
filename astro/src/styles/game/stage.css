@@ -187,3 +187,14 @@ body .vn-menu > :is(a,button,span){min-height:42px;padding-block:7px}
  .vn-music-room{grid-template-columns:1fr;gap:12px}
  .vn-music-cover{width:min(160px,100%);justify-self:center}
 }
+
+/* Map is a complete scene, never synthetic pins or a character composite. */
+.vn-map{display:grid;gap:12px}
+.vn-map-picture{aspect-ratio:16/9;width:100%;background-image:var(--vn-day);background-position:center;background-size:cover;border:1px solid var(--vn-border)}
+html[data-theme=moonlit] .vn-map-picture{background-image:var(--vn-night)}
+html body .vn-map[data-vn-map-original=true] .vn-map-picture{background-image:var(--vn-map-frame),var(--vn-day)}
+.vn-map-status{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:#d6e6f2;font-size:12px}
+.vn-map-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.vn-map-links a{display:flex;align-items:center;justify-content:space-between;min-height:44px;border:1px solid var(--vn-border);padding:8px 12px;background:var(--vn-panel);color:#e3edf6!important}
+.vn-map-links a:is(:hover,:focus-visible){background:#345a73}
+@media(max-width:680px){.vn-map-links{grid-template-columns:1fr}}

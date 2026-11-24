@@ -90,5 +90,45 @@
         "height": 720
       }
     }
+  },
+  "map": {
+    "notice": "Island overview frames confirmed visually. Completion thresholds and sequence are provisional blog adaptation, not verified game progress map.",
+    "states": [
+      {
+        "id": "arrival",
+        "minCompleted": 0,
+        "frame": "day"
+      },
+      {
+        "id": "first-encounter",
+        "minCompleted": 1,
+        "frame": "evening"
+      },
+      {
+        "id": "familiar",
+        "minCompleted": 3,
+        "frame": "night"
+      }
+    ],
+    "frames": {
+      "day": {
+        "id": "bgimage-124",
+        "source": "_hxv4_hash/94D4A97C61498621/00000082_0F9595C18561C86612A071536CF02BABFA25FA102B2CDF94B5C3193A5980B81E.png",
+        "width": 1280,
+        "height": 720
+      },
+      "evening": {
+        "id": "bgimage-125",
+        "source": "_hxv4_hash/94D4A97C61498621/00000083_DE6F2C74409AB26DC9CC5A09907A266A6E2351140B3C800903F519818EF2B684.png",
+        "width": 1280,
+        "height": 720
+      },
+      "night": {
+        "id": "bgimage-126",
+        "source": "_hxv4_hash/94D4A97C61498621/00000084_857FEF035E60ADABB3155D70CDDBD20D92C577FBF636B129A446F6105C6F2AD3.png",
+        "width": 1280,
+        "height": 720
+      }
+    }
   }
 }

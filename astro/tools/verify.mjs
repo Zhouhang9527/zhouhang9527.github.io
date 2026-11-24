@@ -74,3 +74,11 @@ for(const [route,screen] of [['search','search'],['music-room','music']]){
  assert.ok(home.includes('href="/'+route+'/"'),'Unreachable VN '+route);
 }
 console.log('PASS VN search and music entry points');
+
+const mapHtml=fs.readFileSync('dist/map/index.html','utf8');
+assert.match(mapHtml,/data-vn-map/);
+assert.match(mapHtml,/data-vn-map-original="false"/);
+assert.doesNotMatch(mapHtml,/__ginka_local_ui__/);
+assert.ok(home.includes('href="/map/"'));
+for(const state of vn.map.states)assert.ok(Object.hasOwn(vn.map.frames,state.frame),'Unknown map frame');
+console.log('PASS map state manifest and private isolation');

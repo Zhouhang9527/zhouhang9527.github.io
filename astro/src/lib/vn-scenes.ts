@@ -22,3 +22,11 @@ export function sceneVars(slug:string,focal:string):string {
  const prefix='/images/ginka/scenes/'+slug;
  return `--vn-day:url('${prefix}-day-1280.webp');--vn-night:url('${prefix}-night-1280.webp');--vn-day-small:url('${prefix}-day-640.webp');--vn-night-small:url('${prefix}-night-640.webp');--vn-focal:${focal}`;
 }
+
+export type MapFrameId=keyof typeof manifest.map.frames;
+export function resolveMapState(completed:number){
+ const state=[...manifest.map.states].reverse().find(state=>completed>=state.minCompleted)??manifest.map.states[0];
+ if(!Object.hasOwn(manifest.map.frames,state.frame))throw Error('Unknown map frame '+state.frame);
+ return {...state,frame:state.frame as MapFrameId};
+}
+export function localMapFrame(frame:MapFrameId){return '/__ginka_local_ui__/map-'+frame+'.png';}

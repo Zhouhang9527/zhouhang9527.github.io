@@ -41,3 +41,5 @@ document.addEventListener('click',event=>{
 document.addEventListener('astro:before-preparation',dispose);
 document.addEventListener('astro:page-load',mount);
 mount();
+
+export {};

@@ -61,3 +61,5 @@ document.addEventListener('click',event=>{
  else if(document.fullscreenEnabled)void document.documentElement.requestFullscreen().catch(()=>{});
 });
 fullscreenState();
+
+export {};

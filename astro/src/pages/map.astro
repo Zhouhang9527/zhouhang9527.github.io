@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GamePanel from '../components/game/GamePanel.astro';
+import {allPosts,href} from '../lib/site';
+import {resolveMapState,localMapFrame} from '../lib/vn-scenes';
+const posts=await allPosts();
+const state=resolveMapState(0);
+const original=import.meta.env.DEV&&!!process.env.GINKA_MAP_DATA;
+---
+<Layout title="岛屿地图" kind="home">
+ <GamePanel heading="姬之岛" label="MAP" kind="map">
+  <div class="vn-map" data-vn-map data-vn-paths={JSON.stringify(posts.map(post=>href(post.data.route)))} data-vn-map-phase={state.id} data-vn-map-frame={state.frame} data-vn-map-original={String(original)}>
+   <div class="vn-map-picture" data-vn-map-art style={original?`--vn-map-frame:url('${localMapFrame(state.frame)}')`:undefined} role="img" aria-label={original?'姬之岛俯视图':'海岸场景预览，原作地图暂未启用'}></div>
+   <div class="vn-map-status"><span data-vn-map-count>阅读记录 0 / {posts.length}</span><small>{original?'岛屿昼暮夜映射为暂定阅读进度':'原作地图仅供本地预览'}</small></div>
+   <nav class="vn-map-links" aria-label="地图导航"><a href="/archives/">时间归档 〉</a><a href="/categories/">内容分类 〉</a><a href="/tags/">主题标签 〉</a><a href="/library/">读取存档 〉</a></nav>
+  </div>
+ </GamePanel>
+</Layout>
