@@ -7,6 +7,7 @@ const $ = load(html);
 const motion = fs.readFileSync('source/js/ginka-motion.js', 'utf8');
 // styles.styl 已在本分支清空（旧玻璃滚动条等遗留规则），ginka_style.css 不再产出。
 // 缺失即视为「没有遗留 TTF 引用」，但仍要求构建产物里没有 .ttf 直链。
+// The old stylesheet may still exist in the submodule, but must never be linked.
 const legacyStylesPath = 'public/css/ginka_style.css';
 const legacyStyles = fs.existsSync(legacyStylesPath) ? fs.readFileSync(legacyStylesPath, 'utf8') : '';
 

@@ -29,18 +29,21 @@ const routes = [['home','/'],['archives','/archives/'],['tags','/tags/'],['categ
         for (const [name,route] of routes) {
           try {
             const response = await page.goto(new URL(route,base).href,{waitUntil:'domcontentloaded',timeout:25000});
-            await page.waitForFunction(()=>window.GINKA_THEME,{timeout:10000});
+            await page.waitForFunction(()=>window.GINKA_THEME,{}, {timeout:10000});
             await page.waitForTimeout(400);
             await shot(name);
+            if(name==='404'&&!(await page.locator('.journal-not-found').count())) issues.push(width+' '+mode+' missing themed 404');
             const result = await page.evaluate(()=>({
               theme:document.documentElement.dataset.theme,
               overflow:document.documentElement.scrollWidth>innerWidth+1,
               hero:document.querySelector('.journal-hero-art')?.currentSrc||null,
               drawer:document.querySelector('#main-content')?.dataset.sceneKind||null,
-              dialogue:document.querySelectorAll('.journal-dialogue').length
+              dialogue:document.querySelectorAll('.journal-dialogue').length,
+              legacyStyle:!!document.querySelector('link[href*="ginka_style.css"]'),
+              darkHeadings:[...document.querySelectorAll('.post-body h1,.post-body h2,.post-body h3,.journal-about-banner-copy h1,.journal-feedback h2')].filter(el=>{const m=getComputedStyle(el).color.match(/\d+/g);return m&&Math.max(...m.slice(0,3).map(Number))<110}).map(el=>el.textContent.trim())
             }));
             report.push({width,mode,name,status:response?.status(),...result});
-            if (result.theme!==mode||result.overflow||result.dialogue>1) issues.push(width+' '+mode+' '+name+' layout/theme');
+            if (result.theme!==mode||result.overflow||result.dialogue>1||result.legacyStyle||(mode==='moonlit'&&result.darkHeadings.length)) issues.push(width+' '+mode+' '+name+' layout/theme');
             if(name==='article' && (width===390||width===1440)) {
               const code=page.locator('.journal-code').first();
               if(await code.count()){await code.scrollIntoViewIfNeeded();await shot('code');}
@@ -60,12 +63,12 @@ const routes = [['home','/'],['archives','/archives/'],['tags','/tags/'],['categ
               }
             }
             if(name==='home'&&(width===390||width===1440)) {
-              const drawer=page.locator('[data-journal-sidebar-open]').first();
+              const drawer=page.locator('.header [data-journal-sidebar-open]:visible, .sidebar-toggle:visible, .journal-sidebar-edge:visible').first();
               if(await drawer.isVisible()){
-                await drawer.click();await page.waitForTimeout(350);await shot('sidebar');
+                await drawer.click();await page.waitForFunction(()=>document.body.classList.contains('sidebar-active'),{}, {timeout:5000});await shot('sidebar');
                 const playlist=page.locator('#music-playlist-toggle');
                 if(await playlist.isVisible()){await playlist.click();await page.waitForTimeout(250);await shot('playlist');}
-                await page.locator('.journal-sidebar-close').click();await page.waitForTimeout(300);
+                await page.locator('.journal-sidebar-close').click();await page.waitForFunction(()=>!document.body.classList.contains('sidebar-active'),{}, {timeout:5000});
               }
               const search=page.locator('.popup-trigger').first();
               if(await search.isVisible()){await search.click();await page.waitForTimeout(400);await shot('search');await page.keyboard.press('Escape');}

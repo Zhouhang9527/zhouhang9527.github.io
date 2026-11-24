@@ -9,9 +9,9 @@ const base = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4004';
       const page = await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
       // Isolate comment layout from external Giscus/GitHub availability.
       // This is not a test of the live Discussions API or authentication.
-      await page.route('https://giscus.app/client.js', route=>route.fulfill({contentType:'application/javascript',body:
+      await page.route('https://giscus.app/client.js', route=>route.fulfill({contentType:'application/javascript',headers:{'access-control-allow-origin':'*'},body:
         "(function(){const s=document.currentScript;const frame=document.createElement('iframe');frame.className='giscus-frame';frame.title='Mock comments';frame.src='https://giscus.app/en/widget?theme='+encodeURIComponent(s.dataset.theme);frame.style.height='230px';s.parentNode.append(frame);s.remove()})()"}));
-      await page.route('https://giscus.app/en/widget?**', route=>route.fulfill({contentType:'text/html',body:'<!doctype html><title>Mock Giscus</title><textarea aria-label="Comment"></textarea>'}));
+      await page.route('https://giscus.app/**/widget?**', route=>route.fulfill({contentType:'text/html',body:'<!doctype html><title>Mock Giscus</title><textarea aria-label="Comment"></textarea>'}));
       await page.goto(base,{waitUntil:'domcontentloaded'});
       const link = page.locator('.journal-entry h3 a, .post-title-link').first();
       const href = await link.getAttribute('href');
@@ -32,6 +32,7 @@ const base = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4004';
         assert.ok(bounds.widget&&!bounds.overflow,JSON.stringify(bounds));
       }
       await section.scrollIntoViewIfNeeded();
+      await page.waitForFunction(()=>!!document.querySelector('.giscus-container iframe, iframe.giscus-frame'),{}, {timeout:15000});
       await page.locator('iframe.giscus-frame').waitFor();
       assert.equal(await page.locator('iframe.giscus-frame').count(),1);
       const frame=page.locator('iframe.giscus-frame');
