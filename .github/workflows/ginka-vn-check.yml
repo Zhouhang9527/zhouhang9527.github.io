@@ -1,0 +1,54 @@
+name: GINKA VN validation (no deploy)
+on:
+  push:
+    branches: ['feature/ginka-vn']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ginka-vn-check-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    if: github.ref == 'refs/heads/feature/ginka-vn'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: astro
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned direct dependencies
+        run: npm install --no-audit --no-fund
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build and validate output
+        run: npm run build
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Browser acceptance
+        run: |
+          npm run preview -- --host 127.0.0.1 > /tmp/ginka-preview.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4321/ >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:4321/ >/dev/null
+          npm run check:vn-browser
+      - name: Upload screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ginka-vn-validation
+          path: |
+            astro/artifacts/vn/
+            /tmp/ginka-preview.log
+          if-no-files-found: ignore
+          retention-days: 7
