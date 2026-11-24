@@ -622,3 +622,14 @@ html:has([data-vn-log-open=true]) .vn-game-reader{visibility:hidden}
 .vn-confirm[open]{animation:vn-appear 300ms ease both}
 html[data-vn-motion=reduced] .vn-confirm{animation:none!important}
 @media(prefers-reduced-motion:reduce){.vn-confirm{animation:none!important}}
+
+/* The old four-button fallback stays available without JS only. */
+html:not([data-vn-mode=reader]) body:has([data-vn-game-reader]:not([hidden])) .vn-reading-controls{display:none!important}
+.vn-game-reader[data-vn-reader-original=true] button[data-vn-game-action][aria-pressed=true]:is(:hover,:focus-visible){background-image:var(--vn-selectedHover,var(--vn-hover))}
+.vn-game-reader[data-vn-reader-original=true] button[data-vn-game-action][aria-pressed=true]:active{background-image:var(--vn-selectedPressed,var(--vn-pressed))}
+@media(max-width:959px){
+ .vn-game-reader[data-vn-reader-original=true] .vn-game-buttons button{width:44px;height:36px;min-width:44px}
+ .vn-game-reader[data-vn-reader-original=true] .vn-game-quick{height:min(570px,75dvh);overflow:auto;align-content:start;grid-auto-rows:minmax(44px,1fr)}
+ .vn-game-reader[data-vn-reader-original=true] .vn-game-quick button{min-height:44px;aspect-ratio:114/115;width:100%;max-height:70px}
+ .vn-game-reader[data-vn-reader-original=true] .vn-game-quick button[data-vn-game-action=hide]{aspect-ratio:1}
+}
