@@ -113,4 +113,4 @@ npm run check:vn-browser
 - 基线 `36f132d`：上一轮 7 份真实 PBD 的解析检查成功、视频 reference 接入记录与 CI runner 修复已提交；`33cc372` 的 typecheck/build 已通过，浏览器因 Ubuntu 26.04 不支持而失败
 - 本轮 ENGINE-01：新增 vn-control.ts，标题、阅读器、确认框共用状态与坐标适配；统一私有 sprite 逻辑画布合成；补控制/合成单测并纳入构建。当前为增量迁移，不声称通用渲染器全部完成
 - 素材 `30b43e7` 有 title/dialogue 视频参考，其他界面及真实角色包缺失；未修改私有仓库
-- 本轮 CI 尚未确认；本地 GitHub DNS 不通。下一步检查 Actions 实际日志并修复，继续 DATA-01/ENGINE-01 与独立手动存档、真实对白历史
+- CI 45461954168（36f132d）typecheck 通过，build 在新增 PBD fixture 括号错误处失败；已将 fixture 拆成三条语句修复，当前 CI 尚未确认；本地 GitHub DNS 不通。下一步检查 Actions 实际日志并修复，继续 DATA-01/ENGINE-01 与独立手动存档、真实对白历史

@@ -9,7 +9,9 @@ test('typed PBD nodes, null, and prototype-safe keys',()=>{
  assert.throws(()=>decodePbd({$type:'bogus'}));assert.throws(()=>decodePbd(dict({a:{$type:'integer',value:'bad'}})));
 });
 test('normalize logical rect, rotated crop and opaque script data',()=>{
- const raw={schema:'krkr-xp3-brute/pbd-v1',root:dict({result:dict({start:dict({class:str('button'),x:int(62),y:int(328),width:int(166),height:int(38),exp:str('throw new Error("never execute")'),uistates:dict({off:dict({cx:int(18),cy:int(136),cw:int(16),ch:int(107),cr:int(1),ox:int(11),oy:int(11),w:int(166),h:int(38),storage:str('atlas')})})})})};
+ const state=dict({cx:int(18),cy:int(136),cw:int(16),ch:int(107),cr:int(1),ox:int(11),oy:int(11),w:int(166),h:int(38),storage:str('atlas')});
+ const start=dict({class:str('button'),x:int(62),y:int(328),width:int(166),height:int(38),exp:str('throw new Error("never execute")'),uistates:dict({off:state})});
+ const raw={schema:'krkr-xp3-brute/pbd-v1',root:dict({result:dict({start})})};
  const m=normalizePbd(raw,'fixture');assert.deepEqual(m.controls.start.bounds,[62,328,166,38]);assert.deepEqual(m.controls.start.states.off.crop,[18,136,16,107]);assert.equal(m.controls.start.states.off.rotation,90);assert.equal(m.controls.start.states.off.opacity,null);assert.match(m.controls.start.actions.exp,/never execute/);
  assert.throws(()=>normalizePbd({...raw,schema:'unknown'},'fixture'));
 });

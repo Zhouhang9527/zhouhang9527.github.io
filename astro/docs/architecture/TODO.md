@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括号语法错误处失败；已拆分 fixture 构造语句修复，等待重新执行。
+
 2026-11-25 ENGINE-01 增量：标题、消息窗/快捷菜单、确认框共用 `vn-control.ts` 状态/坐标适配；title row 坐标从 PBD manifest 计算，底部/侧栏使用已记录父矩形；私有中间件共用逻辑 sprite 旋转/裁切/透明偏移函数，新增单测。尚未实现通用 slider/text/layer renderer 和原作全状态验收，不勾选 ENGINE-01。
 
 2026-11-25 第二轮：`33cc372` 的 [VN CI](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45461370567) typecheck 和 build 均实际成功（75 页面、62 旧 URL），Playwright 安装因 ubuntu26.04 不支持失败。本轮固定 ubuntu-24.04；新增 PBD decoder / UI manifest 私有增量导出、fixture test 及 build gate；对真实 7 个 PBD 执行同一解析函数核对标题和消息窗坐标。素材 `30b43e7` 已有 reference，标题和对话覆盖，其余九界面未覆盖，原作预览隐藏锁定 NEXT 文案保留槽位。BASE-01/02/03、DATA-01/02/07/08、TITLE-01 未完成全部验收，继续保持未勾选。
