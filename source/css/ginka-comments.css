@@ -10,8 +10,10 @@ body .journal-dialogue :is(.comments,.tabs-comment,.giscus-container){background
 .journal-dialogue :is(.giscus-container,.giscus,iframe.giscus-frame){width:100%;min-width:0;max-width:100%;box-sizing:border-box}
 .journal-dialogue iframe.giscus-frame{display:block;border:0}
 .journal-comments-status{display:flex;align-items:center;justify-content:center;gap:9px;margin:0;padding:20px 0;color:var(--journal-muted);font-size:12px}
-.journal-comments-status:not(:has(button))::before{content:'';width:15px;height:15px;border:1.5px solid var(--journal-line);border-top-color:var(--journal-blue);border-radius:50%;animation:ginka-dialogue-ring .85s linear infinite}
+.journal-comments-status.is-pending::before{content:'';width:15px;height:15px;border:1.5px solid var(--journal-line);border-top-color:var(--journal-blue);border-radius:50%;animation:ginka-dialogue-ring .85s linear infinite}
 @media(prefers-reduced-motion:reduce){.journal-comments-status::before{animation:none!important}}
 .journal-comments-status button{margin-inline-start:10px;font:inherit;color:var(--journal-blue);background:transparent;border:0;cursor:pointer;text-decoration:underline}
 @media(max-width:767px){.journal-dialogue{margin-block:24px;font-size:15px}}
 @media print{.journal-dialogue{display:none}}
+
+.journal-comments-status{flex-wrap:wrap}.journal-comments-status a{color:var(--journal-blue);font-size:12px;text-decoration:underline;text-underline-offset:3px}

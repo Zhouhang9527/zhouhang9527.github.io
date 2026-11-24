@@ -31,7 +31,7 @@ const base = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4004';
         assert.ok(bounds.deltaLeft<4&&bounds.deltaRight<4,JSON.stringify({width,mode,...bounds}));
         assert.ok(bounds.widget&&!bounds.overflow,JSON.stringify(bounds));
       }
-      await section.scrollIntoViewIfNeeded();
+      await section.evaluate(el=>el.scrollIntoView({block:'center',behavior:'instant'}));
       await page.waitForFunction(()=>!!document.querySelector('.giscus-container iframe, iframe.giscus-frame'),{}, {timeout:15000});
       await page.locator('iframe.giscus-frame').waitFor();
       assert.equal(await page.locator('iframe.giscus-frame').count(),1);
