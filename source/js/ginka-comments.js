@@ -13,7 +13,7 @@
     observer = null;
     observed = null;
   }
-  function load(container) {
+  async function load(container) {
     if (!container.isConnected || mounted.has(container)) return;
     mounted.add(container);
     setBusy(container, true);
@@ -27,7 +27,13 @@
       const value = container.getAttribute('data-' + name);
       if (value !== null) script.setAttribute('data-' + name, value);
     }
-    script.setAttribute('data-theme', window.GINKA_THEME?.commentTheme ||
+    // Our own observer already implements lazy loading; do not defer the
+    // iframe again once the user is at the comments.
+    script.setAttribute('data-loading', 'eager');
+    let selected;
+    try { selected = await window.GINKA_THEME?.prepareCommentTheme?.(); } catch (_) {}
+    if (!container.isConnected) { mounted.delete(container); return; }
+    script.setAttribute('data-theme', selected || window.GINKA_THEME?.commentTheme ||
       (document.documentElement.dataset.theme === 'moonlit' ? 'dark_dimmed' : 'light'));
     script.addEventListener('load', () => {
       const frame = container.querySelector('iframe.giscus-frame');

@@ -1,7 +1,7 @@
 /* A visual-novel scene, not a dark card. The textbox belongs to the CG. */
-.journal-dialogue{box-sizing:border-box;margin:36px auto 40px;min-width:0;width:100%;max-width:72ch;font:400 16px/1.9 var(--font-body,var(--journal-font-body,'Noto Serif SC',serif))}
-.journal-reading-shell>.journal-dialogue{grid-column:1;grid-row:3;justify-self:center;width:calc(100% - 88px)}
-.journal-dialogue-frame{position:relative;isolation:isolate;container-type:inline-size;box-sizing:border-box;aspect-ratio:16/9;min-height:216px;overflow:hidden;margin:0 0 20px;background:#324b5d var(--dialogue-scene-day) center / cover no-repeat;color:#fff;border:0;border-radius:0}
+ .journal-dialogue{box-sizing:border-box;margin:28px auto 36px;min-width:0;width:100%;max-width:72ch;font:400 16px/1.9 var(--font-body,var(--journal-font-body,'Noto Serif SC',serif))}
+.journal-reading-shell>.journal-dialogue{grid-column:1;grid-row:3;justify-self:center;width:calc(100% - 2 * var(--reading-inline-padding,44px));max-width:72ch}
+.journal-dialogue-frame{position:relative;isolation:isolate;container-type:inline-size;box-sizing:border-box;aspect-ratio:16/9;min-height:216px;overflow:hidden;margin:0 0 12px;background:#324b5d var(--dialogue-scene-day) center / cover no-repeat;color:#fff;border:0;border-radius:0}
 html[data-theme='moonlit'] .journal-dialogue-frame{background-color:#172638;background-image:var(--dialogue-scene-night)}
 .journal-dialogue-panel{position:absolute;inset:auto 0 0;height:28%;min-height:106px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-start;padding:12px 13% 24px;z-index:1;isolation:isolate}
 .journal-dialogue-panel::before{content:'';position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,transparent,#06080d 11%,#11182b 100%);opacity:.62;pointer-events:none}
@@ -22,11 +22,14 @@ body .journal-dialogue-frame .journal-dialogue-next:is(:hover,:focus-visible){ba
 .journal-dialogue-comments{min-width:0;scroll-margin-top:calc(var(--book-header,72px) + 16px)}
 .journal-dialogue-comments:focus-visible{outline:2px solid var(--journal-focus);outline-offset:4px}
 body .journal-dialogue :is(.comments,.tabs-comment,.giscus-container){background:transparent!important;border:0;border-radius:0;padding:0;box-shadow:none}
-.journal-dialogue .giscus-container{min-height:180px}
+.journal-dialogue .giscus-container{min-height:84px}
 .journal-dialogue .giscus-container:has(iframe.giscus-frame){min-height:0}
-.journal-dialogue :is(.giscus-container,.giscus,iframe.giscus-frame){width:100%;min-width:0}
-.journal-comments-status{margin:0;padding:20px 0;color:var(--journal-muted);font-size:13px}
+.journal-dialogue :is(.giscus-container,.giscus,iframe.giscus-frame){width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+.journal-dialogue iframe.giscus-frame{display:block;border:0}
+.journal-comments-status{display:flex;align-items:center;justify-content:center;gap:9px;margin:0;padding:20px 0;color:var(--journal-muted);font-size:12px}
+.journal-comments-status:not(:has(button))::before{content:'';width:15px;height:15px;border:1.5px solid var(--journal-line);border-top-color:var(--journal-blue);border-radius:50%;animation:ginka-dialogue-ring .85s linear infinite}
+@media(prefers-reduced-motion:reduce){.journal-comments-status::before{animation:none!important}}
 .journal-comments-status button{margin-inline-start:10px;font:inherit;color:var(--journal-blue);background:transparent;border:0;cursor:pointer;text-decoration:underline}
-@media(max-width:767px){.journal-dialogue{margin-block:30px;font-size:15px}.journal-reading-shell>.journal-dialogue{width:calc(100% - 36px)}.journal-dialogue-frame{aspect-ratio:4/3;min-height:216px}.journal-dialogue-panel{min-height:104px;padding-inline:6%}.journal-dialogue-name{left:5%}body .journal-dialogue-frame .journal-dialogue-next{right:4%;bottom:0}}
+@media(max-width:767px){.journal-dialogue{margin-block:30px;font-size:15px}.journal-reading-shell>.journal-dialogue{font-size:15px}.journal-dialogue-frame{aspect-ratio:4/3;min-height:216px}.journal-dialogue-panel{min-height:104px;padding-inline:6%}.journal-dialogue-name{left:5%}body .journal-dialogue-frame .journal-dialogue-next{right:4%;bottom:0}}
 @media(pointer:coarse){body .journal-dialogue-frame .journal-dialogue-next{width:44px;height:44px;bottom:0}}
 @media print{.journal-dialogue{display:none}}

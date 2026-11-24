@@ -46,12 +46,17 @@ const routes = [['home','/'],['archives','/archives/'],['tags','/tags/'],['categ
               if(await code.count()){await code.scrollIntoViewIfNeeded();await shot('code');}
               const dialogue=page.locator('.journal-dialogue').first();
               if(await dialogue.count()){
-                await dialogue.scrollIntoViewIfNeeded();await page.waitForTimeout(1000);await shot('comments');
+                await dialogue.scrollIntoViewIfNeeded();
+                const widget=page.frameLocator('iframe.giscus-frame');
+                await widget.locator('.gsc-comment-box').first().waitFor({state:'visible',timeout:15000}).catch(()=>{});
+                await shot('comments');
                 const frame=page.locator('.journal-dialogue-frame');
                 const structure=await frame.evaluate(el=>({height:el.getBoundingClientRect().height,panelHeight:el.querySelector('.journal-dialogue-panel')?.getBoundingClientRect().height,hasIframe:!!el.querySelector('iframe'),next:el.nextElementSibling?.classList.contains('journal-dialogue-comments'),readingColumn:el.closest('.journal-dialogue')?.parentElement?.classList.contains('journal-reading-shell'),aligned:Math.abs(el.getBoundingClientRect().left-document.querySelector('.post-body').getBoundingClientRect().left)<3}));
                 if(structure.hasIframe||!structure.next||structure.height>600||structure.panelHeight>structure.height*.55||!structure.readingColumn||!structure.aligned)issues.push(width+' '+mode+' dialogue structure');
                 const count=await page.locator('iframe.giscus-frame').count();
-                report.push({width,mode,name:'giscus',count,structure});
+                const editor=await page.frameLocator('iframe.giscus-frame').locator('.gsc-comment-box').first().evaluate(el=>({background:getComputedStyle(el).backgroundImage,textarea:!!el.querySelector('textarea')})).catch(()=>null);
+                report.push({width,mode,name:'giscus',count,structure,editor});
+                if(!editor||!editor.background.includes('linear-gradient')) issues.push(width+' '+mode+' live Giscus editor/theme not verified');
                 if(count>1)issues.push(width+' '+mode+' duplicate Giscus');
               }
             }

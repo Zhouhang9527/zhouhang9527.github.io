@@ -28,7 +28,21 @@ jobs:
           for i in $(seq 1 60); do curl -fsS http://127.0.0.1:4004/ >/dev/null && exit 0; sleep 2; done
           cat /tmp/ginka-server.log
           exit 1
+      - name: Focused live comment review
+        if: ${{ !cancelled() }}
+        env:
+          GINKA_TEST_BASE_URL: http://127.0.0.1:4004
+        run: |
+          export GINKA_CHROME_PATH="$(node -e "console.log(require('playwright').chromium.executablePath())")"
+          node tools/checks/live-comment-review.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ginka-live-comments
+          path: artifacts/comment-live/
+          retention-days: 7
       - name: Browser checks
+        if: ${{ !cancelled() }}
         env:
           GINKA_TEST_BASE_URL: http://127.0.0.1:4004
         run: |
