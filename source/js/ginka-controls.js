@@ -14,7 +14,9 @@
     if (open && sidebar) {
       var night = document.documentElement.getAttribute('data-theme') === 'moonlit';
       sidebar.querySelectorAll('[data-sidebar-src-day]').forEach(function (img) {
-        var src = img.getAttribute(night ? 'data-sidebar-src-night' : 'data-sidebar-src-day');
+        var main = document.getElementById('main-content');
+        var src = main && main.getAttribute(night ? 'data-sidebar-scene-night' : 'data-sidebar-scene-day');
+        src = src || img.getAttribute(night ? 'data-sidebar-src-night' : 'data-sidebar-src-day');
         if (src && img.getAttribute('src') !== src) img.src = src;
       });
       if (!window.__ginkaMusicBooted && typeof window.GINKA_BOOT_MUSIC === 'function') window.GINKA_BOOT_MUSIC();

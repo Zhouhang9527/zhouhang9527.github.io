@@ -8,14 +8,15 @@
   {% set isLinksPage = 'links' in (page.path or '') %}
   {% if isAboutPage %}
     <header class="journal-about-banner">
-      <img class="scene-day" src="{{ url_for('/images/ginka/scenes/beach-day-1280.webp') }}" srcset="{{ url_for('/images/ginka/scenes/beach-day-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/beach-day-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/beach-day-1280.webp') }} 1280w" sizes="(max-width: 990px) 94vw, 920px" alt="姬之岛的夏日海岸" width="2560" height="1440" loading="eager" fetchpriority="high" decoding="async">
-      <img class="scene-night" src="{{ url_for('/images/ginka/scenes/beach-night-1280.webp') }}" srcset="{{ url_for('/images/ginka/scenes/beach-night-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/beach-night-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/beach-night-1280.webp') }} 1280w" sizes="(max-width: 990px) 94vw, 920px" alt="" width="2560" height="1440" loading="lazy" decoding="async">
+      {% set aboutScene = ginka_scene(page, 'masthead') %}
+      <div class="journal-about-art" aria-hidden="true" style="--scene-day:url('{{ aboutScene.day }}');--scene-night:url('{{ aboutScene.night }}')"></div>
       <div class="journal-about-banner-copy"><span>ABOUT / 关于博客</span><h1>关于 mm9527</h1></div>
     </header>
   {% else %}
     <header class="journal-masthead">
       <div><a class="journal-breadcrumb" href="{{ url_for('/') }}">GINKA / mm9527</a><span class="journal-eyebrow">{% if page.type == 'tags' %}TOPICS / 主题索引{% elif page.type == 'categories' %}CATEGORIES / 内容分类{% elif page.type == 'links' %}FRIENDS / 友情链接{% else %}ABOUT / 关于博客{% endif %}</span><h1>{{ page.title | escape }}</h1><p>{% if taxonomy %}选择一个主题，继续阅读。{% elif page.type == 'links' %}一起学习，互相分享。{% else %}mm9527 的技术笔记与个人记录。{% endif %}</p></div>
-      <img src="{{ url_for('/images/ginka/reunion.webp' if page.type == 'links' else ('/images/ginka/story-street.jpg' if taxonomy else '/images/ginka/sunset.webp')) }}" alt="" width="1920" height="1141">
+      {% set mastheadScene = ginka_scene(page, 'masthead') %}
+    <div class="journal-masthead-art" aria-hidden="true" style="--scene-day:url('{{ mastheadScene.day }}');--scene-night:url('{{ mastheadScene.night }}')"></div>
     </header>
   {% endif %}
   {% if taxonomy %}

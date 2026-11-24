@@ -1,0 +1,113 @@
+/*! MIT License
+ * Copyright (c) 2018 GitHub Inc.
+ * https://github.com/primer/primitives/blob/main/LICENSE
+ */
+
+main {
+  --color-prettylights-syntax-comment: #768390;
+  --color-prettylights-syntax-constant: #6cb6ff;
+  --color-prettylights-syntax-entity: #dcbdfb;
+  --color-prettylights-syntax-storage-modifier-import: #adbac7;
+  --color-prettylights-syntax-entity-tag: #8ddb8c;
+  --color-prettylights-syntax-keyword: #f47067;
+  --color-prettylights-syntax-string: #96d0ff;
+  --color-prettylights-syntax-variable: #f69d50;
+  --color-prettylights-syntax-brackethighlighter-unmatched: #e5534b;
+  --color-prettylights-syntax-invalid-illegal-text: #cdd9e5;
+  --color-prettylights-syntax-invalid-illegal-bg: #922323;
+  --color-prettylights-syntax-carriage-return-text: #cdd9e5;
+  --color-prettylights-syntax-carriage-return-bg: #ad2e2c;
+  --color-prettylights-syntax-string-regexp: #8ddb8c;
+  --color-prettylights-syntax-markup-list: #eac55f;
+  --color-prettylights-syntax-markup-heading: #316dca;
+  --color-prettylights-syntax-markup-italic: #adbac7;
+  --color-prettylights-syntax-markup-bold: #adbac7;
+  --color-prettylights-syntax-markup-deleted-text: #ffd8d3;
+  --color-prettylights-syntax-markup-deleted-bg: #78191b;
+  --color-prettylights-syntax-markup-inserted-text: #b4f1b4;
+  --color-prettylights-syntax-markup-inserted-bg: #1b4721;
+  --color-prettylights-syntax-markup-changed-text: #ffddb0;
+  --color-prettylights-syntax-markup-changed-bg: #682d0f;
+  --color-prettylights-syntax-markup-ignored-text: #adbac7;
+  --color-prettylights-syntax-markup-ignored-bg: #255ab2;
+  --color-prettylights-syntax-meta-diff-range: #dcbdfb;
+  --color-prettylights-syntax-brackethighlighter-angle: #768390;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #545d68;
+  --color-prettylights-syntax-constant-other-reference-link: #96d0ff;
+  --color-btn-text: #c2ccd7;
+  --color-btn-bg: #223040;
+  --color-btn-border: #4b6880;
+  --color-btn-shadow: 0 0 transparent;
+  --color-btn-inset-shadow: 0 0 transparent;
+  --color-btn-hover-bg: #2b3c4e;
+  --color-btn-hover-border: #9ac9e8;
+  --color-btn-active-bg: #2b3c4e;
+  --color-btn-active-border: #9ac9e8;
+  --color-btn-selected-bg: #2a4054;
+  --color-btn-primary-text: #111923;
+  --color-btn-primary-bg: #9ac9e8;
+  --color-btn-primary-border: #9ac9e8;
+  --color-btn-primary-shadow: 0 0 transparent;
+  --color-btn-primary-inset-shadow: 0 0 transparent;
+  --color-btn-primary-hover-bg: #b7dcff;
+  --color-btn-primary-hover-border: #b7dcff;
+  --color-btn-primary-selected-bg: #9ac9e8;
+  --color-btn-primary-selected-shadow: 0 0 transparent;
+  --color-btn-primary-disabled-text: #9aaabc;
+  --color-btn-primary-disabled-bg: #2a4054;
+  --color-btn-primary-disabled-border: #334353;
+  --color-action-list-item-default-hover-bg: #2b3c4e;
+  --color-segmented-control-bg: #121c29;
+  --color-segmented-control-button-bg: #192431;
+  --color-segmented-control-button-selected-border: #4b6880;
+  --color-fg-default: #c2ccd7;
+  --color-fg-muted: #9aaabc;
+  --color-fg-subtle: #9aaabc;
+  --color-canvas-default: #192431;
+  --color-canvas-overlay: #192431;
+  --color-canvas-inset: #121c29;
+  --color-canvas-subtle: #2a4054;
+  --color-border-default: #4b6880;
+  --color-border-muted: #334353;
+  --color-neutral-muted: #334353;
+  --color-accent-fg: #9ac9e8;
+  --color-accent-emphasis: #9ac9e8;
+  --color-accent-muted: #4b6880;
+  --color-accent-subtle: #2b3c4e;
+  --color-success-fg: #57ab5a;
+  --color-attention-fg: #c69026;
+  --color-attention-muted: rgb(174 124 20 / 40%);
+  --color-attention-subtle: rgb(174 124 20 / 15%);
+  --color-danger-fg: #e5534b;
+  --color-danger-muted: rgb(229 83 75 / 40%);
+  --color-danger-subtle: rgb(229 83 75 / 10%);
+  --color-primer-shadow-inset: 0 0 transparent;
+  --color-scale-gray-7: #373e47;
+  --color-scale-blue-8: #143d79;
+
+  /*! Extensions from @primer/css/alerts/flash.scss */
+  --color-social-reaction-bg-hover: #2b3c4e;
+  --color-social-reaction-bg-reacted-hover: #2a4054;
+}
+
+main .pagination-loader-container {
+  background-image: url("https://github.com/images/modules/pulls/progressive-disclosure-line-dark.svg");
+}
+
+main .gsc-loading-image {
+  background-image: url("https://github.githubassets.com/images/mona-loading-dimmed.gif");
+}
+
+/* GINKA dialogue treatment — retains native controls and real author names. */
+main { color-scheme: dark; }
+.gsc-comment-box, .gsc-comment > div:first-child { border-radius: 3px; }
+.gsc-comment-box-tabs, .gsc-comment-header { background: #2a4054; border-radius: 3px 3px 0 0; border-bottom: 1px solid #334353; }
+.gsc-comment-header { padding-block: 8px; }
+.gsc-comment-author-avatar { color: #e2e9f0; }
+.gsc-comment-content, .gsc-comment-box-main { background: #192431; }
+.gsc-comment-box-textarea { background: #121c29; border-color: #334353; color: #c2ccd7; border-radius: 3px; }
+.gsc-comment-box-textarea::placeholder { color: #9aaabc; }
+.gsc-comment-box textarea:focus-visible, .gsc-comment-box button:focus-visible, .gsc-comment button:focus-visible, .gsc-comment a:focus-visible { outline: 2px solid #9ac9e8; outline-offset: 2px; }
+.gsc-comment-footer { border-top: 1px solid #334353; }
+.gsc-comment-box :is(.btn, button), .gsc-comment :is(.btn, button) { border-radius: 3px; }
+.gsc-homepage-bg { background-color: #192431; }

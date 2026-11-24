@@ -5,7 +5,10 @@ const musicRuntime = fs.readFileSync('public/js/ginka-music.js', 'utf8');
 const { load } = require('cheerio');
 const $ = load(html);
 const motion = fs.readFileSync('source/js/ginka-motion.js', 'utf8');
-const legacyStyles = fs.readFileSync('public/css/ginka_style.css', 'utf8');
+// styles.styl 已在本分支清空（旧玻璃滚动条等遗留规则），ginka_style.css 不再产出。
+// 缺失即视为「没有遗留 TTF 引用」，但仍要求构建产物里没有 .ttf 直链。
+const legacyStylesPath = 'public/css/ginka_style.css';
+const legacyStyles = fs.existsSync(legacyStylesPath) ? fs.readFileSync(legacyStylesPath, 'utf8') : '';
 
 const checks = [
   {
@@ -73,7 +76,8 @@ const checks = [
       $('[data-journal-gallery] [data-fancybox="ginka-island"]').length === 3 &&
       $('[data-journal-gallery] [data-fancybox="ginka-island"] .scene-night').length === 3 &&
       $('[data-journal-gallery] .journal-scene-label').length === 3 &&
-      $('.journal-hero-dust i').length === 6
+      $('.journal-hero-dust i').length === 0 &&
+      $('.journal-hero-light').length === 1 && !html.includes('local-preview/hero-')
   },
   {
     name: 'publishes flat navigation and removes the cover side inscription',
@@ -100,7 +104,8 @@ const checks = [
   },
   {
     name: 'removes full TTF font downloads from legacy styles',
-    pass: !/url\([^)]*\.ttf/i.test(legacyStyles)
+    pass: !/url\([^)]*\.ttf/i.test(legacyStyles) &&
+      !/url\([^)]*\.ttf/i.test(html)
   },
   {
     name: 'renders exactly one player inside the persistent sidebar',

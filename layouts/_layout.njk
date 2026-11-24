@@ -31,10 +31,39 @@
       {%- endif %}
     </div>
 
-    <div id="main-content" class="main-inner {% block class %}{% endblock %}">
+    {% set drawerScene = ginka_scene(page, 'sidebar') %}
+    <div id="main-content" class="main-inner {% block class %}{% endblock %}" data-sidebar-scene-day="{{ drawerScene.day }}" data-sidebar-scene-night="{{ drawerScene.night }}" data-scene-kind="{{ drawerScene.kind }}">
       {%- include '_partials/header/sub-menu.njk' -%}
       {% block content %}{% endblock %}
-      {%- include '_partials/comments.njk' -%}
+      {% if page.comments and theme.giscus.repo %}
+        {% set dialogueSkin = ginka_dialogue_skin() %}
+        <section class="journal-dialogue" aria-label="评论区">
+          <div class="journal-dialogue-frame{% if dialogueSkin %} journal-dialogue-original{% endif %}{% if dialogueSkin and dialogueSkin.advance %} journal-dialogue-has-advance{% endif %}"{% if dialogueSkin %} data-dialogue-skin="original" style="--dialogue-frame:url('{{ dialogueSkin.frame }}');--dialogue-butterfly:url('{{ dialogueSkin.butterfly }}');--dialogue-line:url('{{ dialogueSkin.line }}'){% if dialogueSkin.advance %};--dialogue-advance:url('{{ dialogueSkin.advance }}'){% endif %}"{% endif %}>
+            <div class="journal-dialogue-name">mm9527</div>
+            <p class="journal-dialogue-intro">读到这里，有什么想说的吗？</p>
+            <a class="journal-dialogue-next" href="#journal-comments" aria-label="进入评论区" title="进入评论区"><svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true" focusable="false"><path d="M2 2h12L8 10z" fill="currentColor"/></svg></a>
+          </div>
+          <div id="journal-comments" class="journal-dialogue-comments" tabindex="-1">
+            <div class="giscus-container"
+                 data-repo="{{ theme.giscus.repo | escape }}"
+                 data-repo-id="{{ theme.giscus.repo_id | escape }}"
+                 data-category="{{ theme.giscus.category | escape }}"
+                 data-category-id="{{ theme.giscus.category_id | escape }}"
+                 data-mapping="{{ theme.giscus.mapping | default('pathname') | escape }}"
+                 data-strict="{{ theme.giscus.strict | default(0) }}"
+                 data-reactions-enabled="{{ theme.giscus.reactions_enabled }}"
+                 data-emit-metadata="{{ theme.giscus.emit_metadata }}"
+                 data-lang="{{ theme.giscus.lang | escape }}"
+                 data-input-position="{{ theme.giscus.input_position | escape }}"
+                 data-loading="{{ theme.giscus.loading | default('lazy') }}">
+              <p class="journal-comments-status" role="status">评论加载中…</p>
+              <noscript><a href="https://github.com/{{ theme.giscus.repo | escape }}/discussions">在 GitHub 查看讨论</a></noscript>
+            </div>
+          </div>
+        </section>
+      {% elif page.comments %}
+        {%- include '_partials/comments.njk' -%}
+      {% endif %}
     </div>
   </main>
 

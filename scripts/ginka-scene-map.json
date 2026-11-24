@@ -1,0 +1,104 @@
+{
+  "routes": {
+    "home": {
+      "masthead": [
+        "panorama",
+        "panorama"
+      ],
+      "sidebar": [
+        "torii-sea",
+        "torii-close"
+      ]
+    },
+    "archive": {
+      "masthead": [
+        "window-room",
+        "beach"
+      ],
+      "sidebar": [
+        "courtyard",
+        "panorama"
+      ]
+    },
+    "tags": {
+      "masthead": [
+        "classroom",
+        "shop-street"
+      ],
+      "sidebar": [
+        "corridor",
+        "torii-close"
+      ]
+    },
+    "categories": {
+      "masthead": [
+        "corridor",
+        "panorama"
+      ],
+      "sidebar": [
+        "classroom",
+        "beach"
+      ]
+    },
+    "links": {
+      "masthead": [
+        "island-street",
+        "shop-street"
+      ],
+      "sidebar": [
+        "house",
+        "panorama"
+      ]
+    },
+    "about": {
+      "masthead": [
+        "house",
+        "beach"
+      ],
+      "sidebar": [
+        "window-room",
+        "torii-close"
+      ]
+    },
+    "post": {
+      "masthead": [
+        "courtyard",
+        "panorama"
+      ],
+      "sidebar": [
+        "courtyard",
+        "shop-street"
+      ]
+    }
+  },
+  "previewPairs": {
+    "window-room": [
+      35,
+      36
+    ],
+    "classroom": [
+      28,
+      26
+    ],
+    "corridor": [
+      24,
+      25
+    ],
+    "island-street": [
+      62,
+      63
+    ],
+    "house": [
+      47,
+      50
+    ],
+    "courtyard": [
+      13,
+      14
+    ],
+    "torii-sea": [
+      66,
+      69
+    ]
+  }
+}

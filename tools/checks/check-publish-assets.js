@@ -33,6 +33,11 @@ for (const item of forbidden) {
   }
 }
 
+if (fs.existsSync(path.join(publicDir, 'images/ginka/scenes/local-preview'))) {
+  console.error('FAIL private local-preview scene directory must not be published');
+  failed = true;
+}
+
 const required = [
   'live2d/ATRI/ATRI.model3.json',
   'live2d/ATRI/ATRI.moc3',
@@ -44,6 +49,9 @@ const required = [
   'css/ginka-runtime.css',
   'css/ginka-motion.css',
   'css/ginka-theme.css',
+  'css/ginka-comments.css',
+  'css/giscus-day.css',
+  'css/giscus-moonlit.css',
   'fonts/ginka/cormorant-garamond-latin-400-italic.woff2',
   'images/ginka/scenes/hero-katana-day-1280.webp',
   'images/ginka/scenes/hero-katana-night-1280.webp',
@@ -52,6 +60,7 @@ const required = [
   'images/ginka/scenes/panorama-night-960.webp',
   'images/ginka/scenes/torii-close-night-1440.webp',
   'js/ginka-motion.js',
+  'js/ginka-comments.js',
   'js/vendor/lenis.min.js',
   'js/vendor/lenis.LICENSE.txt',
   'js/ginka-music.js',

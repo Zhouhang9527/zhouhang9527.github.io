@@ -22,7 +22,9 @@ hexo.extend.filter.register('after_generate', function() {
 
   for (const route of hexo.route.list()) {
     const normalized = normalizeRoute(route);
-    if (!excludedRoutes.has(normalized)) continue;
+    const localArt = normalized.startsWith('images/ginka/scenes/local-preview/');
+    const allowLocalArt = hexo.env.cmd === 'server' && process.env.GINKA_LOCAL_SCENES === '1';
+    if (!excludedRoutes.has(normalized) && !(localArt && !allowLocalArt)) continue;
     hexo.route.remove(route);
     removed.push(normalized);
   }

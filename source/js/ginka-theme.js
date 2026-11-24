@@ -27,14 +27,84 @@
     return mode;
   }
 
+  // Giscus is cross-origin. Set the initial configuration before its lazy
+  // loader runs, and repeat after the iframe handshake (including PJAX).
+  var giscusFrames = new WeakMap();
+  var giscusVerified = new Map();
+  var giscusPending = new Map();
+  function giscusTheme(resolved) {
+    var fallback = resolved === 'moonlit' ? 'dark_dimmed' : 'light';
+    var meta = document.querySelector('meta[name="ginka-giscus-theme-base"]');
+    var configured = meta && meta.content;
+    if (!configured && location.protocol !== 'https:') return fallback;
+    try {
+      var base = configured || new URL('css/', location.origin + (window.CONFIG?.root || '/')).href;
+      var url = new URL('giscus-' + (resolved === 'moonlit' ? 'moonlit' : 'day') + '.css', base);
+      if (url.protocol !== 'https:') return fallback;
+      var build = document.querySelector('meta[name="ginka-build"]')?.content;
+      if (build) url.searchParams.set('v', build);
+      // Check custom CSS availability. A broken theme must not make comments unreadable.
+      var key = url.href;
+      if (giscusVerified.get(key)) return key;
+      if (!giscusPending.has(key)) {
+        var pending = fetch(key, { mode: 'cors', credentials: 'omit' })
+          .then(function (response) {
+            var mime = response.headers.get('content-type') || '';
+            var cors = response.headers.get('access-control-allow-origin');
+            var sameOrigin = url.origin === location.origin;
+            return response.ok && /text\/css/i.test(mime) &&
+              (!sameOrigin || cors === '*' || cors === 'https://giscus.app');
+          }).catch(function () { return false; })
+          .then(function (ok) {
+            giscusVerified.set(key, ok);
+            if (ok) syncGiscus(root.getAttribute('data-theme'));
+          });
+        giscusPending.set(key, pending);
+      }
+      return fallback;
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function sendGiscus(frame, selected, force) {
+    if (!frame.contentWindow) return;
+    if (!force && giscusFrames.get(frame) === selected) return;
+    giscusFrames.set(frame, selected);
+    frame.contentWindow.postMessage({ giscus: { setConfig: { theme: selected } } }, 'https://giscus.app');
+  }
+
   function syncGiscus(resolved) {
+    var selected = giscusTheme(resolved);
+    if (window.CONFIG && window.CONFIG.giscus) window.CONFIG.giscus.theme = selected;
     var frames = document.querySelectorAll('iframe.giscus-frame');
     for (var index = 0; index < frames.length; index += 1) {
-      if (!frames[index].contentWindow) continue;
-      frames[index].contentWindow.postMessage({
-        giscus: { setConfig: { theme: resolved === 'moonlit' ? 'dark_dimmed' : 'light' } }
-      }, 'https://giscus.app');
+      sendGiscus(frames[index], selected, false);
     }
+  }
+
+  function bindGiscus() {
+    // The load event is captured because iframe load does not bubble.
+    document.addEventListener('load', function (event) {
+      var frame = event.target;
+      if (frame && frame.matches && frame.matches('iframe.giscus-frame')) {
+        sendGiscus(frame, giscusTheme(root.getAttribute('data-theme')), true);
+      }
+    }, true);
+    var ready = new WeakSet();
+    window.addEventListener('message', function (event) {
+      if (event.origin !== 'https://giscus.app' || !event.data || !event.data.giscus) return;
+      var frames = document.querySelectorAll('iframe.giscus-frame');
+      for (var i = 0; i < frames.length; i += 1) {
+        var frame = frames[i];
+        if (frame.contentWindow !== event.source || ready.has(frame)) continue;
+        ready.add(frame);
+        sendGiscus(frame, giscusTheme(root.getAttribute('data-theme')), true);
+      }
+    });
+    document.addEventListener('page:loaded', function () {
+      syncGiscus(root.getAttribute('data-theme'));
+    }, true);
   }
 
   function syncButtons(mode) {
@@ -53,6 +123,19 @@
   }
 
   function syncScenes(resolved) {
+    // The drawer survives PJAX. Read its artwork from the newly swapped main.
+    var main = document.getElementById('main-content');
+    var cover = document.querySelector('#journal-sidebar [data-sidebar-src-day]');
+    if (main && cover) {
+      var day = main.getAttribute('data-sidebar-scene-day');
+      var night = main.getAttribute('data-sidebar-scene-night');
+      if (day && night) {
+        cover.setAttribute('data-sidebar-src-day', day);
+        cover.setAttribute('data-sidebar-src-night', night);
+        var chosen = resolved === 'moonlit' ? night : day;
+        if (document.body.classList.contains('sidebar-active') && cover.getAttribute('src') !== chosen) cover.src = chosen;
+      }
+    }
     var links = document.querySelectorAll('.journal-scene-card[data-full-day]');
     for (var index = 0; index < links.length; index += 1) {
       var link = links[index];
@@ -83,7 +166,7 @@
       try { window.localStorage.setItem(STORAGE_KEY, mode); } catch (error) {}
     }
     var colorMeta = document.querySelector('meta[name="theme-color"]:not([media])');
-    if (colorMeta) colorMeta.setAttribute('content', resolved === 'moonlit' ? '#111923' : '#f3f6fa');
+    if (colorMeta) colorMeta.setAttribute('content', resolved === 'moonlit' ? '#111923' : '#f4f7fa');
     syncButtons(mode);
     syncScenes(resolved);
     syncGiscus(resolved);
@@ -125,9 +208,12 @@
     get mode() { return root.getAttribute('data-theme-mode') || readMode(); },
     get theme() { return root.getAttribute('data-theme') || resolve(readMode()); },
     set: function (mode) { if (MODES.indexOf(mode) !== -1) apply(mode, true); },
+    get commentTheme() { return giscusTheme(root.getAttribute('data-theme') || resolve(readMode())); },
     cycle: cycle
   };
 
+  bindGiscus();
   bind();
-  apply(root.getAttribute('data-theme-mode') || readMode(), false);
+  var initialMode = root.getAttribute('data-theme-mode');
+  apply(MODES.indexOf(initialMode) === -1 ? readMode() : initialMode, false);
 })();

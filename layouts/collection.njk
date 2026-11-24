@@ -6,8 +6,8 @@
   {% set collection_name = page.tag or page.category or '文章归档' %}
   <header class="journal-masthead">
     <div><a class="journal-breadcrumb" href="{{ url_for('/') }}">GINKA / mm9527</a><span class="journal-eyebrow">{{ 'TOPIC / 标签' if page.tag else ('CATEGORY / 分类' if page.category else 'ARCHIVE / 时间归档') }}</span><h1>{{ collection_name | escape }}</h1><p>{% if page.tag or page.category %}与这个主题相关的文章。{% else %}按时间整理的题解、分析与学习笔记。{% endif %}</p></div>
-    <img class="scene-day" src="{{ url_for('/images/ginka/scenes/beach-day-960.webp') }}" srcset="{{ url_for('/images/ginka/scenes/beach-day-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/beach-day-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/beach-day-1440.webp') }} 1440w" sizes="(max-width: 990px) 34vw, 320px" alt="" width="2560" height="1440" loading="lazy" decoding="async">
-    <img class="scene-night" src="{{ url_for('/images/ginka/scenes/beach-night-960.webp') }}" srcset="{{ url_for('/images/ginka/scenes/beach-night-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/beach-night-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/beach-night-1440.webp') }} 1440w" sizes="(max-width: 990px) 34vw, 320px" alt="" width="2560" height="1440" loading="lazy" decoding="async">
+    {% set mastheadScene = ginka_scene(page, 'masthead') %}
+    <div class="journal-masthead-art" aria-hidden="true" style="--scene-day:url('{{ mastheadScene.day }}');--scene-night:url('{{ mastheadScene.night }}')"></div>
   </header>
   <nav class="journal-page-nav" aria-label="内容索引"><a href="{{ url_for('/archives/') }}">全部文章</a><a href="{{ url_for('/tags/') }}">按标签浏览</a><a href="{{ url_for('/categories/') }}">按分类浏览</a><span>{{ page.posts.length }} 篇 / 本页</span></nav>
   <section class="journal-archive-list" aria-label="文章列表">

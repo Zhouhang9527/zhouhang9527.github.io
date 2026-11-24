@@ -51,6 +51,15 @@
     button.title = label;
   }
 
+  function setWrapState(button, enabled) {
+    // The bent arrow indicates a soft line break; keep its shape stable when
+    // toggled so aria-pressed and the selected tint identify the active state.
+    button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5h16M4 10h12a4 4 0 0 1 0 8h-4m3-3-3 3 3 3M4 15h4M4 20h4"/></svg>';
+    button.setAttribute('aria-label', '自动换行');
+    button.setAttribute('aria-pressed', String(enabled));
+    button.title = enabled ? '关闭自动换行' : '开启自动换行';
+  }
+
   function scheduleButtonReset(button, feedback) {
     clearResetTimer(button);
     const timer = setTimeout(() => {
@@ -106,9 +115,8 @@
       const source = code.cloneNode(true);
       source.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
       const text = source.textContent;
-      // Hexo's table renderer keeps short lines offscreen when a long signature
-      // is scrolled sideways. Render each logical line as its own wrapping row,
-      // so its line number expands with it and no content needs horizontal panning.
+      // Preserve logical lines and line numbers in a scrollable listing.
+      // The optional wrap mode expands each logical row without changing copied text.
       if (block.tagName === 'FIGURE' && code.matches('td.code > pre')) {
         const lines = Array.from(code.children).filter(node => node.matches('span.line'));
         if (lines.length) {
@@ -142,6 +150,7 @@
       const classes = `${code.className || ''} ${block.className || ''}`;
       const language = classes.match(/(?:^|\s)language-([\w+#.-]+)/i)?.[1]
         || [...block.classList].find(name => !['highlight', 'code', 'hljs', 'line-numbers', 'table-container'].includes(name));
+      label.className = 'journal-code-language';
       label.textContent = (language || 'CODE').toUpperCase();
       const button = document.createElement('button');
       button.type = 'button';
@@ -161,18 +170,23 @@
       const wrapButton = document.createElement('button');
       wrapButton.type = 'button';
       wrapButton.className = 'journal-code-wrap';
-      wrapButton.setAttribute('aria-pressed', 'false');
-      wrapButton.textContent = '自动换行';
+      setWrapState(wrapButton, false);
       wrapButton.addEventListener('click', () => {
         const shell = wrapButton.closest('.journal-code');
         if (!shell) return;
         const on = shell.getAttribute('data-code-wrap') === 'on';
         if (on) shell.removeAttribute('data-code-wrap');
         else shell.setAttribute('data-code-wrap', 'on');
-        wrapButton.setAttribute('aria-pressed', String(!on));
+        setWrapState(wrapButton, !on);
+        if (!on) {
+          const scroller = shell.querySelector('pre.journal-code-pre, figure.highlight, pre');
+          if (scroller) scroller.scrollLeft = 0;
+        }
       });
       const actions = document.createElement('span');
       actions.className = 'journal-code-actions';
+      actions.setAttribute('role', 'group');
+      actions.setAttribute('aria-label', '代码操作');
       actions.append(wrapButton, button);
       toolbar.append(label, actions, feedback);
       const shell = document.createElement('div');

@@ -548,56 +548,7 @@ body.is-pjax-enter .main-inner {
 // ---------------------------------------------------------------
 // Custom Scrollbar (Webkit)
 // ---------------------------------------------------------------
-/* 定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸 */
-::-webkit-scrollbar {
-  width: 6px !important;
-  height: 6px !important;
-  background: transparent !important;
-  display: block !important;
-}
-
-/* 定义滚动条轨道 内阴影+圆角 - 确保透明以显示视频背景 */
-::-webkit-scrollbar-track {
-  background: transparent !important;
-  border-radius: 999px;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* 定义滑块 内阴影+圆角 */
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(126, 184, 230, 0.88), rgba(91, 155, 213, 0.88)) !important;
-  border-radius: 999px;
-  border: none !important;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
-  min-height: 42px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(126, 184, 230, 0.95), rgba(91, 155, 213, 0.95)) !important;
-}
-
-/* 去掉顶部/底部小箭头，避免割裂感 */
-::-webkit-scrollbar-button {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
-}
-
-::-webkit-scrollbar-button:single-button,
-::-webkit-scrollbar-button:vertical:decrement,
-::-webkit-scrollbar-button:vertical:increment {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-/* Firefox scrollbar */
-html {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(135, 206, 250, 0.4) transparent;
-}
+/* Scrollbars are owned by ginka-editorial.css and the component styles. */
 
 // ---------------------------------------------------------------
 // Sidebar & Giscus Optimizations
@@ -653,65 +604,7 @@ body.sidebar-active .sidebar {
   display: none !important;
 }
 
-/* 侧边栏滚动条玻璃化（覆盖白底轨道） */
-.sidebar,
-.sidebar-inner,
-.sidebar-panel-container,
-.sidebar-panel,
-.post-toc {
-  scrollbar-width: thin !important;
-  scrollbar-color: rgba(190, 226, 248, 0.95) rgba(166, 179, 196, 0.42) !important;
-}
-
-.sidebar::-webkit-scrollbar,
-.sidebar-inner::-webkit-scrollbar,
-.sidebar-panel-container::-webkit-scrollbar,
-.sidebar-panel::-webkit-scrollbar,
-.post-toc::-webkit-scrollbar {
-  width: 9px !important;
-  height: 9px !important;
-  background: transparent !important;
-}
-
-.sidebar::-webkit-scrollbar-track,
-.sidebar-inner::-webkit-scrollbar-track,
-.sidebar-panel-container::-webkit-scrollbar-track,
-.sidebar-panel::-webkit-scrollbar-track,
-.post-toc::-webkit-scrollbar-track {
-  background: rgba(166, 179, 196, 0.36) !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(200, 214, 230, 0.35) !important;
-  box-shadow: inset 0 0 0 1px rgba(235, 242, 248, 0.14);
-}
-
-.sidebar::-webkit-scrollbar-thumb,
-.sidebar-inner::-webkit-scrollbar-thumb,
-.sidebar-panel-container::-webkit-scrollbar-thumb,
-.sidebar-panel::-webkit-scrollbar-thumb,
-.post-toc::-webkit-scrollbar-thumb {
-  border-radius: 999px !important;
-  background: linear-gradient(180deg, rgba(200, 231, 250, 0.96), rgba(147, 201, 236, 0.95)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.35) !important;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover,
-.sidebar-inner::-webkit-scrollbar-thumb:hover,
-.sidebar-panel-container::-webkit-scrollbar-thumb:hover,
-.sidebar-panel::-webkit-scrollbar-thumb:hover,
-.post-toc::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(213, 238, 252, 0.98), rgba(160, 209, 240, 0.97)) !important;
-}
-
-.sidebar::-webkit-scrollbar-button,
-.sidebar-inner::-webkit-scrollbar-button,
-.sidebar-panel-container::-webkit-scrollbar-button,
-.sidebar-panel::-webkit-scrollbar-button,
-.post-toc::-webkit-scrollbar-button {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
-}
+/* Sidebar scrollbars are owned by ginka-pages.css. */
 
 /* Giscus 评论区深度适配 - 模拟"嵌入"效果 */
 .comments {
@@ -1319,73 +1212,6 @@ aside.sidebar .sidebar-panel,
 aside.sidebar .post-toc,
 aside.sidebar .post-toc-wrap,
 aside.sidebar .site-overview-wrap {
-  background: transparent !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: rgba(190, 226, 248, 0.95) transparent !important;
-}
-
-aside.sidebar .sidebar-inner::-webkit-scrollbar,
-aside.sidebar .sidebar-panel-container::-webkit-scrollbar,
-aside.sidebar .sidebar-panel::-webkit-scrollbar,
-aside.sidebar .post-toc::-webkit-scrollbar,
-aside.sidebar .post-toc-wrap::-webkit-scrollbar,
-aside.sidebar .site-overview-wrap::-webkit-scrollbar {
-  width: 8px !important;
-  height: 8px !important;
-  background: transparent !important;
-}
-
-aside.sidebar .sidebar-inner::-webkit-scrollbar-track,
-aside.sidebar .sidebar-panel-container::-webkit-scrollbar-track,
-aside.sidebar .sidebar-panel::-webkit-scrollbar-track,
-aside.sidebar .post-toc::-webkit-scrollbar-track,
-aside.sidebar .post-toc-wrap::-webkit-scrollbar-track,
-aside.sidebar .site-overview-wrap::-webkit-scrollbar-track {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  border-radius: 999px !important;
-}
-
-aside.sidebar .sidebar-inner::-webkit-scrollbar-thumb,
-aside.sidebar .sidebar-panel-container::-webkit-scrollbar-thumb,
-aside.sidebar .sidebar-panel::-webkit-scrollbar-thumb,
-aside.sidebar .post-toc::-webkit-scrollbar-thumb,
-aside.sidebar .post-toc-wrap::-webkit-scrollbar-thumb,
-aside.sidebar .site-overview-wrap::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(200, 231, 250, 0.96), rgba(147, 201, 236, 0.95)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.28) !important;
-  border-radius: 999px !important;
-}
-
-aside.sidebar .sidebar-inner::-webkit-scrollbar-button,
-aside.sidebar .sidebar-panel-container::-webkit-scrollbar-button,
-aside.sidebar .sidebar-panel::-webkit-scrollbar-button,
-aside.sidebar .post-toc::-webkit-scrollbar-button,
-aside.sidebar .post-toc-wrap::-webkit-scrollbar-button,
-aside.sidebar .site-overview-wrap::-webkit-scrollbar-button {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
-}
-
-aside.sidebar .sidebar-inner::-webkit-scrollbar-track-piece,
-aside.sidebar .sidebar-panel-container::-webkit-scrollbar-track-piece,
-aside.sidebar .sidebar-panel::-webkit-scrollbar-track-piece,
-aside.sidebar .post-toc::-webkit-scrollbar-track-piece,
-aside.sidebar .post-toc-wrap::-webkit-scrollbar-track-piece,
-aside.sidebar .site-overview-wrap::-webkit-scrollbar-track-piece {
-  background: transparent !important;
-  border: none !important;
-}
-
-aside.sidebar .sidebar-inner::-webkit-scrollbar-corner,
-aside.sidebar .sidebar-panel-container::-webkit-scrollbar-corner,
-aside.sidebar .sidebar-panel::-webkit-scrollbar-corner,
-aside.sidebar .post-toc::-webkit-scrollbar-corner,
-aside.sidebar .post-toc-wrap::-webkit-scrollbar-corner,
-aside.sidebar .site-overview-wrap::-webkit-scrollbar-corner {
   background: transparent !important;
 }
 

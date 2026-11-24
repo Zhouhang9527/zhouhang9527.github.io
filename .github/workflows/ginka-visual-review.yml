@@ -1,0 +1,52 @@
+name: GINKA visual review
+on:
+  push:
+    branches: [ginka-art-direction, ginka-dialogue-polish]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:release
+      - run: npm run check
+      - run: npm install --no-save --package-lock=false playwright
+      - run: npx playwright install --with-deps chromium
+      - name: Start isolated preview
+        run: |
+          npx hexo server -p 4004 > /tmp/ginka-server.log 2>&1 &
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:4004/ >/dev/null && exit 0; sleep 2; done
+          cat /tmp/ginka-server.log
+          exit 1
+      - name: Browser checks
+        env:
+          GINKA_TEST_BASE_URL: http://127.0.0.1:4004
+        run: |
+          export GINKA_CHROME_PATH="$(node -e "console.log(require('playwright').chromium.executablePath())")"
+          npm run check:browser
+          npm run check:motion
+      - name: Capture all routes and interactions
+        if: ${{ !cancelled() }}
+        env:
+          GINKA_TEST_BASE_URL: http://127.0.0.1:4004
+        run: |
+          export GINKA_CHROME_PATH="$(node -e "console.log(require('playwright').chromium.executablePath())")"
+          node tools/checks/visual-review.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ginka-visual-review
+          path: |
+            artifacts/visual-review/
+            /tmp/ginka-server.log
+          retention-days: 7

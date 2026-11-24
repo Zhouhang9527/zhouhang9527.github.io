@@ -18,7 +18,7 @@
     "build:clean": "hexo clean && hexo generate",
     "build:release": "hexo clean && hexo generate && npm run check:publish-assets",
     "optimize:images": "node tools/optimize-images.js",
-    "check": "npm run check:perf && npm run check:inline && npm run check:publish-assets && npm run check:music-sources && npm run check:cloudflare-purge && npm run check:local-assets",
+    "check": "npm run check:perf && npm run check:inline && npm run check:publish-assets && npm run check:music-sources && npm run check:cloudflare-purge && npm run check:local-assets && npm run check:dialogue",
     "check:perf": "node tools/checks/check-performance-guards.js",
     "check:inline": "node tools/checks/check-inline-scripts.js",
     "check:publish-assets": "node tools/checks/check-publish-assets.js",
@@ -31,7 +31,9 @@
     "clean": "hexo clean",
     "new": "hexo new",
     "new:reverse": "hexo new reverse",
-    "new:pwn": "hexo new pwn"
+    "new:pwn": "hexo new pwn",
+    "check:dialogue": "node tools/checks/ginka-dialogue-regression.js",
+    "check:motion": "node tools/checks/hero-motion-regression.js"
   },
   "engines": {
     "node": ">=20.19.0",

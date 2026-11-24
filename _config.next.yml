@@ -181,7 +181,8 @@ comments:
       order: -1
 
 giscus:
-  enable: true
+  # The project-owned external loader replaces the plugin inline injection.
+  enable: false
   repo: Zhouhang9527/blog-comments
   repo_id: R_kgDORD1-mg
   category: Announcements
