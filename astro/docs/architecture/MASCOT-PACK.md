@@ -49,3 +49,6 @@ Every pose must declare character=child or adult, outfit, expression, gesture, a
 
 ## Playback lifecycle
 Selected-pose images are predecoded; idle motion skips unavailable frames, blink and mouth are mutually exclusive, and switching lines cancels prior animation. First NEXT during text reveal completes that line, subsequent NEXT advances. Hiding a tab pauses voice and finishes reveal; it does not automatically resume audio. Closing the mascot restores launcher focus if focus was inside it. View changes rebind the dialogue to the existing reader or mascot message window. The 30ms reveal and blink intervals remain provisional, not measured original timing. Private reference/animations/dialogue.text_reveal.json at 30b43e7 has duration_ms=null; reference/asset-matches/sound_events.json is unconfirmed. No actual mascot pack was available for validation.
+
+## Canvas validation
+The local manifest loader reads PNG IHDR and WebP VP8/VP8L/VP8X dimensions, rejects invalid image headers and requires blink, mouth and motion frames to have the same pixel canvas as their pose base. The served manifest includes derived `canvas: {width,height}` per pose. This checks geometry only; alpha, anchor alignment, expression identity, frame decoding and provenance still need actual original-asset review. Synthetic fixture tests do not certify original portraits.
