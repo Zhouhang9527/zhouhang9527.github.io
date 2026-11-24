@@ -125,7 +125,7 @@ main { color-scheme: dark; }
    the GitHub identities, timestamps, moderation, reactions and forms are untouched.
    No imported game extraction is required by the remote iframe. */
 main .gsc-comments { gap: 22px; }
-main .gsc-comment > div:first-child {
+main :is(.gsc-comment > div:first-child, .gsc-comment-box) {
 
   --color-prettylights-syntax-comment: #768390;
   --color-prettylights-syntax-constant: #6cb6ff;
@@ -326,10 +326,6 @@ main .gsc-reply-header::after {
 main .gsc-reply-content { padding-bottom: 6px; }
 main .gsc-reply-box { background: transparent; border-top: 1px solid #a8c5dd25; }
 main .gsc-reply-box button { background: #15202d; color: var(--dialogue-muted); border-color: #3a4b5d; }
-main .gsc-comment .gsc-comment-box { background: #172230; }
-main .gsc-comment .gsc-comment-box-tabs { border-color: #3a4b5d; }
-main .gsc-comment .gsc-comment-box-textarea { color: var(--dialogue-ink); background: #121b26; border-color: #3a4b5d; }
-main .gsc-comment .gsc-comment-box-textarea-extras { background: #121b26; border-color: #3a4b5d; }
 main .gsc-comment :is(a,button,textarea):focus-visible {
   outline: 2px solid #b5dbf4; outline-offset: 2px;
 }
@@ -360,4 +356,242 @@ main .gsc-loading-image {
 @media (forced-colors: active) {
   main .gsc-comment > div:first-child { border: 1px solid CanvasText; }
   main .gsc-comment-header::after, main .gsc-reply-header::after { background: CanvasText; }
+}
+
+/* GINKA message composer: the native form itself is the dialogue window.
+   Keep the real tab order, preview, fixed-width switch and GitHub controls. */
+main .gsc-comment-box,
+main .gsc-comment-box:not(.gsc-comment-box-is-reply) {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(180deg,#293b4c 0,#101721 32px,#141d29 60%,#1a2938 100%);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: none;
+  color: var(--dialogue-ink);
+}
+main .gsc-comment .gsc-comment-box-is-reply {
+  background: linear-gradient(180deg,#243444 0,#111b27 32px,#162332 100%);
+  border-top: 1px solid #a8c5dd26;
+}
+main .gsc-comment-box .gsc-comment-box-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  min-width: 0;
+  min-height: 44px;
+  padding: 7px 18px 6px;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+main .gsc-comment-box-tabs::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg,#e5edf5a0,#e5edf522 70%,transparent);
+  pointer-events: none;
+}
+main .gsc-comment-box-tabs > div:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 13px;
+  margin: 0;
+  min-width: 0;
+}
+main .gsc-comment-box-tabs > div:first-child::before {
+  content: '';
+  flex: 0 0 19px;
+  height: 18px;
+  background: var(--dialogue-motif) center / contain no-repeat;
+  filter: brightness(0) invert(1);
+  opacity: .9;
+}
+main .gsc-comment-box-tabs > div:first-child > button {
+  position: relative;
+  margin: 0;
+  padding: 4px 0;
+  min-height: 28px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--dialogue-muted);
+  font-size: 13px;
+  line-height: 1.6;
+  box-shadow: none;
+}
+main .gsc-comment-box-tabs > div:first-child > button.color-bg-canvas {
+  color: var(--dialogue-ink);
+  font-weight: 600;
+}
+main .gsc-comment-box-tabs > div:first-child > button.color-bg-canvas::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -6px;
+  height: 1px;
+  background: #e5edf5;
+}
+main .gsc-comment-box-tabs > div:first-child > button:hover {
+  color: #fff;
+  text-shadow: 0 0 1px #fff4;
+}
+main .gsc-comment-box-md-toolbar { flex: none; margin: 0; }
+main .gsc-comment-box .gsc-toolbar-item {
+  display: grid; place-items: center;
+  width: 30px; height: 30px; padding: 0;
+  background: transparent; color: var(--dialogue-muted);
+  border: 0; border-radius: 2px; box-shadow: none;
+}
+main .gsc-comment-box .gsc-toolbar-item:hover { background: #ffffff12; color: #fff; }
+main .gsc-comment-box .gsc-toolbar-item svg { width: 16px; height: 16px; }
+main .gsc-comment-box .gsc-comment-box-main {
+  margin: 0;
+  min-width: 0;
+  padding: 8px 22px 0;
+  background: transparent;
+}
+main .gsc-comment-box .gsc-comment-box-write {
+  display: flex; flex-direction: column;
+  min-width: 0; background: transparent; border: 0; border-radius: 0;
+}
+main .gsc-comment-box .gsc-comment-box-write:focus-within { box-shadow: none; }
+main .gsc-comment-box .gsc-comment-box-textarea,
+main .gsc-comment .gsc-comment-box .gsc-comment-box-textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 116px;
+  padding: 9px 0 10px;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--dialogue-ink);
+  caret-color: #d0e7f8;
+  font-size: 14px;
+  line-height: 1.85;
+  box-shadow: none;
+  resize: vertical;
+  scrollbar-width: thin;
+  scrollbar-color: #52677d transparent;
+}
+main .gsc-comment-box .gsc-comment-box-textarea::placeholder { color: #a7b7c8; opacity: 1; }
+main .gsc-comment-box .gsc-comment-box-textarea:disabled { color: #a7b7c8; opacity: 1; cursor: not-allowed; }
+main .gsc-comment-box .gsc-comment-box-textarea-extras,
+main .gsc-comment .gsc-comment-box .gsc-comment-box-textarea-extras {
+  display: flex; justify-content: flex-end; padding: 0 0 6px;
+  background: transparent; border: 0; border-radius: 0; box-shadow: none;
+}
+main .gsc-comment-box .gsc-comment-box-markdown-hint { color: var(--dialogue-muted); }
+main .gsc-comment-box .gsc-comment-box-markdown-hint:hover { color: #fff; }
+main .gsc-comment-box .gsc-comment-box-preview {
+  min-height: 131px; padding: 9px 0 10px; border: 0;
+  background: transparent; color: var(--dialogue-ink);
+  font-size: 14px; line-height: 1.85; overflow-wrap: anywhere;
+}
+main .gsc-comment-box .gsc-comment-box-preview :is(pre,.highlight pre) {
+  max-width: 100%; overflow-x: auto; background: #101923;
+}
+main .gsc-comment-box .gsc-comment-box-preview table { display: block; max-width: 100%; overflow-x: auto; }
+main .gsc-comment-box .gsc-comment-box-preview img { max-width: 100%; height: auto; }
+main .gsc-comment-box .gsc-comment-box-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px 12px;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 18px 9px;
+  border-top: 1px solid #b7cde026;
+  background: #0b121c40;
+}
+main .gsc-comment-box .gsc-comment-box-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px 12px;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 100%;
+  margin-inline-start: auto;
+}
+main .gsc-comment-box-bottom :is(.btn,button,a.btn) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  max-width: 100%;
+  margin: 0;
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--dialogue-muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  box-shadow: none;
+  white-space: normal;
+}
+main .gsc-comment-box-bottom :is(.btn,button,a.btn):hover:not(:disabled) {
+  background: #ffffff10;
+  color: #fff;
+  border-color: #b4c8dc35;
+}
+main .gsc-comment-box-bottom .btn-primary {
+  color: #e5f3ff;
+  border-color: #b4c8dc54;
+  background: #ffffff08;
+}
+main .gsc-comment-box-bottom .btn-primary:disabled {
+  color: #8495a6;
+  border-color: #b4c8dc24;
+  background: transparent;
+  cursor: not-allowed;
+  opacity: 1;
+}
+main .gsc-comment-box-bottom svg { flex: none; width: 15px; height: 15px; }
+main .gsc-comment-box :is(a,button,textarea):focus-visible {
+  outline: 2px solid #b5dbf4;
+  outline-offset: 2px;
+}
+main .gsc-comment-box .gsc-comment-box-textarea:focus-visible {
+  outline: 0; box-shadow: inset 0 -1px #b5dbf4;
+}
+main .gsc-reply-box button {
+  border: 0; border-radius: 0; background: transparent;
+  color: var(--dialogue-muted); box-shadow: none;
+}
+main .gsc-reply-box button:hover { color: #fff; background: #ffffff0a; }
+@media(max-width:480px) {
+  main .gsc-comment-box .gsc-comment-box-tabs { padding-inline: 12px; }
+  main .gsc-comment-box-tabs::after { left: 12px; right: 12px; }
+  main .gsc-comment-box .gsc-comment-box-main { padding-inline: 14px; }
+  main .gsc-comment-box .gsc-comment-box-bottom { padding-inline: 12px; }
+}
+@media(pointer:coarse) {
+  main .gsc-comment-box-tabs > div:first-child > button,
+  main .gsc-comment-box .gsc-toolbar-item,
+  main .gsc-comment-box-bottom :is(.btn,button,a.btn) { min-height: 44px; }
+  main .gsc-comment-box .gsc-toolbar-item { width: 44px; }
+  main .gsc-comment-box .gsc-comment-box-textarea { font-size: 16px; }
+}
+@media(forced-colors:active) {
+  main .gsc-comment-box { border: 1px solid CanvasText; }
+  main .gsc-comment-box-tabs::after { background: CanvasText; }
+  main .gsc-comment-box .gsc-comment-box-textarea:focus-visible { outline: 2px solid Highlight; }
 }
