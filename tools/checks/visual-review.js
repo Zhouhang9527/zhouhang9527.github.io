@@ -48,8 +48,8 @@ const routes = [['home','/'],['archives','/archives/'],['tags','/tags/'],['categ
               if(await dialogue.count()){
                 await dialogue.scrollIntoViewIfNeeded();await page.waitForTimeout(1000);await shot('comments');
                 const frame=page.locator('.journal-dialogue-frame');
-                const structure=await frame.evaluate(el=>({height:el.getBoundingClientRect().height,hasIframe:!!el.querySelector('iframe'),next:el.nextElementSibling?.classList.contains('journal-dialogue-comments'),readingColumn:el.closest('.journal-dialogue')?.parentElement?.classList.contains('journal-reading-shell'),aligned:Math.abs(el.getBoundingClientRect().left-document.querySelector('.post-body').getBoundingClientRect().left)<3}));
-                if(structure.hasIframe||!structure.next||structure.height>190||!structure.readingColumn||!structure.aligned)issues.push(width+' '+mode+' dialogue structure');
+                const structure=await frame.evaluate(el=>({height:el.getBoundingClientRect().height,panelHeight:el.querySelector('.journal-dialogue-panel')?.getBoundingClientRect().height,hasIframe:!!el.querySelector('iframe'),next:el.nextElementSibling?.classList.contains('journal-dialogue-comments'),readingColumn:el.closest('.journal-dialogue')?.parentElement?.classList.contains('journal-reading-shell'),aligned:Math.abs(el.getBoundingClientRect().left-document.querySelector('.post-body').getBoundingClientRect().left)<3}));
+                if(structure.hasIframe||!structure.next||structure.height>600||structure.panelHeight>structure.height*.55||!structure.readingColumn||!structure.aligned)issues.push(width+' '+mode+' dialogue structure');
                 const count=await page.locator('iframe.giscus-frame').count();
                 report.push({width,mode,name:'giscus',count,structure});
                 if(count>1)issues.push(width+' '+mode+' duplicate Giscus');

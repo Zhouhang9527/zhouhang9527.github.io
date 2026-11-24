@@ -17,8 +17,11 @@ function routeKind(page) {
 }
 
 function ginkaScene(page, slot) {
-  const pair = sceneMap.routes[routeKind(page)][slot === 'sidebar' ? 'sidebar' : 'masthead'];
-  const width = slot === 'sidebar' ? 640 : routeKind(page) === 'about' ? 1280 : 960;
+  const kind = routeKind(page);
+  const pair = slot === 'dialogue'
+    ? (kind === 'post' ? ['window-room','beach'] : ['torii-sea','torii-close'])
+    : sceneMap.routes[kind][slot === 'sidebar' ? 'sidebar' : 'masthead'];
+  const width = slot === 'dialogue' ? 960 : slot === 'sidebar' ? 640 : kind === 'about' ? 1280 : 960;
   // Extra extracted art is only for the opt-in local server, never a production build.
   const preview = hexo.env.cmd === 'server' && process.env.GINKA_LOCAL_SCENES === '1';
   const candidates = preview ? ['local-preview/' + pair[0], pair[1]] : [pair[1]];

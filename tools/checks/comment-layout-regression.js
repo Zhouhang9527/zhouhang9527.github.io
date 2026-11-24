@@ -25,10 +25,10 @@ const base = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4004';
         const bounds=await frame.evaluate(el=>{
           const body=document.querySelector('.post-body').getBoundingClientRect();
           const box=el.getBoundingClientRect();
-          return {deltaLeft:Math.abs(body.left-box.left),deltaRight:Math.abs(body.right-box.right),height:box.height,overflow:document.documentElement.scrollWidth>innerWidth+1,separate:el.nextElementSibling?.classList.contains('journal-dialogue-comments')};
+          return {deltaLeft:Math.abs(body.left-box.left),deltaRight:Math.abs(body.right-box.right),height:box.height,panel:el.querySelector('.journal-dialogue-panel').getBoundingClientRect().height,scene: getComputedStyle(el).backgroundImage,overflow:document.documentElement.scrollWidth>innerWidth+1,separate:el.nextElementSibling?.classList.contains('journal-dialogue-comments')};
         });
         assert.ok(bounds.deltaLeft<4&&bounds.deltaRight<4,JSON.stringify({width,mode,...bounds}));
-        assert.ok(bounds.height>=100&&bounds.height<=190,JSON.stringify(bounds));
+        assert.ok(bounds.height>=216&&bounds.height<=600&&bounds.panel>=100&&bounds.panel<=bounds.height*.55&&bounds.scene!=='none',JSON.stringify(bounds));
         assert.ok(bounds.separate&&!bounds.overflow);
       }
       await frame.locator('.journal-dialogue-next').click();
