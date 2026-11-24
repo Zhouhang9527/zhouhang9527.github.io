@@ -64,14 +64,15 @@ const checks = [
       motion.includes('observer.observe(hero)') && motion.includes('if (!hero) return;')
   },
   {
-    name: 'publishes one hero per theme and the six hand-selected gallery plates',
+    name: 'publishes one hero per theme and the three hand-selected gallery frames',
     pass: $('.journal-hero picture.journal-hero-image .hero-art[loading="eager"][fetchpriority="high"][srcset*="hero-katana-day-640.webp"]').length === 1 &&
       // 首屏只留一个 <img>，夜色版本交给 <source media="(prefers-color-scheme: dark)">，
       // 避免昼夜两套图同时下载。
       $('.journal-hero picture.journal-hero-image img').length === 1 &&
       $('.journal-hero picture.journal-hero-image source[srcset*="hero-katana-night-640.webp"]').length === 1 &&
-      $('[data-journal-gallery] [data-fancybox="ginka-island"]').length === 6 &&
-      $('[data-journal-gallery] [data-fancybox="ginka-island"] .scene-night').length === 6 &&
+      $('[data-journal-gallery] [data-fancybox="ginka-island"]').length === 3 &&
+      $('[data-journal-gallery] [data-fancybox="ginka-island"] .scene-night').length === 3 &&
+      $('[data-journal-gallery] .journal-scene-label').length === 3 &&
       $('.journal-hero-dust i').length === 6
   },
   {

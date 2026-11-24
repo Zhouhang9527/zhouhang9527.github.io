@@ -102,56 +102,35 @@
     </aside>
   </div>
 {% if cover %}
-  {% set plates = [
-    {slug: 'torii-close', number: '01', title: '鸟居 · 近景', alt: '岛上的朱红鸟居，日光穿过梁柱。', max: 1440},
-    {slug: 'torii-sea', number: '02', title: '鸟居 · 远景', alt: '暮色里的海上鸟居，朱红梁柱立在海面尽头。', max: 1440},
-    {slug: 'beach', number: '03', title: '沙滩 · 夏日', alt: '夏日沙滩与浅滩的水光，远处是岛影。', max: 1440},
-    {slug: 'island-street', number: '04', title: '岛上街道', alt: '通往海边的小路，两侧是低矮的木屋。', max: 1440},
-    {slug: 'house', number: '05', title: '日式住宅', alt: '木格窗与檐下的日式住宅。', max: 1440},
-    {slug: 'window-room', number: '06', title: '窗边的房间', alt: '榻榻米房间与窗外的海。', max: 1440}
+  {% set scenes = [
+    {slug: 'torii-close', name: '海上鸟居', max: 1440, alt: '海面上的朱红鸟居，日光穿过梁柱。'},
+    {slug: 'beach', name: '姬之岛海岸', max: 1440, alt: '姬之岛的夏日海岸，浅滩上落着水光。'},
+    {slug: 'shop-street', name: '岛间街道', max: 1440, alt: '岛上的商店街，蓝色门檐连成一排。'}
   ] %}
   <section class="journal-island" id="ginka-scenes" aria-labelledby="island-title">
     <div class="book-width">
       <div class="journal-island-heading">
-        <span class="journal-eyebrow">03 / GINKA · THE ISLAND</span>
-        <h2 id="island-title"><img class="journal-wing" src="{{ url_for('/images/ginka/butterfly.png') }}" alt="" width="24" height="24">岛影画廊</h2>
-        <span class="journal-island-number" aria-hidden="true">03</span>
+        <h2 id="island-title"><img class="journal-wing" src="{{ url_for('/images/ginka/butterfly.png') }}" alt="" width="22" height="22">岛影画廊</h2>
+        <span class="journal-island-credit">©Frontwing / ©bushiroad</span>
       </div>
-      <div class="journal-island-grid" data-journal-gallery>
-        <figure class="journal-island-main art-mat">
-          <div class="art-viewport">
-            {% for plate in plates %}
-            {% set base = '/images/ginka/scenes/' ~ plate.slug %}
-            {% set extra %}{% if plate.max > 960 %}, {{ url_for(base ~ '-day-' ~ plate.max ~ '.webp') }} {{ plate.max }}w{% endif %}{% endset %}
-            {% set extraNight %}{% if plate.max > 960 %}, {{ url_for(base ~ '-night-' ~ plate.max ~ '.webp') }} {{ plate.max }}w{% endif %}{% endset %}
-            <a class="art-slide{% if loop.first %} is-active{% endif %}" href="{{ url_for(base ~ '-day-960.webp') }}" data-full-day="{{ url_for(base ~ '-day-' ~ plate.max ~ '.webp') }}" data-full-night="{{ url_for(base ~ '-night-' ~ plate.max ~ '.webp') }}" data-fancybox="ginka-island" data-caption="PLATE {{ plate.number }} · {{ plate.title }} · ©Frontwing / ©bushiroad" data-plate="{{ plate.number }}" data-plate-title="{{ plate.title }}"{% if not loop.first %} aria-hidden="true" tabindex="-1"{% endif %}>
-              <img class="scene-day" src="{{ url_for(base ~ '-day-960.webp') }}" srcset="{{ url_for(base ~ '-day-640.webp') }} 640w, {{ url_for(base ~ '-day-960.webp') }} 960w{{ extra | trim }}" sizes="(max-width: 960px) 90vw, 630px" alt="{{ plate.alt }}" width="1680" height="720" loading="lazy" decoding="async">
-              <img class="scene-night" src="{{ url_for(base ~ '-night-960.webp') }}" srcset="{{ url_for(base ~ '-night-640.webp') }} 640w, {{ url_for(base ~ '-night-960.webp') }} 960w{{ extraNight | trim }}" sizes="(max-width: 960px) 90vw, 630px" alt="" width="1680" height="720" loading="lazy" decoding="async">
-            </a>
-            {% endfor %}
-          </div>
-          <figcaption><span class="art-caption" aria-live="polite">PLATE 01 · 海境 · 鸟居</span><span>©Frontwing / ©bushiroad</span></figcaption>
-        </figure>
-        <div class="journal-island-story">
-          <span class="journal-eyebrow" lang="ja">姫之島で、もう一度</span>
-          <h3>银花、流星与夏日的岛屿</h3>
-          <p>夏日祭那一夜，银花从岛上消失了。五年后，青羽流星乘渡轮回到姬之岛，在熟悉的风景里，与模样依旧的她重逢。</p>
-          <a class="journal-story-link" href="{{ official }}" target="_blank" rel="noopener noreferrer">阅读官方故事介绍 <span aria-hidden="true">↗</span></a>
-          <div class="journal-plates" role="group" aria-label="选择岛影画幅">
-            <span class="journal-eyebrow">SELECT PLATE · 切换画集场景</span>
-            <div class="plate-list">
-              {% for plate in plates %}
-              {% set base = '/images/ginka/scenes/' ~ plate.slug %}
-              <a class="plate-thumb" href="{{ url_for(base ~ '-day-' ~ plate.max ~ '.webp') }}" data-plate-select="{{ plate.number }}"{% if loop.first %} aria-current="true"{% endif %}>
-                <img class="scene-day" src="{{ url_for(base ~ '-day-320.webp') }}" alt="" width="320" height="137" loading="lazy" decoding="async">
-                <img class="scene-night" src="{{ url_for(base ~ '-night-320.webp') }}" alt="" width="320" height="137" loading="lazy" decoding="async">
-                <span><small>PLATE {{ plate.number }}</small>{{ plate.title }}</span>
-              </a>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-      </div>
+      <ul class="journal-scene-strip" data-journal-gallery>
+        {% for scene in scenes %}
+        {% set base = '/images/ginka/scenes/' ~ scene.slug %}
+        {% set extra %}{% if scene.max > 960 %}, {{ url_for(base ~ '-day-' ~ scene.max ~ '.webp') }} {{ scene.max }}w{% endif %}{% endset %}
+        {% set extraNight %}{% if scene.max > 960 %}, {{ url_for(base ~ '-night-' ~ scene.max ~ '.webp') }} {{ scene.max }}w{% endif %}{% endset %}
+        <li class="journal-scene-item">
+          <a class="journal-scene-card" href="{{ url_for(base ~ '-day-' ~ scene.max ~ '.webp') }}"
+             data-full-day="{{ url_for(base ~ '-day-' ~ scene.max ~ '.webp') }}"
+             data-full-night="{{ url_for(base ~ '-night-' ~ scene.max ~ '.webp') }}"
+             data-fancybox="ginka-island"
+             data-caption="{{ scene.name }} · ©Frontwing / ©bushiroad">
+            <img class="scene-day" src="{{ url_for(base ~ '-day-960.webp') }}" srcset="{{ url_for(base ~ '-day-640.webp') }} 640w, {{ url_for(base ~ '-day-960.webp') }} 960w{{ extra | trim }}" sizes="(max-width: 767px) 78vw, (max-width: 1100px) 46vw, 360px" alt="{{ scene.alt }}" width="2560" height="1440" loading="lazy" decoding="async">
+            <img class="scene-night" src="{{ url_for(base ~ '-night-960.webp') }}" srcset="{{ url_for(base ~ '-night-640.webp') }} 640w, {{ url_for(base ~ '-night-960.webp') }} 960w{{ extraNight | trim }}" sizes="(max-width: 767px) 78vw, (max-width: 1100px) 46vw, 360px" alt="" width="2560" height="1440" loading="lazy" decoding="async">
+            <span class="journal-scene-label">{{ scene.name }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
     </div>
   </section>
 {% endif %}

@@ -53,7 +53,7 @@
   }
 
   function syncScenes(resolved) {
-    var links = document.querySelectorAll('.art-slide[data-full-day], .plate-thumb[data-plate-select]');
+    var links = document.querySelectorAll('.journal-scene-card[data-full-day]');
     for (var index = 0; index < links.length; index += 1) {
       var link = links[index];
       var full = resolved === 'moonlit' ? link.getAttribute('data-full-night') : link.getAttribute('data-full-day');

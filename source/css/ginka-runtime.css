@@ -408,10 +408,10 @@
 #music-next:hover,
 #music-play-mode-toggle:hover,
 #music-playlist-toggle:hover {
-  background: rgba(255, 255, 255, 0.4) !important;
+  background: var(--music-hover) !important;
   transform: scale(1.05);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: none !important;
+  border-color: var(--music-border) !important;
 }
 
 #music-toggle:active,
@@ -425,10 +425,10 @@
 }
 
 #music-mini-btn:hover {
-  background: rgba(255, 255, 255, 0.4) !important;
+  background: var(--music-hover) !important;
   transform: scale(1.05);
-  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.15) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: none !important;
+  border-color: var(--music-border) !important;
 }
 
 #music-mini-btn:active {
@@ -498,10 +498,10 @@
 #music-play-mode-toggle:hover,
 #music-playlist-toggle:hover,
 #music-mini-btn:hover {
-  background: rgba(255, 255, 255, 0.4) !important;
+  background: var(--music-hover) !important;
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
+  border-color: var(--music-border) !important;
 }
 
 /* 移动端触摸反馈 */
@@ -513,7 +513,7 @@
   #music-play-mode-toggle:active,
   #music-playlist-toggle:active,
   #music-mini-btn:active {
-    background: rgba(255, 255, 255, 0.4) !important;
+    background: var(--music-hover) !important;
     transform: scale(0.92) !important;
   }
 }
@@ -558,12 +558,12 @@
 #music-title {
   color: #284560 !important;
   font-weight: 700 !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  text-shadow: none;
 }
 
 #music-time,
 #music-info > div:nth-child(2) {
-  color: #4a6682 !important;
+  color: var(--music-text) !important;
   font-weight: 500;
 }
 

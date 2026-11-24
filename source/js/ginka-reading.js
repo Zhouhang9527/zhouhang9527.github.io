@@ -158,7 +158,23 @@
         finally { button.disabled = false; }
         if (button.isConnected) scheduleButtonReset(button, feedback);
       });
-      toolbar.append(label, button, feedback);
+      const wrapButton = document.createElement('button');
+      wrapButton.type = 'button';
+      wrapButton.className = 'journal-code-wrap';
+      wrapButton.setAttribute('aria-pressed', 'false');
+      wrapButton.textContent = '自动换行';
+      wrapButton.addEventListener('click', () => {
+        const shell = wrapButton.closest('.journal-code');
+        if (!shell) return;
+        const on = shell.getAttribute('data-code-wrap') === 'on';
+        if (on) shell.removeAttribute('data-code-wrap');
+        else shell.setAttribute('data-code-wrap', 'on');
+        wrapButton.setAttribute('aria-pressed', String(!on));
+      });
+      const actions = document.createElement('span');
+      actions.className = 'journal-code-actions';
+      actions.append(wrapButton, button);
+      toolbar.append(label, actions, feedback);
       const shell = document.createElement('div');
       shell.className = 'journal-code';
       block.before(shell);

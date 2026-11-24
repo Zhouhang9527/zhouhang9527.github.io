@@ -33,7 +33,7 @@ body .post-body .journal-table-hint { font-size: 12px; color: var(--journal-mute
 body .post-body .journal-code { margin: 1.5em 0; min-width: 0; max-width: 100%; border: 1px solid var(--journal-line); border-radius: var(--journal-radius-control); overflow: hidden; background: #f6f8fb; }
 .journal-code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 6px 0 14px; min-height: 34px; background: #e9f0f6; border-bottom: 1px solid var(--journal-line); }
 .journal-code-toolbar > span { font: 12px Consolas, monospace; letter-spacing: 1px; color: #526a80; }
-body .post-body .journal-code :is(figure.highlight,pre) { margin: 0 !important; padding-top: 0; border: 0; border-radius: 0; box-shadow: none; max-width: 100%; font-size: 13px; line-height: 1.75; }
+body .post-body .journal-code :is(figure.highlight,pre) { margin: 0 !important; padding-top: 0; border: 0; border-radius: 0; box-shadow: none; max-width: 100%; font-size: 14px; line-height: 1.75; }
 body .post-body .journal-code > pre { padding: 14px 16px; overflow-x: auto; white-space: pre; }
 body .post-body .journal-code figure.highlight { overflow-x: auto; padding-bottom: 12px; }
 body .post-body .journal-code figure.highlight table { display: table; width: auto; min-width: 100%; border: 0; border-collapse: collapse; margin: 0; }
@@ -48,11 +48,12 @@ body .post-body .journal-code figure.highlight pre.journal-code-pre {
   box-sizing: border-box;
   width: 100%;
   padding: 10px 0;
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: hidden;
   white-space: normal;
   line-height: 1.65;
 }
-.journal-code-pre .journal-code-lines { display: block; background: none; border: 0; padding: 0; font: inherit; white-space: normal; }
+.journal-code-pre .journal-code-lines { display: block; width: max-content; min-width: 100%; background: none; border: 0; padding: 0; font: inherit; white-space: normal; }
 .journal-code-lines .journal-code-line { display: grid; grid-template-columns: 3.2em minmax(0, 1fr); min-height: 1.65em; }
 .journal-code-line::before {
   content: attr(data-line);
@@ -62,12 +63,17 @@ body .post-body .journal-code figure.highlight pre.journal-code-pre {
   text-align: right;
   user-select: none;
 }
-.journal-code-line .journal-code-text { min-width: 0; padding: 0 14px; white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; tab-size: 4; }
+/* 默认横向滚动，长行不折；顶部「自动换行」按钮切到 pre-wrap */
+.journal-code-line .journal-code-text { min-width: 0; padding: 0 14px; white-space: pre; overflow-wrap: normal; word-break: normal; tab-size: 4; }
+.journal-code[data-code-wrap='on'] pre.journal-code-pre { overflow-x: hidden; }
+.journal-code[data-code-wrap='on'] .journal-code-lines { width: auto; min-width: 0; }
+.journal-code[data-code-wrap='on'] .journal-code-line .journal-code-text { white-space: pre-wrap; overflow-wrap: anywhere; }
 body .post-body .journal-code > pre { white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; }
 body #music-player button, body .search-popup button, body .journal-copy, body .journal-feedback-actions button { font: inherit; font-size: 13px; min-height: 44px; padding: 8px 14px; border: 1px solid var(--journal-line) !important; border-radius: var(--journal-radius-control); background: var(--journal-surface) !important; color: #425e77 !important; box-shadow: none !important; transform: none !important; cursor: pointer; }
 body .journal-copy:hover, body .journal-feedback-actions button:hover { background: #e0ebf4 !important; }
 body .journal-copy:disabled { cursor: wait; opacity: .65; }
 .journal-copy-buffer { position: fixed; top: 0; left: -9999px; }
+.journal-code-actions { display: inline-flex; align-items: center; gap: 8px; }
 
 .journal-feedback { padding: 24px; margin: 32px 0; border: 1px solid var(--journal-line); border-radius: var(--journal-radius); background: var(--journal-surface-soft); text-align: center; }
 body .journal-feedback h2 { margin: 0 0 16px; font-family: inherit; font-weight: 600; font-size: 17px; line-height: 1.6; color: #354f67; text-shadow: none; }
@@ -305,3 +311,16 @@ body .post-body .journal-code .journal-copy svg { display: block; width: 16px; h
 @media print {
   .journal-reading-progress, .journal-outline { display: none !important; }
 }
+
+/* 代码块「自动换行」开关 */
+.journal-code-wrap {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 28px; margin-right: 6px; padding: 0 9px;
+  border: 1px solid var(--journal-line); border-radius: var(--journal-radius-control);
+  background: var(--journal-surface); color: #4a6478;
+  font: 400 12px/1 var(--font-body); cursor: pointer;
+}
+.journal-code-wrap[aria-pressed='true'] { border-color: #7ba6c2; color: #2d6286; background: #e4eef7; }
+.journal-code-wrap:focus-visible { outline: 2px solid var(--journal-focus); outline-offset: 2px; }
+html[data-theme='moonlit'] .journal-code-wrap { background: #1b2734; border-color: var(--journal-line); color: var(--body-text); }
+html[data-theme='moonlit'] .journal-code-wrap[aria-pressed='true'] { background: #24333f; border-color: #476a8b; color: var(--music-accent, #91c5f4); }

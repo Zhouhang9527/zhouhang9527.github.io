@@ -311,69 +311,24 @@
     });
   }
 
+  // 三张画幅并列：只接管 Fancybox 打开，不再有画幅切换状态。
   function bindGallery(scope, gallery) {
-    const mat = gallery.querySelector('.art-mat');
-    const plates = [...gallery.querySelectorAll('[data-plate]')];
-    const thumbs = [...gallery.querySelectorAll('[data-plate-select]')];
-    const caption = mat.querySelector('.art-caption');
-    let inView = false;
-    let active = plates.find(plate => plate.classList.contains('is-active'));
-    const play = () => gallery.classList.toggle('ginka-gallery-playing', inView && !isPaused());
-    function select(id) {
-      const plate = plates.find(item => item.dataset.plate === id);
-      if (!plate || plate === active) return;
-      active = plate;
-      if (!reduce.matches) active.classList.add('ginka-plate-primed');
-      for (const slide of plates) {
-        slide.classList.toggle('is-active', slide === active);
-        slide.toggleAttribute('inert', slide !== active);
-        if (slide === active) { slide.removeAttribute('aria-hidden'); slide.removeAttribute('tabindex'); }
-        else { slide.setAttribute('aria-hidden', 'true'); slide.tabIndex = -1; }
-      }
-      for (const thumb of thumbs) {
-        if (thumb.dataset.plateSelect === id) thumb.setAttribute('aria-current', 'true');
-        else thumb.removeAttribute('aria-current');
-      }
-      caption.textContent = `PLATE ${id} · ${plate.dataset.plateTitle}`;
-    }
-    // A gallery image is an ordinary link without JS. With Fancybox, run its
-    // handler before Pjax can mistake the local JPG/WebP for an HTML route.
     scope.on(gallery, 'click', event => {
       if (!plainClick(event)) return;
-      const thumb = event.target.closest('[data-plate-select]');
-      if (thumb) { event.preventDefault(); select(thumb.dataset.plateSelect); return; }
-      const slide = event.target.closest('[data-plate].is-active');
-      if (!slide) return;
-      if (!window.Fancybox?.show) { event.stopPropagation(); return; }
+      const link = event.target.closest('.journal-scene-card');
+      if (!link) return;
+      if (!window.Fancybox?.show) return; // 没有 Fancybox 时保留原生链接
+      const links = [...gallery.querySelectorAll('.journal-scene-card')];
+      const items = links.map(item => ({
+        src: item.href,
+        caption: item.dataset.caption,
+        type: 'image'
+      }));
       event.preventDefault();
-      window.Fancybox.show(plates.map(item => ({ src: item.href, caption: item.dataset.caption, type: 'image' })), {
-        startIndex: plates.indexOf(slide), triggerEl: slide
-      });
+      window.Fancybox.show(items, { startIndex: links.indexOf(link), triggerEl: link });
     }, { capture: true });
-    scope.on(gallery, 'keyup', event => {
-      if (event.key === 'Enter' && event.target.closest('[data-plate], [data-plate-select]')) event.preventDefault();
-    }, { capture: true });
-    if (reduce.matches || !('IntersectionObserver' in window)) return;
-    active?.classList.add('ginka-plate-primed');
-    const reveal = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      reveal.unobserve(mat);
-      mat.classList.remove('ginka-mat-pending');
-      mat.classList.add('ginka-mat-seen');
-    }, { threshold: 0.12 });
-    const visible = new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; play(); });
-    mat.classList.add('ginka-mat-pending');
-    reveal.observe(mat);
-    visible.observe(mat);
-    watchPause(scope, play);
-    scope.dispose(() => {
-      reveal.disconnect();
-      visible.disconnect();
-      mat.classList.remove('ginka-mat-pending', 'ginka-mat-seen');
-      gallery.classList.remove('ginka-gallery-playing');
-      plates.forEach(plate => plate.classList.remove('ginka-plate-primed'));
-    });
   }
+
 
   function cleanup() {
     if (!current) return;

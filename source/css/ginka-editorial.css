@@ -257,7 +257,7 @@ body .header .journal-mobile-links :is(a, button):hover { background: #eaf2f8 !i
   grid-template-columns: minmax(0, 1fr) 272px;
   align-items: start;
   gap: clamp(29px, 5vw, 64px);
-  padding-block: 76px 88px;
+  padding-block: 64px 74px;
 }
 .main-inner:not(:has(.journal-hero)) .journal-layout { padding-top: 8px; }
 .journal-feed { min-width: 0; }
@@ -346,28 +346,18 @@ body .header .journal-mobile-links :is(a, button):hover { background: #eaf2f8 !i
 .ginka-home .journal-game-note a { font: 400 11px/1.6 var(--font-mono); color: #385f7b !important; }
 
 /* Book III · island scenes are read manually, never auto-advanced. */
-.journal-island { padding-block: 94px 100px; border-block: 1px solid var(--rule); background: linear-gradient(180deg, #fcfdff, #edf3f9); }
-.journal-island-heading { position: relative; margin-bottom: 42px; padding-block: 5px 19px; border-bottom: 1px solid var(--rule); }
-.journal-island-number { position: absolute; inset: auto 0 0 auto; color: #b7cbdc; font: italic 400 clamp(60px, 8vw, 92px)/.88 var(--font-number); pointer-events: none; }
-.journal-island-grid { display: grid; grid-template-columns: minmax(0, 1.38fr) minmax(0, .82fr); gap: clamp(24px, 4.2vw, 52px); align-items: center; }
-.journal-island-main { box-sizing: border-box; margin: 0; padding: 13px 13px 14px; border: 1px solid #d6e1e9; border-radius: 3px; background: #fffefa; box-shadow: 0 4px 14px #4161840c; }
-.art-viewport { position: relative; overflow: hidden; isolation: isolate; aspect-ratio: 16/9.5; background: #e8eef4; }
-.ginka-home .art-slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 490ms var(--ease-art); }
-.ginka-home .art-slide.is-active { opacity: 1; pointer-events: auto; z-index: 1; cursor: zoom-in; }
-.art-slide:focus-visible { outline-offset: -4px; }
-.art-slide img { display: block; width: 100%; height: 100%; object-fit: cover; margin: 0; filter: saturate(.84) contrast(.97) brightness(1.02); }
-.journal-island-main figcaption { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 4px 14px; margin-top: 11px; color: var(--muted); font: 400 11px/1.6 var(--font-mono); letter-spacing: .035em; }
-.journal-island-story { padding-inline-start: 7px; }
-.ginka-home .journal-island-story h3 { margin: 9px 0 13px; font: 400 clamp(21px, 2.25vw, 26px)/1.55 var(--font-title); letter-spacing: .1em; }
-.journal-island-story p { color: var(--muted); font-size: 14px; line-height: 2; margin: 0 0 14px; }
-.ginka-home .journal-story-link { display: inline-flex; gap: 12px; align-items: center; color: #315d7e !important; font-size: 12.5px; min-height: 34px; }
-.journal-plates { border-top: 1px solid var(--rule); margin-top: 23px; padding-top: 15px; }
-.plate-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-top: 9px; }
-.ginka-home a.plate-thumb { display: block; box-sizing: border-box; padding: 5px; border: 1px solid var(--rule); border-radius: 2px; background: #fafcfe; color: #3e5970 !important; }
-.ginka-home a.plate-thumb:is(:hover, [aria-current='true']) { border-color: #6b9ab9; background: #edf4fa; }
-.plate-thumb img { display: block; width: 100%; height: auto; aspect-ratio: 16/10; object-fit: cover; margin: 0; filter: saturate(.84) contrast(.97) brightness(1.02); }
-.plate-thumb > span { display: block; font-size: 10.5px; line-height: 1.5; margin-top: 4px; }
-.plate-thumb small { display: block; font: 400 9px/1.5 var(--font-mono); letter-spacing: .07em; }
+.journal-island { padding-block: 46px 48px; border-block: 1px solid var(--rule); background: linear-gradient(180deg, #fcfdff, #eef3f9); }
+.journal-island-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.journal-island-credit { color: var(--muted); font: 400 11px/1.6 var(--font-mono); letter-spacing: .04em; }
+
+/* 三张画幅横向并列；保持原比例，不做统一裁切 */
+.journal-scene-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 0; padding: 0; list-style: none; }
+.journal-scene-item { min-width: 0; }
+.journal-scene-card { position: relative; display: block; overflow: hidden; border: 1px solid var(--rule); border-radius: 3px; background: #fffefa; cursor: zoom-in; transition: border-color .25s var(--ease-art), transform .25s var(--ease-art); }
+.journal-scene-card:is(:hover, :focus-visible) { border-color: #7ba6c2; transform: translateY(-2px); }
+.journal-scene-card:focus-visible { outline: 2px solid var(--journal-focus); outline-offset: 2px; }
+.journal-scene-card img { display: block; width: 100%; height: auto; margin: 0; }
+.journal-scene-label { position: absolute; inset: auto 0 0 0; padding: 22px 12px 9px; color: #f4f9fd; font: 400 12px/1.4 var(--font-body); letter-spacing: .06em; background: linear-gradient(180deg, #0d1b2a00, #0d1b2ab8); }
 
 /* Interiors keep their landmark structure and existing Hexo/NexT controls. */
 body .post-block { background: #fdfefe !important; border: 1px solid var(--rule) !important; border-radius: var(--journal-radius); box-shadow: none !important; backdrop-filter: none !important; }
@@ -391,13 +381,22 @@ body .search-popup { background: #fbfdff !important; backdrop-filter: none !impo
 body .search-popup .search-header { border-radius: 6px 6px 0 0 !important; background: #edf4fa !important; backdrop-filter: none !important; }
 
 @media (max-width: 960px) {
-  .journal-layout, .journal-island-grid { grid-template-columns: minmax(0, 1fr); }
-  .journal-layout { padding-block: 58px 64px; }
+  .journal-layout { padding-block: 49px 54px; }
   .journal-aside { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
   .journal-game-note .journal-scene { max-height: 208px; }
-  .journal-island { padding-block: 63px 70px; }
-  .journal-island-story { padding: 0; }
-  .plate-list { max-width: 530px; }
+  .journal-island { padding-block: 34px 36px; }
+  .journal-scene-strip {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .journal-scene-strip::-webkit-scrollbar { display: none; }
+  .journal-scene-item { flex: 0 0 78%; scroll-snap-align: start; }
+  .journal-island-heading { margin-bottom: 14px; }
   .journal-entry { margin-inline: 0; }
 }
 @media (max-width: 680px) {
@@ -426,7 +425,7 @@ body .search-popup .search-header { border-radius: 6px 6px 0 0 !important; backg
   .ginka-home .journal-chapter-grid a { padding: 11px 6px; gap: 11px; min-height: 30px; }
   .journal-chapter-grid a + a { border-left: 0; border-top: 1px solid var(--rule); }
   .journal-chapter-grid a > span { font-size: 24px; }
-  .journal-layout { padding-block: 44px 55px; gap: 36px; }
+  .journal-layout { padding-block: 38px 47px; gap: 32px; }
   .journal-section-heading { padding-bottom: 16px; margin-bottom: 11px; }
   .journal-section-heading > a { display: inline-flex; align-items: center; min-height: 40px; }
   .journal-filters button { min-height: 40px; }
@@ -438,7 +437,6 @@ body .search-popup .search-header { border-radius: 6px 6px 0 0 !important; backg
   .journal-entry-tags a { padding-block: 7px; }
   .journal-aside { grid-template-columns: minmax(0, 1fr); }
   .journal-island-heading { margin-bottom: 24px; }
-  .journal-island-main { padding: 8px 8px 10px; }
   .journal-colophon { padding: 31px 0 36px; }
   body .search-popup { left: 12px !important; right: 12px !important; width: auto !important; margin-left: 0 !important; }
 }
@@ -453,7 +451,7 @@ body .search-popup .search-header { border-radius: 6px 6px 0 0 !important; backg
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto !important; }
-  .journal-entry::before, .journal-entry-arrow, .journal-hero-note, .art-slide,
+  .journal-entry::before, .journal-entry-arrow, .journal-hero-note,
   body .column > header.header::before, body .header .main-menu > .menu-item > a::after { transition: none !important; }
 }
 
@@ -470,8 +468,7 @@ body .search-popup .search-header { border-radius: 6px 6px 0 0 !important; backg
 .journal-scroll-cue,
 .journal-hero-note,
 .journal-game-note a,
-.journal-island-main figcaption,
-.plate-thumb > span,
+.journal-scene-label,
 .art-caption,
 body .header kbd { font-size: 12px; }
 
