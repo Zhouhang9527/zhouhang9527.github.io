@@ -2,11 +2,11 @@
         {% set dialogueSkin = ginka_dialogue_skin() %}
         {% set dialogueScene = ginka_scene(page, "dialogue") %}
         <section class="journal-dialogue" aria-label="评论区">
-          <div class="journal-dialogue-frame{% if dialogueSkin %} journal-dialogue-original{% endif %}{% if dialogueSkin and dialogueSkin.advance %} journal-dialogue-has-advance{% endif %}" data-dialogue-scene="{{ dialogueScene.slug }}"{% if dialogueSkin %} data-dialogue-skin="original"{% endif %} style="--dialogue-scene-day:url('{{ dialogueScene.day }}');--dialogue-scene-night:url('{{ dialogueScene.night }}'){% if dialogueSkin %};--dialogue-frame:url('{{ dialogueSkin.frame }}');--dialogue-butterfly:url('{{ dialogueSkin.butterfly }}');--dialogue-line:url('{{ dialogueSkin.line }}'){% if dialogueSkin.advance %};--dialogue-advance:url('{{ dialogueSkin.advance }}'){% endif %}{% endif %}">
+          <div class="journal-dialogue-frame{% if dialogueSkin %} journal-dialogue-original{% endif %}" data-dialogue-scene="{{ dialogueScene.slug }}"{% if dialogueSkin %} data-dialogue-skin="original"{% endif %} style="--dialogue-scene-day:url('{{ dialogueScene.day }}');--dialogue-scene-night:url('{{ dialogueScene.night }}'){% if dialogueSkin %};--dialogue-frame:url('{{ dialogueSkin.frame }}');--dialogue-butterfly:url('{{ dialogueSkin.butterfly }}');--dialogue-line:url('{{ dialogueSkin.line }}'){% endif %}">
             <div class="journal-dialogue-panel">
             <div class="journal-dialogue-name">mm9527</div>
             <p class="journal-dialogue-intro">「有什么想法，欢迎在这里留言」</p>
-            <a class="journal-dialogue-next" href="#journal-comments" aria-label="前往评论编辑区" title="前往评论编辑区"><svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true" focusable="false"><path d="M2 2h12L8 10z" fill="currentColor"/></svg></a>
+            <a class="journal-dialogue-next" href="#journal-comments" aria-label="前往评论编辑区" title="前往评论编辑区"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".28"/><path d="M12 4a8 8 0 0 1 8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>
             </div>
           </div>
           <div id="journal-comments" class="journal-dialogue-comments" tabindex="-1">

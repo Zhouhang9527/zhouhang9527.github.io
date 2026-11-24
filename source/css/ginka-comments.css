@@ -1,5 +1,5 @@
 /* A visual-novel scene, not a dark card. The textbox belongs to the CG. */
-.journal-dialogue{box-sizing:border-box;margin:36px auto 40px;min-width:0;width:100%;max-width:72ch;font:400 16px/1.8 var(--font-body,sans-serif)}
+.journal-dialogue{box-sizing:border-box;margin:36px auto 40px;min-width:0;width:100%;max-width:72ch;font:400 16px/1.9 var(--font-body,var(--journal-font-body,'Noto Serif SC',serif))}
 .journal-reading-shell>.journal-dialogue{grid-column:1;grid-row:3;justify-self:center;width:calc(100% - 88px)}
 .journal-dialogue-frame{position:relative;isolation:isolate;container-type:inline-size;box-sizing:border-box;aspect-ratio:16/9;min-height:216px;overflow:hidden;margin:0 0 20px;background:#324b5d var(--dialogue-scene-day) center / cover no-repeat;color:#fff;border:0;border-radius:0}
 html[data-theme='moonlit'] .journal-dialogue-frame{background-color:#172638;background-image:var(--dialogue-scene-night)}
@@ -12,13 +12,13 @@ html[data-theme='moonlit'] .journal-dialogue-frame{background-color:#172638;back
 .journal-dialogue-name::after{content:'';position:absolute;left:10px;bottom:0;width:min(190px,42cqw);height:1px;background:linear-gradient(90deg,#fff,transparent);pointer-events:none;filter:drop-shadow(0 1px 1px #000b)}
 .journal-dialogue-original .journal-dialogue-name::after{height:5px;bottom:-1px;background:var(--dialogue-line) left bottom / 100% 100% no-repeat}
 body .journal-dialogue-frame .journal-dialogue-intro{margin:0;padding:0 18px 0 clamp(16px,2.7cqw,24px);color:#fff;font:600 clamp(15px,2.45cqw,21px)/1.65 var(--font-body,sans-serif);letter-spacing:0;text-shadow:0 1px 2px #000,1px 0 #242a30,-1px 0 #242a30,0 -1px #242a30}
-body .journal-dialogue-frame .journal-dialogue-next{position:absolute;right:7%;bottom:6px;display:grid;place-items:center;width:34px;height:34px;padding:0;color:#b7f1c4!important;background:transparent!important;border:0;border-radius:2px;box-shadow:none!important;text-shadow:none;transform:none}
+body .journal-dialogue-frame .journal-dialogue-next{position:absolute;right:7%;bottom:6px;display:grid;place-items:center;width:34px;height:34px;padding:0;color:#e1edf6!important;background:transparent!important;border:0;border-radius:2px;box-shadow:none!important;text-shadow:none;transform:none}
 body .journal-dialogue-frame .journal-dialogue-next:is(:hover,:focus-visible){background:#ffffff15!important}
 .journal-dialogue-next:focus-visible{outline:2px solid #d3f2dd;outline-offset:2px}
-.journal-dialogue-has-advance .journal-dialogue-next svg{display:none}
-.journal-dialogue-has-advance .journal-dialogue-next::after{content:'';width:24px;height:24px;background:var(--dialogue-advance) -360px 0 / 384px 24px no-repeat;pointer-events:none}
-@media(prefers-reduced-motion:no-preference){.journal-dialogue-has-advance .journal-dialogue-next.is-entered::after{animation:ginka-dialogue-advance 480ms steps(15,end) both}}
-@keyframes ginka-dialogue-advance{from{background-position:0 0}to{background-position:-360px 0}}
+.journal-dialogue-next svg{display:block;flex:none}
+.journal-dialogue-next[aria-busy='true'] svg{animation:ginka-dialogue-ring .85s linear infinite}
+@keyframes ginka-dialogue-ring{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.journal-dialogue-next[aria-busy='true'] svg{animation:none}}
 .journal-dialogue-comments{min-width:0;scroll-margin-top:calc(var(--book-header,72px) + 16px)}
 .journal-dialogue-comments:focus-visible{outline:2px solid var(--journal-focus);outline-offset:4px}
 body .journal-dialogue :is(.comments,.tabs-comment,.giscus-container){background:transparent!important;border:0;border-radius:0;padding:0;box-shadow:none}

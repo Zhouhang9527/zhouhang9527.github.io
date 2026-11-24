@@ -120,3 +120,244 @@ main { color-scheme: dark; }
 .gsc-comment-footer { border-top: 1px solid var(--color-border-muted); }
 .gsc-comment-box :is(.btn, button), .gsc-comment :is(.btn, button) { border-radius: 4px; box-shadow: none; }
 .gsc-homepage-bg { background-color: var(--color-canvas-default); }
+
+/* GINKA dialogue log. Use the real upstream Comment.tsx / Reply.tsx nodes;
+   the GitHub identities, timestamps, moderation, reactions and forms are untouched.
+   No imported game extraction is required by the remote iframe. */
+main .gsc-comments { gap: 22px; }
+main .gsc-comment > div:first-child {
+
+  --color-prettylights-syntax-comment: #768390;
+  --color-prettylights-syntax-constant: #6cb6ff;
+  --color-prettylights-syntax-entity: #dcbdfb;
+  --color-prettylights-syntax-storage-modifier-import: #adbac7;
+  --color-prettylights-syntax-entity-tag: #8ddb8c;
+  --color-prettylights-syntax-keyword: #f47067;
+  --color-prettylights-syntax-string: #96d0ff;
+  --color-prettylights-syntax-variable: #f69d50;
+  --color-prettylights-syntax-brackethighlighter-unmatched: #e5534b;
+  --color-prettylights-syntax-invalid-illegal-text: #cdd9e5;
+  --color-prettylights-syntax-invalid-illegal-bg: #922323;
+  --color-prettylights-syntax-carriage-return-text: #cdd9e5;
+  --color-prettylights-syntax-carriage-return-bg: #ad2e2c;
+  --color-prettylights-syntax-string-regexp: #8ddb8c;
+  --color-prettylights-syntax-markup-list: #eac55f;
+  --color-prettylights-syntax-markup-heading: #316dca;
+  --color-prettylights-syntax-markup-italic: #adbac7;
+  --color-prettylights-syntax-markup-bold: #adbac7;
+  --color-prettylights-syntax-markup-deleted-text: #ffd8d3;
+  --color-prettylights-syntax-markup-deleted-bg: #78191b;
+  --color-prettylights-syntax-markup-inserted-text: #b4f1b4;
+  --color-prettylights-syntax-markup-inserted-bg: #1b4721;
+  --color-prettylights-syntax-markup-changed-text: #ffddb0;
+  --color-prettylights-syntax-markup-changed-bg: #682d0f;
+  --color-prettylights-syntax-markup-ignored-text: #adbac7;
+  --color-prettylights-syntax-markup-ignored-bg: #255ab2;
+  --color-prettylights-syntax-meta-diff-range: #dcbdfb;
+  --color-prettylights-syntax-brackethighlighter-angle: #768390;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #545d68;
+  --color-prettylights-syntax-constant-other-reference-link: #96d0ff;
+  --color-btn-text: #c2ccd7;
+  --color-btn-bg: #223040;
+  --color-btn-border: #334353;
+  --color-btn-shadow: 0 0 transparent;
+  --color-btn-inset-shadow: 0 0 transparent;
+  --color-btn-hover-bg: #273647;
+  --color-btn-hover-border: #9ac9e8;
+  --color-btn-active-bg: #273647;
+  --color-btn-active-border: #9ac9e8;
+  --color-btn-selected-bg: #223040;
+  --color-btn-primary-text: #111923;
+  --color-btn-primary-bg: #9ac9e8;
+  --color-btn-primary-border: #9ac9e8;
+  --color-btn-primary-shadow: 0 0 transparent;
+  --color-btn-primary-inset-shadow: 0 0 transparent;
+  --color-btn-primary-hover-bg: #b7dcff;
+  --color-btn-primary-hover-border: #b7dcff;
+  --color-btn-primary-selected-bg: #9ac9e8;
+  --color-btn-primary-selected-shadow: 0 0 transparent;
+  --color-btn-primary-disabled-text: #9aaabc;
+  --color-btn-primary-disabled-bg: #223040;
+  --color-btn-primary-disabled-border: #334353;
+  --color-action-list-item-default-hover-bg: #273647;
+  --color-segmented-control-bg: #121c29;
+  --color-segmented-control-button-bg: #192431;
+  --color-segmented-control-button-selected-border: #334353;
+  --color-fg-default: #c2ccd7;
+  --color-fg-muted: #9aaabc;
+  --color-fg-subtle: #9aaabc;
+  --color-canvas-default: #192431;
+  --color-canvas-overlay: #192431;
+  --color-canvas-inset: #121c29;
+  --color-canvas-subtle: #223040;
+  --color-border-default: #334353;
+  --color-border-muted: #334353;
+  --color-neutral-muted: #334353;
+  --color-accent-fg: #9ac9e8;
+  --color-accent-emphasis: #9ac9e8;
+  --color-accent-muted: #334353;
+  --color-accent-subtle: #273647;
+  --color-success-fg: #57ab5a;
+  --color-attention-fg: #c69026;
+  --color-attention-muted: rgb(174 124 20 / 40%);
+  --color-attention-subtle: rgb(174 124 20 / 15%);
+  --color-danger-fg: #e5534b;
+  --color-danger-muted: rgb(229 83 75 / 40%);
+  --color-danger-subtle: rgb(229 83 75 / 10%);
+  --color-primer-shadow-inset: 0 0 transparent;
+  --color-scale-gray-7: #373e47;
+  --color-scale-blue-8: #143d79;
+
+  /*! Extensions from @primer/css/alerts/flash.scss */
+  --color-social-reaction-bg-hover: #273647;
+  --color-social-reaction-bg-reacted-hover: #223040;
+  color-scheme: dark;
+  --dialogue-motif: url("data:image/png;base64,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");
+  --dialogue-ink: #f0f3f7;
+  --dialogue-muted: #b0bfcd;
+  --color-fg-default: var(--dialogue-ink);
+  --color-fg-muted: var(--dialogue-muted);
+  --color-fg-subtle: var(--dialogue-muted);
+  --color-canvas-default: #172230;
+  --color-canvas-inset: #121b26;
+  --color-canvas-overlay: #202e3d;
+  --color-border-default: #3a4b5d;
+  --color-border-muted: #304153;
+  --color-neutral-muted: #263546;
+  --color-accent-fg: #b5dbf4;
+  position: relative;
+  min-width: 0;
+  color: var(--dialogue-ink);
+  background: linear-gradient(180deg,#293b4c 0,#101721 30px,#141d29 62%,#1a2938 100%);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: none;
+  overflow: visible;
+}
+main .gsc-comment-header {
+  position: relative;
+  align-items: center;
+  background: transparent;
+  padding: 13px 18px 9px;
+  border: 0;
+  gap: 8px;
+}
+main .gsc-comment-header::after {
+  content: '';
+  position: absolute;
+  left: 22px; bottom: 0;
+  width: min(238px,65%);
+  height: 1px;
+  background: linear-gradient(90deg,#e5edf5b8,#e5edf500);
+  pointer-events: none;
+}
+main .gsc-comment-author,
+main .gsc-reply-author { flex-wrap: wrap; row-gap: 3px; }
+main .gsc-comment-author-avatar::before,
+main .gsc-reply-author > a:first-child::before {
+  content: '';
+  width: 18px; height: 17px; flex: none;
+  margin-inline-end: 6px;
+  background: var(--dialogue-motif) center / contain no-repeat;
+  filter: brightness(0) invert(1);
+  opacity: .9;
+}
+main .gsc-comment-author-avatar img,
+main .gsc-reply-author-avatar img {
+  width: 25px; height: 25px; object-fit: cover;
+  border: 1px solid #c7d9e64d;
+  border-radius: 50%;
+}
+main .gsc-comment-author .link-primary,
+main .gsc-reply-author .link-primary {
+  color: var(--dialogue-ink);
+  font-size: 14px; font-weight: 600;
+  text-shadow: 0 1px 1px #0008;
+}
+main .gsc-comment-author .link-secondary,
+main .gsc-reply-author .link-secondary,
+main .gsc-comment-edited,
+main .gsc-reply-edited {
+  color: var(--dialogue-muted);
+  font-size: 11px;
+}
+main .gsc-comment-content,
+main .gsc-reply-content {
+  background: transparent;
+  color: var(--dialogue-ink);
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.85;
+  text-shadow: none;
+}
+main .gsc-comment-content { padding: 13px 22px 10px; }
+main .gsc-comment-content.minimized { padding: 12px 22px; border: 0; }
+main .gsc-comment-content :is(pre,.highlight pre),
+main .gsc-reply-content :is(pre,.highlight pre) {
+  max-width: 100%; overflow-x: auto;
+  background: #101923;
+  text-shadow: none;
+}
+main .gsc-comment-content table, main .gsc-reply-content table {
+  display: block; max-width: 100%; overflow-x: auto;
+}
+main .gsc-comment-content img, main .gsc-reply-content img { max-width: 100%; height: auto; }
+main .gsc-comment-footer { padding: 3px 18px 12px; margin: 0; border: 0; }
+main .gsc-comment-reactions, main .gsc-comment-replies-count { margin: 0; }
+main .gsc-comment .gsc-social-reaction-summary-item { box-shadow: none; }
+main .gsc-comment .gsc-replies {
+  background: #0c152066;
+  border: 0; border-top: 1px solid #a8c5dd25;
+  border-radius: 0; padding: 5px 0 0;
+}
+main .gsc-reply {
+  padding: 12px 18px 9px;
+  background: linear-gradient(180deg,#23344666,transparent 65%);
+}
+main .gsc-reply + .gsc-reply { border-top: 1px solid #a8c5dd1c; }
+main .gsc-reply .gsc-tl-line { background: #a8c5dd26; width: 1px; }
+main .gsc-reply-header { position: relative; padding: 0 0 6px; margin-bottom: 7px; }
+main .gsc-reply-header::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: min(190px,65%); height: 1px;
+  background: linear-gradient(90deg,#dce9f18c,transparent);
+  pointer-events: none;
+}
+main .gsc-reply-content { padding-bottom: 6px; }
+main .gsc-reply-box { background: transparent; border-top: 1px solid #a8c5dd25; }
+main .gsc-reply-box button { background: #15202d; color: var(--dialogue-muted); border-color: #3a4b5d; }
+main .gsc-comment .gsc-comment-box { background: #172230; }
+main .gsc-comment .gsc-comment-box-tabs { border-color: #3a4b5d; }
+main .gsc-comment .gsc-comment-box-textarea { color: var(--dialogue-ink); background: #121b26; border-color: #3a4b5d; }
+main .gsc-comment .gsc-comment-box-textarea-extras { background: #121b26; border-color: #3a4b5d; }
+main .gsc-comment :is(a,button,textarea):focus-visible {
+  outline: 2px solid #b5dbf4; outline-offset: 2px;
+}
+/* Replace the actual Giscus loading mascot, not completed comments, with a ring. */
+main .gsc-loading-image {
+  width: 22px; height: 22px; box-sizing: border-box;
+  background-image: none;
+  border: 1.5px solid var(--color-border-default);
+  border-top-color: var(--color-accent-fg);
+  border-right-color: var(--color-accent-fg);
+  border-radius: 50%;
+  animation: ginka-giscus-loading .85s linear infinite;
+}
+@keyframes ginka-giscus-loading { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  main .gsc-loading-image { animation: none; }
+}
+@media (max-width: 480px) {
+  main .gsc-comments { gap: 16px; }
+  main .gsc-comment-header { padding: 11px 12px 8px; }
+  main .gsc-comment-header::after { left: 15px; }
+  main .gsc-comment-content { padding: 11px 14px 9px; }
+  main .gsc-comment-footer { padding-inline: 12px; flex-wrap: wrap; }
+  main .gsc-reply { padding-inline: 12px; }
+  main .gsc-reply .gsc-tl-line { left: 24px; }
+  main .gsc-comment-author-avatar::before, main .gsc-reply-author > a:first-child::before { width: 15px; height: 15px; margin-inline-end: 4px; }
+}
+@media (forced-colors: active) {
+  main .gsc-comment > div:first-child { border: 1px solid CanvasText; }
+  main .gsc-comment-header::after, main .gsc-reply-header::after { background: CanvasText; }
+}

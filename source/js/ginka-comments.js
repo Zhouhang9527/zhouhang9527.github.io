@@ -4,9 +4,10 @@
   const mounted = new WeakSet();
   let observed = null;
   let observer = null;
-  let cueObserver = null;
-  let cueTarget = null;
-  const playedCues = new WeakSet();
+  function setBusy(container, busy) {
+    const cue = container.closest('.journal-dialogue')?.querySelector('.journal-dialogue-next');
+    if (cue) cue.setAttribute('aria-busy', String(busy));
+  }
   function detach() {
     observer?.disconnect();
     observer = null;
@@ -15,6 +16,7 @@
   function load(container) {
     if (!container.isConnected || mounted.has(container)) return;
     mounted.add(container);
+    setBusy(container, true);
     detach();
     const status = container.querySelector('.journal-comments-status');
     const script = document.createElement('script');
@@ -28,12 +30,18 @@
     script.setAttribute('data-theme', window.GINKA_THEME?.commentTheme ||
       (document.documentElement.dataset.theme === 'moonlit' ? 'dark_dimmed' : 'light'));
     script.addEventListener('load', () => {
+      const frame = container.querySelector('iframe.giscus-frame');
+      if (frame) frame.addEventListener('load', () => setBusy(container, false), {once:true});
+      else setBusy(container, false);
+      // Never leave the visual indicator spinning indefinitely on a blocked iframe.
+      window.setTimeout(() => setBusy(container, false), 15000);
       status?.remove();
       if (container.isConnected) document.dispatchEvent(new CustomEvent('ginka:comments-ready'));
     }, {once:true});
     script.addEventListener('error', () => {
       script.remove();
       mounted.delete(container);
+      setBusy(container, false);
       if (!status || !container.isConnected) return;
       status.textContent = '评论加载失败';
       const retry = document.createElement('button');
@@ -44,24 +52,7 @@
     }, {once:true});
     container.append(script);
   }
-  function mountCue() {
-    const cue = document.querySelector('.journal-dialogue-has-advance .journal-dialogue-next');
-    if (!cue || playedCues.has(cue) || cue === cueTarget) return;
-    cueObserver?.disconnect();
-    cueTarget = cue;
-    if (!('IntersectionObserver' in window)) { playedCues.add(cue); return; }
-    cueObserver = new IntersectionObserver(entries => {
-      if (!entries.some(entry => entry.isIntersecting)) return;
-      cue.classList.add('is-entered');
-      playedCues.add(cue);
-      cueObserver?.disconnect();
-      cueObserver = null;
-      cueTarget = null;
-    }, { threshold: .5 });
-    cueObserver.observe(cue);
-  }
   function mount() {
-    mountCue();
     const container = document.querySelector('.journal-dialogue .giscus-container');
     if (!container || mounted.has(container)) { detach(); return; }
     if (observed === container) return;
@@ -74,12 +65,7 @@
       observer.observe(container);
     } else load(container);
   }
-  document.addEventListener('pjax:send', () => {
-    detach();
-    cueObserver?.disconnect();
-    cueObserver = null;
-    cueTarget = null;
-  });
+  document.addEventListener('pjax:send', detach);
   document.addEventListener('click', event => {
     const cue = event.target.closest?.('.journal-dialogue-next');
     if (!cue) return;
