@@ -69,6 +69,14 @@ const baseUrl = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4000';
     });
   });
 
+  await check('route scene metadata is complete and theme-aware', async () => {
+    return page.evaluate(() => {
+      const main = document.getElementById('main-content');
+      return !!main?.dataset.sidebarSceneDay && !!main?.dataset.sidebarSceneNight &&
+        main.dataset.sidebarSceneDay !== main.dataset.sidebarSceneNight;
+    });
+  });
+
   const article = page.locator('.journal-entry h3 a, .post-title-link').first();
   if (await article.count()) {
     const audioBeforePjax = await page.locator('#bg-music').elementHandle();

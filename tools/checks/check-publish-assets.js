@@ -33,6 +33,11 @@ for (const item of forbidden) {
   }
 }
 
+if (fs.existsSync(path.join(publicDir, 'images/ginka/scenes/local-preview'))) {
+  console.error('FAIL private local-preview scene directory must not be published');
+  failed = true;
+}
+
 const required = [
   'live2d/ATRI/ATRI.model3.json',
   'live2d/ATRI/ATRI.moc3',

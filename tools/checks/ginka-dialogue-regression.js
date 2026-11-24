@@ -19,6 +19,7 @@ function setup(stored, dark, throws = false) {
   const frame = { matches: s => s === 'iframe.giscus-frame',
     contentWindow: { postMessage: (data, origin) => messages.push({data, origin}) } };
   const doc = { documentElement,
+    getElementById: () => null,
     querySelector: () => null,
     querySelectorAll: s => s === 'iframe.giscus-frame' ? [frame] : [],
     addEventListener: (s, fn) => { const a = listeners.get(s) || []; a.push(fn); listeners.set(s, a); },
