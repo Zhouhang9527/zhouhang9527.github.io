@@ -73,6 +73,21 @@ body #music-player button:not(.music-playlist-item), body .search-popup button, 
 body .journal-copy:hover, body .journal-feedback-actions button:hover { background: var(--music-hover, #e0ebf4) !important; }
 body .journal-copy:disabled { cursor: wait; opacity: .65; }
 .journal-copy-buffer { position: fixed; top: 0; left: -9999px; }
+/* 日间代码块：GitHub Light 语义配色，只改颜色不改高亮结构 */
+body .post-body .journal-code :is(pre, code, .journal-code-text) { color: #24292f; }
+body .post-body .journal-code .hljs-comment,
+body .post-body .journal-code .hljs-quote,
+body .post-body .journal-code .hljs-doctag { color: #6e7781; }
+body .post-body .journal-code :is(.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-deletion) { color: #cf222e; }
+body .post-body .journal-code :is(.hljs-string, .hljs-regexp, .hljs-addition, .hljs-char.escape_) { color: #0a3069; }
+body .post-body .journal-code :is(.hljs-title, .hljs-title.function_, .hljs-section) { color: #8250df; }
+body .post-body .journal-code :is(.hljs-number, .hljs-symbol, .hljs-bullet, .hljs-link) { color: #0550ae; }
+body .post-body .journal-code :is(.hljs-type, .hljs-tag, .hljs-built_in, .hljs-title.class_, .hljs-selector-id, .hljs-selector-class) { color: #116329; }
+body .post-body .journal-code :is(.hljs-attr, .hljs-attribute, .hljs-property, .hljs-name, .hljs-variable, .hljs-params, .hljs-operator, .hljs-punctuation, .hljs-subst, .hljs-meta) { color: #24292f; }
+body .post-body .journal-code .journal-code-line::before { color: #8c959f; }
+body .post-body .journal-code .hljs-emphasis { font-style: italic; }
+body .post-body .journal-code .hljs-strong { font-weight: 600; }
+
 .journal-code-actions { display: inline-flex; flex: none; align-items: center; gap: 3px; }
 
 .journal-feedback { padding: 24px; margin: 32px 0; border: 1px solid var(--journal-line); border-radius: var(--journal-radius); background: var(--journal-surface-soft); text-align: center; }
@@ -224,8 +239,8 @@ body .journal-reading-shell .post-body :is(h1,h2,h3,h4,h5,h6) {
 }
 body .journal-reading-shell .post-body :is(h2,h3,h4) { max-width: 72ch; }
 body .journal-reading-shell .post-body figure.highlight,
-body .journal-reading-shell .post-body .journal-code { background: #f4f7fa; }
-body .journal-reading-shell .post-body .journal-code-toolbar { background: #f7f9fc; }
+body .journal-reading-shell .post-body .journal-code { background: #f6f8fa; border-color: #d8dee4; }
+body .journal-reading-shell .post-body .journal-code-toolbar { background: #f0f2f4; border-bottom-color: #d8dee4; }
 body .journal-reading-shell .post-body img {
   border: 1px solid var(--journal-line, #dce5ed);
   border-radius: 6px;

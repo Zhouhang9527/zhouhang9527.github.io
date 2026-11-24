@@ -213,18 +213,18 @@ html[data-theme='moonlit'] body .post-body figure.highlight td.code pre { backgr
 
 /* 语法高亮：低饱和淡紫 / 冰蓝 / 浅绿 / 暖橙（覆盖 main.css 的 34 类 hljs token）
    注意：高亮由浏览器端 highlight.js 添加，构建产物里没有这些类。 */
-html[data-theme='moonlit'] :is(.hljs-comment, .hljs-quote, .hljs-doctag) { color: #6f8296; }
-html[data-theme='moonlit'] :is(.hljs-keyword, .hljs-literal, .hljs-selector-tag) { color: #c4a7e7; }
-html[data-theme='moonlit'] :is(.hljs-string, .hljs-regexp, .hljs-addition, .hljs-char.escape_) { color: #a8cfc4; }
-html[data-theme='moonlit'] :is(.hljs-number, .hljs-symbol, .hljs-bullet, .hljs-link) { color: #e8c07a; }
-html[data-theme='moonlit'] :is(.hljs-title, .hljs-section, .hljs-name, .hljs-title.function_, .hljs-title.class_) { color: #9cc7e6; }
-html[data-theme='moonlit'] :is(.hljs-built_in, .hljs-type, .hljs-attr, .hljs-attribute, .hljs-property) { color: #9ac9e8; }
-html[data-theme='moonlit'] :is(.hljs-variable, .hljs-template-variable, .hljs-variable.language_, .hljs-variable.constant_) { color: #c2ccd7; }
-html[data-theme='moonlit'] :is(.hljs-tag, .hljs-meta, .hljs-selector, .hljs-selector-id, .hljs-selector-class, .hljs-selector-attr, .hljs-selector-pseudo) { color: #b9a6d6; }
-html[data-theme='moonlit'] :is(.hljs-operator, .hljs-punctuation, .hljs-params, .hljs-subst, .hljs-code, .hljs-formula) { color: #cfdce8; }
-html[data-theme='moonlit'] .hljs-deletion { color: #d99a9a; }
-html[data-theme='moonlit'] .hljs-emphasis { font-style: italic; }
-html[data-theme='moonlit'] .hljs-strong { font-weight: 600; color: #e2e9f0; }
+/* 月夜代码块：GitHub Dark Dimmed 语义配色（关键字/字符串/函数/数值/注释/类型各自可辨） */
+html[data-theme='moonlit'] body .post-body .journal-code :is(pre, code, .journal-code-text) { color: #c2ccd7; }
+html[data-theme='moonlit'] body .post-body .journal-code :is(.hljs-comment, .hljs-quote, .hljs-doctag) { color: #8b98a5; }
+html[data-theme='moonlit'] body .post-body .journal-code :is(.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-deletion) { color: #f47067; }
+html[data-theme='moonlit'] body .post-body .journal-code :is(.hljs-string, .hljs-regexp, .hljs-addition, .hljs-char.escape_) { color: #96d0ff; }
+html[data-theme='moonlit'] body .post-body .journal-code :is(.hljs-title, .hljs-title.function_, .hljs-section) { color: #dcbdfb; }
+html[data-theme='moonlit'] body .post-body .journal-code :is(.hljs-number, .hljs-symbol, .hljs-bullet, .hljs-link) { color: #6cb6ff; }
+html[data-theme='moonlit'] body .post-body .journal-code :is(.hljs-type, .hljs-tag, .hljs-built_in, .hljs-title.class_, .hljs-selector-id, .hljs-selector-class) { color: #8ddb8c; }
+html[data-theme='moonlit'] body .post-body .journal-code :is(.hljs-attr, .hljs-attribute, .hljs-property, .hljs-name, .hljs-variable, .hljs-params, .hljs-operator, .hljs-punctuation, .hljs-subst, .hljs-meta) { color: #c2ccd7; }
+html[data-theme='moonlit'] body .post-body .journal-code .journal-code-line::before { color: #7c8b99; }
+html[data-theme='moonlit'] body .post-body .journal-code .hljs-emphasis { font-style: italic; }
+html[data-theme='moonlit'] body .post-body .journal-code .hljs-strong { font-weight: 600; }
 /* 元信息里的字符串（如 #include <x>、注解参数）单独压一档，避免整行发亮 */
 html[data-theme='moonlit'] .hljs-meta :is(.hljs-string, .hljs-keyword) { color: #b9a6d6; }
 
