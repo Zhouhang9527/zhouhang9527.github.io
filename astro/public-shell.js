@@ -38,7 +38,7 @@
    for(const hit of hits){const a=document.createElement('a');a.href=hit.url;const title=document.createElement('strong');title.textContent=hit.meta.title||hit.url;const p=document.createElement('p');const fragment=new DOMParser().parseFromString(hit.excerpt||'','text/html');p.textContent=fragment.body.textContent;a.append(title,p);results.append(a);}
   }catch(err){if(token===queryToken){searchModule=null;results.textContent='搜索暂时不可用，请重试';}}
  });
- document.addEventListener('astro:before-preparation',()=>{drawer(false);document.querySelectorAll('dialog[open]').forEach(d=>d.close());});
+ document.addEventListener('astro:before-preparation',()=>{++queryToken;drawer(false);document.querySelectorAll('dialog[open]').forEach(d=>d.close());});
  document.addEventListener('astro:after-swap',()=>{try{window.GINKA_THEME?.set(localStorage.getItem('ginka-theme')||'system');}catch{}drawer(false);});
  document.addEventListener('astro:page-load',updateOutline);
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',updateOutline,{once:true});else updateOutline();

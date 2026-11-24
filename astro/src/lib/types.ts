@@ -14,6 +14,7 @@ export interface CollectionProps {
 }
 export type RouteProps =
   | { kind: 'post'; post: Post }
-  | { kind: 'about' | 'links'; title: string }
+  | { kind: 'about'; title: string }
+  | { kind: 'links'; title: string }
   | CollectionProps;
 export interface StaticRoute { params: { path: string }; props: RouteProps }
