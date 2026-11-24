@@ -1,103 +1,101 @@
-/* A restrained visual-novel dialogue frame; no external game UI assets. */
+/* A compact original-game dialogue strip followed by a normal reading surface.
+   One visual grammar in both themes, no stretched comment-list background. */
 .journal-dialogue {
-  --dialogue-bg: #f9fcff;
-  --dialogue-name: #d8e6f2;
-  --dialogue-border: #abc3d9;
-  --dialogue-ink: #345572;
-  margin: 42px 0 36px;
+  margin: 40px auto 36px;
   min-width: 0;
-  color: var(--dialogue-ink);
+  max-width: 76ch;
 }
-html[data-theme='moonlit'] .journal-dialogue {
-  --dialogue-bg: #192431;
-  --dialogue-name: #2a4054;
-  --dialogue-border: #4b6880;
-  --dialogue-ink: #e2e9f0;
-}
-.journal-dialogue-heading { margin-bottom: 22px; padding-bottom: 12px; border-bottom: 1px solid var(--journal-line); }
-.journal-dialogue-eyebrow { color: var(--journal-muted); font: 11px/1.6 var(--font-mono, monospace); letter-spacing: .16em; }
-.journal-dialogue-heading h2 { margin: 6px 0 0; font: 500 clamp(24px, 3vw, 30px)/1.5 var(--font-title, serif); color: var(--dialogue-ink); letter-spacing: .08em; }
-.journal-dialogue-frame { position: relative; margin-top: 38px; padding: 24px clamp(12px, 3vw, 28px) 22px; border: 1px solid var(--dialogue-border); border-radius: 3px; background: var(--dialogue-bg); box-shadow: inset 0 0 0 3px var(--dialogue-bg), inset 0 0 0 4px var(--journal-line); min-width: 0; }
-.journal-dialogue-name { position: absolute; bottom: calc(100% - 1px); left: -1px; padding: 6px 18px; border: 1px solid var(--dialogue-border); border-bottom: 0; background: var(--dialogue-name); color: var(--dialogue-ink); font: 500 11px/1.6 var(--font-mono, monospace); letter-spacing: .1em; border-radius: 3px 3px 0 0; }
-.journal-dialogue-intro { margin: 0 0 18px; color: var(--dialogue-ink); font: 400 15px/1.8 var(--font-body, sans-serif); }
-body .journal-dialogue :is(.comments, .tabs-comment) { background: transparent !important; border: 0; border-radius: 0; padding: 0; box-shadow: none; }
-.journal-dialogue .giscus-container, .journal-dialogue .giscus, .journal-dialogue iframe.giscus-frame { width: 100%; min-width: 0; }
-@media (max-width: 767px) { .journal-dialogue { margin: 30px 0; } .journal-dialogue-frame { padding: 18px 12px 16px; } }
-@media print { .journal-dialogue { display: none; } }
-
-/* An existing small game motif, not a new artwork download. */
-.journal-dialogue-heading h2 { display: flex; align-items: center; gap: 10px; }
-.journal-dialogue-heading h2::before { content: ''; display: inline-block; width: 19px; height: 19px; flex: none; background: url('../images/ginka/butterfly.png') center / contain no-repeat; opacity: .78; }
-
-/* Opt-in local artwork: nine-slice the real frame so it grows with comments.
-   The embedded Giscus editor stays on a readable opaque surface. */
-/* 原作对话框（本地预览素材）：UI-0093 完整渐变框体，按编辑区尺寸拉伸，不做九宫格 */
-.journal-dialogue-original {
+.journal-dialogue-frame {
   position: relative;
   isolation: isolate;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 13px;
+  min-height: 146px;
+  margin: 0 0 22px;
+  padding: 23px clamp(18px, 4vw, 34px) 34px;
   border: 0;
-  border-radius: 6px;
-  box-shadow: none;
-  background: transparent;
-  padding: 84px clamp(16px, 3.4vw, 34px) 30px;
-  min-width: 0;
+  border-radius: 2px;
+  background: linear-gradient(180deg,#202b3a 0%,#111822 17%,#10151e 74%,#1a2637 100%);
+  color: #eef1f5;
 }
-.journal-dialogue-original::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  pointer-events: none;
-  background: var(--dialogue-frame) center / 100% 100% no-repeat;
-}
-/* 姓名栏：原作蝴蝶 + 角色名 + 渐变细横线，不用外凸矩形姓名牌 */
-.journal-dialogue-original .journal-dialogue-name {
-  position: absolute;
-  left: clamp(12px, 2.2vw, 26px);
-  top: 34px;
+.journal-dialogue-original { background: #141e2b var(--dialogue-frame) center / 100% 100% no-repeat; }
+.journal-dialogue-name {
+  position: relative;
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  padding: 0 0 6px;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  color: #efe7d9;
-  font: 500 12px/1.4 var(--font-mono, monospace);
-  letter-spacing: .12em;
-  text-shadow: 0 1px 3px #000000a6;
+  gap: 8px;
+  min-width: 128px;
+  padding: 0 12px 8px 0;
+  color: #eef1f5;
+  font: 500 13px/1.5 var(--font-body, sans-serif);
+  letter-spacing: .06em;
 }
-.journal-dialogue-original .journal-dialogue-name::before {
+.journal-dialogue-name::before {
   content: '';
-  width: 30px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   flex: none;
-  background: var(--dialogue-butterfly) center / contain no-repeat;
-  opacity: .95;
+  background: url('../images/ginka/butterfly.png') center / contain no-repeat;
 }
-.journal-dialogue-original .journal-dialogue-name::after {
+.journal-dialogue-original .journal-dialogue-name::before { background-image: var(--dialogue-butterfly); }
+.journal-dialogue-name::after {
   content: '';
   position: absolute;
-  left: 30px;
-  right: 0;
-  bottom: -2px;
-  height: 8px;
-  background: var(--dialogue-line) left bottom / 100% 100% no-repeat;
-  opacity: .85;
+  left: 15px;
+  bottom: 0;
+  width: min(190px, 48vw);
+  height: 1px;
+  background: linear-gradient(90deg,#dbe4f0b3,transparent);
   pointer-events: none;
 }
-.journal-dialogue-original .journal-dialogue-intro {
-  display: block;
-  margin: 0 0 16px;
-  padding: 0;
-  background: none;
-  border-radius: 0;
-  color: #d9e2ec;
-  font: 400 14px/1.85 var(--font-body, sans-serif);
-  text-shadow: 0 1px 2px #00000066;
+.journal-dialogue-original .journal-dialogue-name::after {
+  height: 6px;
+  bottom: -2px;
+  background: var(--dialogue-line) left bottom / 100% 100% no-repeat;
 }
-.journal-dialogue-original :is(.comments, .tabs-comment) { background: transparent !important; padding: 0; }
-/* 框体内部编辑器统一深色，与框体一致；列表仍由 Giscus 主题决定 */
-.journal-dialogue-original :is(.giscus, iframe.giscus-frame) { background: transparent; }
-@media (max-width: 767px) { .journal-dialogue-original { padding: 56px 14px 22px; } .journal-dialogue-original .journal-dialogue-name { top: 8px; } }
+.journal-dialogue-intro {
+  margin: 0;
+  padding: 0 0 0 30px;
+  color: #f0f2f5;
+  font: 400 15px/1.8 var(--font-body, sans-serif);
+  letter-spacing: .025em;
+}
+body .journal-dialogue-frame .journal-dialogue-next {
+  position: absolute;
+  right: 13px;
+  bottom: 8px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: #c2d7e8 !important;
+  background: transparent !important;
+  border: 0;
+  border-radius: 3px;
+  box-shadow: none !important;
+  text-shadow: none;
+  transform: none;
+}
+body .journal-dialogue-frame .journal-dialogue-next:is(:hover,:focus-visible) { background: #ffffff12 !important; color: #fff !important; }
+.journal-dialogue-next:focus-visible { outline: 2px solid #a8cce9; outline-offset: 2px; }
+.journal-dialogue-comments { min-width: 0; scroll-margin-top: 18px; }
+.journal-dialogue-comments:focus-visible { outline: 2px solid var(--journal-focus); outline-offset: 4px; }
+body .journal-dialogue :is(.comments,.tabs-comment,.giscus-container) {
+  background: transparent !important; border: 0; border-radius: 0; padding: 0; box-shadow: none;
+}
+.journal-dialogue .giscus-container { min-height: 180px; }
+.journal-dialogue :is(.giscus-container,.giscus,iframe.giscus-frame) { width: 100%; min-width: 0; }
+.journal-comments-status { margin: 0; padding: 20px 0; color: var(--journal-muted); font-size: 13px; }
+.journal-comments-status button { margin-inline-start: 10px; font: inherit; color: var(--journal-blue); background: transparent; border: 0; cursor: pointer; text-decoration: underline; }
+@media(max-width:767px) {
+  .journal-dialogue { margin-block: 30px; }
+  .journal-dialogue-frame { min-height: 124px; padding: 18px 16px 30px; gap: 10px; }
+  .journal-dialogue-intro { font-size: 14px; }
+}
+@media(pointer:coarse) { body .journal-dialogue-frame .journal-dialogue-next { width: 44px; height: 44px; bottom: 0; right: 4px; } }
+@media print { .journal-dialogue { display: none; } }

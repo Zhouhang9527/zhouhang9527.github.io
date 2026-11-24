@@ -62,24 +62,34 @@ def scan(args):
         print("No raster candidates. Inspect local PSB/TLG extraction output before choosing a frame.")
 
 def install(args):
-    rows = json.loads(args.inventory.read_text(encoding="utf-8"))
-    row = next((x for x in rows if x["id"] == args.id), None)
-    if row is None:
-        raise SystemExit("Unknown candidate ID")
-    with Image.open(row["path"]) as im:
-        im = im.convert("RGBA")
-        if args.crop:
-            x, y, w, h = args.crop
-            if min(x,y) < 0 or min(w,h) <= 0 or x+w > im.width or y+h > im.height:
-                raise SystemExit("Invalid crop rectangle")
-            im = im.crop((x,y,x+w,y+h))
-        t,r,b,l = args.slice
-        if min(t,r,b,l) <= 0 or max(t,r,b,l) > 2048 or t+b >= im.height or l+r >= im.width:
-            raise SystemExit("Slice must preserve a nonempty center")
-        OUT.mkdir(parents=True, exist_ok=True)
-        im.save(OUT / "dialogue-frame.webp", "WEBP", lossless=True, method=6)
-    (OUT / "dialogue-skin.json").write_text(json.dumps({"slice": args.slice}, indent=2), encoding="utf-8")
-    print("Original frame installed for local preview only:", row["path"])
+    rows = {x["id"]: x for x in json.loads(args.inventory.read_text(encoding="utf-8"))}
+    expected = {
+        "UI-0093": (1280, 201),
+        "UI-0089": (617, 71),
+    }
+    images = {}
+    for key, size in expected.items():
+        if key not in rows:
+            raise SystemExit(f"Missing {key}")
+        with Image.open(rows[key]["path"]) as im:
+            if im.size != size:
+                raise SystemExit(f"Unexpected size for {key}: {im.size}")
+            images[key] = im.convert("RGBA")
+    frame = images["UI-0093"]
+    atlas = images["UI-0089"]
+    pieces = {
+        "dialogue-frame.webp": frame,
+        "dialogue-butterfly.webp": atlas.crop((0, 34, 40, 71)),
+        "dialogue-name-line.webp": atlas.crop((40, 63, 278, 71)),
+    }
+    for name, image in pieces.items():
+        if any(r > 240 and g < 20 and b > 240 and a > 0 for r,g,b,a in image.getdata()):
+            raise SystemExit(f"Unexpected magenta atlas placeholder: {name}")
+    OUT.mkdir(parents=True, exist_ok=True)
+    for name, image in pieces.items():
+        image.save(OUT / name, "WEBP", lossless=True, method=6)
+        print(name, image.size)
+    (OUT / "dialogue-skin.json").write_text(json.dumps({"mode":"stretch","slice":None}), encoding="utf-8")
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -89,9 +99,6 @@ def main():
     a.add_argument("--output", type=Path, required=True)
     b = sub.add_parser("install")
     b.add_argument("--inventory", type=Path, required=True)
-    b.add_argument("--id", required=True)
-    b.add_argument("--crop", nargs=4, type=int, metavar=("X","Y","W","H"))
-    b.add_argument("--slice", nargs=4, type=int, required=True, metavar=("TOP","RIGHT","BOTTOM","LEFT"))
     args = parser.parse_args()
     (scan if args.command == "scan" else install)(args)
 

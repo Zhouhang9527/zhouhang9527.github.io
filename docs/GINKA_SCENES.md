@@ -19,10 +19,10 @@ Check all route covers in day and moonlit modes, including PJAX navigation and t
 
 ## Original dialogue frame
 
-The remote contact sheets only cover wide previews, not the small/transparent UI assets. Scan the full local extraction:
+UI-0093 is the 1280×201 dialogue strip; UI-0089 contains the original butterfly and name line. The verified extraction is automated:
 
 ```powershell
-python tools/prepare-dialogue-skin.py scan --assets "E:/30500/Downloads/GINKA-study/assets" --output "../ginka-ui-review"
+python tools/prepare-dialogue-skin.py install --inventory "D:/ginka-ui-review/inventory.json"
 ```
 
-Review the generated JPG contact sheets and inventory to identify the actual message window (or crop it from a UI atlas). The install command accepts its confirmed UI ID and four nine-slice distances: `python tools/prepare-dialogue-skin.py install --inventory PATH --id UI-ID --slice TOP RIGHT BOTTOM LEFT`. Optional `--crop X Y W H` extracts a selected rectangle. Do not guess the ID or slice values. The original frame appears in local preview only, with the Giscus editor and comments on the readable theme background. Production keeps the CSS frame unless an independently authorized asset integration is provided.
+The script validates original dimensions, crops the butterfly at (0,34,40,71) and the line at (40,63,278,71), and rejects magenta placeholders. The original game strip is a short introduction, not a backdrop for the comment list. Giscus is a separate theme-aware iframe and uses the existing repo/category/pathname mapping. The same layout has a CSS-only fallback in normal builds. No newly extracted assets are published.

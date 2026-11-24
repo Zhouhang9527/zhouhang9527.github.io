@@ -11,7 +11,7 @@ try {
 const baseUrl = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4000';
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(process.env.GINKA_CHROME_PATH ? { executablePath: process.env.GINKA_CHROME_PATH } : { channel: 'chrome' });
   const context = await browser.newContext({
     viewport: { width: 1366, height: 768 },
     reducedMotion: 'no-preference'
