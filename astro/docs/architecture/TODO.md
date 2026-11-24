@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 CHAR-03/07/08/09/10/11/12、AUDIO-04 增量：看板娘按选中姿势预解码差分与动作帧，未就绪帧不切换；眨眼/口型互斥，切换语音取消旧计时器，后台暂停且完成文本揭示，首次 NEXT 补全当前文字再推进，收起恢复启动器焦点，模式变化重新绑定消息窗，跨标签页角色过滤同步。客户端也校验动作帧 URL/时长。私有 main 30b43e7 的 reference/ 无 mascot 目录；dialogue.text_reveal 时长为 null、sound_events 未确认，保持现有临时时序，不伪造立绘/录音。未运行完整 typecheck/build/browser，任务不勾选。
+
 2026-11-25 EXTRA-02 / BASE-02/04/10：`d9c53b5` 的 [VN CI](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45466158145) typecheck/build/Chromium 成功；390/1440 均越过此前文章导航、存档阻塞，已至 gallery 截图，但实际 URL 变为 CG 图片，导致返回失败。图片链接排除 ClientRouter、捕获阶段先接管普通点击，保留修饰键与无 JS 原生访问；新增 URL、焦点、持续音频回归断言，最新 CI 未确认。
 
 2026-11-25：DATA-02/03、ENGINE-02/05、TITLE-02：私有 `30b43e7` 与博客配置的 249 项原始 PBD 坐标、裁切、旋转、偏移、画布尺寸比对一致；新增 `npm run audit:original -- <private-repo>` 可重复审计并扩展 action/NEW 检查，原作 SystemAction 采用精确白名单，START/NEXT 使用 custom.ks 确认的 1000ms 淡出且支持跳过，新增正常动效 smoke；未将原作素材复制入博客，完整原作渲染及新 CI 尚未验收。

@@ -110,6 +110,9 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
+- 看板娘专线（与其他 Agent 并行）：2026-11-25 CHAR-03/07/08/09/10/11/12、AUDIO-04 增量：看板娘按选中姿势预解码差分与动作帧，未就绪帧不切换；眨眼/口型互斥，切换语音取消旧计时器，后台暂停且完成文本揭示，首次 NEXT 补全当前文字再推进，收起恢复启动器焦点，模式变化重新绑定消息窗，跨标签页角色过滤同步。客户端也校验动作帧 URL/时长。私有 main 30b43e7 的 reference/ 无 mascot 目录；dialogue.text_reveal 时长为 null、sound_events 未确认，保持现有临时时序，不伪造立绘/录音。未运行完整 typecheck/build/browser，任务不勾选。
+- 下一步 CHAR-01/02/05/06：私有包到位后先验来源、透明差分对齐及逐句语音，再进行 CHAR-07/08/09/12 实测；不修改其他模块或 main。
+
 - 基线 d1b3ca6：原作四份 PBD 的 249 项几何/裁切/偏移/旋转/画布比对一致；新增 audit:original、精确 SystemAction 白名单、custom.ks 明确的 START/NEXT 1000ms 淡出。私有素材 HEAD 30b43e7，视频只覆盖 title/dialogue，其他九界面和角色/SE 证据缺失
 - d9c53b5 VN CI 45466158145 typecheck/build/Chromium 成功，390/1440 都走过此前 dock/存档故障进入 gallery，发现 CG 打开后实际导航至 webp，导致返回失败；旧 review 浏览器被后续提交取消
 - 本轮修复 CG 链接排除 Astro ClientRouter，public-shell 捕获普通点击并打开原生 dialog，保留 Ctrl/Meta/无 JS 链接行为；新增 URL 不变、焦点恢复、BGM DOM identity 断言
