@@ -60,6 +60,7 @@ const required = [
   'images/ginka/scenes/panorama-night-960.webp',
   'images/ginka/scenes/torii-close-night-1440.webp',
   'js/ginka-motion.js',
+  'js/ginka-comments.js',
   'js/vendor/lenis.min.js',
   'js/vendor/lenis.LICENSE.txt',
   'js/ginka-music.js',

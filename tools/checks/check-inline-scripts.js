@@ -43,15 +43,7 @@ for (const file of htmlFiles) {
     const attrs = match[1] || '';
     const body = match[2] || '';
     const type = getScriptType(attrs);
-    // NexT stores JSON in inert config elements. Only permit a valid JSON object
-    // with the exact known marker; never permit executable script bodies.
-    const nextData = /\bclass\s*=\s*["'][^"']*\bnext-config\b[^"']*["']/i.test(attrs) &&
-      /\bdata-name\s*=\s*["'][\w-]+["']/i.test(attrs);
-    let inert = false;
-    if (nextData && !type) {
-      try { const value = JSON.parse(body); inert = value !== null && typeof value === 'object' && !Array.isArray(value); } catch (_) {}
-    }
-    if (!inert && isJavascriptType(type) && body.trim()) {
+    if (isJavascriptType(type) && body.trim()) {
       const label = `${file}#inline_${index}`;
 
       totalInlineScripts += 1;

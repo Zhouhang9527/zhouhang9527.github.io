@@ -78,6 +78,4 @@ html.lenis-smooth :is(.search-popup, .sidebar, .journal-outline, .journal-table-
   .ginka-mat-pending .art-viewport, .ginka-mat-seen .art-viewport { clip-path: none !important; animation: none !important; }
 }
 
-.journal-hero-previous { width: calc(100% + 20px); height: calc(100% + 20px); margin: 0; border: 0; object-position: 62% 36%; transform: scale(1.02); }
-@media (max-width: 767px) { .journal-hero-previous { width: calc(100% + 10px); height: 359px; object-position: 67% 31%; } }
 @media print { .ginka-hero-previous { display: none !important; } }

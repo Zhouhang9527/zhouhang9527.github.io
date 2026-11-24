@@ -269,7 +269,8 @@
       oldImage = null;
     }
     function showOldImage(src) {
-      if (!src || oldImage?.getAttribute('src') === src) return;
+      if (!src) return;
+      if (oldImage?.getAttribute('src') === src && !fade) return;
       dropOldImage();
       const node = document.createElement('img');
       node.className = 'journal-hero-art ginka-hero-previous';
@@ -277,9 +278,11 @@
       node.setAttribute('aria-hidden', 'true');
       node.decoding = 'async';
       node.src = src;
-      picture.after(node);
-      // The previous image must share the same crop as the live picture.
-      node.style.inset = getComputedStyle(picture).inset;
+      picture.append(node);
+      node.style.inset = '0';
+      node.style.width = '100%';
+      node.style.height = '100%';
+      node.style.objectPosition = getComputedStyle(art).objectPosition;
       oldImage = node;
     }
     function matching(src, desired) {
