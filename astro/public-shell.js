@@ -11,7 +11,7 @@
  window.addEventListener('sidebar:show',()=>drawer(true));
  window.addEventListener('sidebar:hide',()=>drawer(false));
  function search(){
-  const dialog=$('.astro-search');if(!dialog||dialog.open)return;opener=document.activeElement;dialog.showModal();$('#astro-query')?.focus();
+  const dialog=$('.astro-search');if(!dialog||dialog.open)return;opener=document.activeElement===document.body?$('.popup-trigger'):document.activeElement;dialog.showModal();$('#astro-query')?.focus();
  }
  function updateOutline(){
   const target=$('[data-sidebar-outline]'),outline=$('[data-journal-outline]');if(target){target.replaceChildren();if(outline){const copy=outline.cloneNode(true);copy.removeAttribute('data-journal-outline');target.append(copy);}}
@@ -25,7 +25,13 @@
    e.preventDefault();const dialog=$('.astro-gallery');const img=dialog.querySelector('img');img.src=el.href;img.alt=el.dataset.caption||'';dialog.querySelector('p').textContent=el.dataset.caption||'';opener=el;dialog.showModal();
   }
  });
- document.addEventListener('close',e=>{if(e.target.matches('.astro-search,.astro-gallery')){opener?.focus({preventScroll:true});opener=null;}},true);
+ // Explicit escape handling avoids the search input consuming its first Escape.
+ document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  const dialog=$('.astro-search[open],.astro-gallery[open]');
+  if(dialog){e.preventDefault();dialog.close();}
+ },true);
+ document.addEventListener('close',e=>{if(e.target.matches('.astro-search,.astro-gallery')){++queryToken;const target=opener;opener=null;if(target?.isConnected)target.focus({preventScroll:true});}},true);
  document.addEventListener('input',async e=>{
   if(e.target.id!=='astro-query')return;const q=e.target.value.trim(),token=++queryToken,results=$('#astro-results');results.replaceChildren();if(!q)return;
   results.textContent='检索中…';

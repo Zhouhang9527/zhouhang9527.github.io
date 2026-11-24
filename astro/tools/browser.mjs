@@ -25,7 +25,7 @@ try {
    await page.goto(base+'/',{waitUntil:'domcontentloaded'});
    await page.waitForFunction(m=>window.GINKA_THEME?.theme===m&&document.documentElement.dataset.theme===m,mode);
    await page.evaluate(()=>document.fonts.ready);
-   assert.ok(!await overflow(page),'home overflow');
+   assert.ok(!await overflow(page),JSON.stringify(await page.evaluate(()=>({error:'home overflow',width:innerWidth,scroll:document.documentElement.scrollWidth,offenders:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.right>innerWidth+2&&getComputedStyle(e).position!=='fixed'&&!e.closest('.journal-scene-strip,.sidebar,.journal-mobile-links')}).slice(0,12).map(e=>({tag:e.tagName,class:e.className?.toString(),right:e.getBoundingClientRect().right}))}))));
    await checkNav(page);
    const feed=await page.locator('.journal-feed').evaluate(el=>({width:el.getBoundingClientRect().width,layout:el.parentElement.getBoundingClientRect().width}));
    assert.ok(width>960||feed.width>=feed.layout-2,'mobile feed squeezed: '+JSON.stringify(feed));
@@ -38,7 +38,7 @@ try {
    await page.locator('#astro-query').fill('Android');
    await page.locator('#astro-results a').first().waitFor({timeout:12000});
    await page.keyboard.press('Escape');
-   assert.equal(await search.evaluate(e=>e.open),false);
+   await page.waitForFunction(()=>!document.querySelector('.astro-search').open,{}, {timeout:3000});
    const trigger=page.locator('[data-journal-sidebar-open]:visible').first();
    await trigger.click();
    await page.waitForFunction(()=>document.body.classList.contains('sidebar-active'));
