@@ -2,16 +2,17 @@
 <nav class="site-nav" aria-label="主导航">
   <ul class="main-menu menu">
     <li class="menu-item menu-item-home"><a href="{{ config.root }}" rel="start">首页</a></li>
-    <li class="menu-item menu-item-archives"><a href="{{ url_for('/archives/') }}" rel="section">文章归档</a></li>
-    <li class="menu-item menu-item-gallery"><a href="{{ config.root }}#ginka-scenes">岛影画廊</a></li>
+    <li class="menu-item menu-item-archives"><a href="{{ url_for('/archives/') }}" rel="section">归档</a></li>
+    <li class="menu-item menu-item-gallery"><a href="{{ config.root }}#ginka-scenes">画廊</a></li>
     <li class="menu-item menu-item-about"><a href="{{ url_for('/about/') }}" rel="section">关于</a></li>
-    {% for node in theme.main_menu %}
-      {% if node.name not in ['home', 'archives', 'about', 'position', 'display'] %}{{ menu_item.render(node) | trim }}{% endif %}
-    {% endfor %}
-    <li class="menu-item menu-item-more" hidden>
+    <li class="menu-item menu-item-more">
       <details class="journal-mobile-menu">
         <summary>更多 <span aria-hidden="true">⌄</span></summary>
-        <ul class="journal-mobile-links"></ul>
+        <ul class="journal-mobile-links">
+          {% for node in theme.main_menu %}
+            {% if node.name in ['tags', 'categories', 'links', '友链'] %}{{ menu_item.render(node) | trim }}{% endif %}
+          {% endfor %}
+        </ul>
       </details>
     </li>
     <li class="menu-item menu-item-theme">

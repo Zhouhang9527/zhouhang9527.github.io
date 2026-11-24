@@ -86,8 +86,10 @@
     const details = more?.querySelector('details');
     const overflow = details?.querySelector('.journal-mobile-links');
     if (!overflow) return;
-    const items = Array.from(row.children).filter(item => !item.matches('.menu-item-more, .menu-item-search'));
+    // 「更多」现在常驻（内含标签/分类/友链），只把真正溢出的主导航项搬进去。
+    const items = Array.from(row.children).filter(item => !item.matches('.menu-item-more, .menu-item-search, .menu-item-theme'));
     const search = row.querySelector('.menu-item-search');
+    const themeToggle = row.querySelector('.menu-item-theme');
     let layoutTimer = 0;
     let hiddenCount = -1;
     nav.classList.add('journal-nav-ready');
@@ -103,16 +105,16 @@
       const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
       const widths = items.map(item => item.getBoundingClientRect().width);
       const searchWidth = search?.getBoundingClientRect().width || 0;
+      const themeWidth = themeToggle?.getBoundingClientRect().width || 0;
       let visible = items.length;
-      let width = widths.reduce((sum, value) => sum + value, 0) + searchWidth + gap * (items.length + (search ? 1 : 0) - 1);
+      let width = widths.reduce((sum, value) => sum + value, 0) + searchWidth + themeWidth + gap * (items.length + (search ? 1 : 0) + (themeToggle ? 1 : 0) - 1);
       if (width > available + .5) {
         width += more.getBoundingClientRect().width + gap;
         while (visible > 1 && width > available + .5) width -= widths[--visible] + gap;
       }
       items.slice(visible).forEach(item => overflow.append(item));
-      more.hidden = visible === items.length;
       const nextHiddenCount = items.length - visible;
-      if (more.hidden || (hiddenCount !== nextHiddenCount && !wasOpen)) details.open = false;
+      if (hiddenCount !== nextHiddenCount && !wasOpen) details.open = false;
       hiddenCount = nextHiddenCount;
       if (focus && focus !== document.body && nav.contains(focus)) {
         if (overflow.contains(focus)) details.open = true;
@@ -132,4 +134,43 @@
     layout();
   }
   bindAdaptiveNavigation();
+
+  // 新版本提示：只提示，不自动刷新，避免打断阅读和音乐播放。
+  function bindUpdateNotice() {
+    const meta = document.querySelector('meta[name="ginka-build"]');
+    const build = meta && meta.getAttribute('content');
+    if (!build) return;
+    let shown = false;
+    function show(next) {
+      if (shown) return;
+      shown = true;
+      const notice = document.createElement('div');
+      notice.className = 'journal-update-notice';
+      notice.setAttribute('role', 'status');
+      notice.innerHTML = '<span>站点已更新到 <code></code></span>' +
+        '<button type="button" data-update-reload>刷新</button>' +
+        '<button type="button" class="journal-update-dismiss" data-update-dismiss aria-label="稍后再说">×</button>';
+      notice.querySelector('code').textContent = next;
+      notice.addEventListener('click', (event) => {
+        if (event.target.closest('[data-update-dismiss]')) { notice.remove(); return; }
+        if (!event.target.closest('[data-update-reload]')) return;
+        const done = () => window.location.reload();
+        navigator.serviceWorker?.getRegistration?.().then((registration) => {
+          if (!registration || !registration.waiting) { done(); return; }
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          setTimeout(done, 120);
+        }).catch(done);
+      });
+      document.body.appendChild(notice);
+    }
+    function check() {
+      fetch('/site-version.json?t=' + Date.now(), { cache: 'no-store' })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((data) => { if (data && data.version && data.version !== build) show(data.version); })
+        .catch(() => {});
+    }
+    window.addEventListener('pageshow', check);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+  }
+  bindUpdateNotice();
 })();

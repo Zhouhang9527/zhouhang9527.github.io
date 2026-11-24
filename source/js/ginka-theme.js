@@ -59,6 +59,20 @@
       var full = resolved === 'moonlit' ? link.getAttribute('data-full-night') : link.getAttribute('data-full-day');
       if (full) link.setAttribute('href', full);
     }
+    // 首屏用 <picture> + prefers-color-scheme 只下载一张；用户手动改了主题时，
+    // 去掉 <source> 直接改 img，避免浏览器继续按系统偏好挑图。
+    var hero = document.querySelector('.journal-hero-image .journal-hero-art[data-src-day]');
+    if (!hero) return;
+    var picture = hero.parentElement;
+    var sources = picture && picture.tagName === 'PICTURE' ? picture.querySelectorAll('source') : null;
+    if (sources && sources.length) {
+      for (var i = 0; i < sources.length; i += 1) sources[i].parentNode.removeChild(sources[i]);
+    }
+    var night = resolved === 'moonlit';
+    var src = hero.getAttribute(night ? 'data-src-night' : 'data-src-day');
+    var srcset = hero.getAttribute(night ? 'data-srcset-night' : 'data-srcset-day');
+    if (src && hero.getAttribute('src') !== src) hero.setAttribute('src', src);
+    if (srcset && hero.getAttribute('srcset') !== srcset) hero.setAttribute('srcset', srcset);
   }
 
   function apply(mode, persist) {

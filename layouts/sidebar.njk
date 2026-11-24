@@ -1,7 +1,7 @@
 {% macro render(display_toc) %}
   <button class="journal-sidebar-edge" type="button" data-journal-sidebar-open aria-label="打开侧栏" aria-controls="journal-sidebar" aria-expanded="false"></button>
   <aside class="sidebar" id="journal-sidebar" aria-label="站点导航与文章目录">
-    <div class="journal-sidebar-cover"><img data-sidebar-src="{{ url_for('/images/ginka/profile.webp') }}" alt="" width="1920" height="1141" decoding="async"><span>GINKA / mm9527</span><button type="button" class="journal-sidebar-close" aria-label="关闭侧栏">×</button></div>
+    <div class="journal-sidebar-cover"><img data-sidebar-src-day="{{ url_for('/images/ginka/scenes/panorama-day-960.webp') }}" data-sidebar-src-night="{{ url_for('/images/ginka/scenes/panorama-night-960.webp') }}" alt="" width="2560" height="1440" decoding="async"><span>GINKA / mm9527</span><button type="button" class="journal-sidebar-close" aria-label="关闭侧栏">×</button></div>
     {{ partial('journal-music.njk') }}
     {%- if display_toc %}
       {%- set toc = toc(page.content, {class: 'nav', list_number: page.toc.number, max_depth: page.toc.max_depth}) %}

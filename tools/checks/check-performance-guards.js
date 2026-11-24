@@ -64,18 +64,22 @@ const checks = [
       motion.includes('observer.observe(hero)') && motion.includes('if (!hero) return;')
   },
   {
-    name: 'publishes the responsive high-priority hero and the hand-selected gallery plates',
-    pass: $('.journal-hero .hero-art[loading="eager"][fetchpriority="high"][srcset*="hero-katana-day-640.webp"]').length === 1 &&
-      $('.journal-hero .scene-night[srcset*="hero-katana-night-640.webp"]').length === 1 &&
-      $('[data-journal-gallery] [data-fancybox="ginka-island"]').length === 8 &&
-      $('[data-journal-gallery] [data-fancybox="ginka-island"] .scene-night').length === 8 &&
+    name: 'publishes one hero per theme and the six hand-selected gallery plates',
+    pass: $('.journal-hero picture.journal-hero-image .hero-art[loading="eager"][fetchpriority="high"][srcset*="hero-katana-day-640.webp"]').length === 1 &&
+      // 首屏只留一个 <img>，夜色版本交给 <source media="(prefers-color-scheme: dark)">，
+      // 避免昼夜两套图同时下载。
+      $('.journal-hero picture.journal-hero-image img').length === 1 &&
+      $('.journal-hero picture.journal-hero-image source[srcset*="hero-katana-night-640.webp"]').length === 1 &&
+      $('[data-journal-gallery] [data-fancybox="ginka-island"]').length === 6 &&
+      $('[data-journal-gallery] [data-fancybox="ginka-island"] .scene-night').length === 6 &&
       $('.journal-hero-dust i').length === 6
   },
   {
     name: 'publishes flat navigation and removes the cover side inscription',
     pass: $('.journal-hero-edition').length === 0 &&
-      ['tags', 'categories', 'links'].every(path => $(`.main-menu > .menu-item > a[href="/${path}/"]`).length === 1) &&
-      $('.menu-item-more[hidden] .journal-mobile-links').children().length === 0
+      // 标签 / 分类 / 友链收进「更多」，各自只能出现一次
+      ['tags', 'categories', 'links'].every(path => $(`.site-nav a[href="/${path}/"]`).length === 1) &&
+      $('.main-menu > .menu-item-more .journal-mobile-links > li').length === 3
   },
   {
     name: 'loads ui shell runtime',

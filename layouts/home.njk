@@ -7,10 +7,15 @@
 {% set official = 'http://ginka.frontwing.jp/story/' %}
 {% if cover %}
   <section class="journal-hero" aria-labelledby="journal-title">
-    <div class="journal-hero-image" aria-hidden="true">
-      <img class="hero-art journal-hero-art scene-day" src="{{ url_for('/images/ginka/scenes/hero-katana-day-1280.webp') }}" srcset="{{ url_for('/images/ginka/scenes/hero-katana-day-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/hero-katana-day-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/hero-katana-day-1280.webp') }} 1280w" sizes="100vw" alt="" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async">
-      <img class="hero-art journal-hero-art scene-night" src="{{ url_for('/images/ginka/scenes/hero-katana-night-1280.webp') }}" srcset="{{ url_for('/images/ginka/scenes/hero-katana-night-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/hero-katana-night-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/hero-katana-night-1280.webp') }} 1280w" sizes="100vw" alt="" width="1280" height="720" loading="eager" decoding="async">
-    </div>
+    <picture class="journal-hero-image" aria-hidden="true">
+      <source media="(prefers-color-scheme: dark)" srcset="{{ url_for('/images/ginka/scenes/hero-katana-night-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/hero-katana-night-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/hero-katana-night-1280.webp') }} 1280w" sizes="100vw">
+      <img class="hero-art journal-hero-art" src="{{ url_for('/images/ginka/scenes/hero-katana-day-1280.webp') }}" srcset="{{ url_for('/images/ginka/scenes/hero-katana-day-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/hero-katana-day-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/hero-katana-day-1280.webp') }} 1280w" sizes="100vw"
+           data-src-day="{{ url_for('/images/ginka/scenes/hero-katana-day-1280.webp') }}"
+           data-src-night="{{ url_for('/images/ginka/scenes/hero-katana-night-1280.webp') }}"
+           data-srcset-day="{{ url_for('/images/ginka/scenes/hero-katana-day-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/hero-katana-day-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/hero-katana-day-1280.webp') }} 1280w"
+           data-srcset-night="{{ url_for('/images/ginka/scenes/hero-katana-night-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/hero-katana-night-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/hero-katana-night-1280.webp') }} 1280w"
+           alt="" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async">
+    </picture>
     <span class="journal-hero-light" aria-hidden="true"></span>
     <div class="journal-hero-dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="book-width journal-hero-inner">
@@ -99,13 +104,11 @@
 {% if cover %}
   {% set plates = [
     {slug: 'torii-close', number: '01', title: '鸟居 · 近景', alt: '岛上的朱红鸟居，日光穿过梁柱。', max: 1440},
-    {slug: 'torii-sea', number: '02', title: '海上鸟居', alt: '暮色里的海上鸟居，朱红梁柱立在海面尽头。', max: 1440},
+    {slug: 'torii-sea', number: '02', title: '鸟居 · 远景', alt: '暮色里的海上鸟居，朱红梁柱立在海面尽头。', max: 1440},
     {slug: 'beach', number: '03', title: '沙滩 · 夏日', alt: '夏日沙滩与浅滩的水光，远处是岛影。', max: 1440},
     {slug: 'island-street', number: '04', title: '岛上街道', alt: '通往海边的小路，两侧是低矮的木屋。', max: 1440},
-    {slug: 'shop-street', number: '05', title: '商店街', alt: '岛上的商店街，蓝色门檐连成一排。', max: 1440},
-    {slug: 'classroom', number: '06', title: '教室 · 午后', alt: '靠窗的课桌与午后的教室。', max: 1440},
-    {slug: 'window-room', number: '07', title: '窗边的房间', alt: '榻榻米房间与窗外的海。', max: 1440},
-    {slug: 'house', number: '08', title: '日式住宅', alt: '木格窗与檐下的日式住宅。', max: 1440}
+    {slug: 'house', number: '05', title: '日式住宅', alt: '木格窗与檐下的日式住宅。', max: 1440},
+    {slug: 'window-room', number: '06', title: '窗边的房间', alt: '榻榻米房间与窗外的海。', max: 1440}
   ] %}
   <section class="journal-island" id="ginka-scenes" aria-labelledby="island-title">
     <div class="book-width">

@@ -123,13 +123,23 @@ const run = async () => {
     assert(!logger.lines.join('\n').includes(token));
   }
 
+  // 真正的离线用例：不给 token，子进程应当跳过 purge 并打印警告。
+  // 只保留启动 Node 必需的环境变量；之前只传 SystemRoot，在 Git Bash 里
+  // process.env.SystemRoot 可能是 undefined，子进程直接启动失败（spawn EINVAL），
+  // 断言只会看到非 0 的 status，看不出是环境问题。
+  const childEnv = {};
+  for (const [key, value] of Object.entries(process.env)) {
+    if (/^(path|pathext|systemroot|windir|comspec|temp|tmp|lang|lc_all|node_options)$/i.test(key)) {
+      childEnv[key] = value;
+    }
+  }
   const cli = spawnSync(process.execPath, [scriptPath], {
     encoding: 'utf8',
-    env: {
-      PATH: process.env.PATH || '',
-      SystemRoot: process.env.SystemRoot || ''
-    }
+    env: childEnv,
+    timeout: 30000
   });
+  assert.strictEqual(cli.error, undefined, `spawn failed: ${cli.error && cli.error.message}`);
+  assert.strictEqual(cli.signal, null, `killed by signal ${cli.signal}`);
   assert.strictEqual(cli.status, 0, cli.stderr || cli.stdout);
   assert.match(`${cli.stdout}\n${cli.stderr}`, /warning|警告/i);
 

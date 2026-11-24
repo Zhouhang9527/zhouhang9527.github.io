@@ -1,148 +1,104 @@
 // ===================================================
-// GINKA Blog Service Worker - PWA Support
-// Version: 2.0.1
+// GINKA Blog Service Worker
+// 策略：HTML 在线优先；静态资源缓存优先（URL 自带内容版本）；
+// 更新只在用户点「刷新」后 skipWaiting，不打断阅读与音乐。
 // ===================================================
 
-const CACHE_VERSION = 'ginka-blog-v2.1.0';
-const CACHE_SHELL = 'ginka-shell-v2';
-const CACHE_RUNTIME = 'ginka-runtime-v2';
+const VERSION = 'ginka-blog-3.0.0';
+const SHELL_CACHE = 'ginka-shell-' + VERSION;
+const RUNTIME_CACHE = 'ginka-runtime-' + VERSION;
+const KEEP = [SHELL_CACHE, RUNTIME_CACHE];
 
-// 关键资源 - 预缓存（只列真实被页面引用的资源，避免缓存未使用或已下线的文件）
+// 离线兜底需要的最小集合；带 ?v= 的 CSS/JS 不预缓存，避免留下无版本号副本。
 const SHELL_FILES = [
   '/',
   '/manifest.webmanifest',
-  '/css/ginka-editorial.css',
-  '/css/ginka-pages.css',
-  '/css/ginka-reading.css',
-  '/css/ginka-runtime.css',
-  '/css/ginka-motion.css',
-  '/css/ginka-theme.css',
-  '/js/ginka-theme-init.js',
-  '/js/ginka-theme.js',
-  '/js/ginka-runtime.js',
-  '/js/ginka-reading.js',
-  '/js/ginka-ui-shell.js',
-  '/js/ginka-controls.js',
   '/images/avatar.png',
   '/images/favicon.png'
 ];
 
-// 安装事件 - 预缓存关键资源
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing Service Worker v' + CACHE_VERSION);
   event.waitUntil(
-    caches.open(CACHE_SHELL)
-      .then((cache) => {
-        console.log('[SW] Caching shell files');
-        // 逐条容错：单个 404 不应让整个 SW 安装失败（否则离线能力整体失效）。
-        return Promise.all(
-          SHELL_FILES.map((file) => cache.add(file).catch((error) => {
-            console.warn('[SW] skip shell file', file, error);
-          }))
-        );
-      })
-      .then(() => self.skipWaiting())
+    caches.open(SHELL_CACHE).then((cache) =>
+      Promise.all(SHELL_FILES.map((file) =>
+        cache.add(file).catch((error) => console.warn('[SW] skip shell file', file, error))
+      ))
+    )
   );
 });
 
-// 激活事件 - 清理旧缓存
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating Service Worker v' + CACHE_VERSION);
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_SHELL && cacheName !== CACHE_RUNTIME) {
-            console.log('[SW] Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
+    caches.keys()
+      .then((names) => Promise.all(
+        names.filter((name) => !KEEP.includes(name)).map((name) => caches.delete(name))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
-// 请求拦截 - 缓存策略
+async function networkFirst(request) {
+  const cache = await caches.open(RUNTIME_CACHE);
+  try {
+    const fresh = await fetch(request);
+    if (fresh && fresh.ok) cache.put(request, fresh.clone());
+    return fresh;
+  } catch (error) {
+    const cached = await cache.match(request);
+    if (cached) return cached;
+    const fallback = await caches.match('/');
+    if (fallback) return fallback;
+    return new Response('离线状态，请稍后重试。', {
+      status: 503,
+      headers: { 'content-type': 'text/plain; charset=utf-8' }
+    });
+  }
+}
+
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  try {
+    const fresh = await fetch(request);
+    if (fresh && fresh.ok) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(request, fresh.clone());
+    }
+    return fresh;
+  } catch (error) {
+    return new Response('', { status: 504, statusText: 'Offline' });
+  }
+}
+
 self.addEventListener('fetch', (event) => {
-  // 只处理 GET 请求
-  if (event.request.method !== 'GET') return;
-  
-  // 只处理同源请求
-  if (!event.request.url.startsWith(self.location.origin)) return;
-  
-  const url = new URL(event.request.url);
-  
-  // 跳过 API 请求
+  const request = event.request;
+  if (request.method !== 'GET') return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
   if (url.pathname.includes('/api/')) return;
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      // 缓存命中
-      if (cachedResponse) {
-        // 返回缓存，同时在后台更新
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.ok) {
-            caches.open(CACHE_RUNTIME).then((cache) => {
-              cache.put(event.request, networkResponse);
-            });
-          }
-        }).catch(() => {
-          // 网络错误，忽略
-        });
-        
-        return cachedResponse;
-      }
-      
-      // 缓存未命中，从网络获取
-      return fetch(event.request).then((networkResponse) => {
-        // 只缓存成功的响应
-        if (networkResponse && networkResponse.ok) {
-          const responseClone = networkResponse.clone();
-          
-          // 缓存静态资源
-          const cacheable = event.request.destination === 'style' 
-                         || event.request.destination === 'script'
-                         || event.request.destination === 'image'
-                         || event.request.destination === 'font'
-                         || url.pathname.endsWith('.html');
-          
-          if (cacheable) {
-            caches.open(CACHE_RUNTIME).then((cache) => {
-              cache.put(event.request, responseClone);
-            });
-          }
-        }
-        
-        return networkResponse;
-      }).catch(() => {
-        // 网络失败，尝试返回首页（离线页面）
-        if (event.request.destination === 'document') {
-          return caches.match('/');
-        }
-        
-        // 其他资源返回空响应
-        return new Response('', {
-          status: 408,
-          statusText: 'Network request timeout'
-        });
-      });
-    })
-  );
+  if (request.mode === 'navigate' || request.destination === 'document') {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+  if (['style', 'script', 'image', 'font', 'manifest'].includes(request.destination)) {
+    event.respondWith(cacheFirst(request));
+  }
 });
 
-// 消息处理 - 支持手动清理缓存
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWait();
+  const type = event.data && event.data.type;
+  if (type === 'SKIP_WAITING') {
+    self.skipWaiting();
+    return;
   }
-  
-  if (event.data && event.data.type === 'CLEAR_CACHE') {
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => caches.delete(cacheName))
-      );
-    }).then(() => {
-      event.ports[0].postMessage({ success: true });
-    });
+  if (type === 'CLEAR_CACHE') {
+    event.waitUntil(
+      caches.keys()
+        .then((names) => Promise.all(names.map((name) => caches.delete(name))))
+        .then(() => {
+          if (event.ports && event.ports[0]) event.ports[0].postMessage({ success: true });
+        })
+    );
   }
 });
