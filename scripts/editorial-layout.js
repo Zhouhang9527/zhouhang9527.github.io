@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const sceneMap = require('./ginka-scene-map.json');
+const sceneMap = require('../config/ginka-scene-map.json');
 
 function routeKind(page) {
   page = page || {};

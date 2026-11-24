@@ -3,6 +3,9 @@ on:
   push:
     branches: [ginka-art-direction, ginka-dialogue-polish, ginka-comments-refine]
   workflow_dispatch:
+concurrency:
+  group: ginka-visual-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -23,13 +26,14 @@ jobs:
       - run: npm install --no-save --package-lock=false playwright
       - run: npx playwright install --with-deps chromium
       - name: Start isolated preview
+        id: preview
         run: |
           npx hexo server -p 4004 > /tmp/ginka-server.log 2>&1 &
           for i in $(seq 1 60); do curl -fsS http://127.0.0.1:4004/ >/dev/null && exit 0; sleep 2; done
           cat /tmp/ginka-server.log
           exit 1
       - name: Focused live comment review
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.preview.outcome == 'success' }}
         env:
           GINKA_TEST_BASE_URL: http://127.0.0.1:4004
         run: |
@@ -42,7 +46,7 @@ jobs:
           path: artifacts/comment-live/
           retention-days: 7
       - name: Browser checks
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.preview.outcome == 'success' }}
         env:
           GINKA_TEST_BASE_URL: http://127.0.0.1:4004
         run: |
@@ -54,7 +58,7 @@ jobs:
           npm run check:motion || status=1
           exit "$status"
       - name: Capture all routes and interactions
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.preview.outcome == 'success' }}
         env:
           GINKA_TEST_BASE_URL: http://127.0.0.1:4004
         run: |

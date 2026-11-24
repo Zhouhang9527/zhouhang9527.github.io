@@ -2,7 +2,7 @@
 
 The day palette uses cool cloud white and sea blue; the moonlit palette uses muted navy/slate and light silver rather than saturated blue cards. Main article content stays free of scene backgrounds.
 
-Route art is centralized in scripts/ginka-scene-map.json. The checked-in scene pairs are used by default; the exact original image paths selected from the private visual index are embedded in tools/prepare-local-scenes.py. Local extras remain ignored and are excluded from generated production routes.
+Route art is centralized in config/ginka-scene-map.json. The checked-in scene pairs are used by default; the exact original image paths selected from the private visual index are embedded in tools/prepare-local-scenes.py. Local extras remain ignored and are excluded from generated production routes.
 
 Local preview (PowerShell):
 

@@ -88,7 +88,7 @@ assert.doesNotMatch(head, /cdn\.jsdelivr\.net|fonts\.googleapis\.com|fonts\.loli
 assert.doesNotMatch(head, /\burl_for\s*\(/);
 assert.match(head, /vendor\/fonts\/noto-serif-sc\/wght\.css/);
 assert.match(head, /vendor\/fonts\/jetbrains-mono\/wght\.css/);
-assert.match(body, /js\/vendor\/lenis\.min\.js/);
+assert.doesNotMatch(body, /js\/vendor\/lenis\.min\.js/);
 assert.ok(read('source/js/vendor/lenis.LICENSE.txt').includes('MIT License'));
 assert.doesNotMatch(body, /ginka-effects-loader|ginka-page-effects|ginka-lazy-loader|cdn\.jsdelivr\.net/);
 assert.doesNotMatch(shell, /canvas-nest|scheduleCanvasNest/);
