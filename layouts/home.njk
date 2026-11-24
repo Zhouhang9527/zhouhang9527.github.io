@@ -6,7 +6,8 @@
 {% set index = ginka_journal_index(page.posts, site.posts, cover) %}
 {% set official = 'http://ginka.frontwing.jp/story/' %}
 {% if cover %}
-  <section class="journal-hero" aria-labelledby="journal-title">
+  {% set heroEffects = ginka_hero_effects() %}
+  <section class="journal-hero" aria-labelledby="journal-title"{% if heroEffects %} data-streak-art="{{ heroEffects.streak }}" data-glint-art="{{ heroEffects.glint }}" data-bokeh-art="{{ heroEffects.bokeh }}" style="--hero-bokeh:url('{{ heroEffects.bokeh }}')"{% endif %}>
     <picture class="journal-hero-image" aria-hidden="true">
       <source media="(prefers-color-scheme: dark)" srcset="{{ url_for('/images/ginka/scenes/hero-katana-night-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/hero-katana-night-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/hero-katana-night-1280.webp') }} 1280w" sizes="100vw">
       <img class="hero-art journal-hero-art" src="{{ url_for('/images/ginka/scenes/hero-katana-day-1280.webp') }}" srcset="{{ url_for('/images/ginka/scenes/hero-katana-day-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/hero-katana-day-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/hero-katana-day-1280.webp') }} 1280w" sizes="100vw"
@@ -17,7 +18,6 @@
            alt="" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async">
     </picture>
     <span class="journal-hero-light" aria-hidden="true"></span>
-    <div class="journal-hero-dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="book-width journal-hero-inner">
       <div class="journal-hero-copy">
         <span class="journal-eyebrow journal-hero-kicker">MM9527 · PERSONAL ARCHIVE</span>
