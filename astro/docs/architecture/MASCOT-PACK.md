@@ -1,5 +1,7 @@
 # GINKA private mascot pack
 
+> 当前开发计划与验收状态统一维护于 [TODO.md](TODO.md)；本文保留设计、实现或素材接入契约。
+
 Place this pack in the private assets repository at reference/mascot/manifest.json, or explicitly set GINKA_MASCOT_MANIFEST to an absolute manifest path. Keep all referenced files inside that directory. The local preview mounts only validated assets on loopback and never copies them into dist.
 
 The recovered KAG/TJS index currently establishes UI behavior but does not contain a verified dialogue/voice/portrait crosswalk. Do not guess hashed resource identities, synthesize lines, or crop a character from a title CG. Resolve the PSB scene strings and their associated voice storage IDs, render transparent original character poses from the recovered animation/character resources, and verify the result against the original game. Choose a small spoiler-free subset of genuine GINKA lines with exact text and corresponding audio; post-clear lines must be marked afterstory. Use complete aligned images for base, closed eyes and speaking mouth, all same canvas size. Missing blink/mouth may be null; never mark unrelated frames as expression differences. Audio is original recording converted locally to Ogg/WAV/MP3/M4A, not voice synthesis.

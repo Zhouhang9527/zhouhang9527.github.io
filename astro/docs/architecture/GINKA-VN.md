@@ -1,4 +1,6 @@
 # GINKA Visual Novel Blog — 架构设计
+
+> 当前开发计划与验收状态统一维护于 [TODO.md](TODO.md)；本文保留设计、实现或素材接入契约。
 状态：Proposed / 待实施；基线：feature/ginka-astro @ 0e70303；本文件只定义目标架构，不代表功能已完成
 
 ## 1. 产品定义与边界

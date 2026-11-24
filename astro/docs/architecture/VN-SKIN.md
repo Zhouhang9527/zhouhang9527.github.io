@@ -1,4 +1,6 @@
 # VN skin implementation
+
+> 当前开发计划与验收状态统一维护于 [TODO.md](TODO.md)；本文保留设计、实现或素材接入契约。
 Status: functional provisional skin; original screenshot/atlas calibration pending.
 - Shared panel: GamePanel; stage.css owns typography, colours, geometry, state, timing.
 - Title: full CG selection remains driven by vn-scenes.json; no character overlay.

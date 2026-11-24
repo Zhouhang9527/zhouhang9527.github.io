@@ -1,4 +1,7 @@
 # GINKA Astro
+
+> 当前 GINKA VN 开发待办：[TODO.md](docs/architecture/TODO.md)，架构设计及实现证据分别见 [GINKA-VN.md](docs/architecture/GINKA-VN.md) 与 [VN-SKIN.md](docs/architecture/VN-SKIN.md)。TODO 是后续任务的唯一清单，未实际验收的项目不勾选。
+
 Independent static-site migration on feature/ginka-astro. The original Hexo source remains a rollback reference and the shared content/assets owner until cutover. The Astro build never invokes Hexo or NexT.
 
 ## Development
