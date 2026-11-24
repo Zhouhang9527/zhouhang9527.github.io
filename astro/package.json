@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node tools/prepare.mjs && astro dev",
-    "build": "node tools/prepare.mjs && astro build && pagefind --site dist && node tools/verify.mjs",
+    "build": "node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
     "preview": "astro preview",
     "check": "node tools/verify.mjs"
   },

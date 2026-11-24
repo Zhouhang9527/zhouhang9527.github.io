@@ -28,7 +28,11 @@ for(const file of fs.readdirSync(postDir).filter(n=>n.endsWith('.md'))){
  if(!date)throw Error('Missing original date: '+file);
  const route=routeByStem.get(stem)||date.replaceAll('-','/')+'/'+stem+'/';
  const attachment=path.join(postDir,stem);
- if(fs.existsSync(attachment)) fs.cpSync(attachment,path.join(out,route),{recursive:true});
+ for(const item of tracked.filter(p=>p.startsWith('source/_posts/'+stem+'/'))){
+  const suffix=item.slice(('source/_posts/'+stem+'/').length);
+  if(suffix.includes('local-preview/'))continue;
+  copy(path.join(root,item),path.join(out,route,suffix));
+ }
  // Preserve original URL paths; change only relative local Markdown image URLs.
  const content=parsed.content.replace(/(!\[[^\]\n]*\]\()([^\s)]+)([^\n)]*\))/g,(all,open,src,tail)=>{
   if(/^(?:[a-z]+:|\/|#)/i.test(src))return all;
@@ -39,7 +43,7 @@ for(const file of fs.readdirSync(postDir).filter(n=>n.endsWith('.md'))){
  const list=v=>Array.isArray(v)?v.flat(Infinity).map(String):v==null?[]:[String(v)];
  const data={...parsed.data,date,route,title:String(parsed.data.title||stem),tags:list(parsed.data.tags),categories:list(parsed.data.categories)};
  fs.writeFileSync(path.join(stage,'posts',file),matter.stringify(content,data));
- rows.push({route,title:data.title,stem});
+ rows.push({route,title:data.title,stem,date,description:String(data.description||''),tags:data.tags,categories:data.categories});
 }
 for(const slug of ['about','links']){
  const parsed=matter(fs.readFileSync(path.join(source,slug,'index.md'),'utf8'));
@@ -65,3 +69,5 @@ for(const name of ['reading','atri-loader','ui-shell','theme','comments','contro
  fs.writeFileSync(file,code);
 }
 copy(path.resolve('public-shell.js'),path.join(out,'js/astro-shell.js'));
+copy(path.resolve('src/styles/base.css'),path.join(out,'css/astro-base.css'));
+fs.writeFileSync(path.join(out,'.nojekyll'),'');

@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   preview:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     defaults:
       run:
@@ -24,6 +24,11 @@ jobs:
           node-version: 22
       - run: npm install --no-audit --no-fund
       - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: astro-preview-dist
+          path: astro/dist/
+          retention-days: 7
       - run: npx playwright install --with-deps chromium
       - name: Browser acceptance
         run: |
@@ -37,10 +42,4 @@ jobs:
           path: |
             astro/artifacts/
             /tmp/ginka-astro.log
-          retention-days: 7
-      - uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: astro-preview-dist
-          path: astro/dist/
           retention-days: 7
