@@ -50,9 +50,8 @@ const routes = [['home','/'],['archives','/archives/'],['tags','/tags/'],['categ
                 const widget=page.frameLocator('iframe.giscus-frame');
                 await widget.locator('.gsc-comment-box').first().waitFor({state:'visible',timeout:15000}).catch(()=>{});
                 await shot('comments');
-                const frame=page.locator('.journal-dialogue-frame');
-                const structure=await frame.evaluate(el=>({height:el.getBoundingClientRect().height,panelHeight:el.querySelector('.journal-dialogue-panel')?.getBoundingClientRect().height,hasIframe:!!el.querySelector('iframe'),next:el.nextElementSibling?.classList.contains('journal-dialogue-comments'),readingColumn:el.closest('.journal-dialogue')?.parentElement?.classList.contains('journal-reading-shell'),aligned:Math.abs(el.getBoundingClientRect().left-document.querySelector('.post-body').getBoundingClientRect().left)<3}));
-                if(structure.hasIframe||!structure.next||structure.height>600||structure.panelHeight>structure.height*.55||!structure.readingColumn||!structure.aligned)issues.push(width+' '+mode+' dialogue structure');
+                const structure=await dialogue.evaluate(el=>({intro:el.querySelectorAll('.journal-dialogue-frame,.journal-dialogue-intro').length,widget:!!el.querySelector('#journal-comments .giscus-container'),readingColumn:el.parentElement?.classList.contains('journal-reading-shell'),aligned:Math.abs(el.getBoundingClientRect().left-document.querySelector('.post-body').getBoundingClientRect().left)<4}));
+                if(structure.intro||!structure.widget||!structure.readingColumn||!structure.aligned)issues.push(width+' '+mode+' dialogue structure');
                 const count=await page.locator('iframe.giscus-frame').count();
                 const editor=await page.frameLocator('iframe.giscus-frame').locator('.gsc-comment-box').first().evaluate(el=>({background:getComputedStyle(el).backgroundImage,textarea:!!el.querySelector('textarea')})).catch(()=>null);
                 report.push({width,mode,name:'giscus',count,structure,editor});

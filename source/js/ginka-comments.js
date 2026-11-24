@@ -4,10 +4,6 @@
   const mounted = new WeakSet();
   let observed = null;
   let observer = null;
-  function setBusy(container, busy) {
-    const cue = container.closest('.journal-dialogue')?.querySelector('.journal-dialogue-next');
-    if (cue) cue.setAttribute('aria-busy', String(busy));
-  }
   function detach() {
     observer?.disconnect();
     observer = null;
@@ -16,7 +12,6 @@
   async function load(container) {
     if (!container.isConnected || mounted.has(container)) return;
     mounted.add(container);
-    setBusy(container, true);
     detach();
     const status = container.querySelector('.journal-comments-status');
     const script = document.createElement('script');
@@ -36,18 +31,12 @@
     script.setAttribute('data-theme', selected || window.GINKA_THEME?.commentTheme ||
       (document.documentElement.dataset.theme === 'moonlit' ? 'dark_dimmed' : 'light'));
     script.addEventListener('load', () => {
-      const frame = container.querySelector('iframe.giscus-frame');
-      if (frame) frame.addEventListener('load', () => setBusy(container, false), {once:true});
-      else setBusy(container, false);
-      // Never leave the visual indicator spinning indefinitely on a blocked iframe.
-      window.setTimeout(() => setBusy(container, false), 15000);
       status?.remove();
       if (container.isConnected) document.dispatchEvent(new CustomEvent('ginka:comments-ready'));
     }, {once:true});
     script.addEventListener('error', () => {
       script.remove();
       mounted.delete(container);
-      setBusy(container, false);
       if (!status || !container.isConnected) return;
       status.textContent = '评论加载失败';
       const retry = document.createElement('button');
@@ -72,17 +61,6 @@
     } else load(container);
   }
   document.addEventListener('pjax:send', detach);
-  document.addEventListener('click', event => {
-    const cue = event.target.closest?.('.journal-dialogue-next');
-    if (!cue) return;
-    const target = document.getElementById('journal-comments');
-    if (!target) return;
-    event.preventDefault();
-    const container = target.querySelector('.giscus-container');
-    if (container) load(container);
-    target.focus({preventScroll:true});
-    target.scrollIntoView({block:'start',behavior:'auto'});
-  });
   ['page:loaded','pjax:success','pjax:complete','DOMContentLoaded'].forEach(name => document.addEventListener(name,mount));
   if (document.readyState !== 'loading') mount();
 })();

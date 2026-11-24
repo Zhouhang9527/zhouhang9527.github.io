@@ -18,27 +18,28 @@ const base = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4004';
       assert.ok(href,'Missing article link');
       await page.goto(new URL(href,base).href,{waitUntil:'domcontentloaded'});
       await page.waitForFunction(()=>window.GINKA_THEME);
-      const frame=page.locator('.journal-dialogue-frame');
-      assert.equal(await frame.count(),1,'One introduction per article');
+      const section=page.locator('.journal-dialogue');
+      assert.equal(await section.count(),1,'One real comment area per article');
+      assert.equal(await page.locator('.journal-dialogue-frame,.journal-dialogue-intro,.journal-dialogue-next').count(),0,'No introductory scene');
       for(const mode of ['day','moonlit']){
         await page.evaluate(mode=>window.GINKA_THEME.set(mode),mode);
-        const bounds=await frame.evaluate(el=>{
+        const bounds=await section.evaluate(el=>{
           const body=document.querySelector('.post-body').getBoundingClientRect();
           const box=el.getBoundingClientRect();
-          return {deltaLeft:Math.abs(body.left-box.left),deltaRight:Math.abs(body.right-box.right),height:box.height,panel:el.querySelector('.journal-dialogue-panel').getBoundingClientRect().height,scene: getComputedStyle(el).backgroundImage,overflow:document.documentElement.scrollWidth>innerWidth+1,separate:el.nextElementSibling?.classList.contains('journal-dialogue-comments')};
+          return {deltaLeft:Math.abs(body.left-box.left),deltaRight:Math.abs(body.right-box.right),overflow:document.documentElement.scrollWidth>innerWidth+1,widget:!!el.querySelector('#journal-comments .giscus-container')};
         });
         assert.ok(bounds.deltaLeft<4&&bounds.deltaRight<4,JSON.stringify({width,mode,...bounds}));
-        assert.ok(bounds.height>=216&&bounds.height<=600&&bounds.panel>=100&&bounds.panel<=bounds.height*.55&&bounds.scene!=='none',JSON.stringify(bounds));
-        assert.ok(bounds.separate&&!bounds.overflow);
+        assert.ok(bounds.widget&&!bounds.overflow,JSON.stringify(bounds));
       }
-      await frame.locator('.journal-dialogue-next').click();
+      await section.scrollIntoViewIfNeeded();
       await page.locator('iframe.giscus-frame').waitFor();
       assert.equal(await page.locator('iframe.giscus-frame').count(),1);
-      assert.equal(await page.locator('.journal-dialogue-frame iframe').count(),0);
-      const before=(await frame.boundingBox()).height;
-      await page.locator('iframe.giscus-frame').evaluate(el=>{el.style.height='1800px'});
-      assert.equal((await frame.boundingBox()).height,before);
-      console.log('PASS dialogue alignment, focus/advance, independent height',width);
+      const frame=page.locator('iframe.giscus-frame');
+      assert.ok(await frame.evaluate(el=>el.getBoundingClientRect().width<=el.closest('.journal-dialogue').getBoundingClientRect().width+1));
+      await frame.evaluate(el=>{el.style.height='1800px'});
+      assert.equal(await page.locator('.journal-dialogue-frame').count(),0);
+      assert.ok(await section.evaluate(el=>el.getBoundingClientRect().height>=1800));
+      console.log('PASS direct comment area, lazy loading and reading alignment',width);
       await page.close();
     }
   }finally{await browser.close();}

@@ -1,24 +1,7 @@
-/* A visual-novel scene, not a dark card. The textbox belongs to the CG. */
- .journal-dialogue{box-sizing:border-box;margin:28px auto 36px;min-width:0;width:100%;max-width:72ch;font:400 16px/1.9 var(--font-body,var(--journal-font-body,'Noto Serif SC',serif))}
+/* The real Giscus conversation is the dialogue UI; no introductory scene. */
+.journal-dialogue{box-sizing:border-box;margin:24px auto 36px;min-width:0;width:100%;max-width:72ch;font:400 16px/1.9 var(--font-body,var(--journal-font-body,'Noto Serif SC',serif))}
 .journal-reading-shell>.journal-dialogue{grid-column:1;grid-row:3;justify-self:center;width:calc(100% - 2 * var(--reading-inline-padding,44px));max-width:72ch}
-.journal-dialogue-frame{position:relative;isolation:isolate;container-type:inline-size;box-sizing:border-box;aspect-ratio:16/9;min-height:216px;overflow:hidden;margin:0 0 12px;background:#324b5d var(--dialogue-scene-day) center / cover no-repeat;color:#fff;border:0;border-radius:0}
-html[data-theme='moonlit'] .journal-dialogue-frame{background-color:#172638;background-image:var(--dialogue-scene-night)}
-.journal-dialogue-panel{position:absolute;inset:auto 0 0;height:28%;min-height:106px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-start;padding:12px 13% 24px;z-index:1;isolation:isolate}
-.journal-dialogue-panel::before{content:'';position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,transparent,#06080d 11%,#11182b 100%);opacity:.62;pointer-events:none}
-.journal-dialogue-original .journal-dialogue-panel::before{background:var(--dialogue-frame) center / 100% 100% no-repeat}
-.journal-dialogue-name{position:absolute;left:12%;top:0;transform:translateY(-57%);display:flex;align-items:flex-end;gap:2px;min-width:0;padding:0 0 5px 0;color:#fff;font:600 clamp(14px,2.25cqw,19px)/1.35 var(--font-body,sans-serif);text-shadow:0 1px 2px #000,1px 0 #26313a,-1px 0 #26313a,0 -1px #26313a;letter-spacing:0}
-.journal-dialogue-name::before{content:'';width:clamp(19px,3.4cqw,27px);height:clamp(18px,3.15cqw,25px);flex:none;background:url('../images/ginka/butterfly.png') center / contain no-repeat;filter:drop-shadow(0 1px 1px #0008)}
-.journal-dialogue-original .journal-dialogue-name::before{background-image:var(--dialogue-butterfly)}
-.journal-dialogue-name::after{content:'';position:absolute;left:10px;bottom:0;width:min(190px,42cqw);height:1px;background:linear-gradient(90deg,#fff,transparent);pointer-events:none;filter:drop-shadow(0 1px 1px #000b)}
-.journal-dialogue-original .journal-dialogue-name::after{height:5px;bottom:-1px;background:var(--dialogue-line) left bottom / 100% 100% no-repeat}
-body .journal-dialogue-frame .journal-dialogue-intro{margin:0;padding:0 18px 0 clamp(16px,2.7cqw,24px);color:#fff;font:600 clamp(15px,2.45cqw,21px)/1.65 var(--font-body,sans-serif);letter-spacing:0;text-shadow:0 1px 2px #000,1px 0 #242a30,-1px 0 #242a30,0 -1px #242a30}
-body .journal-dialogue-frame .journal-dialogue-next{position:absolute;right:7%;bottom:6px;display:grid;place-items:center;width:34px;height:34px;padding:0;color:#e1edf6!important;background:transparent!important;border:0;border-radius:2px;box-shadow:none!important;text-shadow:none;transform:none}
-body .journal-dialogue-frame .journal-dialogue-next:is(:hover,:focus-visible){background:#ffffff15!important}
-.journal-dialogue-next:focus-visible{outline:2px solid #d3f2dd;outline-offset:2px}
-.journal-dialogue-next svg{display:block;flex:none}
-.journal-dialogue-next[aria-busy='true'] svg{animation:ginka-dialogue-ring .85s linear infinite}
 @keyframes ginka-dialogue-ring{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.journal-dialogue-next[aria-busy='true'] svg{animation:none}}
 .journal-dialogue-comments{min-width:0;scroll-margin-top:calc(var(--book-header,72px) + 16px)}
 .journal-dialogue-comments:focus-visible{outline:2px solid var(--journal-focus);outline-offset:4px}
 body .journal-dialogue :is(.comments,.tabs-comment,.giscus-container){background:transparent!important;border:0;border-radius:0;padding:0;box-shadow:none}
@@ -30,6 +13,5 @@ body .journal-dialogue :is(.comments,.tabs-comment,.giscus-container){background
 .journal-comments-status:not(:has(button))::before{content:'';width:15px;height:15px;border:1.5px solid var(--journal-line);border-top-color:var(--journal-blue);border-radius:50%;animation:ginka-dialogue-ring .85s linear infinite}
 @media(prefers-reduced-motion:reduce){.journal-comments-status::before{animation:none!important}}
 .journal-comments-status button{margin-inline-start:10px;font:inherit;color:var(--journal-blue);background:transparent;border:0;cursor:pointer;text-decoration:underline}
-@media(max-width:767px){.journal-dialogue{margin-block:30px;font-size:15px}.journal-reading-shell>.journal-dialogue{font-size:15px}.journal-dialogue-frame{aspect-ratio:4/3;min-height:216px}.journal-dialogue-panel{min-height:104px;padding-inline:6%}.journal-dialogue-name{left:5%}body .journal-dialogue-frame .journal-dialogue-next{right:4%;bottom:0}}
-@media(pointer:coarse){body .journal-dialogue-frame .journal-dialogue-next{width:44px;height:44px;bottom:0}}
+@media(max-width:767px){.journal-dialogue{margin-block:24px;font-size:15px}}
 @media print{.journal-dialogue{display:none}}

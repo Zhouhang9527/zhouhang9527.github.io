@@ -23,13 +23,13 @@ const dir = path.resolve('artifacts/comment-live');
     await page.addInitScript(m=>localStorage.setItem('ginka-theme',m),mode);
     await page.goto(new URL(href,base).href,{waitUntil:'domcontentloaded',timeout:25000});
     await page.waitForFunction(()=>window.GINKA_THEME);
-    const scene=page.locator('.journal-dialogue-frame');
+    const scene=page.locator('.journal-dialogue');
     await scene.scrollIntoViewIfNeeded();
     rec.layout=await scene.evaluate(el=>{
      const a=el.getBoundingClientRect(),b=document.querySelector('.post-body').getBoundingClientRect();
      return {leftDelta:Math.abs(a.left-b.left),rightDelta:Math.abs(a.right-b.right),overflow:document.documentElement.scrollWidth>innerWidth+1};
     });
-    await scene.locator('.journal-dialogue-next').click();
+    rec.introCount=await page.locator('.journal-dialogue-frame,.journal-dialogue-intro').count();
     const frame=page.locator('iframe.giscus-frame');
     await frame.waitFor({timeout:15000});
     rec.src=await frame.getAttribute('src');
@@ -47,5 +47,5 @@ const dir = path.resolve('artifacts/comment-live');
    } finally {rec.pageErrors=errors;result.push(rec);await page.close();}
   })));
  }finally{await browser.close();await fs.writeFile(path.join(dir,'report.json'),JSON.stringify(result,null,2));}
- if(result.some(r=>!r.custom||r.layout?.overflow||r.layout?.leftDelta>=4||r.layout?.rightDelta>=4)){console.error(JSON.stringify(result,null,2));process.exitCode=1;}
+ if(result.some(r=>r.introCount!==0||!r.custom||r.layout?.overflow||r.layout?.leftDelta>=4||r.layout?.rightDelta>=4)){console.error(JSON.stringify(result,null,2));process.exitCode=1;}
 })().catch(error=>{console.error(error);process.exit(1)});
