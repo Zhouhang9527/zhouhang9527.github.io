@@ -36,7 +36,9 @@ function ginkaDialogueSkin() {
   if (!need.every(name => fs.existsSync(path.join(hexo.source_dir, prefix + name)))) return null;
   const url = name => hexo.extend.helper.get('url_for').call(
     { config: hexo.config }, '/' + prefix + name);
-  return {frame: url(need[0]), butterfly: url(need[1]), line: url(need[2])};
+  const advance = 'dialogue-advance.webp';
+  return {frame: url(need[0]), butterfly: url(need[1]), line: url(need[2]),
+    advance: fs.existsSync(path.join(hexo.source_dir, prefix + advance)) ? url(advance) : null};
 }
 hexo.extend.helper.register('ginka_dialogue_skin', ginkaDialogueSkin);
 hexo.extend.helper.register('ginka_scene', ginkaScene);

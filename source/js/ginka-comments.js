@@ -4,6 +4,9 @@
   const mounted = new WeakSet();
   let observed = null;
   let observer = null;
+  let cueObserver = null;
+  let cueTarget = null;
+  const playedCues = new WeakSet();
   function detach() {
     observer?.disconnect();
     observer = null;
@@ -41,7 +44,24 @@
     }, {once:true});
     container.append(script);
   }
+  function mountCue() {
+    const cue = document.querySelector('.journal-dialogue-has-advance .journal-dialogue-next');
+    if (!cue || playedCues.has(cue) || cue === cueTarget) return;
+    cueObserver?.disconnect();
+    cueTarget = cue;
+    if (!('IntersectionObserver' in window)) { playedCues.add(cue); return; }
+    cueObserver = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      cue.classList.add('is-entered');
+      playedCues.add(cue);
+      cueObserver?.disconnect();
+      cueObserver = null;
+      cueTarget = null;
+    }, { threshold: .5 });
+    cueObserver.observe(cue);
+  }
   function mount() {
+    mountCue();
     const container = document.querySelector('.journal-dialogue .giscus-container');
     if (!container || mounted.has(container)) { detach(); return; }
     if (observed === container) return;
@@ -54,7 +74,21 @@
       observer.observe(container);
     } else load(container);
   }
-  document.addEventListener('pjax:send', detach);
+  document.addEventListener('pjax:send', () => {
+    detach();
+    cueObserver?.disconnect();
+    cueObserver = null;
+    cueTarget = null;
+  });
+  document.addEventListener('click', event => {
+    const cue = event.target.closest?.('.journal-dialogue-next');
+    if (!cue) return;
+    const target = document.getElementById('journal-comments');
+    if (!target) return;
+    event.preventDefault();
+    target.focus({preventScroll:true});
+    target.scrollIntoView({block:'start',behavior:'auto'});
+  });
   ['page:loaded','pjax:success','pjax:complete','DOMContentLoaded'].forEach(name => document.addEventListener(name,mount));
   if (document.readyState !== 'loading') mount();
 })();

@@ -38,7 +38,7 @@
       {% if page.comments and theme.giscus.repo %}
         {% set dialogueSkin = ginka_dialogue_skin() %}
         <section class="journal-dialogue" aria-label="评论区">
-          <div class="journal-dialogue-frame{% if dialogueSkin %} journal-dialogue-original{% endif %}"{% if dialogueSkin %} data-dialogue-skin="original" style="--dialogue-frame:url('{{ dialogueSkin.frame }}');--dialogue-butterfly:url('{{ dialogueSkin.butterfly }}');--dialogue-line:url('{{ dialogueSkin.line }}')"{% endif %}>
+          <div class="journal-dialogue-frame{% if dialogueSkin %} journal-dialogue-original{% endif %}{% if dialogueSkin and dialogueSkin.advance %} journal-dialogue-has-advance{% endif %}"{% if dialogueSkin %} data-dialogue-skin="original" style="--dialogue-frame:url('{{ dialogueSkin.frame }}');--dialogue-butterfly:url('{{ dialogueSkin.butterfly }}');--dialogue-line:url('{{ dialogueSkin.line }}'){% if dialogueSkin.advance %};--dialogue-advance:url('{{ dialogueSkin.advance }}'){% endif %}"{% endif %}>
             <div class="journal-dialogue-name">mm9527</div>
             <p class="journal-dialogue-intro">读到这里，有什么想说的吗？</p>
             <a class="journal-dialogue-next" href="#journal-comments" aria-label="进入评论区" title="进入评论区"><svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true" focusable="false"><path d="M2 2h12L8 10z" fill="currentColor"/></svg></a>

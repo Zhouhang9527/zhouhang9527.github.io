@@ -19,7 +19,7 @@ Check all route covers in day and moonlit modes, including PJAX navigation and t
 
 ## Original dialogue frame
 
-UI-0093 is the 1280×201 dialogue strip; UI-0089 contains the original butterfly and name line. The verified extraction is automated:
+UI-0093 is the 1280×201 dialogue strip; UI-0089 contains the original butterfly and name line. UI-0091 is a 384×24 sprite with 16 cells (the first is transparent), played once when the introduction enters view. The verified extraction is automated:
 
 ```powershell
 python tools/prepare-dialogue-skin.py install --inventory "D:/ginka-ui-review/inventory.json"

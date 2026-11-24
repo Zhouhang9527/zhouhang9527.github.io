@@ -66,6 +66,7 @@ def install(args):
     expected = {
         "UI-0093": (1280, 201),
         "UI-0089": (617, 71),
+        "UI-0091": (384, 24),
     }
     images = {}
     for key, size in expected.items():
@@ -81,6 +82,7 @@ def install(args):
         "dialogue-frame.webp": frame,
         "dialogue-butterfly.webp": atlas.crop((0, 34, 40, 71)),
         "dialogue-name-line.webp": atlas.crop((40, 63, 278, 71)),
+        "dialogue-advance.webp": images["UI-0091"],
     }
     for name, image in pieces.items():
         if any(r > 240 and g < 20 and b > 240 and a > 0 for r,g,b,a in image.getdata()):
