@@ -71,7 +71,7 @@ body.sidebar-active .journal-sidebar-edge { visibility: hidden; }
 body .journal-sidebar-edge:focus-visible { background: #e4eef7; outline: 1px solid #82a5c1; outline-offset: -1px; }
 body.sidebar-active .main, body.sidebar-active .footer { transform: none !important; padding-left: 0 !important; padding-right: 0 !important; }
 body .sidebar .sidebar-inner { padding: 20px 22px 34px !important; border-radius: 0; box-shadow: none; overflow: visible !important; backdrop-filter: none !important; }
-.journal-sidebar-cover { position: relative; height: 155px; overflow: hidden; background: linear-gradient(160deg, #e2ebf5, #c9d8e6); }
+.journal-sidebar-cover { position: relative; height: 136px; overflow: hidden; background: linear-gradient(160deg, #e2ebf5, #c9d8e6); }
 #journal-sidebar > .journal-sidebar-cover > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 40% 38%; border: 0; border-radius: 0; padding: 0; margin: 0; box-shadow: none; transform: none; }
 .journal-sidebar-cover > span { position: absolute; bottom: 13px; left: 20px; font: 12px var(--font-mono, Consolas, monospace); color: #334d6b; letter-spacing: 1.5px; }
 .journal-sidebar-close { position: absolute; top: 10px; right: 12px; width: 34px; height: 34px; padding: 0; border-radius: 50%; border: 1px solid #ffffffb0; background: #f7f9fcc9; color: #536a84 !important; font: 23px/1 sans-serif; cursor: pointer; }

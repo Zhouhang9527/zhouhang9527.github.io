@@ -425,3 +425,101 @@ html[data-theme='moonlit'] .journal-archive-row { border-bottom-color: var(--rul
 html[data-theme='moonlit'] .journal-archive-row h3 a { color: var(--ink) !important; }
 html[data-theme='moonlit'] .journal-archive-row h3 a:hover { color: var(--blue) !important; }
 html[data-theme='moonlit'] .journal-archive-row > span { color: var(--muted); }
+
+/* Interior surfaces and controls: align with the same moonlit palette. */
+html[data-theme='moonlit'] .ginka-home a.journal-secondary { color: var(--blue) !important; }
+html[data-theme='moonlit'] .ginka-home :is(.journal-section-heading, .journal-island-heading) h2 { color: var(--ink); }
+html[data-theme='moonlit'] .journal-page-nav,
+html[data-theme='moonlit'] .journal-reading-nav { border-color: var(--rule); }
+html[data-theme='moonlit'] .journal-page-nav [aria-current] { color: var(--blue) !important; }
+html[data-theme='moonlit'] .journal-taxonomy-item {
+  background: var(--surface-read);
+  border-color: var(--rule) !important;
+}
+html[data-theme='moonlit'] .journal-taxonomy-item:hover {
+  background: var(--surface-float);
+  border-color: var(--blue) !important;
+}
+html[data-theme='moonlit'] .journal-taxonomy-item h2 { color: var(--ink) !important; }
+html[data-theme='moonlit'] .journal-taxonomy-item :is(.journal-taxonomy-symbol, b) { color: var(--blue); }
+html[data-theme='moonlit'] .journal-empty { color: var(--muted); }
+html[data-theme='moonlit'] body .post :is(.post-header, .post-nav) { border-color: var(--rule); }
+html[data-theme='moonlit'] body .post .post-body h2 { border-color: var(--rule); }
+html[data-theme='moonlit'] body .post .post-tags a {
+  background: var(--surface-float);
+  color: var(--blue);
+  border-color: var(--rule);
+}
+html[data-theme='moonlit'] body .post .post-copyright {
+  background: var(--surface-nav);
+  color: var(--body-text);
+  border-color: var(--rule);
+}
+html[data-theme='moonlit'] body .post .post-copyright a { color: var(--blue); }
+html[data-theme='moonlit'] body .post .post-nav-item a { color: var(--blue); }
+html[data-theme='moonlit'] body :is(.journal-contact-card, .link-card) {
+  background: var(--surface-read);
+  border-color: var(--rule) !important;
+}
+html[data-theme='moonlit'] body .journal-contact-card:hover,
+html[data-theme='moonlit'] body .link-card:hover { background: var(--surface-float); }
+html[data-theme='moonlit'] body .journal-contact-card strong,
+html[data-theme='moonlit'] body .link-info h3 { color: var(--ink); }
+html[data-theme='moonlit'] .journal-about-banner { background: var(--surface-nav); }
+html[data-theme='moonlit'] .journal-about-banner::after {
+  background: linear-gradient(90deg, #0c1424e6, #0c14243d 75%),
+              linear-gradient(0deg, #0c142499, transparent 60%);
+}
+html[data-theme='moonlit'] .journal-about-banner-copy h1 { color: var(--ink); }
+html[data-theme='moonlit'] .journal-about-banner-copy > span { color: var(--body-text); }
+html[data-theme='moonlit'] body .post-body .journal-table-scroll th { color: var(--ink); background: var(--surface-float); }
+html[data-theme='moonlit'] body .post-body .journal-table-scroll tbody tr:hover { background: var(--surface-float); }
+html[data-theme='moonlit'] body .journal-feedback h2 { color: var(--ink); }
+html[data-theme='moonlit'] body .journal-feedback-actions button { color: var(--body-text) !important; }
+html[data-theme='moonlit'] body .journal-feedback .post-like-btn[aria-pressed="true"] { background: var(--surface-float) !important; border-color: var(--blue) !important; }
+html[data-theme='moonlit'] body .post-body .journal-code .journal-copy:is(:hover, :focus-visible) { background: var(--surface-float) !important; }
+html[data-theme='moonlit'] body .post-body .journal-code .journal-copy[data-copy-state='copied'] { color: #a8cfc4 !important; }
+html[data-theme='moonlit'] body .journal-reading-shell .post-body .journal-code { background: var(--code-bg); }
+html[data-theme='moonlit'] body .post-body .journal-code .journal-code-lines { background: transparent; }
+html[data-theme='moonlit'] body .search-popup .search-header { background: var(--surface-nav) !important; border-color: var(--rule); }
+html[data-theme='moonlit'] body .search-popup button { color: var(--body-text) !important; }
+html[data-theme='moonlit'] body .search-popup .search-result { color: var(--body-text); }
+html[data-theme='moonlit'] body .search-popup mark { background: var(--surface-read); color: var(--blue); }
+html[data-theme='moonlit'] .journal-colophon a { color: var(--body-text) !important; }
+html[data-theme='moonlit'] body aside#journal-sidebar.sidebar { scrollbar-color: #40566d transparent; }
+html[data-theme='moonlit'] body #journal-sidebar .sidebar-inner { background: var(--surface-nav) !important; }
+html[data-theme='moonlit'] body #journal-sidebar .sidebar-nav { border-color: var(--rule); }
+html[data-theme='moonlit'] body #journal-sidebar .post-toc .active > a { background: var(--surface-float); color: var(--blue) !important; }
+html[data-theme='moonlit'] body #journal-sidebar .site-author-image { border-color: var(--rule); }
+html[data-theme='moonlit'] body #journal-sidebar::-webkit-scrollbar-thumb { background: #40566d; }
+html[data-theme='moonlit'] body #journal-sidebar::-webkit-scrollbar-track { background: var(--surface-nav); }
+html[data-theme='moonlit'] body .sidebar-dimmer { background: #00000065 !important; }
+html[data-theme='moonlit'] #custom-context-menu {
+  background: var(--surface-float) !important;
+  border-color: var(--rule) !important;
+  color: var(--body-text);
+  box-shadow: 0 8px 24px #00000059;
+}
+html[data-theme='moonlit'] #custom-context-menu .context-menu-item,
+html[data-theme='moonlit'] #custom-context-menu .context-menu-item i { color: var(--body-text) !important; }
+html[data-theme='moonlit'] #custom-context-menu .context-menu-item:hover { background: var(--surface-nav) !important; }
+html[data-theme='moonlit'] #custom-context-menu .context-menu-divider { border-color: var(--rule); background: var(--rule); }
+html[data-theme='moonlit'] #atri-live2d-widget #atri-message-box {
+  background: var(--surface-float) !important;
+  border-color: var(--rule) !important;
+  color: var(--body-text);
+  box-shadow: 0 8px 24px #00000059;
+}
+html[data-theme='moonlit'] #atri-live2d-widget .atri-message-content { color: var(--body-text); }
+html[data-theme='moonlit'] #atri-live2d-widget #atri-controls .atri-control-btn {
+  background: var(--surface-float) !important;
+  color: var(--blue) !important;
+  border-color: var(--rule) !important;
+}
+html[data-theme='moonlit'] #atri-launcher-shell .atri-launcher__status:not(:empty) { background: var(--surface-float); color: var(--body-text); }
+@media (max-width: 767px) {
+  /* Keep the upper illustration clear; the title sits over the lower fade. */
+  html[data-theme='moonlit'] .journal-hero::before {
+    background: linear-gradient(180deg, #0c14244d, transparent 22%, transparent 34%, #0c1424a6 52%, var(--bg-canvas) 76%);
+  }
+}
