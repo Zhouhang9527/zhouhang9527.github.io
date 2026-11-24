@@ -29,14 +29,15 @@ try{
    assert.equal(await page.locator('[data-vn-continue]').isVisible(),false);
    assert.equal(await page.locator('[data-vn-next]').isVisible(),false);
    assert.equal(await page.locator('[data-vn-extra]').isVisible(),false);
-   await visible('[data-vn-no-next][aria-disabled=true]');await visible('[data-vn-no-extra][aria-disabled=true]');
+   if(original)assert.equal(await page.locator('[data-vn-no-next]').isVisible(),false);else await visible('[data-vn-no-next][aria-disabled=true]');
+   await visible('[data-vn-no-extra][aria-disabled=true]');
    assert.equal(await page.locator('[data-vn-next-new]').isVisible(),false);
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-original'),String(original));
    // Locking EXTRA on the title must not prevent direct access to public articles.
    await go('/afterstory/','[data-vn-afterstory-locked]');
    assert.equal(await page.locator('[data-vn-afterstory-content]').isVisible(),false);
    await go('/','[data-vn-title]');
-   assert.deepEqual(await page.locator('.vn-menu > :visible > span').allTextContents(),['CONTINUE','NEXT','START','LOAD','SYSTEM','EXTRA','INFORMATION','EXIT']);
+   assert.deepEqual(await page.locator('.vn-menu > :visible > span').allTextContents(),original?['CONTINUE','START','LOAD','SYSTEM','EXTRA','INFORMATION','EXIT']:['CONTINUE','NEXT','START','LOAD','SYSTEM','EXTRA','INFORMATION','EXIT']);
    await page.locator('[data-vn-start]').focus();
    await page.keyboard.press('ArrowDown');
    assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('href')),'/library/');

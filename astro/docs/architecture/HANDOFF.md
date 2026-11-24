@@ -1,7 +1,7 @@
 # GINKA VN — 跨会话开发接续
 
 更新：2026-11-25  
-本记录编写基线：`96c27dacb5cea266e9b3f2c262c6188c827a6104`（不是最新 HEAD 的固定值，接手时必须重新获取）
+本记录编写基线：`33cc372c51b7045d8fdf70efe0f5ebbcaa71d7a9`（不是最新 HEAD 的固定值，接手时必须重新获取）
 
 ## 1. 新会话启动协议
 
@@ -9,7 +9,7 @@
 
 - 博客：`Zhouhang9527/zhouhang9527.github.io`
 - 唯一活动开发分支：`feature/ginka-vn`
-- 私有原作素材：`Zhouhang9527/ginka-xp3-assets`，分支 `main`，本次核实 HEAD `e4b85e4f771e3e94c65a7f8f143a47b0bc80c5bd`
+- 私有原作素材：`Zhouhang9527/ginka-xp3-assets`，分支 `main`，本次核实 HEAD `30b43e739aeef0b9a7bf7a38d58975123b677cec`
 - 已上线 main 不动；根目录 Hexo/NexT 保留为回滚和共享文章来源
 - 接手前获取两个仓库当前 HEAD，读取根 AGENTS.md、astro/AGENTS.md、本文件、TODO.md、VN-SKIN.md；按任务补读 GINKA-VN.md、MASCOT-PACK.md、design-system/ginka/MASTER.md 和相关实现
 - 本文件给出接续状态，TODO.md 是唯一任务清单，实际代码和最新测试结果优先于旧文档叙述；出现冲突先核对，不擅自扩展需求
@@ -110,8 +110,8 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
-- 接续基线：`8c8062fce10b6232e278760e54f38ca73a74a78c`；素材 HEAD `e4b85e4f771e3e94c65a7f8f143a47b0bc80c5bd`，reference/ 返回 404，未发现新增视频参考或角色包
-- 真实 CI：基线 Astro review（45460932413）build 成功，typecheck 因 SYSTEM aria-selected 类型错误失败；VN CI（45460932472）同样失败，两个浏览器步骤均跳过
-- 本次提交：settings.astro 修复 aria-selected 类型；vn-reader-controls.ts、vn-backlog.ts 使用真实 LOG 触发器恢复焦点、停止自动阅读并防止快速读取确认后跨路由执行；vn-smoke.mjs 覆盖后日谈锁定/NEW、无语音包、BACKLOG 焦点和公共/原作预览私有请求检查；同步 TODO
-- 当前会话 Node 22 可用，但容器无法解析 github.com，无法完整 clone/install/运行 Astro；本次代码静态检查，未声称测试通过。由分支 CI 验证公开构建；私有模式需本地 `npm run dev:original` 后设 `GINKA_TEST_ORIGINAL=1` 执行 smoke
-- 下一步：读取本提交实际 Actions 日志，修复 BASE-01/02 后继续 DATA-01/ENGINE-01；素材包上传后核实 reference/ 的实际文件，不猜原作资源
+- 基线 `33cc372`，真实 VN CI 45461370567：typecheck/build 成功（75 页、62 旧 URL），Playwright 1.56.1 不支持 ubuntu26.04 安装失败，browser 未执行；固定 ubuntu-24.04 后等待新提交结果
+- 私有素材 `30b43e7` 已上传 reference/，标题/对白有视频证据，其余九界面未覆盖；无 mascot manifest。见 VN-SKIN 新章节，保留 PBD 逻辑矩形，原作模式锁定 NEXT 不显示文字
+- 本次新增 tools/pbd-ui.mjs、extract-pbd-ui.mjs、pbd-ui.test.mjs；对真实 7 个 PBD 执行相同解析函数并核对坐标，通过；完整批量本地执行/语言覆盖合并/通用渲染尚未完成。运行 `node tools/extract-pbd-ui.mjs <private-repo> <private-output>`，输出必须在博客仓库之外
+- Node 22 本地可用但 github.com DNS 不通，未完成真实浏览器截图或完整 build；新 fixture 由 CI 运行
+- 下一步：检查本轮 CI，修复 smoke 实际失败，再将解析产物用于 ENGINE-01，继续核对原作资源，勿发布

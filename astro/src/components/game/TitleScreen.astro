@@ -27,7 +27,7 @@ const coverStyle=sceneVars(background.slug,background.focal)+(localOriginal?`;--
     <a data-vn-continue data-vn-resume href="/archives/" hidden><span style={menuStyle('CONTINUE')}>CONTINUE</span><small>继续阅读</small></a>
     <span class="vn-menu-disabled" data-vn-no-save aria-disabled="true"><span style={menuStyle('CONTINUE')}>CONTINUE</span><small>暂无阅读记录</small></span>
     <a data-vn-next href="/afterstory/" hidden><span style={menuStyle('NEXT')}>NEXT</span><small>后日谈</small></a>
-    <span class="vn-menu-disabled" data-vn-no-next aria-disabled="true"><span style={menuStyle('NEXT')}>NEXT</span><small>通关后解锁</small></span>
+    <span class="vn-menu-disabled" data-vn-no-next aria-disabled="true" aria-hidden={menuOriginal?true:undefined}><span style={menuStyle('NEXT')}>NEXT</span><small>通关后解锁</small></span>
     <a data-vn-start href="/archives/"><span style={menuStyle('START')}>START</span><small>开始阅读</small></a>
     <a href="/library/"><span style={menuStyle('LOAD')}>LOAD</span><small>读取存档</small></a>
     <a href="/settings/"><span style={menuStyle('SYSTEM')}>SYSTEM</span><small>系统设置</small></a>

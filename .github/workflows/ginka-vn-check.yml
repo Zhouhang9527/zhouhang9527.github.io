@@ -11,7 +11,7 @@ concurrency:
 jobs:
   validate:
     if: github.ref == 'refs/heads/feature/ginka-vn'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     defaults:
       run:
