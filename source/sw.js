@@ -3,19 +3,26 @@
 // Version: 2.0.1
 // ===================================================
 
-const CACHE_VERSION = 'ginka-blog-v2.0.1';
+const CACHE_VERSION = 'ginka-blog-v2.1.0';
 const CACHE_SHELL = 'ginka-shell-v2';
 const CACHE_RUNTIME = 'ginka-runtime-v2';
 
-// 关键资源 - 预缓存
+// 关键资源 - 预缓存（只列真实被页面引用的资源，避免缓存未使用或已下线的文件）
 const SHELL_FILES = [
   '/',
   '/manifest.webmanifest',
-  '/css/ginka-custom.css',
   '/css/ginka-editorial.css',
+  '/css/ginka-pages.css',
   '/css/ginka-reading.css',
   '/css/ginka-runtime.css',
-  '/js/ginka-main.js',
+  '/css/ginka-motion.css',
+  '/css/ginka-theme.css',
+  '/js/ginka-theme-init.js',
+  '/js/ginka-theme.js',
+  '/js/ginka-runtime.js',
+  '/js/ginka-reading.js',
+  '/js/ginka-ui-shell.js',
+  '/js/ginka-controls.js',
   '/images/avatar.png',
   '/images/favicon.png'
 ];
@@ -27,7 +34,12 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_SHELL)
       .then((cache) => {
         console.log('[SW] Caching shell files');
-        return cache.addAll(SHELL_FILES);
+        // 逐条容错：单个 404 不应让整个 SW 安装失败（否则离线能力整体失效）。
+        return Promise.all(
+          SHELL_FILES.map((file) => cache.add(file).catch((error) => {
+            console.warn('[SW] skip shell file', file, error);
+          }))
+        );
       })
       .then(() => self.skipWaiting())
   );

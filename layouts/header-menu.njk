@@ -14,6 +14,12 @@
         <ul class="journal-mobile-links"></ul>
       </details>
     </li>
+    <li class="menu-item menu-item-theme">
+      <button type="button" class="journal-theme-toggle" data-ginka-theme-toggle aria-label="切换主题">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+        <span class="journal-theme-toggle-label">跟随系统</span>
+      </button>
+    </li>
     {% if theme.algolia_search.enable or theme.local_search.enable %}
     <li class="menu-item menu-item-search">
       <button type="button" class="popup-trigger" aria-label="搜索文章" aria-keyshortcuts="Control+K Meta+K">

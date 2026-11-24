@@ -32,6 +32,23 @@
   safeStorageRemove('atri_widget_pos');
   safeStorageSet('atri_collapsed', '1');
 
+  // 移动端不挂载看板娘：900KB 库 + 1.4MB 模型只为装饰，且会压住正文、抢走点击。
+  var MOBILE_ATRI_OPTOUT = window.matchMedia('(max-width: 767px), (hover: none) and (pointer: coarse)');
+  if (MOBILE_ATRI_OPTOUT.matches) {
+    if (shell) shell.hidden = true;
+    if (badge) { badge.hidden = true; badge.setAttribute('aria-hidden', 'true'); }
+    if (widget) { widget.hidden = true; widget.setAttribute('aria-hidden', 'true'); }
+    document.documentElement.classList.remove('ginka-atri-home');
+    window.GINKA_ATRI_LOADER = {
+      state: 'disabled',
+      error: null,
+      start: function () { return Promise.resolve(); },
+      retry: function () { return Promise.resolve(); },
+      isHome: function () { return false; }
+    };
+    return;
+  }
+
   function normalizedPath(path) {
     var value = String(path || '/').replace(/\/{2,}/g, '/');
     if (value.length > 1) value = value.replace(/\/+$/, '');

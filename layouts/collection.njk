@@ -3,6 +3,8 @@
 {% block title %}{{ page.tag or page.category or '文章归档' }} | {{ title }}{% endblock %}
 {% block class %}journal-collection{% endblock %}
 {% block content %}
+  {% set wash_slug = 'house' if page.tag else ('classroom' if page.category else 'island-street') %}
+  {{ partial('journal-page-wash.njk', {wash: wash_slug}) }}
   {% set collection_name = page.tag or page.category or '文章归档' %}
   <header class="journal-masthead">
     <div><a class="journal-breadcrumb" href="{{ url_for('/') }}">GINKA / mm9527</a><span class="journal-eyebrow">{{ 'TOPIC / 标签' if page.tag else ('CATEGORY / 分类' if page.category else 'ARCHIVE / 时间归档') }}</span><h1>{{ collection_name | escape }}</h1><p>{% if page.tag or page.category %}与这个主题相关的文章。{% else %}按时间整理的题解、分析与学习笔记。{% endif %}</p></div>

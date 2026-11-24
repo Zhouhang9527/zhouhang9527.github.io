@@ -9,6 +9,30 @@ const legacyStyles = fs.readFileSync('public/css/ginka_style.css', 'utf8');
 
 const checks = [
   {
+    // 线上曾出现首页 0 个 h1，这里守住语义标题。
+    name: 'keeps exactly one h1 on the homepage',
+    pass: $('h1').length === 1
+  },
+  {
+    name: 'links every stylesheet once',
+    pass: (() => {
+      const hrefs = $('link[rel=stylesheet]')
+        .map((index, element) => $(element).attr('href'))
+        .get()
+        .filter(href => href && !/noscript\.css/.test(href));
+      return hrefs.length === new Set(hrefs).size;
+    })()
+  },
+  {
+    name: 'renders each navigation entry once',
+    pass: (() => {
+      const labels = $('.header .menu-item > a')
+        .map((index, element) => $(element).text().trim())
+        .get();
+      return labels.length === new Set(labels).size;
+    })()
+  },
+  {
     name: 'removes engagement script from homepage',
     pass: !html.includes('/js/ginka-engagement.js')
   },
@@ -40,9 +64,11 @@ const checks = [
       motion.includes('observer.observe(hero)') && motion.includes('if (!hero) return;')
   },
   {
-    name: 'publishes the responsive high-priority hero and exactly three hand-selected gallery plates',
-    pass: $('.journal-hero .hero-art[loading="eager"][fetchpriority="high"][srcset*="hero-silver-640.webp"]').length === 1 &&
-      $('[data-journal-gallery] [data-fancybox="ginka-island"]').length === 3 &&
+    name: 'publishes the responsive high-priority hero and the hand-selected gallery plates',
+    pass: $('.journal-hero .hero-art[loading="eager"][fetchpriority="high"][srcset*="hero-katana-day-640.webp"]').length === 1 &&
+      $('.journal-hero .scene-night[srcset*="hero-katana-night-640.webp"]').length === 1 &&
+      $('[data-journal-gallery] [data-fancybox="ginka-island"]').length === 8 &&
+      $('[data-journal-gallery] [data-fancybox="ginka-island"] .scene-night').length === 8 &&
       $('.journal-hero-dust i').length === 6
   },
   {

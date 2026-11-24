@@ -5,6 +5,9 @@
 {% block content %}
   {% set taxonomy = page.type == 'tags' or page.type == 'categories' %}
   {% set isAboutPage = page.source == 'about/index.md' or page.path == 'about/index.html' or page.path == 'about/' %}
+  {% set isLinksPage = 'links' in (page.path or '') %}
+  {% set wash_slug = 'beach' if isAboutPage else ('courtyard' if isLinksPage else ('house' if page.type == 'tags' else ('classroom' if page.type == 'categories' else 'panorama'))) %}
+  {{ partial('journal-page-wash.njk', {wash: wash_slug}) }}
   {% if isAboutPage %}
     <header class="journal-about-banner">
       <img src="{{ url_for('/images/ginka/sunset.webp') }}" srcset="{{ ginka_journal_srcset('/images/ginka/sunset.webp') }}" sizes="(max-width: 990px) 94vw, 920px" alt="夏日黄昏的海岛景色" width="1920" height="1141" loading="eager" fetchpriority="high" decoding="async">

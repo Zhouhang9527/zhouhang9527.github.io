@@ -133,9 +133,14 @@
     var sidebar = document.querySelector('.sidebar');
     if (!sidebar) return;
     var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+    var EDGE_ZONE = 16;      // 左侧多少像素内算"鼠标移到左边"
+    var PEEK_MS = 1500;      // 打开页面自动展示的时长
+    var LEAVE_DELAY = 420;   // 离开后的收起缓冲
     var timer = 0;
     var initialPeekPending = true;
     var hovering = false;
+    var atEdge = false;
+    var edgeArmed = true;
 
     function clearTimer() { window.clearTimeout(timer); timer = 0; }
     function isOpen() { return document.body.classList.contains('sidebar-active'); }
@@ -150,7 +155,7 @@
       clearTimer();
       timer = window.setTimeout(function () {
         timer = 0;
-        if (!hovering && !hasFocus()) hide();
+        if (!hovering && !atEdge && !hasFocus()) hide();
       }, delay);
     }
     function show() {
@@ -163,7 +168,7 @@
       initialPeekPending = false;
       if (document.body.classList.contains('search-active') || document.documentElement.classList.contains('with-fancybox')) return;
       show();
-      hideAfter(1500);
+      hideAfter(PEEK_MS);
     }
     sidebar.addEventListener('pointerenter', function (event) {
       if (event.pointerType !== 'mouse') return;
@@ -173,20 +178,42 @@
     sidebar.addEventListener('pointerleave', function (event) {
       if (event.pointerType !== 'mouse') return;
       hovering = false;
-      if (isOpen()) hideAfter(350);
+      if (isOpen()) hideAfter(LEAVE_DELAY);
     });
     sidebar.addEventListener('focusin', clearTimer);
     sidebar.addEventListener('focusout', function () {
-      if (!hovering && isOpen()) hideAfter(350);
+      if (!hovering && isOpen()) hideAfter(LEAVE_DELAY);
     });
+    // 鼠标贴到左侧边缘就展开，并保持到鼠标离开（不再固定 1.5s 后自动收起）。
     document.addEventListener('pointermove', function (event) {
-      if (!finePointer.matches || event.pointerType !== 'mouse' || document.hidden || isOpen()) return;
-      if (event.clientX > 12 || event.clientX < 0 || document.body.classList.contains('search-active') || document.documentElement.classList.contains('with-fancybox')) return;
-      show();
-      hideAfter(1500);
+      if (!finePointer.matches || event.pointerType !== 'mouse' || document.hidden) return;
+      var blocked = document.body.classList.contains('search-active') || document.documentElement.classList.contains('with-fancybox');
+      var inEdge = event.clientX >= 0 && event.clientX <= EDGE_ZONE;
+      atEdge = inEdge;
+      if (blocked) { if (isOpen() && !inEdge) hide(); return; }
+      if (inEdge) {
+        if (edgeArmed && !isOpen()) show();
+        return;
+      }
+      // 离开边缘区域后重新武装，避免关掉后又被同一次移动立刻弹开。
+      if (event.clientX > EDGE_ZONE + 24) edgeArmed = true;
+      if (isOpen() && !hovering && !hasFocus() && event.clientX > sidebar.offsetWidth + EDGE_ZONE + 24) hideAfter(LEAVE_DELAY);
     }, { passive: true });
+    // 关闭按钮 / Esc / 遮罩点击之后，需要先把鼠标移开左边再回来才会重新展开。
+    document.addEventListener('click', function (event) {
+      if (!event.target || !event.target.closest) return;
+      if (event.target.closest('.journal-sidebar-close, .sidebar-dimmer, .sidebar-toggle')) edgeArmed = false;
+    }, true);
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') edgeArmed = false;
+    }, true);
+    document.addEventListener('pointerleave', function (event) {
+      if (event.pointerType !== 'mouse') return;
+      atEdge = false;
+      if (isOpen() && !hasFocus()) hideAfter(LEAVE_DELAY);
+    });
     window.addEventListener('sidebar:show', clearTimer);
-    window.addEventListener('sidebar:hide', function () { clearTimer(); hovering = false; });
+    window.addEventListener('sidebar:hide', function () { clearTimer(); hovering = false; atEdge = false; });
     document.addEventListener('pjax:send', function () {
       initialPeekPending = false;
       clearTimer();

@@ -1,0 +1,384 @@
+/* ==========================================================================
+   GINKA · 月夜篇 (Moonlit Island)
+   日间沿用现有画集配色；月夜把浅蓝灰换成深海蓝 + 月光银，不做纯黑或霓虹。
+   主题由 <html data-theme="day|moonlit"> 控制，data-theme-mode 记录用户选择
+   （day / moonlit / system），切换逻辑在 js/ginka-theme.js。
+   ========================================================================== */
+
+html[data-theme='moonlit'] {
+  color-scheme: dark;
+
+  /* 基础色板 */
+  --ink: #dce8f5;          /* 月白 · 标题 */
+  --body-text: #bacbdd;    /* 银灰 · 正文 */
+  --muted: #8c9fb3;        /* 远山 · 辅助文字 */
+  --blue: #91c5f4;         /* 月蓝 · 交互强调 */
+  --bg-canvas: #0c1424;    /* 深海 · 页面背景 */
+  --paper: #152237;        /* 蓝墨 · 阅读区域 */
+  --rule: #2c405a;
+  --surface-nav: #111d30;  /* 夜幕 · 导航栏 */
+  --surface-read: #152237;
+  --surface-float: #1d2d44;/* 薄雾 · 悬浮组件 */
+  --code-bg: #0d1727;
+  --code-bar: #16233a;
+
+  /* 站点变量映射 */
+  --journal-ink: var(--ink);
+  --journal-blue: var(--blue);
+  --journal-muted: var(--muted);
+  --journal-line: var(--rule);
+  --journal-surface: var(--surface-float);
+  --journal-surface-soft: var(--surface-nav);
+  --journal-focus: var(--blue);
+  --journal-shadow: 0 2px 14px #00000059;
+  --content-bg-color: var(--surface-read);
+  --text-color: var(--ink);
+  --link-color: var(--blue);
+}
+
+html[data-theme='moonlit'] body {
+  background: linear-gradient(180deg, #0a1120 0, var(--bg-canvas) 950px) !important;
+  color: var(--body-text);
+}
+html[data-theme='moonlit'] { background: #0c1424 !important; }
+
+/* ---------------------------------------------------------------- 导航栏 */
+html[data-theme='moonlit'] body .column > header.header::before {
+  background: color-mix(in srgb, var(--surface-nav) 93%, transparent);
+  border-bottom: 1px solid var(--rule);
+}
+html[data-theme='moonlit'] body .header .journal-brand img { filter: invert(1) brightness(1.55) saturate(.9); }
+html[data-theme='moonlit'] body .header .journal-brand { color: var(--muted) !important; }
+html[data-theme='moonlit'] body .header .menu-item :is(a, button, summary) { color: var(--body-text) !important; }
+html[data-theme='moonlit'] body .header .menu-item a:hover,
+html[data-theme='moonlit'] body .header .menu-item a[aria-current='page'],
+html[data-theme='moonlit'] body .header .menu-item a.menu-item-active { color: var(--ink) !important; }
+html[data-theme='moonlit'] body .header .menu-item :is(a, button, summary)::after {
+  background: linear-gradient(90deg, transparent, var(--blue), transparent);
+}
+html[data-theme='moonlit'] body .header .popup-trigger {
+  background: var(--surface-float) !important;
+  border-color: var(--rule) !important;
+  color: var(--body-text) !important;
+}
+html[data-theme='moonlit'] body .header .popup-trigger kbd { color: var(--muted); }
+html[data-theme='moonlit'] body .header .journal-mobile-links {
+  background: var(--surface-float);
+  border: 1px solid var(--rule);
+}
+
+/* ------------------------------------------------------------------ 首屏 */
+/* 昼夜各用一张场景图，不再靠滤镜压暗，插画细节全部保留。 */
+html[data-theme='moonlit'] .journal-hero { background: #0a1120; }
+html[data-theme='moonlit'] .journal-hero::before {
+  background: linear-gradient(90deg, #0c1424e6 0%, #0c1424b8 22%, #0c142466 45%, #0c142414 70%),
+              linear-gradient(180deg, #0c14244d 0%, #0c142400 26%, #0c142400 74%, #0c1424cc 100%);
+}
+html[data-theme='moonlit'] .journal-hero-dust i { background: #dfe9f4; box-shadow: 0 0 7px #cfe0f03d; }
+html[data-theme='moonlit'] .journal-eyebrow { color: var(--muted) !important; }
+html[data-theme='moonlit'] .journal-game-title { color: var(--ink); }
+html[data-theme='moonlit'] .journal-hero-kicker,
+html[data-theme='moonlit'] .ginka-home :is(.journal-scroll-cue, .journal-hero-note) { color: var(--muted) !important; }
+
+/* -------------------------------------------------------------- 章节条 */
+html[data-theme='moonlit'] .journal-chapters { border-block-color: var(--rule); }
+html[data-theme='moonlit'] .journal-chapter-grid a { color: var(--body-text) !important; }
+html[data-theme='moonlit'] .journal-chapter-grid a + a { border-left-color: var(--rule); }
+html[data-theme='moonlit'] .journal-chapter-grid a:is(:hover, :focus-visible) { background: var(--surface-float); }
+html[data-theme='moonlit'] .journal-chapter-grid a > span { color: var(--muted); }
+html[data-theme='moonlit'] .journal-chapter-grid strong { color: var(--ink); }
+html[data-theme='moonlit'] .journal-chapter-grid small { color: var(--muted); }
+
+/* ------------------------------------------------------------ 文章列表 */
+html[data-theme='moonlit'] .journal-section-heading { border-bottom-color: var(--rule); color: var(--ink); }
+html[data-theme='moonlit'] .journal-section-heading > a { color: var(--blue) !important; }
+html[data-theme='moonlit'] .journal-count { color: var(--muted); border-color: var(--rule); }
+html[data-theme='moonlit'] .journal-entry { border-bottom-color: var(--rule); }
+html[data-theme='moonlit'] .journal-entry:is(:hover, :focus-within) { background: #17212c; }
+html[data-theme='moonlit'] .journal-entry h3 a { color: var(--ink) !important; }
+html[data-theme='moonlit'] .journal-entry:is(:hover, :focus-within) h3 a { color: var(--blue) !important; }
+html[data-theme='moonlit'] .journal-entry-content > p { color: var(--body-text); }
+html[data-theme='moonlit'] .journal-date { color: var(--muted); }
+html[data-theme='moonlit'] .journal-date strong { color: var(--ink); }
+html[data-theme='moonlit'] .journal-entry-meta span { color: var(--muted); border-color: var(--rule); }
+html[data-theme='moonlit'] .journal-entry-meta :is(.journal-new, .journal-pinned) {
+  color: var(--blue);
+  background: #1d2b39;
+  border-color: #2f4356;
+}
+html[data-theme='moonlit'] .journal-entry-tags a { color: var(--blue) !important; }
+html[data-theme='moonlit'] .journal-entry-arrow { color: var(--blue); }
+html[data-theme='moonlit'] .journal-filters button[data-journal-filter] {
+  --filter-ink: var(--body-text);
+  background: var(--surface-float);
+  border-color: var(--rule);
+}
+html[data-theme='moonlit'] .journal-filters button[data-journal-filter]:is(:hover, :focus-visible) {
+  background: #24333f;
+  border-color: #3c5266;
+}
+html[data-theme='moonlit'] .journal-filters button[data-journal-filter][aria-pressed='true'] {
+  --filter-ink: var(--ink);
+  background: #24405a;
+  border-color: #476a8b;
+}
+
+/* ------------------------------------------------------------ 侧边卡片 */
+html[data-theme='moonlit'] :is(.journal-profile, .journal-game-note) {
+  background: var(--surface-float);
+  border-color: var(--rule);
+}
+html[data-theme='moonlit'] .journal-profile h2,
+html[data-theme='moonlit'] .journal-profile h2 span { color: var(--ink) !important; }
+html[data-theme='moonlit'] :is(.journal-profile p, .journal-topics) { color: var(--body-text); }
+html[data-theme='moonlit'] .journal-topics span { border-color: var(--rule); }
+html[data-theme='moonlit'] .journal-profile-links { border-top-color: var(--rule); }
+html[data-theme='moonlit'] .ginka-home .journal-profile-links a,
+html[data-theme='moonlit'] .ginka-home .journal-game-note a { color: var(--blue) !important; }
+html[data-theme='moonlit'] .journal-game-note p { color: var(--body-text); }
+
+/* -------------------------------------------------------------- 画廊区 */
+html[data-theme='moonlit'] .journal-island {
+  background: linear-gradient(180deg, #141d27, #101821);
+  border-block-color: var(--rule);
+}
+html[data-theme='moonlit'] .journal-island-heading { border-bottom-color: var(--rule); color: var(--ink); }
+html[data-theme='moonlit'] .journal-island-number { color: #2b3d4e; }
+html[data-theme='moonlit'] .journal-island-main {
+  background: #18232f;
+  border-color: var(--rule);
+  box-shadow: none;
+}
+html[data-theme='moonlit'] .journal-island-story p { color: var(--body-text); }
+html[data-theme='moonlit'] .ginka-home .journal-story-link { color: var(--blue) !important; }
+html[data-theme='moonlit'] .journal-plates { border-top-color: var(--rule); }
+html[data-theme='moonlit'] .ginka-home a.plate-thumb {
+  background: var(--surface-float);
+  border-color: var(--rule);
+  color: var(--body-text) !important;
+}
+html[data-theme='moonlit'] .ginka-home a.plate-thumb:is(:hover, [aria-current='true']) {
+  background: #26343f;
+  border-color: #4a6c8b;
+}
+html[data-theme='moonlit'] .journal-plate-caption,
+html[data-theme='moonlit'] .journal-island-main figcaption { color: var(--muted); }
+
+/* ------------------------------------------------------------ 文章阅读 */
+/* 三级明度：页面 111923 < 正文 192431 < 悬浮 202E3D；代码块比正文更暗。 */
+html[data-theme='moonlit'] body .post-block {
+  background: var(--surface-read) !important;
+  border-color: var(--rule) !important;
+}
+html[data-theme='moonlit'] body :is(.post-title, .post-title a) { color: var(--ink) !important; }
+html[data-theme='moonlit'] body .post-body { color: var(--body-text) !important; }
+html[data-theme='moonlit'] body .post-body :is(h1, h2, h3, h4, strong, b) { color: var(--ink); }
+html[data-theme='moonlit'] body .post-body a { color: var(--blue); }
+html[data-theme='moonlit'] body .post-body hr { border-top-color: var(--rule); }
+html[data-theme='moonlit'] body .post-body blockquote {
+  background: #16202b;
+  border-left-color: #4a6c8b;
+  color: var(--body-text);
+}
+html[data-theme='moonlit'] body .post-body :is(th, td) { border-color: var(--rule); }
+html[data-theme='moonlit'] body .post-body th { background: var(--surface-float); }
+html[data-theme='moonlit'] body .post-body code,
+html[data-theme='moonlit'] body .post-body :not(pre) > code {
+  background: #1b2734;
+  color: #cfe0ef;
+  border-color: var(--rule);
+}
+html[data-theme='moonlit'] body .post-body .journal-code { background: var(--code-bg); border-color: var(--rule); }
+html[data-theme='moonlit'] .journal-code-toolbar { background: var(--code-bar); border-bottom-color: var(--rule); }
+html[data-theme='moonlit'] .journal-code-toolbar > span { color: var(--muted); }
+html[data-theme='moonlit'] body .journal-reading-shell .post-body .journal-code-toolbar { background: var(--code-bar); }
+html[data-theme='moonlit'] body .post-body figure.highlight,
+html[data-theme='moonlit'] body .post-body figure.highlight table,
+html[data-theme='moonlit'] body .post-body figure.highlight pre,
+html[data-theme='moonlit'] body .post-body figure.highlight td.code pre { background: var(--code-bg) !important; }
+
+/* 语法高亮：低饱和淡紫 / 冰蓝 / 浅绿 / 暖橙（highlighter 输出 hljs-* 类名） */
+html[data-theme='moonlit'] .journal-code :is(.hljs-comment, .hljs-quote) { color: #6f8296; }
+html[data-theme='moonlit'] .journal-code :is(.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-doctag) { color: #c4a7e7; }
+html[data-theme='moonlit'] .journal-code :is(.hljs-string, .hljs-regexp, .hljs-addition) { color: #a8cfc4; }
+html[data-theme='moonlit'] .journal-code :is(.hljs-number, .hljs-symbol, .hljs-bullet, .hljs-link) { color: #e8c07a; }
+html[data-theme='moonlit'] .journal-code :is(.hljs-title, .hljs-function_, .hljs-class_, .hljs-section, .hljs-name) { color: #9cc7e6; }
+html[data-theme='moonlit'] .journal-code :is(.hljs-built_in, .hljs-type, .hljs-attr, .hljs-attribute, .hljs-property) { color: #94bdda; }
+html[data-theme='moonlit'] .journal-code :is(.hljs-variable, .hljs-template-variable, .hljs-variable.hljs-language_) { color: #bdcdd9; }
+html[data-theme='moonlit'] .journal-code :is(.hljs-meta, .hljs-tag, .hljs-selector-id, .hljs-selector-class) { color: #b9a6d6; }
+html[data-theme='moonlit'] .journal-code :is(.hljs-operator, .hljs-punctuation, .hljs-params, .hljs-subst) { color: #cfdce8; }
+html[data-theme='moonlit'] .journal-code :is(.hljs-deletion) { color: #d99a9a; }
+html[data-theme='moonlit'] .journal-code :is(.hljs-emphasis) { font-style: italic; }
+html[data-theme='moonlit'] .journal-code :is(.hljs-strong) { font-weight: 600; color: var(--ink); }
+
+/* 正文内的截图、流程图、IDA 反汇编一律保留原色，不做反相或压暗 */
+html[data-theme='moonlit'] body .post-body img,
+html[data-theme='moonlit'] body .post-body figure img { filter: none; }
+
+/* 阅读辅助 */
+html[data-theme='moonlit'] .journal-reading-nav { color: var(--muted); }
+html[data-theme='moonlit'] .journal-reading-nav a { color: var(--blue) !important; }
+html[data-theme='moonlit'] :is(.journal-outline, .journal-outline-list-link) { color: var(--body-text); }
+html[data-theme='moonlit'] body .journal-reading-shell .post-meta,
+html[data-theme='moonlit'] body .journal-reading-shell .post-description { color: var(--muted); }
+html[data-theme='moonlit'] body .journal-reading-shell .post-meta a { color: var(--blue) !important; }
+html[data-theme='moonlit'] body .post-body .journal-back-to-top,
+html[data-theme='moonlit'] .journal-post-nav a { color: var(--blue); }
+
+/* ---------------------------------------------------------------- 侧栏 */
+html[data-theme='moonlit'] body aside.sidebar {
+  background: var(--surface-nav) !important;
+  box-shadow: 8px 0 35px #00000073 !important;
+}
+html[data-theme='moonlit'] body .sidebar :is(.sidebar-nav li, .site-state-item-name) { color: var(--muted) !important; }
+html[data-theme='moonlit'] body .sidebar .sidebar-toc-active .sidebar-nav-toc,
+html[data-theme='moonlit'] body .sidebar .sidebar-overview-active .sidebar-nav-overview {
+  color: var(--ink) !important;
+  background: var(--surface-float);
+}
+html[data-theme='moonlit'] .journal-sidebar-links a {
+  color: var(--body-text) !important;
+  border-bottom-color: var(--rule) !important;
+}
+html[data-theme='moonlit'] .journal-sidebar-links a:hover { background: var(--surface-float); }
+html[data-theme='moonlit'] .journal-sidebar-links a span { color: var(--muted); }
+html[data-theme='moonlit'] body .sidebar .site-author-name { color: var(--ink) !important; }
+html[data-theme='moonlit'] body .sidebar .site-state-item-count { color: var(--blue) !important; }
+html[data-theme='moonlit'] body .sidebar :is(.site-state, .links-of-author) { border-top-color: var(--rule); }
+html[data-theme='moonlit'] body .sidebar .post-toc a { color: var(--body-text) !important; }
+html[data-theme='moonlit'] body .sidebar .back-to-top { background: var(--surface-float); color: var(--body-text); }
+html[data-theme='moonlit'] .journal-sidebar-cover { background: linear-gradient(160deg, #17222e, #101821); }
+html[data-theme='moonlit'] .journal-sidebar-cover > span { color: var(--body-text); }
+html[data-theme='moonlit'] .journal-sidebar-close {
+  background: #1b2733cc;
+  border-color: #ffffff26;
+  color: var(--body-text) !important;
+}
+
+/* -------------------------------------------------------------- 音乐播放器 */
+html[data-theme='moonlit'] .journal-music-heading { color: var(--ink) !important; }
+html[data-theme='moonlit'] .journal-music-heading span { color: var(--muted); }
+html[data-theme='moonlit'] #music-title { color: var(--ink) !important; }
+html[data-theme='moonlit'] :is(#music-time, .music-artist) { color: var(--muted) !important; }
+html[data-theme='moonlit'] body #journal-sidebar #music-progress { background: #24333f !important; }
+html[data-theme='moonlit'] :is(.music-playlist-item, .music-lyric-line) { color: var(--body-text); }
+html[data-theme='moonlit'] .music-playlist-meta { color: var(--muted); }
+
+/* ------------------------------------------------------------------ 搜索 */
+html[data-theme='moonlit'] .search-pop-overlay { background: rgba(9, 14, 20, .84) !important; }
+html[data-theme='moonlit'] .search-popup {
+  background: var(--surface-float) !important;
+  border: 1px solid var(--rule);
+  box-shadow: 0 20px 60px #00000080 !important;
+}
+html[data-theme='moonlit'] .search-input {
+  background: var(--code-bg) !important;
+  color: var(--ink) !important;
+  border-color: var(--rule) !important;
+}
+html[data-theme='moonlit'] .search-input::placeholder { color: var(--muted); }
+html[data-theme='moonlit'] :is(.search-result-container, .search-result-icon) { color: var(--muted); }
+html[data-theme='moonlit'] .local-search-result li > a { color: var(--ink) !important; }
+
+/* -------------------------------------------------------------- 控件与其他 */
+html[data-theme='moonlit'] body .sidebar-toggle {
+  background: var(--surface-float) !important;
+  border-color: var(--rule);
+}
+html[data-theme='moonlit'] body .sidebar-toggle .toggle-line { background: var(--body-text) !important; }
+html[data-theme='moonlit'] body .sidebar-toggle::after { color: var(--muted); }
+html[data-theme='moonlit'] body .sidebar-dimmer { background: #0000008c !important; }
+html[data-theme='moonlit'] body .pagination .current {
+  background: var(--surface-float);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px #3c5266;
+}
+html[data-theme='moonlit'] body .pagination .page-number:hover { background: #1e2b37; }
+html[data-theme='moonlit'] body footer.footer { color: var(--muted); }
+html[data-theme='moonlit'] .journal-colophon { border-top-color: var(--rule); }
+html[data-theme='moonlit'] .journal-skip-link {
+  background: var(--surface-float);
+  border-color: var(--rule);
+  color: var(--ink) !important;
+}
+
+/* ------------------------------------------------------------- 主题切换按钮 */
+.journal-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid #d7e3ef;
+  border-radius: 100px;
+  background: #f8faff;
+  color: #465f79;
+  font: 400 12px/1 var(--font-body);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: none;
+}
+.menu-item-theme { flex: none; }
+.journal-theme-toggle:hover { border-color: #a9c2d6; color: #2d6286; }
+.journal-theme-toggle:focus-visible { outline: 2px solid var(--journal-focus); outline-offset: 2px; }
+.journal-theme-toggle svg { width: 15px; height: 15px; flex: none; }
+
+html[data-theme='moonlit'] .journal-theme-toggle {
+  background: var(--surface-float);
+  border-color: var(--rule);
+  color: var(--body-text);
+}
+html[data-theme='moonlit'] .journal-theme-toggle:hover { border-color: #476a8b; color: var(--ink); }
+
+@media (max-width: 767px) {
+  .journal-theme-toggle { height: 32px; padding: 0 8px; }
+  .journal-theme-toggle span { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme='moonlit'] body .post-body img { transition: none; }
+}
+
+/* ---------------------------------------------------------- 昼夜场景图切换 */
+/* 同一个画框里放日/夜两张图，只显示当前主题那一张；data-theme 未落定前保持日间。 */
+.scene-night { display: none; }
+html[data-theme='moonlit'] .scene-day { display: none; }
+html[data-theme='moonlit'] .scene-night { display: block; }
+
+/* 两张图叠在同一位置：首屏 */
+.journal-hero-image .journal-hero-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* 夜色图本身已经是低饱和夜景，不再叠滤镜 */
+html[data-theme='moonlit'] :is(.art-slide img, .plate-thumb img) { filter: none; }
+
+/* ------------------------------------------------------------- 页面场景底图 */
+/* 归档 / 标签 / 分类 / 文章 / 关于 / 友链各自一张场景图，日间一张、月夜一张。 */
+.journal-page-wash { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.journal-page-wash img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 26%;
+  opacity: .5;
+  filter: saturate(.86) contrast(.98);
+}
+.journal-page-wash::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, #f8fbfdd9 0%, #f6f9fce6 42%, var(--bg-canvas) 82%);
+}
+html[data-theme='moonlit'] .journal-page-wash img { opacity: .58; filter: none; }
+html[data-theme='moonlit'] .journal-page-wash::after {
+  background: linear-gradient(180deg, #0c1424e6 0%, #0c1424f2 42%, var(--bg-canvas) 84%);
+}
+body .main-inner, body .footer { position: relative; z-index: 1; }
+@media print { .journal-page-wash { display: none; } }
+
+/* 关于页横幅：浅色水彩在月夜下压暗，避免出现一块白板 */
+html[data-theme='moonlit'] .journal-about-banner { position: relative; }
+html[data-theme='moonlit'] .journal-about-banner img { filter: brightness(.6) saturate(.85); }
+html[data-theme='moonlit'] .journal-about-banner::after {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, #0c142499 0%, #0c1424d9 62%, var(--bg-canvas) 100%);
+}

@@ -1,5 +1,7 @@
+{# 主题必须在样式表之前同步判定，否则月夜模式会闪白。 #}
+<script src="{{ config.root }}js/ginka-theme-init.js"></script>
 {# Project styles load in cascade order; font downloads never block text. #}
-{% set style_sheets = ['editorial', 'pages', 'reading', 'runtime', 'motion'] %}
+{% set style_sheets = ['editorial', 'pages', 'reading', 'runtime', 'motion', 'theme'] %}
 {% for name in style_sheets %}
   {% set style_path = 'css/ginka-' ~ name ~ '.css' %}
   <link rel="stylesheet" href="{{ ginka_asset(style_path) if ginka_asset is defined else config.root ~ style_path }}">
@@ -35,7 +37,7 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#f3f6fa">
 <meta name="msapplication-TileColor" content="#f3f6fa">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="light dark">
 <meta name="ginka-api-base" content="{{ theme.ginka_backend.api_base | default('') }}">
 <script type="application/ld+json" data-ginka-page-meta>
 {

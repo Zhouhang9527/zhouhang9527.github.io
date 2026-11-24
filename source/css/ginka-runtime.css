@@ -306,9 +306,9 @@
 
 /* 移动设备 (Mobile: <= 768px) */
 @media screen and (max-width: 768px) {
-  /* ATRI Widget */
+  /* ATRI Widget — decorative on touch: it must never cover copy or eat taps. */
   #atri-live2d-widget { right: 5px !important; bottom: 0 !important; }
-  #atri-canvas { width: 200px !important; height: 300px !important; }
+  #atri-canvas { width: 150px !important; height: 224px !important; pointer-events: none; }
   
   /* 消息框优化 */
   #atri-message-box {
@@ -344,7 +344,7 @@
 @media screen and (max-width: 480px) {
   /* ATRI Widget */
   #atri-live2d-widget { right: 0 !important; bottom: 50px !important; transform-origin: bottom right; transform: scale(0.9); }
-  #atri-canvas { width: 160px !important; height: 240px !important; }
+  #atri-canvas { width: 132px !important; height: 198px !important; pointer-events: none; }
   
   /* 消息框 */
   #atri-message-box {
@@ -1007,7 +1007,7 @@
 }
 
 .music-playlist-meta {
-  font-size: 11px;
+  font-size: 12px;
   color: #55738f;
 }
 
@@ -1336,3 +1336,4 @@ body #atri-live2d-widget #atri-controls {
   pointer-events: auto !important;
 }
 body #atri-live2d-widget #atri-controls .atri-control-btn { pointer-events: auto !important; }
+

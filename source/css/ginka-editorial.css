@@ -37,7 +37,7 @@
   --text-color: var(--ink);
   --link-color: var(--blue);
 }
-html { scroll-padding-top: calc(var(--book-header) + 15px); }
+html { scroll-padding-top: calc(var(--book-header) + 15px); background: var(--bg-canvas) !important; }
 html body {
   margin: 0;
   background: linear-gradient(180deg, #fafcfe 0, var(--bg-canvas) 950px) !important;
@@ -103,7 +103,7 @@ body .header .journal-brand {
   color: #52677c !important;
   border: 0 !important;
   padding: 0 !important;
-  font: 11px/1 var(--font-mono);
+  font: 12px/1 var(--font-mono);
   letter-spacing: .06em;
   background: transparent !important;
 }
@@ -154,7 +154,7 @@ body .header .menu-item .popup-trigger {
   padding-inline: 10px !important;
   background: #fafcfd63 !important;
 }
-body .header kbd { font: 10px/1 var(--font-mono); color: var(--muted); border: 0; background: none; padding: 0 1px; }
+body .header kbd { font: 11px/1 var(--font-mono); color: var(--muted); border: 0; background: none; padding: 0 1px; }
 .journal-mobile-menu { position: relative; }
 .journal-mobile-menu summary { list-style: none; }
 .journal-mobile-menu summary::-webkit-details-marker { display: none; }
@@ -183,8 +183,8 @@ body .header .journal-mobile-links :is(a, button):hover { background: #eaf2f8 !i
   position: relative;
   display: flex;
   align-items: center;
-  min-height: min(86vh, 720px);
-  min-height: min(86svh, 720px);
+  min-height: min(72vh, 620px);
+  min-height: min(72svh, 620px);
   padding-top: var(--book-header);
   box-sizing: border-box;
   overflow: hidden;
@@ -205,14 +205,14 @@ body .header .journal-mobile-links :is(a, button):hover { background: #eaf2f8 !i
   z-index: 2;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(90deg, #f8fbfd 0%, #f8fbfdee 23%, #f6f9fcaa 45%, #f4f8fc28 69%, #f3f7fb0b),
+  background: linear-gradient(90deg, #f8fbfdf7 0%, #f8fbfde8 20%, #f6f9fcbb 34%, #f4f8fc52 48%, #f3f7fb1a 62%, #f3f7fb00 78%),
               linear-gradient(180deg, #f8fbfd84, transparent 26%, transparent 72%, #f3f6faab 96%, var(--bg-canvas));
 }
 .journal-hero-light, .journal-hero-dust { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
 .journal-hero-inner { position: relative; z-index: 4; padding: clamp(70px, 11vh, 118px) 0 clamp(84px, 12vh, 134px); }
 .journal-hero .journal-hero-colophon { z-index: 4; }
 .journal-hero-copy { max-width: 520px; }
-.journal-eyebrow { color: #47647d; font: 400 11px/1.55 var(--font-mono); letter-spacing: .17em; }
+.journal-eyebrow { color: #47647d; font: 400 12px/1.55 var(--font-mono); letter-spacing: .15em; }
 .journal-hero-kicker { display: inline-flex; align-items: center; gap: 12px; letter-spacing: .22em; }
 .journal-hero-kicker::before { content: ''; width: 22px; height: 1px; background: #80a2b9; }
 .journal-hero .journal-game-title {
@@ -234,10 +234,10 @@ body .header .journal-mobile-links :is(a, button):hover { background: #eaf2f8 !i
 .ginka-home a.journal-secondary { color: #305879 !important; }
 .ginka-home a.journal-secondary:hover { text-decoration: underline; text-underline-offset: 5px; }
 .journal-hero-colophon { position: absolute; inset: auto 0 21px; display: flex; justify-content: space-between; align-items: center; gap: 14px; }
-.ginka-home :is(.journal-scroll-cue, .journal-hero-note) { color: #284761 !important; font: 400 10px/1.4 var(--font-mono); }
+.ginka-home :is(.journal-scroll-cue, .journal-hero-note) { color: #284761 !important; font: 400 11px/1.4 var(--font-mono); }
 .journal-scroll-cue { display: flex; align-items: center; gap: 10px; letter-spacing: .2em; }
 .journal-scroll-cue::after { content: ''; width: 38px; height: 1px; background: #5c7b94; }
-.journal-hero-note { opacity: .48; background: none; transition: opacity 260ms var(--ease-art); }
+.journal-hero-note { opacity: .8; background: none; transition: opacity 260ms var(--ease-art); }
 .journal-hero-note:is(:hover, :focus-visible) { opacity: .85; }
 
 /* Book II · numbered ribbon, list, and a restrained right-hand plate. */
@@ -249,7 +249,7 @@ body .header .journal-mobile-links :is(a, button):hover { background: #eaf2f8 !i
 .journal-chapter-grid a:is(:hover, :focus-visible) { background: #e9f0f7; }
 .journal-chapter-grid a > span { font: italic 400 29px/1 var(--font-number); color: #51748e; }
 .journal-chapter-grid strong { font: 500 14px/1.5 var(--font-title); letter-spacing: .13em; color: var(--ink); white-space: nowrap; }
-.journal-chapter-grid small { font: 400 10px/1.35 var(--font-mono); color: var(--muted); letter-spacing: .12em; }
+.journal-chapter-grid small { font: 400 11px/1.35 var(--font-mono); color: var(--muted); letter-spacing: .12em; }
 .journal-chapter-grid .journal-chapter-wing { flex: none; width: 17px; height: 17px; margin: 0 0 0 auto; opacity: .62; }
 .journal-chapter-grid b { margin-inline-start: 0; font-weight: 400; }
 .journal-layout {
@@ -313,9 +313,9 @@ body .header .journal-mobile-links :is(a, button):hover { background: #eaf2f8 !i
 .journal-entry:is(:hover, :focus-within) { background: #fff9; }
 .journal-date { color: #476783; font: italic 400 25px/1.06 var(--font-number); letter-spacing: .02em; padding-top: 4px; }
 .journal-date > span { display: block; white-space: nowrap; }
-.journal-date small { display: block; margin-top: 6px; color: var(--muted); font: 400 10px/1.5 var(--font-mono); letter-spacing: .16em; }
+.journal-date small { display: block; margin-top: 6px; color: var(--muted); font: 400 11px/1.5 var(--font-mono); letter-spacing: .14em; }
 .journal-entry-content { min-width: 0; }
-.journal-entry-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font: 400 10.5px/1.55 var(--font-mono); }
+.journal-entry-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font: 400 11px/1.55 var(--font-mono); }
 .journal-entry-meta span { border: 1px solid #d8e4ed; border-radius: 3px; padding: 1px 6px; color: #456882; }
 .journal-entry-meta :is(.journal-new, .journal-pinned) { color: #2d597b; background: #e7f0f7; border-color: #d5e5ef; }
 .ginka-home .journal-entry h3 { margin: 6px 0; font: 500 19px/1.55 var(--font-title); letter-spacing: .025em; overflow-wrap: anywhere; }
@@ -335,7 +335,7 @@ body .header .journal-mobile-links :is(a, button):hover { background: #eaf2f8 !i
 .ginka-home .journal-profile h2 { margin: 0 0 6px; font: 500 24px/1.5 var(--font-title); letter-spacing: .02em; }
 .journal-profile h2 > span { color: #4788ab; }
 .journal-profile p { margin: 0 0 14px; color: var(--muted); font-size: 13px; line-height: 1.85; }
-.journal-topics { display: flex; gap: 5px; flex-wrap: wrap; color: #4d697f; font: 400 10px/1.5 var(--font-mono); letter-spacing: .03em; }
+.journal-topics { display: flex; gap: 5px; flex-wrap: wrap; color: #4d697f; font: 400 11px/1.5 var(--font-mono); letter-spacing: .03em; }
 .journal-topics span { border: 1px solid var(--rule); border-radius: 3px; padding: 2px 6px; }
 .journal-profile-links { display: flex; flex-wrap: wrap; gap: 10px 14px; border-top: 1px solid var(--rule); padding-top: 13px; margin-top: 16px; font: 400 12px/1.5 var(--font-mono); }
 .ginka-home .journal-profile-links a { color: #315f82 !important; }
@@ -343,7 +343,7 @@ body .header .journal-mobile-links :is(a, button):hover { background: #eaf2f8 !i
 .journal-game-note .journal-scene { display: block; width: 100%; height: auto; aspect-ratio: 16/10; object-fit: cover; margin: 0; }
 .journal-game-note figcaption { padding: 11px 4px 0; }
 .journal-game-note p { color: var(--ink); font: 500 15px/1.6 var(--font-title); letter-spacing: .08em; margin: 2px 0 6px; }
-.ginka-home .journal-game-note a { font: 400 10px/1.6 var(--font-mono); color: #385f7b !important; }
+.ginka-home .journal-game-note a { font: 400 11px/1.6 var(--font-mono); color: #385f7b !important; }
 
 /* Book III · island scenes are read manually, never auto-advanced. */
 .journal-island { padding-block: 94px 100px; border-block: 1px solid var(--rule); background: linear-gradient(180deg, #fcfdff, #edf3f9); }
@@ -356,7 +356,7 @@ body .header .journal-mobile-links :is(a, button):hover { background: #eaf2f8 !i
 .ginka-home .art-slide.is-active { opacity: 1; pointer-events: auto; z-index: 1; cursor: zoom-in; }
 .art-slide:focus-visible { outline-offset: -4px; }
 .art-slide img { display: block; width: 100%; height: 100%; object-fit: cover; margin: 0; filter: saturate(.84) contrast(.97) brightness(1.02); }
-.journal-island-main figcaption { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 4px 14px; margin-top: 11px; color: var(--muted); font: 400 10px/1.6 var(--font-mono); letter-spacing: .035em; }
+.journal-island-main figcaption { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 4px 14px; margin-top: 11px; color: var(--muted); font: 400 11px/1.6 var(--font-mono); letter-spacing: .035em; }
 .journal-island-story { padding-inline-start: 7px; }
 .ginka-home .journal-island-story h3 { margin: 9px 0 13px; font: 400 clamp(21px, 2.25vw, 26px)/1.55 var(--font-title); letter-spacing: .1em; }
 .journal-island-story p { color: var(--muted); font-size: 14px; line-height: 2; margin: 0 0 14px; }
@@ -375,12 +375,12 @@ body .post-title, body .post-title a { color: var(--ink) !important; text-shadow
 body .post-block:hover { transform: none; }
 body .post-body { font-family: var(--font-body); color: var(--ink) !important; overflow-wrap: anywhere; }
 body .post-body hr { border: 0; border-top: 1px solid var(--rule); margin: 2.2em 0; }
-body .pagination { margin: 29px 0 0 !important; border: 0; background: none !important; }
-body .pagination .page-number, body .pagination .extend { border: 0; border-radius: 3px; margin: 0 4px; }
+body .pagination { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 29px 0 0 !important; border: 0; background: none !important; }
+body .pagination .page-number, body .pagination .extend { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; border: 0; border-radius: 3px; margin: 0 !important; }
 body .pagination .current { background: #edf4fa; color: #2e638a; box-shadow: inset 0 0 0 1px #bad0e1; }
 body footer.footer { background: none !important; color: var(--muted); padding: 0 !important; }
 body footer .footer-inner { width: min(var(--book-width), calc(100% - 2 * var(--book-gutter))); margin-inline: auto; }
-.journal-colophon { display: flex; justify-content: space-between; align-items: center; gap: 9px 20px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding: 44px 0 49px; font: 400 11px/1.55 var(--font-mono); letter-spacing: .03em; }
+.journal-colophon { display: flex; justify-content: space-between; align-items: center; gap: 9px 20px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding: 44px 0 49px; font: 400 12px/1.55 var(--font-mono); letter-spacing: .03em; }
 .journal-colophon :is(span, nav) { display: flex; align-items: center; gap: 12px; }
 .journal-colophon img { opacity: .43; margin: 0; }
 .journal-colophon a { color: #405b73 !important; text-decoration: none; border: 0; }
@@ -456,7 +456,50 @@ body .search-popup .search-header { border-radius: 6px 6px 0 0 !important; backg
   .journal-entry::before, .journal-entry-arrow, .journal-hero-note, .art-slide,
   body .column > header.header::before, body .header .main-menu > .menu-item > a::after { transition: none !important; }
 }
+
+/* Readability floor: functional labels stay at 12px or larger. */
+.journal-date small,
+.journal-entry-meta,
+.journal-entry-meta span,
+.journal-entry-tags,
+.journal-entry-tags a,
+.journal-topics,
+.journal-topics span,
+.journal-chapter-grid small,
+.journal-count,
+.journal-scroll-cue,
+.journal-hero-note,
+.journal-game-note a,
+.journal-island-main figcaption,
+.plate-thumb > span,
+.art-caption,
+body .header kbd { font-size: 12px; }
+
+/* Keyboard bypass: first stop in the tab order, revealed only on focus. */
+.journal-skip-link {
+  position: fixed;
+  z-index: 10000;
+  top: -72px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink) !important;
+  font: 500 13px/1 var(--font-body);
+  letter-spacing: .04em;
+  box-shadow: 0 6px 20px #233a5926;
+  transition: top 180ms var(--ease-art);
+}
+.journal-skip-link:focus { top: 12px; }
+/* The anchor must not gain a focus ring of its own once we jump into it. */
+#main-content:focus { outline: none; }
+
 @media print {
   body .column > header.header, .journal-aside, .journal-colophon nav { display: none !important; }
   body .main-inner { width: 100% !important; margin: 0 !important; }
+  .journal-skip-link { display: none !important; }
 }

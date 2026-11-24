@@ -8,7 +8,8 @@
 {% if cover %}
   <section class="journal-hero" aria-labelledby="journal-title">
     <div class="journal-hero-image" aria-hidden="true">
-      <img class="hero-art journal-hero-art" src="{{ url_for('/images/ginka/hero-silver.webp') }}" srcset="{{ ginka_journal_srcset('/images/ginka/hero-silver.webp') }}" sizes="100vw" alt="" width="1920" height="1141" loading="eager" fetchpriority="high" decoding="async">
+      <img class="hero-art journal-hero-art scene-day" src="{{ url_for('/images/ginka/scenes/hero-katana-day-1280.webp') }}" srcset="{{ url_for('/images/ginka/scenes/hero-katana-day-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/hero-katana-day-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/hero-katana-day-1280.webp') }} 1280w" sizes="100vw" alt="" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async">
+      <img class="hero-art journal-hero-art scene-night" src="{{ url_for('/images/ginka/scenes/hero-katana-night-1280.webp') }}" srcset="{{ url_for('/images/ginka/scenes/hero-katana-night-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/hero-katana-night-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/hero-katana-night-1280.webp') }} 1280w" sizes="100vw" alt="" width="1280" height="720" loading="eager" decoding="async">
     </div>
     <span class="journal-hero-light" aria-hidden="true"></span>
     <div class="journal-hero-dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -18,7 +19,7 @@
         <h1 id="journal-title" class="journal-game-title"><span class="journal-title-mask"><span>逆向工程</span></span><span class="journal-title-mask"><span>与二进制安全</span></span></h1>
         <div class="journal-actions">
           <a class="journal-primary btn-art-primary" href="#latest"><span>开始阅读</span><span aria-hidden="true">↗</span></a>
-          <a class="journal-secondary" href="{{ url_for('/about/') }}">关于作者 <span aria-hidden="true">→</span></a>
+          <a class="journal-secondary" href="{{ url_for('/about/') }}">关于我 <span aria-hidden="true">→</span></a>
         </div>
       </div>
     </div>
@@ -97,9 +98,14 @@
   </div>
 {% if cover %}
   {% set plates = [
-    {src: '/images/ginka/reunion.webp', thumb: '/images/ginka/responsive/reunion-320.webp', number: '01', title: '重逢 · 归乡', alt: '逆光下，银花与流星重逢。', width: 1280, height: 720},
-    {src: '/images/ginka/story-torii.jpg', thumb: '/images/ginka/responsive/story-torii-320.webp', number: '02', title: '夏空 · 鸟居', alt: '晴夏的海面上，朱红色鸟居依次延向天际。', width: 1000, height: 562},
-    {src: '/images/ginka/story-street.jpg', thumb: '/images/ginka/responsive/story-street-320.webp', number: '03', title: '岛之日常', alt: '白云下的岛间街道、木屋与蓝色门檐。', width: 577, height: 325}
+    {slug: 'torii-close', number: '01', title: '鸟居 · 近景', alt: '岛上的朱红鸟居，日光穿过梁柱。', max: 1440},
+    {slug: 'torii-sea', number: '02', title: '海上鸟居', alt: '暮色里的海上鸟居，朱红梁柱立在海面尽头。', max: 1440},
+    {slug: 'beach', number: '03', title: '沙滩 · 夏日', alt: '夏日沙滩与浅滩的水光，远处是岛影。', max: 1440},
+    {slug: 'island-street', number: '04', title: '岛上街道', alt: '通往海边的小路，两侧是低矮的木屋。', max: 1440},
+    {slug: 'shop-street', number: '05', title: '商店街', alt: '岛上的商店街，蓝色门檐连成一排。', max: 1440},
+    {slug: 'classroom', number: '06', title: '教室 · 午后', alt: '靠窗的课桌与午后的教室。', max: 1440},
+    {slug: 'window-room', number: '07', title: '窗边的房间', alt: '榻榻米房间与窗外的海。', max: 1440},
+    {slug: 'house', number: '08', title: '日式住宅', alt: '木格窗与檐下的日式住宅。', max: 1440}
   ] %}
   <section class="journal-island" id="ginka-scenes" aria-labelledby="island-title">
     <div class="book-width">
@@ -112,12 +118,16 @@
         <figure class="journal-island-main art-mat">
           <div class="art-viewport">
             {% for plate in plates %}
-            <a class="art-slide{% if loop.first %} is-active{% endif %}" href="{{ url_for(plate.src) }}" data-fancybox="ginka-island" data-caption="PLATE {{ plate.number }} · {{ plate.title }} · ©Frontwing / ©bushiroad" data-plate="{{ plate.number }}" data-plate-title="{{ plate.title }}"{% if not loop.first %} aria-hidden="true" tabindex="-1"{% endif %}>
-              <img src="{{ url_for(plate.src) }}" srcset="{{ ginka_journal_srcset(plate.src) }}" sizes="(max-width: 960px) 90vw, 630px" alt="{{ plate.alt }}" width="{{ plate.width }}" height="{{ plate.height }}" loading="lazy" decoding="async">
+            {% set base = '/images/ginka/scenes/' ~ plate.slug %}
+            {% set extra %}{% if plate.max > 960 %}, {{ url_for(base ~ '-day-' ~ plate.max ~ '.webp') }} {{ plate.max }}w{% endif %}{% endset %}
+            {% set extraNight %}{% if plate.max > 960 %}, {{ url_for(base ~ '-night-' ~ plate.max ~ '.webp') }} {{ plate.max }}w{% endif %}{% endset %}
+            <a class="art-slide{% if loop.first %} is-active{% endif %}" href="{{ url_for(base ~ '-day-960.webp') }}" data-full-day="{{ url_for(base ~ '-day-' ~ plate.max ~ '.webp') }}" data-full-night="{{ url_for(base ~ '-night-' ~ plate.max ~ '.webp') }}" data-fancybox="ginka-island" data-caption="PLATE {{ plate.number }} · {{ plate.title }} · ©Frontwing / ©bushiroad" data-plate="{{ plate.number }}" data-plate-title="{{ plate.title }}"{% if not loop.first %} aria-hidden="true" tabindex="-1"{% endif %}>
+              <img class="scene-day" src="{{ url_for(base ~ '-day-960.webp') }}" srcset="{{ url_for(base ~ '-day-640.webp') }} 640w, {{ url_for(base ~ '-day-960.webp') }} 960w{{ extra | trim }}" sizes="(max-width: 960px) 90vw, 630px" alt="{{ plate.alt }}" width="1680" height="720" loading="lazy" decoding="async">
+              <img class="scene-night" src="{{ url_for(base ~ '-night-960.webp') }}" srcset="{{ url_for(base ~ '-night-640.webp') }} 640w, {{ url_for(base ~ '-night-960.webp') }} 960w{{ extraNight | trim }}" sizes="(max-width: 960px) 90vw, 630px" alt="" width="1680" height="720" loading="lazy" decoding="async">
             </a>
             {% endfor %}
           </div>
-          <figcaption><span class="art-caption" aria-live="polite">PLATE 01 · 重逢 · 归乡</span><span>©Frontwing / ©bushiroad</span></figcaption>
+          <figcaption><span class="art-caption" aria-live="polite">PLATE 01 · 海境 · 鸟居</span><span>©Frontwing / ©bushiroad</span></figcaption>
         </figure>
         <div class="journal-island-story">
           <span class="journal-eyebrow" lang="ja">姫之島で、もう一度</span>
@@ -128,8 +138,10 @@
             <span class="journal-eyebrow">SELECT PLATE · 切换画集场景</span>
             <div class="plate-list">
               {% for plate in plates %}
-              <a class="plate-thumb" href="{{ url_for(plate.src) }}" data-plate-select="{{ plate.number }}"{% if loop.first %} aria-current="true"{% endif %}>
-                <img src="{{ url_for(plate.thumb) }}" alt="" width="320" height="180" loading="lazy" decoding="async">
+              {% set base = '/images/ginka/scenes/' ~ plate.slug %}
+              <a class="plate-thumb" href="{{ url_for(base ~ '-day-' ~ plate.max ~ '.webp') }}" data-plate-select="{{ plate.number }}"{% if loop.first %} aria-current="true"{% endif %}>
+                <img class="scene-day" src="{{ url_for(base ~ '-day-320.webp') }}" alt="" width="320" height="137" loading="lazy" decoding="async">
+                <img class="scene-night" src="{{ url_for(base ~ '-night-320.webp') }}" alt="" width="320" height="137" loading="lazy" decoding="async">
                 <span><small>PLATE {{ plate.number }}</small>{{ plate.title }}</span>
               </a>
               {% endfor %}

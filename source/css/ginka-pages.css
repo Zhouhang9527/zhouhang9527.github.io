@@ -71,7 +71,7 @@ body.sidebar-active .journal-sidebar-edge { visibility: hidden; }
 body .journal-sidebar-edge:focus-visible { background: #e4eef7; outline: 1px solid #82a5c1; outline-offset: -1px; }
 body.sidebar-active .main, body.sidebar-active .footer { transform: none !important; padding-left: 0 !important; padding-right: 0 !important; }
 body .sidebar .sidebar-inner { padding: 20px 22px 34px !important; border-radius: 0; box-shadow: none; overflow: visible !important; backdrop-filter: none !important; }
-.journal-sidebar-cover { position: relative; height: 155px; overflow: hidden; }
+.journal-sidebar-cover { position: relative; height: 155px; overflow: hidden; background: linear-gradient(160deg, #e2ebf5, #c9d8e6); }
 #journal-sidebar > .journal-sidebar-cover > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 40% 38%; border: 0; border-radius: 0; padding: 0; margin: 0; box-shadow: none; transform: none; }
 .journal-sidebar-cover > span { position: absolute; bottom: 13px; left: 20px; font: 12px var(--font-mono, Consolas, monospace); color: #334d6b; letter-spacing: 1.5px; }
 .journal-sidebar-close { position: absolute; top: 10px; right: 12px; width: 34px; height: 34px; padding: 0; border-radius: 50%; border: 1px solid #ffffffb0; background: #f7f9fcc9; color: #536a84 !important; font: 23px/1 sans-serif; cursor: pointer; }
@@ -95,9 +95,9 @@ body .sidebar .post-toc .active > a { color: #2b597e !important; background: #e3
 body .sidebar .post-toc ol { padding-left: 15px; }
 body .sidebar .post-toc .nav { padding-left: 0; }
 body .sidebar .back-to-top { position: static; background: #e5edf6; color: #5b7896; margin-top: 20px; border-radius: 5px; opacity: 1; }
-body .sidebar-toggle { display: flex !important; align-items: center; justify-content: center; flex-direction: column; gap: 4px; position: fixed !important; top: 45%; left: 12px !important; right: auto !important; bottom: auto !important; width: 30px !important; height: 54px !important; padding: 8px !important; border-radius: 7px; background: #f8faff !important; border: 1px solid #d7e3ef; box-shadow: 0 4px 16px #49678312; z-index: 2998 !important; transform: none !important; }
-body .sidebar-toggle .toggle-line { width: 17px; height: 2px; background: #6c89a5 !important; margin: 0; }
-body .sidebar-toggle::after { content: '菜单'; font-size: 12px; color: #718ba5; margin-top: 3px; }
+body .sidebar-toggle { box-sizing: border-box; display: flex !important; align-items: center; justify-content: center; flex-direction: column; gap: 3px; position: fixed !important; top: 45%; left: 12px !important; right: auto !important; bottom: auto !important; width: 44px !important; height: 44px !important; padding: 5px !important; border-radius: 7px; background: #f8faff !important; border: 1px solid #d7e3ef; box-shadow: 0 4px 16px #49678312; z-index: 2998 !important; transform: none !important; }
+body .sidebar-toggle .toggle-line { width: 18px; height: 2px; background: #6c89a5 !important; margin: 0; }
+body .sidebar-toggle::after { content: '菜单'; font-size: 11px; line-height: 1; color: #718ba5; margin-top: 2px; }
 body.sidebar-active .sidebar-toggle { visibility: hidden; }
 body .sidebar-dimmer { position: fixed; inset: 0; background: #23384f30 !important; z-index: 2999 !important; display: none; }
 body.sidebar-active .sidebar-dimmer { display: block; opacity: 1; }
@@ -117,7 +117,7 @@ body.sidebar-active .sidebar-dimmer { display: block; opacity: 1; }
 .music-info-row { display: flex; justify-content: space-between; align-items: center; }
 #music-title { overflow: hidden; color: #333; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
 #music-time { margin-left: 8px; color: #999; font-size: 12px; white-space: nowrap; }
-.music-artist { overflow: hidden; color: #999; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.music-artist { overflow: hidden; color: #677b92; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 #music-progress { position: relative; height: 4px; overflow: hidden; border-radius: 2px; background: rgba(0,0,0,.1); cursor: pointer; }
 #music-progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #5b9bd5 0%, #7eb8e6 100%); transition: width .1s linear; }
 body #journal-sidebar #music-player { position: static !important; inset: auto !important; z-index: auto !important; width: auto !important; max-width: none !important; margin: 0 18px; transform: none !important; transition: none; text-align: left; }
@@ -185,11 +185,24 @@ body .search-keyword { color: #376484; background: #e1edf8; padding: 1px 3px; }
   body .post .post-body h3 { font-size: 18px; }
   .journal-contact-grid, body .links-container { grid-template-columns: minmax(0,1fr); }
   body aside.sidebar { width: min(300px,85vw) !important; }
-  body .sidebar-toggle { top: auto !important; bottom: max(16px, env(safe-area-inset-bottom)) !important; left: 14px !important; right: auto !important; width: 40px !important; height: 40px !important; }
+  body .sidebar-toggle { top: auto !important; bottom: max(16px, env(safe-area-inset-bottom)) !important; left: 14px !important; right: auto !important; width: 44px !important; height: 44px !important; }
   body .sidebar-toggle::after { display: none; }
   body .comments { padding: 18px; }
 }
 @media (prefers-reduced-motion: reduce) { body aside.sidebar { transition: none; } img:not([src]) { animation: none; } }
-@media (min-width: 1024px) { body .sidebar-toggle { display: none !important; } }
+/* Desktop keeps a visible opener; the left-edge strip is only a shortcut. */
+@media (min-width: 1024px) { body .sidebar-toggle { display: flex !important; } }
+/* 1024–1251：书页左右只有 32px 留白，44px 的按钮会压到标题，改成贴边的可见导轨。 */
+@media (min-width: 1024px) and (max-width: 1251px) {
+  body .sidebar-toggle { display: none !important; }
+  body .journal-sidebar-edge {
+    width: 8px; height: 22vh; min-height: 96px;
+    background: linear-gradient(180deg, #e6eef7, #d7e4f0);
+    border: 1px solid #cddcea; border-left: 0;
+    border-radius: 0 6px 6px 0;
+    box-shadow: 1px 0 6px #2d4b6614;
+  }
+  body .journal-sidebar-edge:hover { background: linear-gradient(180deg, #dbe8f4, #c7dbec); }
+}
 @media print { .journal-masthead > img, .journal-sidebar-cover, .sidebar-toggle, .journal-reading-nav { display: none !important; } }
 body.sidebar-active .main { margin-left: auto !important; margin-right: auto !important; }

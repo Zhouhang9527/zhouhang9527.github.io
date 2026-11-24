@@ -15,6 +15,7 @@ hexo.extend.filter.register('before_generate', function () {
   const views = {
     '_partials/post-like.njk': 'post-feedback.njk',
     '_partials/post-views.njk': 'post-views.njk',
+    '_layout.njk': '_layout.njk',
     '_partials/header/menu.njk': 'header-menu.njk',
     'index.njk': 'home.njk',
     'archive.njk': 'collection.njk',
@@ -23,6 +24,7 @@ hexo.extend.filter.register('before_generate', function () {
     'page.njk': 'page.njk',
     'post.njk': 'post.njk',
     'journal-sidebar.njk': 'sidebar.njk',
+    'journal-page-wash.njk': '_partials/journal-page-wash.njk',
     'journal-music.njk': 'music.njk'
   };
   for (const [view, file] of Object.entries(views)) {
