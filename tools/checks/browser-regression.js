@@ -77,6 +77,26 @@ const baseUrl = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4000';
     });
   });
 
+  await check('navigation reserves permanent controls across breakpoint widths', async () => {
+    const viewport = page.viewportSize();
+    try {
+      for (const width of [320, 390, 768, 1023, 1024, 1251, 1252, 1440]) {
+        await page.setViewportSize({width,height:viewport.height});
+        await page.waitForTimeout(80);
+        const result = await page.evaluate(() => {
+          const row=document.querySelector('.header .main-menu');
+          const nav=row?.closest('.site-nav');
+          if(!row||!nav) return {ok:false};
+          const bounds=nav.getBoundingClientRect();
+          const controls=[...row.querySelectorAll(':scope > .menu-item-drawer,:scope > .menu-item-more,:scope > .menu-item-theme,:scope > .menu-item-search')].filter(el=>el.getBoundingClientRect().width>0);
+          return {ok: controls.every(el=>{const b=el.getBoundingClientRect();return b.left>=bounds.left-2&&b.right<=bounds.right+2}) && !row.querySelector('.journal-mobile-links .menu-item-drawer') && document.documentElement.scrollWidth<=innerWidth+1,width:innerWidth};
+        });
+        if(!result.ok) {console.error('Navigation bounds',result);return false;}
+      }
+      return true;
+    } finally { await page.setViewportSize(viewport); await page.waitForTimeout(80); }
+  });
+
   await check('no horizontal overflow on desktop', async () => {
     return page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
   });

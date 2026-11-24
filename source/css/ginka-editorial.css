@@ -519,3 +519,7 @@ body .header kbd { font-size: 12px; }
   body .main-inner { width: 100% !important; margin: 0 !important; }
   .journal-skip-link { display: none !important; }
 }
+
+/* Fixed controls can occupy a second row at unusually narrow widths or high zoom.
+   Never clip the theme, search or drawer entry to preserve a nominal header height. */
+body .header .journal-nav-ready ul.menu.journal-nav-tight { flex-wrap: wrap; }
