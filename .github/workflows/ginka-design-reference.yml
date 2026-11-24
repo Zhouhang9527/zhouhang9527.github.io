@@ -1,0 +1,33 @@
+name: GINKA design reference
+on:
+  workflow_dispatch:
+  push:
+    branches: [ginka-comments-refine]
+    paths:
+      - '.github/workflows/ginka-design-reference.yml'
+permissions:
+  contents: read
+jobs:
+  reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: nextlevelbuilder/ui-ux-pro-max-skill
+          ref: cc7b20d85d64d8fa022292cfad731995d3cd4eeb
+          persist-credentials: false
+          path: skill
+      - name: Generate review-only candidates
+        run: |
+          mkdir -p reference
+          python3 skill/src/ui-ux-pro-max/scripts/search.py "technical blog editorial minimal" --design-system --variance 4 --motion 3 --density 5 -p "Editorial reference" -f markdown > reference/design-system.md
+          python3 skill/src/ui-ux-pro-max/scripts/search.py "focus not obscured" --domain ux -n 3 > reference/focus.txt
+          python3 skill/src/ui-ux-pro-max/scripts/search.py "touch target size" --domain ux -n 3 > reference/touch.txt
+          python3 skill/src/ui-ux-pro-max/scripts/search.py "dark mode contrast" --domain ux -n 3 > reference/contrast.txt
+          cat reference/design-system.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: design-reference
+          path: reference/
+          retention-days: 7
