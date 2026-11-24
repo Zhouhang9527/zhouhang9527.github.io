@@ -40,9 +40,11 @@ const baseUrl = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4000';
   });
 
   await check('page can scroll after opening overlay settles', async () => {
-    await page.waitForTimeout(5600);
-    await page.mouse.wheel(0, 500);
-    return page.evaluate(() => window.scrollY > 0 && !document.body.classList.contains('is-opening-active'));
+    await page.waitForFunction(()=>!document.body.classList.contains('is-opening-active'));
+    await page.mouse.move(900,450);
+    await page.mouse.wheel(0,500);
+    await page.waitForFunction(()=>window.scrollY>0,{}, {timeout:5000});
+    return true;
   });
 
   await check('online music loads with the homepage', async () => {
@@ -85,8 +87,16 @@ const baseUrl = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4000';
       if (!audio) return null;
       return { paused: audio.paused, currentTime: audio.currentTime };
     });
+    const target = new URL(await article.getAttribute('href'),page.url()).href;
+    const response = await context.request.get(target);
+    if (!response.ok()) throw Error('Direct article fetch failed: '+response.status());
+    const expected = await page.evaluate(html=>{
+      const d=new DOMParser().parseFromString(html,'text/html');
+      return {canonical:d.querySelector('link[rel="canonical"]')?.getAttribute('href'),og:d.querySelector('meta[property="og:url"]')?.content};
+    },await response.text());
     await article.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForURL(target);
+    await page.locator('.journal-reading-shell').waitFor();
     await check('code toolbar icon-only wrap toggle in both themes', async () => {
       const wrap = page.locator('.journal-code-wrap').first();
       if (!await wrap.count()) return true; // Article without a code listing.
@@ -117,15 +127,12 @@ const baseUrl = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4000';
       }
     });
     await check('pjax metadata follows article URL', async () => {
-      return page.evaluate(() => {
-        const canonical = document.querySelector('link[rel="canonical"]');
-        const ogUrl = document.querySelector('meta[property="og:url"]');
-        const normalize = value => String(value || '').replace(/\/index\.html$/, '/');
-        return !!canonical &&
-          !!ogUrl &&
-          normalize(canonical.href) === normalize(location.href) &&
-          normalize(ogUrl.content) === normalize(location.href);
-      });
+      if (!expected.canonical || !expected.og) return false;
+      await page.waitForFunction(expected => {
+        return document.querySelector('link[rel="canonical"]')?.getAttribute('href') === expected.canonical &&
+          document.querySelector('meta[property="og:url"]')?.content === expected.og;
+      },expected,{timeout:7000});
+      return true;
     });
     await check('pjax keeps one audio node', async () => {
       const statePreserved = await page.evaluate(({ wasPlaying, previousTime }) => {
