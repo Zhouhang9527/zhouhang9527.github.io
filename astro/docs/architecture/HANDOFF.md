@@ -110,7 +110,7 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
-- 基线 `36f132d`：上一轮 7 份真实 PBD 的解析检查成功、视频 reference 接入记录与 CI runner 修复已提交；`33cc372` 的 typecheck/build 已通过，浏览器因 Ubuntu 26.04 不支持而失败
-- 本轮 ENGINE-01：新增 vn-control.ts，标题、阅读器、确认框共用状态与坐标适配；统一私有 sprite 逻辑画布合成；补控制/合成单测并纳入构建。当前为增量迁移，不声称通用渲染器全部完成
-- 素材 `30b43e7` 有 title/dialogue 视频参考，其他界面及真实角色包缺失；未修改私有仓库
-- CI 45461954168（36f132d）typecheck 通过，build 在新增 PBD fixture 括号错误处失败；已将 fixture 拆成三条语句修复，当前 CI 尚未确认；本地 GitHub DNS 不通。下一步检查 Actions 实际日志并修复，继续 DATA-01/ENGINE-01 与独立手动存档、真实对白历史
+- 基线 `3a1da8f`：PBD fixture 语法修复，前轮共享逻辑 sprite 和控件坐标已提交；33cc372 CI typecheck/build 成功，36f132d CI typecheck 成功但 fixture 语法错误，已修复；当前最终 CI 未验证
+- 本轮 SAVE-02/03/05/06：独立 150 手动槽，普通/快速/最近/收藏/已读分页，SAVE 捕获真实文章和位置、LOAD 恢复、覆盖删除确认、重置及跨标签同步，新增 domain 和 smoke 测试；未实现真实缩略图、SAVE 原作 wordmark 及完整原作视觉验收
+- 私有素材 `30b43e7` 已有 title/dialogue 视频参考，其他界面和真实角色包仍未确认；未修改私有仓库
+- 本地 GitHub DNS 不通，CI 实际结果优先，TODO 未勾选；下一步检查最新 CI、修复浏览器失败，继续 PBD 批量和语音历史

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {empty,parse,visit,savePosition,isPath,LIMIT,unlockMain,startAfterstory} from '../src/domain/reading-state.ts';
+import {empty,parse,visit,savePosition,isPath,LIMIT,unlockMain,startAfterstory,parseSaveRecord,parseSaveSlots,validSlot,SAVE_LIMIT} from '../src/domain/reading-state.ts';
 const path='/2026/11/24/article/';
 test('migrate completed-only records',()=>{
  const old={version:1,last:path,completed:[path,path,'https://evil.invalid/']};
@@ -32,4 +32,14 @@ test('main clear is persistent, afterstory starts only after unlocking',()=>{
  const started=startAfterstory(cleared);assert.equal(started.afterstoryStarted,true);
  assert.deepEqual(parse(JSON.stringify(started)),started);
  assert.equal(unlockMain({...started,completed:[]},[...required,'/2026/11/25/new/']).mainCleared,true);
+});
+
+test('independent manual slot validation and 15 pages of ten slots',()=>{
+ const record={path,title:'Example',at:1,position:{ratio:.4,heading:null,section:.4}};
+ assert.equal(SAVE_LIMIT,150);assert.equal(validSlot(149),true);assert.equal(validSlot(150),false);
+ assert.deepEqual(parseSaveRecord(record),record);
+ assert.equal(parseSaveRecord({...record,path:'https://evil.invalid/'}),null);
+ assert.equal(parseSaveRecord({...record,position:{...record.position,ratio:2}}),null);
+ const parsed=parseSaveSlots(JSON.stringify({version:1,slots:{0:record,149:record,150:record,'01':record,2:{...record,at:-1}}}));
+ assert.deepEqual(parsed,{0:record,149:record});assert.deepEqual(parseSaveSlots('broken'),{});
 });

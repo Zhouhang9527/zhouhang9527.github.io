@@ -88,3 +88,6 @@ ATRI is unmounted and its loader is removed from the Astro layout. GINKA mascot 
 
 ### Shared control rendering
 `src/lib/vn-control.ts` converts source rectangles relative to their logical parent and resolves only named sprite states in private mode. Title row geometry, bottom and quick controls and confirmation sprite states share it. `composeLogicalSprite` preserves the original control canvas and offset for both title and logical sprites. The current game controls remain native links/buttons; arbitrary original script actions are not evaluated. Generic text/slider/base/layer controls are still pending.
+
+### Manual save slots
+SAVE opens `/library/?mode=save` with a session-local snapshot of the actual current article, title and section-relative position. LOAD defaults to 150 independent manual slots (15 pages of ten); quick save remains a single independent blog record, recent/bookmarked/completed lists are still available. Overwrite/delete/load are confirmed; corrupt records are discarded and the same-tab restore ticket is consumed once. SAVE header currently uses readable text, not the original LOAD wordmark; no screenshot is invented. Browser and original UI verification pending.

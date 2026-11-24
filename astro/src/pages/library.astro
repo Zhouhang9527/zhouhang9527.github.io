@@ -9,8 +9,9 @@ const skin=original?'--vn-load-base:url(/__ginka_local_ui__/loadBase.png);--vn-l
  <section class="vn-stage vn-load" data-vn-screen="load" data-vn-ui-original={String(original)} style={skin} aria-labelledby="vn-load-title">
   <header class="vn-panel-header vn-load-header"><h1 id="vn-load-title">LOAD</h1><aside class="vn-option-help"><span>HELP WINDOW</span><p>选择阅读记录，恢复上一次的阅读位置</p></aside></header>
   <div class="vn-load-main">
-   <nav class="vn-load-tabs" role="group" aria-label="存档类型" data-vn-library-tabs hidden><button type="button" data-vn-filter="recent" aria-pressed="true"><span>LOAD</span><small>最近阅读</small></button><button type="button" data-vn-filter="bookmarks" aria-pressed="false">收藏</button><button type="button" data-vn-filter="completed" aria-pressed="false">已读</button></nav>
+   <nav class="vn-load-tabs" role="group" aria-label="存档类型" data-vn-library-tabs hidden><button type="button" data-vn-filter="manual" aria-pressed="true"><span>LOAD</span><small>普通存档</small></button><button type="button" data-vn-filter="quick" aria-pressed="false">快速存档</button><button type="button" data-vn-filter="recent" aria-pressed="false">最近阅读</button><button type="button" data-vn-filter="bookmarks" aria-pressed="false">收藏</button><button type="button" data-vn-filter="completed" aria-pressed="false">已读</button></nav>
    <div class="vn-load-body">
+    <div class="vn-save-grid vn-load-grid" data-vn-manual-grid hidden>{Array.from({length:10},(_,i)=><article class="vn-save-slot" data-vn-manual-slot={i}><button type="button" class="vn-save-link" data-vn-manual-action={i}><span class="vn-slot-thumbnail" aria-hidden="true"></span><span class="vn-slot-copy"><strong data-vn-manual-title>No Data</strong><span class="vn-load-meta"><small data-vn-manual-date></small><span data-vn-manual-status></span></span></span></button><button type="button" data-vn-manual-delete={i} hidden>删除</button></article>)}</div><p data-vn-manual-feedback role="status" class="journal-visually-hidden"></p>
     <div class="vn-save-grid vn-load-grid" data-vn-library hidden>
      {posts.map(post=><article class="vn-save-slot" data-vn-slot={href(post.data.route)} hidden><a href={href(post.data.route)} class="vn-save-link" data-vn-resume><span class="vn-slot-thumbnail" aria-hidden="true">GINKA</span><span class="vn-slot-copy"><strong>{post.data.title}</strong><span class="vn-load-meta"><small data-vn-slot-date data-published={post.data.date}>{post.data.date}</small><span data-vn-slot-status></span></span></span></a><button type="button" data-vn-bookmark aria-pressed="false" aria-label={'收藏 '+post.data.title}>收藏</button></article>)}
      {Array.from({length:10},()=> <div class="vn-load-empty-slot" data-vn-empty-slot hidden aria-label="空存档">No Data</div>)}
@@ -20,7 +21,7 @@ const skin=original?'--vn-load-base:url(/__ginka_local_ui__/loadBase.png);--vn-l
    </div>
    <footer class="vn-load-footer">
     <nav data-vn-library-pages aria-label="存档分页" hidden><button type="button" data-vn-page-step="-1" aria-label="上一页">〈</button><span data-vn-page-numbers></span><button type="button" data-vn-page-step="1" aria-label="下一页">〉</button></nav>
-    <a class="vn-return vn-load-return" href="/" data-vn-mode-set="game" aria-label="Back to Title">Back</a>
+    <a class="vn-return vn-load-return" href="/" data-vn-mode-set="game" aria-label="Back to Title">Back</a><button type="button" data-vn-save-back hidden>返回正文</button>
    </footer>
   </div>
  </section>

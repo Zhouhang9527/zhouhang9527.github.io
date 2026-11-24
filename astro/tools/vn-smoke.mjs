@@ -75,7 +75,10 @@ try{
     assert.equal(await page.locator('[data-vn-article]').evaluate(el=>el.inert),false);
    }
    await dock.locator('[data-vn-game-action="save"]').click();
-   assert.equal(await page.locator('[data-vn-save-feedback]').textContent(),'阅读位置已保存');
+   await visible('[data-vn-screen="load"][data-vn-save-mode=true]');
+   await page.locator('[data-vn-manual-action="0"]').click();
+   await page.waitForFunction(()=>JSON.parse(localStorage.getItem('ginka.vn.saves.v1')||'null')?.slots?.['0']);
+   await page.locator('[data-vn-save-back]').click();await visible('.post-body');
    const article=page.url();
    const pathname=new URL(article).pathname;
    assert.ok(await page.evaluate(old=>old===document.querySelector('#bg-music'),audio),'Audio replaced by navigation');
@@ -105,7 +108,10 @@ try{
    await shot('map');
    await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible,.vn-load-return:visible').first().click();
    await page.locator('.vn-menu a[href="/library/"]').click();
-   await visible('[data-vn-slot]:visible');
+   await visible('[data-vn-manual-grid]');
+   assert.equal(await page.locator('[data-vn-manual-slot]:visible').count(),10);
+   assert.equal(await page.locator('[data-vn-manual-empty]:visible').count(),9);
+   await page.locator('[data-vn-filter="recent"]').click();await visible('[data-vn-slot]:visible');
    assert.equal(await page.locator('[data-vn-slot]:visible,[data-vn-empty-slot]:visible').count(),10);
    await page.locator('[data-vn-filter="bookmarks"]').click();
    assert.equal(await page.locator('[data-vn-slot]:visible').count(),1);

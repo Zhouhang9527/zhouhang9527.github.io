@@ -42,3 +42,22 @@ export function unlockMain(state:Progress,required:readonly string[]):Progress{
  const done=new Set(state.completed);return required.every(path=>done.has(path))?{...state,mainCleared:true}:state;
 }
 export function startAfterstory(state:Progress):Progress{return state.mainCleared&&!state.afterstoryStarted?{...state,afterstoryStarted:true}:state;}
+
+// Independent user-selected save slots; automatic reading history is not a manual save.
+export const SAVE_KEY='ginka.vn.saves.v1';
+export const SAVE_PAGES=15,SAVE_PAGE_SIZE=10,SAVE_LIMIT=SAVE_PAGES*SAVE_PAGE_SIZE;
+export type SaveRecord={path:string;position:Position;title:string;at:number};
+export type SaveSlots=Record<string,SaveRecord>;
+export function parseSaveRecord(raw:unknown):SaveRecord|null{
+ const v=object(raw),p=object(v.position);
+ if(!isPath(v.path)||typeof v.title!=='string'||!v.title.trim()||v.title.length>1024||typeof v.at!=='number'||!Number.isFinite(v.at)||v.at<0||!unit(p.ratio)||!unit(p.section)||!(p.heading===null||typeof p.heading==='string'&&p.heading.length<=512))return null;
+ return {path:v.path,title:v.title,at:v.at,position:{ratio:p.ratio,section:p.section,heading:p.heading as string|null}};
+}
+export function validSlot(slot:number){return Number.isInteger(slot)&&slot>=0&&slot<SAVE_LIMIT;}
+export function parseSaveSlots(raw:string|null):SaveSlots{
+ try{const value=object(JSON.parse(raw||'null'));if(value.version!==1)return {};
+  const out:SaveSlots={};
+  for(const [key,entry] of Object.entries(object(value.slots))){const n=Number(key);if(!validSlot(n)||String(n)!==key)continue;const record=parseSaveRecord(entry);if(record)out[key]=record;}
+  return out;
+ }catch{return {};}
+}

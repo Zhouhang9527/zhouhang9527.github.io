@@ -2,6 +2,7 @@ import {navigate} from 'astro:transitions/client';
 import {capturePosition,restorePosition} from './vn-reading-position';
 import {isPath,type Position} from '../domain/reading-state';
 import {confirmVN} from './vn-confirm';
+import {beginManualSave} from './vn-progress';
 const KEY='ginka.vn.quick.v1',PENDING='ginka.vn.quick-restore.v1';
 type Quick={path:string;position:Position;title:string;at:number};
 let root:HTMLElement|null=null,article:HTMLElement|null=null,auto=false,held=false,frame=0,last=0,previewTimer=0,statusFrame=0;
@@ -23,7 +24,7 @@ document.addEventListener('click',async event=>{
  const action=target.dataset.vnGameAction;
  if(action==='hold'){held=!held;sync();return;}
  if(action==='hide'){showQuick(false);const w=find('[data-vn-game-window]'),r=find('[data-vn-reader-reopen]');if(w)w.hidden=true;if(r){r.hidden=false;r.focus();}stop();return;}
- if(action==='save'){article.querySelector<HTMLButtonElement>('[data-vn-save-position]')?.click();feedback('阅读位置已保存');}
+ if(action==='save'){stop();article.querySelector<HTMLButtonElement>('[data-vn-save-position]')?.click();beginManualSave(article);}
  else if(action==='load'){void navigate('/library/');}
  else if(action==='option'){void navigate('/settings/');}
  else if(action==='vreplay'||action==='vsave'){document.dispatchEvent(new CustomEvent('vn:voice-action',{detail:action==='vreplay'?'replay':'save'}));}

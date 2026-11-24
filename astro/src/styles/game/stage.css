@@ -429,8 +429,8 @@ body .post-body{font-size:var(--vn-reader-size,16px)}
 .vn-load[data-vn-ui-original=true] .vn-load-empty-slot{background:var(--vn-load-empty) center/100% 100% no-repeat;border:0;color:transparent;aspect-ratio:589/92;min-height:0}
 .vn-load[data-vn-ui-original=true] .vn-load-return{background:var(--vn-load-back) center/contain no-repeat;color:transparent!important;width:78px;height:56px}
 .vn-load[data-vn-ui-original=true] .vn-load-return:is(:hover,:focus-visible){background-image:var(--vn-load-back-hover)}
-.vn-load[data-vn-ui-original=true] .vn-load-tabs [data-vn-filter=recent]{background:var(--vn-load-tab) center/100% 100% no-repeat;color:transparent}
-.vn-load[data-vn-ui-original=true] .vn-load-tabs [data-vn-filter=recent][aria-pressed=true]{background-image:var(--vn-load-tab-selected)}
+.vn-load[data-vn-ui-original=true] .vn-load-tabs [data-vn-filter=manual]{background:var(--vn-load-tab) center/100% 100% no-repeat;color:transparent}
+.vn-load[data-vn-ui-original=true] .vn-load-tabs [data-vn-filter=manual][aria-pressed=true]{background-image:var(--vn-load-tab-selected)}
 /* EXTRA uses the authentic full-screen blue canvas, independent of LOAD. */
 .vn-panel[data-vn-screen=gallery][data-vn-ui-original=true] .vn-panel-header h1{background:var(--vn-gallery-heading) left center/contain no-repeat;color:transparent!important;width:254px;height:49px}
 .vn-panel[data-vn-screen=gallery][data-vn-ui-original=true] .vn-gallery-grid .journal-scene-card:is(:hover,:focus-visible){outline:3px solid #83e9ff;outline-offset:3px}
@@ -662,3 +662,15 @@ html[data-vn-motion=reduced] .ginka-mascot-portrait{animation:none}
 
 /* Video reference: locked NEXT has no visible label; keep its PBD row reserved. */
 .vn-title[data-vn-title-menu-original=true] [data-vn-no-next]{visibility:hidden}
+
+/* Explicit SAVE/LOAD slots use the same row art; no fabricated screenshots. */
+.vn-load [data-vn-manual-grid][hidden],.vn-load [data-vn-library][hidden]{display:none!important}
+.vn-load [data-vn-manual-grid] button.vn-save-link{width:100%;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.vn-load [data-vn-manual-grid] button.vn-save-link:disabled{cursor:default;opacity:1}
+.vn-load [data-vn-manual-delete]{align-self:center;white-space:nowrap}
+.vn-load[data-vn-ui-original=true] [data-vn-manual-empty]{background:var(--vn-load-empty) center/100% 100% no-repeat!important}
+.vn-load[data-vn-ui-original=true] [data-vn-manual-empty] [data-vn-manual-title]{color:transparent}
+.vn-load[data-vn-save-mode=true] #vn-load-title{background:none;color:inherit!important}
+.vn-load[data-vn-save-mode=true] [data-vn-filter=manual]{background:none;color:inherit}
+.vn-load [data-vn-save-back]{min-height:44px}
+@media(max-width:600px){.vn-load-tabs{flex-wrap:wrap}.vn-load-tabs button{flex:1 0 28%}}
