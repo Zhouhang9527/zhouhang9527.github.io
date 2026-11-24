@@ -68,18 +68,23 @@ for(const route of ['index.html','gallery/index.html','library/index.html','sett
 }
 console.log('PASS private UI build isolation');
 
-for(const [route,screen] of [['search','search'],['music-room','music']]){
+for(const [route,screen] of [['search','search']]){
  const html=fs.readFileSync('dist/'+route+'/index.html','utf8');
  assert.ok(html.includes('data-vn-screen="'+screen+'"'),'Missing VN '+screen);
- assert.ok(home.includes('href="/'+route+'/"'),'Unreachable VN '+route);
+ assert.ok(fs.readFileSync('dist/gallery/index.html','utf8').includes('href="/'+route+'/"'),'Unreachable VN '+route);
 }
-console.log('PASS VN search and music entry points');
+const settingsHtml=fs.readFileSync('dist/settings/index.html','utf8');
+assert.match(settingsHtml,/data-vn-option-panel="sound"/);
+assert.match(settingsHtml,/data-vn-volume/);
+assert.doesNotMatch(home,/href="\/music-room\/"/);
+assert.match(fs.readFileSync('dist/music-room/index.html','utf8'),/\/settings\/#sound/);
+console.log('PASS VN search and integrated SOUND settings');
 
 const mapHtml=fs.readFileSync('dist/map/index.html','utf8');
 assert.match(mapHtml,/data-vn-map/);
 assert.match(mapHtml,/data-vn-map-original="false"/);
 assert.doesNotMatch(mapHtml,/__ginka_local_ui__/);
-assert.ok(home.includes('href="/map/"'));
+assert.ok(fs.readFileSync('dist/gallery/index.html','utf8').includes('href="/map/"'));
 for(const state of vn.map.states)assert.ok(Object.hasOwn(vn.map.frames,state.frame),'Unknown map frame');
 console.log('PASS map state manifest and private isolation');
 

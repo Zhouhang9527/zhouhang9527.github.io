@@ -107,7 +107,7 @@ try {
     assert.equal(await page.locator('[data-vn-slot]:visible').count(),1);
     assert.ok(!await overflow(page),'load overflow');
     await page.screenshot({path:`artifacts/${width}-${mode}-load.png`});
-    await page.locator('.vn-panel-header .vn-return').click();
+    await page.locator('.vn-panel-header .vn-return:visible,.vn-option-footer a[href="/"]:visible').first().click();
     await page.locator('.vn-menu a[href="/gallery/"]').click();
     await page.locator('[data-vn-screen="gallery"]').waitFor();
     await page.locator('.vn-gallery-grid .journal-scene-card').first().click();
@@ -116,13 +116,16 @@ try {
     await page.locator('.astro-gallery').waitFor({state:'hidden'});
     assert.ok(!await overflow(page),'gallery overflow');
     await page.screenshot({path:`artifacts/${width}-${mode}-gallery.png`});
-    await page.locator('.vn-panel-header .vn-return').click();
+    await page.locator('.vn-panel-header .vn-return:visible,.vn-option-footer a[href="/"]:visible').first().click();
     await page.locator('.vn-menu a[href="/settings/"]').click();
     await page.locator('[data-vn-config]:visible').waitFor();
+    await page.locator('[data-vn-option-tab="sound"]').click();
+    await page.locator('[data-vn-volume]').waitFor();
+    await page.locator('[data-vn-option-tab="display"]').click();
     await page.locator('input[name="vn-motion"][value="reduced"]').check();
     await page.waitForFunction(()=>document.documentElement.dataset.vnMotion==='reduced');
     await page.screenshot({path:`artifacts/${width}-${mode}-config.png`});
-    await page.locator('.vn-panel-header .vn-return').click();
+    await page.locator('.vn-panel-header .vn-return:visible,.vn-option-footer a[href="/"]:visible').first().click();
     await page.reload({waitUntil:'domcontentloaded'});
     await page.locator('[data-vn-title][data-vn-cover="torii"][data-vn-stage="first-encounter"]').waitFor();
     await page.locator('[data-vn-continue]').click();

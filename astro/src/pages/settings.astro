@@ -1,16 +1,55 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import GamePanel from '../components/game/GamePanel.astro';
+const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
+const tabs=[['display','DISPLAY'],['program','PROGRAM'],['text','TEXT'],['sound','SOUND'],['dialog','DIALOG'],['touch','TOUCH'],['shortcut','SHORTCUT']];
 ---
 <Layout title="系统设置" kind="home" noindex>
- <GamePanel heading="系统设置" label="CONFIG" kind="config">
-  <div class="vn-config" data-vn-config hidden>
-   <section class="vn-config-row"><div><h2>表现模式</h2><p>游戏界面或简洁阅读索引，共用文章链接</p></div><fieldset class="vn-motion-options"><legend class="journal-visually-hidden">表现模式</legend><label><input type="radio" name="vn-mode" value="game"/> 游戏</label><label><input type="radio" name="vn-mode" value="reader"/> 阅读</label></fieldset></section>
-   <section class="vn-config-row"><div><h2>界面主题</h2><p>不改变原作完整 CG 的颜色</p></div><button type="button" data-ginka-theme-toggle><span class="journal-theme-toggle-label">跟随系统</span></button></section>
-   <section class="vn-config-row"><div><h2>画面动效</h2><p>减少淡入、场景切换和菜单反馈动画</p></div><fieldset class="vn-motion-options"><legend class="journal-visually-hidden">画面动效</legend><label><input type="radio" name="vn-motion" value="system"/> 跟随系统</label><label><input type="radio" name="vn-motion" value="reduced"/> 减少动效</label></fieldset></section>
-   <section class="vn-config-row"><div><h2>音乐</h2><p>使用全站共享播放器</p></div><button type="button" data-journal-sidebar-open aria-controls="journal-sidebar" aria-expanded="false">打开播放器</button></section>
-   <section class="vn-config-row"><div><h2>阅读存档</h2><p>管理或清除本机阅读记录、收藏和标题进度</p></div><a href="/library/">读取存档</a><button type="button" data-vn-reset>清除记录</button></section>
+ <section class="vn-stage vn-option" data-vn-screen="config" data-vn-ui-original={String(original)} style={original?'--vn-option-art:url(/__ginka_local_ui__/extra.png)':undefined} aria-labelledby="vn-option-title">
+  <div class="vn-option-frame">
+   <header class="vn-option-header vn-panel-header"><h1 id="vn-option-title"><span data-vn-option-heading>DISPLAY</span> <small>Setting</small></h1><a class="vn-return journal-visually-hidden" href="/" data-vn-mode-set="game">返回标题</a></header>
+   <div data-vn-config hidden>
+    <nav class="vn-option-tabs" role="tablist" aria-label="系统设置">{tabs.map(([key,label],i)=><button type="button" id={'vn-tab-'+key} role="tab" aria-controls={'vn-option-'+key} aria-selected={String(i===0)} tabindex={i===0?0:-1} data-vn-option-tab={key}><strong>{label}</strong><small>Setting</small></button>)}</nav>
+    <div class="vn-option-body">
+     <section id="vn-option-display" role="tabpanel" aria-labelledby="vn-tab-display" data-vn-option-panel="display">
+      <div class="vn-option-grid">
+       <fieldset><legend>画面尺寸</legend><div class="vn-option-buttons"><button type="button" data-vn-window="window" aria-pressed="true">窗口</button><button type="button" data-vn-window="full" aria-pressed="false">全屏</button></div></fieldset>
+       <fieldset><legend>界面主题</legend><div class="vn-option-buttons"><button type="button" data-vn-theme="system">自动</button><button type="button" data-vn-theme="day">日间</button><button type="button" data-vn-theme="moonlit">夜间</button></div></fieldset>
+       <fieldset><legend>画面效果</legend><div class="vn-option-buttons"><label><input type="radio" name="vn-motion" value="system"/> ON</label><label><input type="radio" name="vn-motion" value="reduced"/> OFF</label></div></fieldset>
+       <fieldset><legend>画面表现</legend><div class="vn-option-buttons"><label><input type="radio" name="vn-mode" value="game"/> 游戏</label><label><input type="radio" name="vn-mode" value="reader"/> 阅读</label></div></fieldset>
+      </div>
+     </section>
+     <section id="vn-option-program" role="tabpanel" aria-labelledby="vn-tab-program" data-vn-option-panel="program" hidden>
+      <div class="vn-option-grid">
+       <fieldset><legend>阅读记录</legend><div class="vn-option-buttons"><a href="/library/">LOAD</a><a href="/archives/">章节选择</a></div></fieldset>
+       <fieldset><legend>阅读模式</legend><div class="vn-option-buttons"><a href="/#latest" data-vn-mode-set="reader">阅读索引</a><a href="/" data-vn-mode-set="game">标题画面</a></div></fieldset>
+      </div>
+     </section>
+     <section id="vn-option-text" role="tabpanel" aria-labelledby="vn-tab-text" data-vn-option-panel="text" hidden>
+      <div class="vn-option-grid">
+       <fieldset><legend>正文文字大小</legend><div class="vn-option-slider"><span>MIN</span><input type="range" min="14" max="22" step="1" value="16" data-vn-text-size aria-label="正文文字大小"/><span>MAX</span><output data-vn-text-value>16</output></div></fieldset>
+       <fieldset><legend>文字显示示例</legend><p class="vn-text-sample" data-vn-text-sample>在姬之岛的夏日里，记录每一次阅读</p></fieldset>
+      </div>
+     </section>
+     <section id="vn-option-sound" role="tabpanel" aria-labelledby="vn-tab-sound" data-vn-option-panel="sound" hidden>
+      <div class="vn-option-grid" data-vn-music>
+       <fieldset><legend>BGM 音量</legend><div class="vn-option-slider"><span>MIN</span><input type="range" min="0" max="100" step="1" value="88" data-vn-volume aria-label="BGM 音量"/><span>MAX</span><output data-vn-volume-value>88</output></div><div class="vn-option-buttons"><button type="button" data-vn-music-action="music-volume-toggle">静音</button><button type="button" data-vn-music-action="music-toggle">播放</button><button type="button" data-vn-music-action="music-next">下一首</button></div></fieldset>
+       <fieldset><legend>正在播放</legend><div class="vn-option-track"><span data-vn-music-title>读取歌单中</span><small data-vn-music-artist></small><progress data-vn-music-progress max="1" value="0" aria-label="播放进度"></progress><small data-vn-music-time></small></div></fieldset>
+       <fieldset class="vn-option-wide"><legend>音乐列表</legend><div data-vn-track-list class="vn-option-playlist"></div><p data-vn-track-status role="status">正在读取歌单</p><button type="button" data-vn-music-action="music-source-retry">刷新歌单</button></fieldset>
+      </div>
+     </section>
+     <section id="vn-option-dialog" role="tabpanel" aria-labelledby="vn-tab-dialog" data-vn-option-panel="dialog" hidden>
+      <div class="vn-option-grid"><fieldset><legend>清除阅读记录</legend><div class="vn-option-buttons"><button type="button" data-vn-reset>清除存档</button></div><p>操作前会再次确认</p></fieldset></div>
+     </section>
+     <section id="vn-option-touch" role="tabpanel" aria-labelledby="vn-tab-touch" data-vn-option-panel="touch" hidden>
+      <div class="vn-option-grid"><fieldset><legend>触屏操作</legend><p>点击选择，滑动浏览文章和存档列表</p></fieldset><fieldset><legend>返回</legend><p>使用界面下方返回按钮，不拦截系统手势</p></fieldset></div>
+     </section>
+     <section id="vn-option-shortcut" role="tabpanel" aria-labelledby="vn-tab-shortcut" data-vn-option-panel="shortcut" hidden>
+      <div class="vn-option-grid"><fieldset><legend>菜单操作</legend><p>↑ / ↓ 选择，Enter 确认</p></fieldset><fieldset><legend>文章检索</legend><p>Ctrl / Command + K</p></fieldset><fieldset><legend>关闭弹窗</legend><p>Esc</p></fieldset></div>
+     </section>
+    </div>
+    <footer class="vn-option-footer"><a href="/" data-vn-mode-set="game">TITLE<small>标题</small></a><a href="/" data-vn-mode-set="game">BACK<small>返回</small></a><button type="button" data-vn-option-default>DEFAULT<small>默认设置</small></button><a href="/archives/">START<small>阅读</small></a></footer>
+   </div>
+   <noscript><p>系统设置需要 JavaScript，<a href="/">返回标题</a></p></noscript>
   </div>
-  <noscript><p>系统设置需要 JavaScript</p></noscript>
- </GamePanel>
+ </section>
 </Layout>

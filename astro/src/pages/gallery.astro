@@ -6,7 +6,8 @@ const scenes=vnScenes.gallery;
 const art='/images/ginka/scenes/';
 ---
 <Layout title="CG 鉴赏" kind="home">
- <GamePanel heading="岛影鉴赏" label="CG GALLERY" kind="gallery">
+ <GamePanel heading="岛影鉴赏" label="EXTRA" kind="gallery">
+  <nav class="vn-tabs vn-extra-nav" aria-label="EXTRA"><a href="/gallery/" aria-current="page">CG 鉴赏</a><a href="/map/">岛屿地图</a><a href="/#latest" data-vn-mode-set="reader">阅读索引</a><a href="/search/">检索</a><a href="/about/">关于</a></nav>
   <p class="vn-panel-note">现有场景预览 · ©Frontwing / ©bushiroad</p>
   <ul class="vn-gallery-grid" data-journal-gallery>{scenes.map(({slug,title},i)=><li class="journal-scene-item"><a class="journal-scene-card" href={art+slug+'-day-1440.webp'} data-full-day={art+slug+'-day-1440.webp'} data-full-night={art+slug+'-night-1440.webp'} data-caption={title+' · ©Frontwing / ©bushiroad'}><img class="scene-day" src={art+slug+'-day-960.webp'} alt={title} width="2560" height="1440" loading="lazy"/><img class="scene-night" src={art+slug+'-night-960.webp'} alt="" width="2560" height="1440" loading="lazy"/><span class="journal-scene-label">{String(i+1).padStart(2,'0')} / {title}</span></a></li>)}</ul>
  </GamePanel>

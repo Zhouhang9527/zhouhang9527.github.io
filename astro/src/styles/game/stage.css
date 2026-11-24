@@ -222,3 +222,63 @@ html body .vn-map[data-vn-map-original=true] .vn-map-picture{background-image:va
 html:has(.vn-stage)::view-transition-old(root),html:has(.vn-stage)::view-transition-new(root){animation-duration:300ms}
 @media(prefers-reduced-motion:reduce){html:has(.vn-stage)::view-transition-old(root),html:has(.vn-stage)::view-transition-new(root){animation:none!important}}
 html[data-vn-motion=reduced]::view-transition-old(root),html[data-vn-motion=reduced]::view-transition-new(root){animation:none!important}
+
+/* Original PC option reference: 1280x720, header 0–118, cyan tabs,
+   central geometric blue panel, bottom commands. Layout is responsive;
+   blog-only controls replace unsupported VN-only functions. */
+.vn-option{--option-cyan:#22b6c8;--option-ink:#071529;--option-white:#fbfcff;background:#071529;min-height: min(720px,90svh);color:#f0f7fc}
+.vn-option-frame{display:grid;grid-template-rows:auto 1fr;min-height:inherit}
+.vn-option-header.vn-panel-header{display:flex;align-items:center;min-height:clamp(82px,9.2cqw,118px);padding:12px 3.5%;border:0;background:#071529}
+.vn-option-header.vn-panel-header h1{font:900 clamp(32px,5.5cqw,70px)/1 Arial,sans-serif!important;letter-spacing:-.045em;color:#438ec4!important;text-align:left;margin:0}
+.vn-option-header h1 small{font-size:.52em;letter-spacing:-.03em}
+.vn-option{container-type:inline-size}
+.vn-option [data-vn-config]{display:grid;grid-template-rows:auto 1fr auto;min-height:0}
+.vn-option-tabs{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:var(--option-cyan);padding-inline:3.5%;border-block:2px solid #37ced6}
+.vn-option-tabs button{border:0;background:transparent;color:#061626;display:flex;flex-direction:column;align-items:center;justify-content:center;font:900 clamp(11px,1.65cqw,21px)/1 Arial,sans-serif;min-height:42px;padding:4px 2px}
+.vn-option-tabs button small{font-size:.65em;font-weight:700}
+.vn-option-tabs button[aria-selected=true]{background:#fff;color:#111}
+.vn-option-tabs button:is(:hover,:focus-visible){background:#d9f9ff;outline:2px solid #fff;outline-offset:-2px}
+.vn-option-body{position:relative;isolation:isolate;padding:clamp(18px,2cqw,28px) 7%;background:linear-gradient(153deg,#2568a3 0%,#254579 65%,#10203f 100%);min-height:clamp(340px,40cqw,500px);border-bottom:3px solid var(--option-cyan)}
+.vn-option-body::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(155deg,transparent 65%,#1329519e 65.3%,transparent 66%),linear-gradient(160deg,transparent 74%,#53a6dd77 74.3%,#142d5b 75%,#142d5b55 80%,transparent 80.3%)}
+.vn-option[data-vn-ui-original=true] .vn-option-body{background-image:var(--vn-option-art);background-size:100% auto;background-position:center 54%;background-repeat:no-repeat}
+.vn-option[data-vn-ui-original=true] .vn-option-body::before{display:none}
+.vn-option-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 8%;align-content:start}
+.vn-option-grid fieldset{min-width:0;border:0;margin:0;padding:0 0 8px}
+.vn-option-grid legend{display:block;float:none;width:100%;box-sizing:border-box;padding:4px 10px 4px 22px;color:#fff;font-size:clamp(12px,1.25cqw,17px);font-weight:600;line-height:1.2;background:linear-gradient(140deg,#24b7c8 0%,#24b7c8 83%,#299bad 83.4%,#299bad 86%,#24b7c8 86.4%);border:1px solid #d1f5fb;box-shadow:0 1px 0 #092942;position:relative}
+.vn-option-grid legend::before{content:"";position:absolute;left:8px;top:50%;width:8px;height:8px;border-radius:50%;background:#fff;transform:translateY(-50%)}
+.vn-option-grid p{color:#eef7ff;margin:12px 5px;font-size:14px;line-height:1.6}
+.vn-option-buttons{display:flex;justify-content:space-evenly;align-items:center;flex-wrap:wrap;gap:10px;padding:12px 4px 0}
+.vn-option-buttons :is(button,a,label),.vn-option-grid fieldset>button{display:inline-flex;align-items:center;justify-content:center;position:relative;min-height:32px;min-width:72px;border-radius:5px;border:1px solid #172e45;box-shadow:0 1px 0 #071529;line-height:1.2;padding:4px 12px;font:600 13px/1.2 var(--vn-font-ui);color:#f0f6fc!important;background:#586879;text-shadow:0 1px 1px #152335;cursor:pointer;text-decoration:none}
+.vn-option-buttons label input{position:absolute;opacity:0;inset:0;margin:0;width:100%;height:100%;cursor:pointer}
+.vn-option-buttons :is(button[aria-pressed=true],label:has(input:checked)),.vn-option-buttons :is(button,a,label):hover,.vn-option-grid fieldset>button:hover{background:#fff;color:#101820!important;text-shadow:none}
+.vn-option-buttons label:has(input:focus-visible){outline:2px solid #fff;outline-offset:3px}
+.vn-option-buttons button:disabled{opacity:.45;cursor:default}
+.vn-option-slider{display:flex;align-items:center;gap:7px;padding:12px 4px 0;font:12px/1 Arial,sans-serif;color:#fff}
+.vn-option-slider input{width:100%;min-width:0;accent-color:#64e3ed;cursor:pointer}
+.vn-option-slider output{min-width:28px;text-align:center;color:#16263a;background:white;border-radius:8px;padding:2px 4px;font-weight:700}
+.vn-option-wide{grid-column:1/-1}
+.vn-option-track{display:grid;gap:8px;padding:12px 6px;color:#fff;overflow-wrap:anywhere}
+.vn-option-track progress{width:100%;height:6px;accent-color:#48d9e8}
+.vn-option-playlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-height:144px;overflow:auto;gap:5px;margin:10px 0}
+.vn-option-playlist button{color:#edf7fd;background:#142f52;border:1px solid #63b5cf;padding:5px 8px;text-align:left;font-size:12px;overflow-wrap:anywhere}
+.vn-option-playlist button[aria-pressed=true],.vn-option-playlist button:hover{background:#fff;color:#142f52}
+.vn-option-footer{display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:18px;background:#071529;padding:12px 5%}
+.vn-option-footer :is(a,button){display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:70px;min-height:56px;position:relative;isolation:isolate;border:0;background:transparent;color:white!important;font:700 12px/1.15 Arial,sans-serif;text-decoration:none}
+.vn-option-footer :is(a,button)::before{content:"";position:absolute;z-index:-1;width:40px;height:40px;transform:rotate(45deg);background:#2c75a4;border:1px solid #7adbe5}
+.vn-option-footer :is(a,button):hover::before{background:#46afca}
+.vn-option-footer small{font:11px/1.2 var(--vn-font-ui)}
+.vn-option [data-vn-option-panel]:not([hidden]){animation:vn-appear 300ms ease both}
+.vn-text-sample{font-size:var(--vn-reader-size,16px)!important}
+body .post-body{font-size:var(--vn-reader-size,16px)}
+/* The persistent player remains mounted but no second music UI in the drawer. */
+#journal-sidebar #music-player{display:none!important}
+@media(max-width:680px){
+ .vn-option-tabs{padding:0;grid-template-columns:repeat(4,minmax(0,1fr))}
+ .vn-option-tabs button{font-size:12px;min-height:40px}
+ .vn-option-grid{grid-template-columns:1fr;gap:14px}
+ .vn-option-body{padding:18px 14px;min-height:360px}
+ .vn-option[data-vn-ui-original=true] .vn-option-body{background-size:cover}
+ .vn-option-buttons :is(button,a,label){min-height:44px}
+ .vn-option-footer{justify-content:center;gap:4px}
+ .vn-option-footer :is(a,button){min-width:68px}
+}
