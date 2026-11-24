@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 2,
-  "notice": "Title composition: fixed torii backdrop; only GINKA presence and expression change with progress (user-confirmed). The tracked torii image, stage thresholds and expression order are provisional. Original character/title differences and rights remain unverified.",
+  "schemaVersion": 3,
+  "notice": "Three complete original CG variants identified in private visual-index/data-01.jpg; progression order is a blog adaptation, not confirmed game order. Full originals dev-only. No separate character layer.",
   "chapter": {
     "slug": "beach",
     "focal": "50% 50%"
@@ -25,29 +25,39 @@
         "minCompleted": 0,
         "present": false,
         "expression": null,
-        "asset": null
+        "frame": "data-004"
       },
       {
         "id": "first-encounter",
         "minCompleted": 1,
         "present": true,
-        "expression": "neutral",
-        "asset": null
+        "expression": "eyes-open",
+        "frame": "data-003"
       },
       {
         "id": "familiar",
         "minCompleted": 3,
         "present": true,
-        "expression": "smile",
-        "asset": null
-      },
-      {
-        "id": "reunion",
-        "minCompleted": 8,
-        "present": true,
-        "expression": "smile-alternate",
-        "asset": null
+        "expression": "eyes-closed",
+        "frame": "data-005"
       }
-    ]
+    ],
+    "frames": {
+      "data-003": {
+        "width": 1280,
+        "height": 720,
+        "source": "_hxv4_hash/35CAB850E76B65EF/000001ef_5CEF34C283E9BF5C9F075DA9083AA1EFC326C6106109F56A0A92206BE10D0CAD.png"
+      },
+      "data-004": {
+        "width": 1280,
+        "height": 720,
+        "source": "_hxv4_hash/35CAB850E76B65EF/000001f0_5FD9A7BD088F9D5526AE32DC3FAC821082A892A23E7E80448DF4DA9A85E3CD7B.png"
+      },
+      "data-005": {
+        "width": 1280,
+        "height": 720,
+        "source": "_hxv4_hash/35CAB850E76B65EF/000001f1_21C8C4A6F235A7C30E2EAF1DB3542C9A10391ADFCDBA6ABD27EBD373D1DA0BE4.png"
+      }
+    }
   }
 }

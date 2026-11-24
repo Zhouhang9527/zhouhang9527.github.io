@@ -1,16 +1,17 @@
 ---
-import {vnScenes,sceneVars,resolveTitleState} from '../../lib/vn-scenes';
+import {vnScenes,sceneVars,resolveTitleState,localTitleFrame} from '../../lib/vn-scenes';
 import {href} from '../../lib/site';
 import type {Post} from '../../lib/types';
 interface Props {posts:Post[]}
 const {posts}=Astro.props;
 const background=vnScenes.title.background;
 const initial=resolveTitleState(0);
+const localOriginal=import.meta.env.DEV&&!!process.env.GINKA_TITLE_DATA;
+const coverStyle=sceneVars(background.slug,background.focal)+(localOriginal?`;--vn-original-frame:url('${localTitleFrame(initial.frame)}')`:'');
 ---
-<section class="vn-stage vn-title" data-vn-title data-vn-cover={background.id} data-vn-stage={initial.id} data-vn-character-present={String(initial.present)} data-vn-expression={initial.expression??"none"} data-vn-character-render="none" data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} aria-labelledby="vn-title-heading">
+<section class="vn-stage vn-title" data-vn-title data-vn-cover={background.id} data-vn-stage={initial.id} data-vn-character-present={String(initial.present)} data-vn-expression={initial.expression??"none"} data-vn-frame={initial.frame} data-vn-original={String(localOriginal)} data-vn-frame-render={localOriginal?"original":"fallback"} data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} aria-labelledby="vn-title-heading">
  <div class="vn-cover" aria-hidden="true">
-  <div class="vn-cover-art" data-vn-art={background.id} style={sceneVars(background.slug,background.focal)}></div>
-  <img class="vn-character-art" data-vn-character-art alt="" decoding="async" hidden/>
+  <div class="vn-cover-art" data-vn-art={background.id} style={coverStyle}></div>
  </div>
  <div class="vn-title-content">
   <div class="vn-title-menu">

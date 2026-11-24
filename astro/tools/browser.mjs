@@ -29,6 +29,7 @@ try {
    await page.locator('[data-vn-title][data-vn-cover="torii"][data-vn-stage="arrival"]').waitFor();
    assert.equal(await page.locator('.header').isVisible(),false,'traditional header on title screen');
    assert.equal(await page.locator('[data-vn-continue]').isVisible(),false,'continue visible without a save');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-004');
    const fixedCover=await page.locator('[data-vn-art]').evaluate(el=>getComputedStyle(el).backgroundImage);
    assert.ok(fixedCover.includes('torii-close-'),'title must use fixed torii scene');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-present'),'false');
@@ -85,9 +86,10 @@ try {
    assert.equal(await page.locator('[data-vn-art]:visible').count(),1,'multiple active cover art layers');
    assert.equal(await page.locator('[data-vn-art]').evaluate(el=>getComputedStyle(el).backgroundImage),fixedCover,'progress changed title background');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-present'),'true');
-   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-expression'),'neutral');
-   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-render'),'unavailable');
-   assert.equal(await page.locator('[data-vn-character-art]').isVisible(),false,'unverified asset must remain hidden');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-expression'),'eyes-open');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-003');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame-render'),'fallback');
+   assert.equal(await page.locator('[data-vn-character-art]').count(),0,'no character overlay');
    await page.screenshot({path:`artifacts/${width}-${mode}-unlocked.png`});
    await page.locator('[data-vn-continue]').click();
    await page.waitForURL(articleURL);

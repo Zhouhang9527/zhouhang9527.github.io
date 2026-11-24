@@ -33,12 +33,16 @@ console.log('PASS VN scene manifest and navigation entry points');
 
 assert.equal(vn.title.background.id,'torii');
 assert.equal(vn.title.states[0].minCompleted,0);
-assert.equal(vn.title.states[0].present,false);
+assert.deepEqual(Object.keys(vn.title.frames).sort(),['data-003','data-004','data-005']);
+assert.equal(new Set(vn.title.states.map(s=>s.frame)).size,3);
 for(const [i,state] of vn.title.states.entries()){
- assert.ok(!i||state.minCompleted>vn.title.states[i-1].minCompleted,'Title progress thresholds must increase');
+ assert.ok(!i||state.minCompleted>vn.title.states[i-1].minCompleted);
  assert.equal(state.present,typeof state.expression==='string');
- assert.ok(!('slug' in state),'Title progress may not replace the background');
- if(state.asset){assert.ok(state.present);assert.ok(state.asset.src.startsWith('/images/ginka/'));assert.ok(fs.existsSync(path.join('dist',state.asset.src)),'Missing verified character difference');}
+ const frame=vn.title.frames[state.frame];assert.equal(frame.width,1280);assert.equal(frame.height,720);
+ assert.ok(!('asset' in state),'Do not composite character sprites');
 }
 assert.match(home,/data-vn-cover="torii"/);
-console.log('PASS fixed torii title and independent character state contract');
+assert.match(home,/data-vn-original="false"/);
+assert.doesNotMatch(home,/data-vn-character-art|--vn-original-frame\s*:/);
+assert.ok(!fs.existsSync('dist/__ginka_local_title__'),'Private original title CG leaked');
+console.log('PASS complete CG frame contract and production isolation');

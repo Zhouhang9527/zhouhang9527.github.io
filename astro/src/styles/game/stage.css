@@ -57,7 +57,7 @@ body .vn-choices a:is(:hover,:focus-visible),.vn-tabs a:focus-visible,.vn-title-
  .vn-tabs a{padding-inline:9px;font-size:13px}
 }
 
-/* The character difference occupies the same title composition as the torii.
-   Only a verified, aligned transparent image is accepted; no invented CG swap. */
+/* One complete original CG, shared geometry. The private source has no
+   verified day/moonlit variants; theme changes must not recolor it. */
 .vn-cover-art{z-index:0}
-.vn-character-art{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:50% 50%;z-index:1;pointer-events:none}
+html body .vn-title[data-vn-original="true"] .vn-cover-art{background-image:var(--vn-original-frame);background-position:50% 50%;background-size:cover}

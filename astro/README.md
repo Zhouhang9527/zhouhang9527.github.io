@@ -29,3 +29,6 @@ Build output: astro/dist. Generated directories are disposable. Track new posts/
 
 ## Migration gates
 Keep old published paths, Markdown and image attachments, Giscus pathname mapping, metadata, single persistent audio element, day/moonlit/system, search and keyboard navigation. Preserve the GINKA design system. No untracked game extraction assets enter dist. A successful build is not approval to deploy: complete browser and visual acceptance plus live integration review before replacing the published main branch.
+
+## Original title CG (private local study)
+The three identified full images are data-003, data-004 and data-005, not character sprites. Set GINKA_TITLE_DATA to the original extracted data folder (the folder containing _hxv4_hash), then run npm run dev on localhost. See config/vn-scenes.json for exact original hash filenames. The Vite dev middleware serves the original bytes without copying to public or dist. Do not expose this private dev server on a network. The release build keeps a single provisional torii fallback until rights are confirmed; no private images are included. Progress thresholds are provisional, not a verified original sequence.

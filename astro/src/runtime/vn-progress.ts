@@ -1,4 +1,4 @@
-import {resolveTitleState} from '../lib/vn-scenes';
+import {resolveTitleState,localTitleFrame} from '../lib/vn-scenes';
 
 const KEY='ginka.vn.progress.v1';
 type Progress={version:1;completed:string[];last:string|null};
@@ -31,19 +31,15 @@ function renderTitle(root:Document=document) {
  title.dataset.vnStage=state.id;
  title.dataset.vnCharacterPresent=String(state.present);
  title.dataset.vnExpression=state.expression??'none';
- const character=title.querySelector<HTMLImageElement>('[data-vn-character-art]');
- // A missing verified character difference must never substitute another location
- // or unrelated story illustration. Keep the fixed torii composition.
- const src=state.present?state.asset?.src:null;
- title.dataset.vnCharacterRender=src?'asset':state.present?'unavailable':'none';
- if(character){
-  if(src){
-   if(character.getAttribute('src')!==src)character.setAttribute('src',src);
-   character.hidden=false;
-  }else{
-   character.hidden=true;
-   character.removeAttribute('src');
-  }
+ // All three original images contain the complete composition. Select one
+ // frame, never composite a character over the torii or invent a night variant.
+ title.dataset.vnFrame=state.frame;
+ const original=title.dataset.vnOriginal==='true';
+ const art=title.querySelector<HTMLElement>('[data-vn-art]');
+ title.dataset.vnFrameRender=original?'original':'fallback';
+ if(art){
+  if(original)art.style.setProperty('--vn-original-frame',`url('${localTitleFrame(state.frame)}')`);
+  else art.style.removeProperty('--vn-original-frame');
  }
  const label=title.querySelector<HTMLElement>('[data-vn-progress]');
  if(label)label.textContent=`阅读记录 ${count} / ${paths.length}`;
