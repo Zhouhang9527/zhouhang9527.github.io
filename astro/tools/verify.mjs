@@ -24,3 +24,9 @@ for(const [asset,hash] of Object.entries(versions)){
  assert.ok(home.includes('/'+asset+'?v='+hash),'Asset not versioned in home '+asset);
 }
 console.log('PASS content-hashed asset manifest');
+
+const vn=JSON.parse(fs.readFileSync('config/vn-scenes.json','utf8'));
+for(const spec of [...vn.covers,vn.chapter])for(const mode of ['day','night'])for(const w of vn.widths)assert.ok(fs.existsSync(path.join('dist','images/ginka/scenes',spec.slug+'-'+mode+'-'+w+'.webp')),'Missing VN scene '+spec.slug);
+assert.match(home,/data-vn-start/);
+assert.match(fs.readFileSync('dist/archives/index.html','utf8'),/data-vn-post/);
+console.log('PASS VN scene manifest and navigation entry points');

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "notice": "Provisional adaptation using existing tracked preview assets; original title-stage map and public permissions not verified.",
+  "covers": [
+    {
+      "id": "arrival",
+      "minCompleted": 0,
+      "slug": "hero-katana",
+      "label": "初见",
+      "focal": "67% 40%"
+    },
+    {
+      "id": "shore",
+      "minCompleted": 1,
+      "slug": "beach",
+      "label": "海岸",
+      "focal": "50% 50%"
+    },
+    {
+      "id": "torii",
+      "minCompleted": 3,
+      "slug": "torii-close",
+      "label": "鸟居",
+      "focal": "50% 50%"
+    },
+    {
+      "id": "island",
+      "minCompleted": 8,
+      "slug": "panorama",
+      "label": "姬之岛",
+      "focal": "50% 50%"
+    }
+  ],
+  "chapter": {
+    "slug": "beach",
+    "focal": "50% 50%"
+  },
+  "widths": [
+    640,
+    1280
+  ],
+  "ui": {
+    "logo": "/images/ginka/header-logo.png",
+    "wing": "/images/ginka/butterfly.png"
+  }
+}

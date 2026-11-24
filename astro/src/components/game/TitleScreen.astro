@@ -1,0 +1,35 @@
+---
+import {vnScenes,sceneVars} from '../../lib/vn-scenes';
+import {href} from '../../lib/site';
+import type {Post} from '../../lib/types';
+interface Props {posts:Post[]}
+const {posts}=Astro.props;
+const defaultCover=vnScenes.covers[0];
+---
+<section class="vn-stage vn-title" data-vn-title data-vn-cover={defaultCover.id} data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} aria-labelledby="vn-title-heading">
+ <div class="vn-cover" aria-hidden="true">
+ {vnScenes.covers.map(cover=><div class="vn-cover-art" data-vn-art={cover.id} style={sceneVars(cover.slug,cover.focal)} hidden={cover.id!==defaultCover.id}/>)}
+ </div>
+ <div class="vn-title-content">
+  <div class="vn-title-menu">
+   <h1 id="vn-title-heading"><img src={vnScenes.ui.logo} alt="GINKA" width="196" height="48"/><span class="journal-visually-hidden">逆向工程与二进制安全</span></h1>
+   <p class="vn-kicker">MM9527 / PERSONAL ARCHIVE</p>
+   <nav class="vn-menu" aria-label="标题菜单">
+    <a data-vn-start href="/archives/"><span>START</span><small>开始阅读</small></a>
+    <a data-vn-continue href="/archives/" hidden><span>CONTINUE</span><small>继续阅读</small></a>
+    <span class="vn-menu-disabled" data-vn-no-save aria-disabled="true"><span>CONTINUE</span><small>暂无阅读记录</small></span>
+    <a href="#latest"><span>INDEX</span><small>快速阅读索引</small></a>
+    <a href="#ginka-scenes"><span>GALLERY</span><small>岛影鉴赏</small></a>
+    <button type="button" class="popup-trigger" aria-label="搜索文章"><span>SEARCH</span><small>全文搜索</small></button>
+    <button type="button" data-journal-sidebar-open aria-controls="journal-sidebar" aria-expanded="false" aria-label="打开系统菜单"><span>SYSTEM</span><small>系统 / 音乐</small></button>
+    <a href="/about/"><span>ABOUT</span><small>关于本站</small></a>
+   </nav>
+   <p class="vn-save-status" data-vn-progress aria-live="polite">阅读记录 0 / {posts.length}</p>
+  </div>
+  <div class="vn-title-tools">
+   <button type="button" data-ginka-theme-toggle aria-label="切换昼夜主题"><span class="journal-theme-toggle-label">跟随系统</span></button>
+   <a href="https://ginka.frontwing.jp/story/" target="_blank" rel="noopener noreferrer">©Frontwing / ©bushiroad</a>
+   <span>非官方同人主题 · 预览</span>
+  </div>
+ </div>
+</section>

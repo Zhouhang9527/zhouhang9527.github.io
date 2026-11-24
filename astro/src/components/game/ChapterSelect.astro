@@ -1,0 +1,15 @@
+---
+import {vnScenes,sceneVars} from '../../lib/vn-scenes';
+import {href,config} from '../../lib/site';
+import type {CollectionProps} from '../../lib/types';
+type Props=CollectionProps;
+const {title,posts,page=1,totalPages=1,base='archives/'}=Astro.props;
+---
+<section class="vn-stage vn-chapter" data-vn-chapter aria-labelledby="vn-chapter-heading" style={sceneVars(vnScenes.chapter.slug,vnScenes.chapter.focal)}>
+ <div class="vn-chapter-content">
+  <header><a class="vn-return" href="/">← TITLE / 返回标题</a><p class="vn-kicker">CHAPTER SELECT</p><h1 id="vn-chapter-heading">{title}</h1><p>选择一篇记录，进入阅读手册</p></header>
+  <nav class="vn-tabs" aria-label="章节索引"><a href="/archives/" aria-current="page">时间归档</a><a href="/tags/">主题标签</a><a href="/categories/">内容分类</a></nav>
+  <ol class="vn-choices" aria-label="文章章节">{posts.map((post,i)=><li><a data-vn-post href={href(post.data.route)}><span class="vn-choice-no">{String((page-1)*config.pageSize+i+1).padStart(2,'0')}</span><span class="vn-choice-title">{post.data.title}</span><time datetime={post.data.date}>{post.data.date}</time><span class="vn-choice-arrow" aria-hidden="true">›</span></a></li>)}</ol>
+  {totalPages>1&&<nav class="vn-tabs" aria-label="分页">{Array.from({length:totalPages},(_,i)=><a href={href(base+(i===0?'':'page/'+(i+1)+'/'))} aria-current={i+1===page?'page':undefined}>{i+1}</a>)}</nav>}
+ </div>
+</section>

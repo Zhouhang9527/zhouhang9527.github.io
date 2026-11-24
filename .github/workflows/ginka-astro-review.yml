@@ -1,7 +1,7 @@
 name: GINKA Astro migration review
 on:
   push:
-    branches: [feature/ginka-astro]
+    branches: [feature/ginka-astro, feature/ginka-vn]
   workflow_dispatch:
 permissions:
   contents: read
