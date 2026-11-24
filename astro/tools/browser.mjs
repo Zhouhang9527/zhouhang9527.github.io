@@ -27,6 +27,8 @@ try {
    await page.evaluate(()=>document.fonts.ready);
    assert.ok(!await overflow(page),'home overflow');
    await checkNav(page);
+   const feed=await page.locator('.journal-feed').evaluate(el=>({width:el.getBoundingClientRect().width,layout:el.parentElement.getBoundingClientRect().width}));
+   assert.ok(width>960||feed.width>=feed.layout-2,'mobile feed squeezed: '+JSON.stringify(feed));
    await page.screenshot({path:`artifacts/${width}-${mode}-home.png`});
    await page.evaluate(()=>window.scrollTo(0,400));
    await page.waitForFunction(()=>window.scrollY>0);

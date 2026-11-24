@@ -26,3 +26,11 @@ html[data-theme=day] .astro-code,html[data-theme=day] .astro-code span{color:var
 body .header .menu-item-drawer button{min-width:44px;min-height:44px}
 @media(max-width:480px){body .header .site-brand-container{flex-shrink:0}body .header .journal-brand span{display:none}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}::view-transition-old(root),::view-transition-new(root){animation:none!important}}
+
+/* The compact masthead must remain legible over a bright CG, independently of
+   the current image crop. A restrained local backdrop is preferable to dimming
+   the entire illustration. */
+@media(max-width:680px){
+ html[data-theme=moonlit] body:has(.ginka-home .journal-hero):not(.ginka-header-solid) .column > header.header::before{opacity:1;background:linear-gradient(180deg,rgba(17,25,35,.82),rgba(17,25,35,.60));border-bottom:0}
+ body .header .menu-item :is(a,button,summary){text-shadow:none}
+}
