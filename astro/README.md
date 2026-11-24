@@ -42,3 +42,6 @@ $env:GINKA_UI_FONT = "D:\\GINKA-study\\assets\\data\\<actual-font-file>.otf"
 npm run dev -- --host 127.0.0.1
 ```
 Use the real path from the scan, not the placeholder. The optional font is served only by the local dev middleware, never copied to the site. It affects VN menu and UI text, not technical article text or code. A single regular face is provisionally mapped to both roles; original font assignments and Chinese glyph coverage still require local visual verification. Browser fallback handles missing glyphs. Unset GINKA_UI_FONT to compare against the production font stack; do not expose the dev server through a proxy or tunnel. No original font is approved for public release by this change.
+
+## Original EXTRA base and transition rule (private local study)
+Set `GINKA_VN_UI_DATA` to the extracted data folder containing _hxv4_hash and run dev on localhost. The two exact paths are recorded in config/vn-scenes.json. The identified data-101 backdrop is a candidate EXTRA base, used in gallery preview; data-021 drives a grayscale threshold wipe. The 320ms timing is provisional. If the environment variable is absent, public fallback skin and CSS transition remain. No original images are copied to dist.

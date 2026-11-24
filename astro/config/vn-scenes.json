@@ -73,5 +73,22 @@
       "slug": "shop-street",
       "title": "岛间街道"
     }
-  ]
+  ],
+  "privateUI": {
+    "notice": "Visually identified from private visual-index/data-03.jpg. EXTRA base is a candidate; exact menu assignment and transition timings are unverified.",
+    "assets": {
+      "extra": {
+        "id": "data-101",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007c4_44CBE58B79EC96B0DEF8DEA7365C190E45E53E7F165339B7C2D1FE912C47BA72.png",
+        "width": 1280,
+        "height": 720
+      },
+      "wipe": {
+        "id": "data-021",
+        "source": "_hxv4_hash/72A487EDE974DA88/0000025b_059FA143F4C13FBC83C47D9399EF9502AAD6D610F7B48CBE72969C78B6CCE96C.png",
+        "width": 1280,
+        "height": 720
+      }
+    }
+  }
 }

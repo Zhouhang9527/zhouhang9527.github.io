@@ -20,8 +20,9 @@ export function localTitleArt(){
    server.middlewares.use((req,res,next)=>{
     const url=(req.url||'').split('?')[0];
     if(!url.startsWith('/__ginka_local_title__/'))return next();
+    if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket.remoteAddress)||!['GET','HEAD'].includes(req.method)){res.statusCode=403;res.end();return;}
     const bytes=frames.get(url);
-    if(!bytes||!['GET','HEAD'].includes(req.method)){res.statusCode=404;res.end();return;}
+    if(!bytes){res.statusCode=404;res.end();return;}
     res.setHeader('Content-Type','image/png');res.setHeader('Cache-Control','no-store');res.setHeader('Content-Length',bytes.length);
     res.end(req.method==='HEAD'?undefined:bytes);
    });

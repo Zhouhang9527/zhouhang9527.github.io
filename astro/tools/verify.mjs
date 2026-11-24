@@ -61,3 +61,9 @@ for(const [route,screen] of [['library','load'],['gallery','gallery'],['settings
  assert.ok(home.includes('href="/'+route+'/"'),'Unreachable VN '+route);
 }
 console.log('PASS VN load, gallery and config routes');
+
+assert.ok(!fs.existsSync('dist/__ginka_local_ui__'),'Private UI files leaked');
+for(const route of ['index.html','gallery/index.html','library/index.html','settings/index.html']){
+ assert.doesNotMatch(fs.readFileSync('dist/'+route,'utf8'),/__ginka_local_ui__|data-vn-ui-original="true"/,'Private UI reference leaked');
+}
+console.log('PASS private UI build isolation');

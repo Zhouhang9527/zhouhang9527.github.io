@@ -2,8 +2,10 @@
 import {vnScenes,sceneVars} from '../../lib/vn-scenes';
 interface Props {heading:string; label:string; kind:string}
 const {heading,label,kind}=Astro.props;
+const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA&&kind==='gallery';
+const style=sceneVars(vnScenes.chapter.slug,vnScenes.chapter.focal)+(original?';--vn-extra-art:url(/__ginka_local_ui__/extra.png)':'');
 ---
-<section class="vn-stage vn-panel" data-vn-screen={kind} aria-labelledby="vn-panel-heading" style={sceneVars(vnScenes.chapter.slug,vnScenes.chapter.focal)}>
+<section class="vn-stage vn-panel" data-vn-screen={kind} aria-labelledby="vn-panel-heading" data-vn-ui-original={String(original)} style={style}>
  <div class="vn-panel-inner">
   <header class="vn-panel-header"><a class="vn-return" href="/">〈 TITLE</a><div><p class="vn-kicker">{label}</p><h1 id="vn-panel-heading">{heading}</h1></div><img src={vnScenes.ui.wing} width="32" height="32" alt=""/></header>
   <div class="vn-panel-body"><slot/></div>

@@ -142,3 +142,12 @@ html[data-theme=moonlit] .vn-slot-thumbnail{background-image:var(--vn-night-smal
 html[data-vn-motion=reduced] .vn-stage *,html[data-vn-motion=reduced] .vn-stage{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 html[data-vn-motion=reduced]::view-transition-old(root),html[data-vn-motion=reduced]::view-transition-new(root){animation:none!important}
 @media(prefers-reduced-motion:reduce){.vn-stage,.vn-stage *{animation:none!important;transition:none!important}}
+
+/* Identified original EXTRA base, enabled solely by private local preview. */
+html body .vn-panel[data-vn-ui-original=true]{background-image:var(--vn-extra-art);background-position:center;background-size:cover;min-height: min(720px,80svh)}
+.vn-panel[data-vn-ui-original=true]::before{background:none}
+.vn-panel[data-vn-ui-original=true] .vn-panel-body{background:#0d1a2c60;border-color:#5ec5e8}
+.vn-panel[data-vn-ui-original=true] .vn-panel-header{border-color:#5ec5e8}
+.vn-rule-transition{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:8}
+@media(prefers-reduced-motion:reduce){.vn-rule-transition{display:none!important}}
+html[data-vn-motion=reduced] .vn-rule-transition{display:none!important}

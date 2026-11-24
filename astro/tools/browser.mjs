@@ -76,6 +76,8 @@ try {
    assert.ok(result.giscus.gradient.includes('linear-gradient')&&result.giscus.toolbar.includes('linear-gradient'),'custom Giscus theme not applied');
    await frame.screenshot({path:`artifacts/${width}-${mode}-iframe.png`});
    const articleURL=page.url();
+   await page.locator('[data-vn-bookmark]').click();
+   await page.locator('[data-vn-bookmark][aria-pressed="true"]').waitFor();
    await page.locator('[data-vn-mark]').click();
    await page.waitForFunction(()=>document.querySelector('[data-vn-mark]')?.getAttribute('aria-pressed')==='true');
    await page.goBack();
@@ -98,6 +100,29 @@ try {
    await page.locator('[data-vn-title][data-vn-cover="torii"][data-vn-stage="first-encounter"]').waitFor();
    assert.ok(await page.evaluate(audio=>audio===document.querySelector('#bg-music'),old),'audio replaced on title return');
    if(width===390){
+    await page.locator('.vn-menu a[href="/library/"]').click();
+    await page.locator('[data-vn-screen="load"]').waitFor();
+    await page.locator('[data-vn-slot]:visible').first().waitFor();
+    await page.locator('[data-vn-filter="bookmarks"]').click();
+    assert.equal(await page.locator('[data-vn-slot]:visible').count(),1);
+    assert.ok(!await overflow(page),'load overflow');
+    await page.screenshot({path:`artifacts/${width}-${mode}-load.png`});
+    await page.locator('.vn-panel-header .vn-return').click();
+    await page.locator('.vn-menu a[href="/gallery/"]').click();
+    await page.locator('[data-vn-screen="gallery"]').waitFor();
+    await page.locator('.vn-gallery-grid .journal-scene-card').first().click();
+    await page.locator('.astro-gallery[open]').waitFor();
+    await page.keyboard.press('Escape');
+    await page.locator('.astro-gallery').waitFor({state:'hidden'});
+    assert.ok(!await overflow(page),'gallery overflow');
+    await page.screenshot({path:`artifacts/${width}-${mode}-gallery.png`});
+    await page.locator('.vn-panel-header .vn-return').click();
+    await page.locator('.vn-menu a[href="/settings/"]').click();
+    await page.locator('[data-vn-config]:visible').waitFor();
+    await page.locator('input[name="vn-motion"][value="reduced"]').check();
+    await page.waitForFunction(()=>document.documentElement.dataset.vnMotion==='reduced');
+    await page.screenshot({path:`artifacts/${width}-${mode}-config.png`});
+    await page.locator('.vn-panel-header .vn-return').click();
     await page.reload({waitUntil:'domcontentloaded'});
     await page.locator('[data-vn-title][data-vn-cover="torii"][data-vn-stage="first-encounter"]').waitFor();
     await page.locator('[data-vn-continue]').click();

@@ -9,3 +9,9 @@ Status: functional provisional skin; original screenshot/atlas calibration pendi
 - Motion: 160ms control feedback, 260ms panel arrival; reduced-motion disables both. These are estimates, not measured game timings.
 - Asset calibration required: title menu sprites, atlas coordinates and state geometry; map stage CGs and progress sequence; save/config frame and backdrop; backlog/editor and gallery controls; original timing/sound cues. Record the reference screenshot and dimensions before replacing fallback CSS. Do not invent an original state from a visual guess.
 - Public asset license review still required before release.
+
+## Identified reference assets
+- visual-index/data-03.jpg data-101: blue geometric EXTRA backdrop candidate (gallery local preview). The surrounding data-099/100/102 appear related but their exact screen assignments are not established.
+- visual-index/data-01.jpg data-021: original grayscale transition rule; local threshold wipe, 320ms provisional timing, no interaction lock, cancels on navigation/reduced motion.
+- bgimage2-03.jpg bgimage2-085/086/087: island overview evening/day/night candidates, not confirmed progress-map UI. Do not conflate time-of-day variants with story progression.
+- Browser acceptance includes library, gallery modal and reduced-motion config. Run against a real built preview before publishing.
