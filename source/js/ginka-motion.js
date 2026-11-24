@@ -52,58 +52,6 @@
     listener();
   }
 
-  function wheelScroll(scope) {
-    if (reduce.matches || !desktop.matches || navigator.connection?.saveData || typeof window.Lenis !== 'function') return null;
-    const lenis = new window.Lenis({
-      lerp: 0.088, smoothWheel: true, syncTouch: false, autoRaf: false,
-      prevent: node => node instanceof Element && node.matches(
-        '[data-lenis-prevent], .search-popup, .search-pop-overlay, .sidebar, .fancybox__container, .journal-table-scroll, .journal-code, .journal-outline'
-      )
-    });
-    let frame = 0;
-    let paused = false;
-    function cancel() {
-      if (frame) cancelAnimationFrame(frame);
-      frame = 0;
-    }
-    function advance(time) {
-      frame = 0;
-      if (paused) return;
-      lenis.raf(time);
-      if (lenis.isScrolling === 'smooth') frame = requestAnimationFrame(advance);
-    }
-    function kick() {
-      if (paused || frame) return;
-      // Prime Lenis's clock after idle rather than advancing by the idle time.
-      lenis.raf(performance.now());
-      frame = requestAnimationFrame(advance);
-    }
-    const unsubscribe = lenis.on('virtual-scroll', ({ event }) => {
-      if (!event.ctrlKey && event.type === 'wheel') kick();
-    });
-    watchPause(scope, () => {
-      const next = isPaused();
-      if (next === paused) return;
-      paused = next;
-      if (paused) { cancel(); lenis.stop(); }
-      else lenis.start();
-    });
-    scope.dispose(() => { cancel(); unsubscribe(); lenis.destroy(); });
-    return {
-      to(target) {
-        if (paused) return false;
-        const offset = typeof target === 'number' ? 0 : -(
-          (parseFloat(getComputedStyle(html).scrollPaddingTop) || 0) +
-          (parseFloat(getComputedStyle(target).scrollMarginTop) || 0)
-        );
-        lenis.resize();
-        kick();
-        lenis.scrollTo(target, { offset: Number.isFinite(offset) ? offset : 0 });
-        return true;
-      }
-    };
-  }
-
   function plainClick(event) {
     return !event.defaultPrevented && event.button === 0 && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
   }
@@ -116,7 +64,7 @@
 
   function routeKey(path) { return path.replace(/(?:\/index\.html)?\/+$/, '').replace(/\/index\.html$/, '') || '/'; }
 
-  function bindAnchors(scope, scrolling, home) {
+  function bindAnchors(scope, home) {
     scope.on(document, 'click', event => {
       const link = event.target.closest?.('a[href]');
       if (!link || !plainClick(event) || link.matches('[data-fancybox], [download]') || (link.target && link.target !== '_self')) return;
@@ -125,10 +73,10 @@
       const top = link.hasAttribute('data-ginka-top') || (home && link.matches('.menu-item-home > a, .journal-brand') && !next.search);
       const target = top ? 0 : hashTarget(next.hash);
       if (target === null || (!top && (next.search !== location.search || link.closest('.post-toc')))) return;
-      const smooth = scrolling?.to(target);
-      if (!smooth && !top) return; // Keep native anchors on touch/reduced motion.
+      // Native wheel and hash scrolling avoid competing scroll controllers.
+      if (!top) return;
       event.preventDefault();
-      if (!smooth) window.scrollTo({ top: 0, behavior: 'instant' });
+      window.scrollTo({ top: 0, behavior: reduce.matches ? 'instant' : 'smooth' });
       const hash = top ? '' : next.hash;
       if (location.hash !== hash) {
         const url = new URL(location.href);
@@ -462,7 +410,7 @@
     current = pageScope(main);
     const hero = main.querySelector('.journal-hero');
     bindMasthead(current);
-    bindAnchors(current, wheelScroll(current), !!hero);
+    bindAnchors(current, !!hero);
     if (!hero) return;
     bindIndex(current);
     bindHero(current, hero, playIntro);

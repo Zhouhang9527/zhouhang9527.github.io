@@ -34,46 +34,46 @@ main {
   --color-prettylights-syntax-brackethighlighter-angle: #57606a;
   --color-prettylights-syntax-sublimelinter-gutter-mark: #8c959f;
   --color-prettylights-syntax-constant-other-reference-link: #0a3069;
-  --color-btn-text: #405c75;
-  --color-btn-bg: #edf3f8;
-  --color-btn-border: #abc3d9;
+  --color-btn-text: #263748;
+  --color-btn-bg: #f4f7fa;
+  --color-btn-border: #dce4eb;
   --color-btn-shadow: 0 1px 0 rgb(31 35 40 / 4%);
   --color-btn-inset-shadow: inset 0 1px 0 rgb(255 255 255 / 25%);
-  --color-btn-hover-bg: #e1edf6;
-  --color-btn-hover-border: #315f83;
-  --color-btn-active-bg: #e1edf6;
-  --color-btn-active-border: #315f83;
-  --color-btn-selected-bg: #d8e6f2;
+  --color-btn-hover-bg: #e8eef3;
+  --color-btn-hover-border: #356c91;
+  --color-btn-active-bg: #e8eef3;
+  --color-btn-active-border: #356c91;
+  --color-btn-selected-bg: #f0f4f7;
   --color-btn-primary-text: #ffffff;
-  --color-btn-primary-bg: #315f83;
-  --color-btn-primary-border: #315f83;
+  --color-btn-primary-bg: #356c91;
+  --color-btn-primary-border: #356c91;
   --color-btn-primary-shadow: 0 1px 0 rgb(31 35 40 / 10%);
   --color-btn-primary-inset-shadow: inset 0 1px 0 rgb(255 255 255 / 3%);
   --color-btn-primary-hover-bg: #315d80;
   --color-btn-primary-hover-border: #315d80;
-  --color-btn-primary-selected-bg: #315f83;
+  --color-btn-primary-selected-bg: #356c91;
   --color-btn-primary-selected-shadow: inset 0 1px 0 rgb(0 45 17 / 20%);
-  --color-btn-primary-disabled-text: #526b82;
-  --color-btn-primary-disabled-bg: #d8e6f2;
-  --color-btn-primary-disabled-border: #cadbe8;
-  --color-action-list-item-default-hover-bg: #e1edf6;
-  --color-segmented-control-bg: #edf3f8;
-  --color-segmented-control-button-bg: #f9fcff;
-  --color-segmented-control-button-selected-border: #abc3d9;
-  --color-fg-default: #405c75;
-  --color-fg-muted: #526b82;
+  --color-btn-primary-disabled-text: #596c7e;
+  --color-btn-primary-disabled-bg: #f0f4f7;
+  --color-btn-primary-disabled-border: #dce4eb;
+  --color-action-list-item-default-hover-bg: #e8eef3;
+  --color-segmented-control-bg: #f4f7fa;
+  --color-segmented-control-button-bg: #fcfdfd;
+  --color-segmented-control-button-selected-border: #dce4eb;
+  --color-fg-default: #263748;
+  --color-fg-muted: #596c7e;
   --color-fg-subtle: #637b90;
-  --color-canvas-default: #f9fcff;
-  --color-canvas-overlay: #f9fcff;
-  --color-canvas-inset: #edf3f8;
-  --color-canvas-subtle: #d8e6f2;
-  --color-border-default: #abc3d9;
-  --color-border-muted: #cadbe8;
-  --color-neutral-muted: #cadbe8;
-  --color-accent-fg: #315f83;
-  --color-accent-emphasis: #315f83;
-  --color-accent-muted: #abc3d9;
-  --color-accent-subtle: #e1edf6;
+  --color-canvas-default: #fcfdfd;
+  --color-canvas-overlay: #fcfdfd;
+  --color-canvas-inset: #f4f7fa;
+  --color-canvas-subtle: #f0f4f7;
+  --color-border-default: #dce4eb;
+  --color-border-muted: #dce4eb;
+  --color-neutral-muted: #dce4eb;
+  --color-accent-fg: #356c91;
+  --color-accent-emphasis: #356c91;
+  --color-accent-muted: #dce4eb;
+  --color-accent-subtle: #e8eef3;
   --color-success-fg: #1a7f37;
   --color-attention-fg: #9a6700;
   --color-attention-muted: rgb(212 167 44 / 40%);
@@ -86,8 +86,8 @@ main {
   --color-scale-blue-1: #b6e3ff;
 
   /*! Extensions from @primer/css/alerts/flash.scss */
-  --color-social-reaction-bg-hover: #e1edf6;
-  --color-social-reaction-bg-reacted-hover: #d8e6f2;
+  --color-social-reaction-bg-hover: #e8eef3;
+  --color-social-reaction-bg-reacted-hover: #f0f4f7;
 }
 
 main .pagination-loader-container {
@@ -98,16 +98,622 @@ main .gsc-loading-image {
   background-image: url("https://github.githubassets.com/images/mona-loading-default.gif");
 }
 
-/* GINKA dialogue treatment — retains native controls and real author names. */
+/* Reading-first comment UI: native controls, restrained separators, no colored author banner. */
 main { color-scheme: light; }
-.gsc-comment-box, .gsc-comment > div:first-child { border-radius: 3px; }
-.gsc-comment-box-tabs, .gsc-comment-header { background: #d8e6f2; border-radius: 3px 3px 0 0; border-bottom: 1px solid #cadbe8; }
+.gsc-comment-box, .gsc-comment > div:first-child { border-radius: 4px; box-shadow: none; }
+.gsc-comment-box-tabs, .gsc-comment-header {
+  background: transparent;
+  border-radius: 4px 4px 0 0;
+  border-bottom: 1px solid var(--color-border-muted);
+}
 .gsc-comment-header { padding-block: 8px; }
-.gsc-comment-author-avatar { color: #29465f; }
-.gsc-comment-content, .gsc-comment-box-main { background: #f9fcff; }
-.gsc-comment-box-textarea { background: #edf3f8; border-color: #cadbe8; color: #405c75; border-radius: 3px; }
-.gsc-comment-box-textarea::placeholder { color: #526b82; }
-.gsc-comment-box textarea:focus-visible, .gsc-comment-box button:focus-visible, .gsc-comment button:focus-visible, .gsc-comment a:focus-visible { outline: 2px solid #315f83; outline-offset: 2px; }
-.gsc-comment-footer { border-top: 1px solid #cadbe8; }
-.gsc-comment-box :is(.btn, button), .gsc-comment :is(.btn, button) { border-radius: 3px; }
-.gsc-homepage-bg { background-color: #f9fcff; }
+.gsc-comment-content, .gsc-comment-box-main { background: var(--color-canvas-default); }
+.gsc-comment-box-textarea {
+  background: var(--color-canvas-default);
+  border-color: var(--color-border-default);
+  color: var(--color-fg-default);
+  border-radius: 4px;
+  line-height: 1.7;
+}
+.gsc-comment-box-textarea::placeholder { color: var(--color-fg-muted); }
+.gsc-comment-box textarea:focus-visible, .gsc-comment-box button:focus-visible, .gsc-comment button:focus-visible, .gsc-comment a:focus-visible { outline: 2px solid var(--color-accent-fg); outline-offset: 2px; }
+.gsc-comment-footer { border-top: 1px solid var(--color-border-muted); }
+.gsc-comment-box :is(.btn, button), .gsc-comment :is(.btn, button) { border-radius: 4px; box-shadow: none; }
+.gsc-homepage-bg { background-color: var(--color-canvas-default); }
+
+/* GINKA dialogue log. Use the real upstream Comment.tsx / Reply.tsx nodes;
+   the GitHub identities, timestamps, moderation, reactions and forms are untouched.
+   No imported game extraction is required by the remote iframe. */
+main .gsc-comments { gap: 22px; }
+main :is(.gsc-comment > div:first-child, .gsc-comment-box) {
+
+  --color-prettylights-syntax-comment: #768390;
+  --color-prettylights-syntax-constant: #6cb6ff;
+  --color-prettylights-syntax-entity: #dcbdfb;
+  --color-prettylights-syntax-storage-modifier-import: #adbac7;
+  --color-prettylights-syntax-entity-tag: #8ddb8c;
+  --color-prettylights-syntax-keyword: #f47067;
+  --color-prettylights-syntax-string: #96d0ff;
+  --color-prettylights-syntax-variable: #f69d50;
+  --color-prettylights-syntax-brackethighlighter-unmatched: #e5534b;
+  --color-prettylights-syntax-invalid-illegal-text: #cdd9e5;
+  --color-prettylights-syntax-invalid-illegal-bg: #922323;
+  --color-prettylights-syntax-carriage-return-text: #cdd9e5;
+  --color-prettylights-syntax-carriage-return-bg: #ad2e2c;
+  --color-prettylights-syntax-string-regexp: #8ddb8c;
+  --color-prettylights-syntax-markup-list: #eac55f;
+  --color-prettylights-syntax-markup-heading: #316dca;
+  --color-prettylights-syntax-markup-italic: #adbac7;
+  --color-prettylights-syntax-markup-bold: #adbac7;
+  --color-prettylights-syntax-markup-deleted-text: #ffd8d3;
+  --color-prettylights-syntax-markup-deleted-bg: #78191b;
+  --color-prettylights-syntax-markup-inserted-text: #b4f1b4;
+  --color-prettylights-syntax-markup-inserted-bg: #1b4721;
+  --color-prettylights-syntax-markup-changed-text: #ffddb0;
+  --color-prettylights-syntax-markup-changed-bg: #682d0f;
+  --color-prettylights-syntax-markup-ignored-text: #adbac7;
+  --color-prettylights-syntax-markup-ignored-bg: #255ab2;
+  --color-prettylights-syntax-meta-diff-range: #dcbdfb;
+  --color-prettylights-syntax-brackethighlighter-angle: #768390;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #545d68;
+  --color-prettylights-syntax-constant-other-reference-link: #96d0ff;
+  --color-btn-text: #c2ccd7;
+  --color-btn-bg: #223040;
+  --color-btn-border: #334353;
+  --color-btn-shadow: 0 0 transparent;
+  --color-btn-inset-shadow: 0 0 transparent;
+  --color-btn-hover-bg: #273647;
+  --color-btn-hover-border: #9ac9e8;
+  --color-btn-active-bg: #273647;
+  --color-btn-active-border: #9ac9e8;
+  --color-btn-selected-bg: #223040;
+  --color-btn-primary-text: #111923;
+  --color-btn-primary-bg: #9ac9e8;
+  --color-btn-primary-border: #9ac9e8;
+  --color-btn-primary-shadow: 0 0 transparent;
+  --color-btn-primary-inset-shadow: 0 0 transparent;
+  --color-btn-primary-hover-bg: #b7dcff;
+  --color-btn-primary-hover-border: #b7dcff;
+  --color-btn-primary-selected-bg: #9ac9e8;
+  --color-btn-primary-selected-shadow: 0 0 transparent;
+  --color-btn-primary-disabled-text: #9aaabc;
+  --color-btn-primary-disabled-bg: #223040;
+  --color-btn-primary-disabled-border: #334353;
+  --color-action-list-item-default-hover-bg: #273647;
+  --color-segmented-control-bg: #121c29;
+  --color-segmented-control-button-bg: #192431;
+  --color-segmented-control-button-selected-border: #334353;
+  --color-fg-default: #c2ccd7;
+  --color-fg-muted: #9aaabc;
+  --color-fg-subtle: #9aaabc;
+  --color-canvas-default: #192431;
+  --color-canvas-overlay: #192431;
+  --color-canvas-inset: #121c29;
+  --color-canvas-subtle: #223040;
+  --color-border-default: #334353;
+  --color-border-muted: #334353;
+  --color-neutral-muted: #334353;
+  --color-accent-fg: #9ac9e8;
+  --color-accent-emphasis: #9ac9e8;
+  --color-accent-muted: #334353;
+  --color-accent-subtle: #273647;
+  --color-success-fg: #57ab5a;
+  --color-attention-fg: #c69026;
+  --color-attention-muted: rgb(174 124 20 / 40%);
+  --color-attention-subtle: rgb(174 124 20 / 15%);
+  --color-danger-fg: #e5534b;
+  --color-danger-muted: rgb(229 83 75 / 40%);
+  --color-danger-subtle: rgb(229 83 75 / 10%);
+  --color-primer-shadow-inset: 0 0 transparent;
+  --color-scale-gray-7: #373e47;
+  --color-scale-blue-8: #143d79;
+
+  /*! Extensions from @primer/css/alerts/flash.scss */
+  --color-social-reaction-bg-hover: #273647;
+  --color-social-reaction-bg-reacted-hover: #223040;
+  color-scheme: dark;
+  --dialogue-motif: url("data:image/png;base64,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");
+  --dialogue-ink: #f0f3f7;
+  --dialogue-muted: #b0bfcd;
+  --color-fg-default: var(--dialogue-ink);
+  --color-fg-muted: var(--dialogue-muted);
+  --color-fg-subtle: var(--dialogue-muted);
+  --color-canvas-default: #172230;
+  --color-canvas-inset: #121b26;
+  --color-canvas-overlay: #202e3d;
+  --color-border-default: #3a4b5d;
+  --color-border-muted: #304153;
+  --color-neutral-muted: #263546;
+  --color-accent-fg: #b5dbf4;
+  position: relative;
+  min-width: 0;
+  color: var(--dialogue-ink);
+  background: linear-gradient(180deg,#293b4c 0,#101721 30px,#141d29 62%,#1a2938 100%);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: none;
+  overflow: visible;
+}
+main .gsc-comment-header {
+  position: relative;
+  align-items: center;
+  background: transparent;
+  padding: 13px 18px 9px;
+  border: 0;
+  gap: 8px;
+}
+main .gsc-comment-header::after {
+  content: '';
+  position: absolute;
+  left: 22px; bottom: 0;
+  width: min(238px,65%);
+  height: 1px;
+  background: linear-gradient(90deg,#e5edf5b8,#e5edf500);
+  pointer-events: none;
+}
+main .gsc-comment-author,
+main .gsc-reply-author { flex-wrap: wrap; row-gap: 3px; }
+main .gsc-comment-author-avatar::before,
+main .gsc-reply-author > a:first-child::before {
+  content: '';
+  width: 18px; height: 17px; flex: none;
+  margin-inline-end: 6px;
+  background: var(--dialogue-motif) center / contain no-repeat;
+  filter: brightness(0) invert(1);
+  opacity: .9;
+}
+main .gsc-comment-author-avatar img,
+main .gsc-reply-author-avatar img {
+  width: 25px; height: 25px; object-fit: cover;
+  border: 1px solid #c7d9e64d;
+  border-radius: 50%;
+}
+main .gsc-comment-author .link-primary,
+main .gsc-reply-author .link-primary {
+  color: var(--dialogue-ink);
+  font-size: 14px; font-weight: 600;
+  text-shadow: 0 1px 1px #0008;
+}
+main .gsc-comment-author .link-secondary,
+main .gsc-reply-author .link-secondary,
+main .gsc-comment-edited,
+main .gsc-reply-edited {
+  color: var(--dialogue-muted);
+  font-size: 11px;
+}
+main .gsc-comment-content,
+main .gsc-reply-content {
+  background: transparent;
+  color: var(--dialogue-ink);
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.85;
+  text-shadow: none;
+}
+main .gsc-comment-content { padding: 13px 22px 10px; }
+main .gsc-comment-content.minimized { padding: 12px 22px; border: 0; }
+main .gsc-comment-content :is(pre,.highlight pre),
+main .gsc-reply-content :is(pre,.highlight pre) {
+  max-width: 100%; overflow-x: auto;
+  background: #101923;
+  text-shadow: none;
+}
+main .gsc-comment-content table, main .gsc-reply-content table {
+  display: block; max-width: 100%; overflow-x: auto;
+}
+main .gsc-comment-content img, main .gsc-reply-content img { max-width: 100%; height: auto; }
+main .gsc-comment-footer { padding: 3px 18px 12px; margin: 0; border: 0; }
+main .gsc-comment-reactions, main .gsc-comment-replies-count { margin: 0; }
+main .gsc-comment .gsc-social-reaction-summary-item { box-shadow: none; }
+main .gsc-comment .gsc-replies {
+  background: #0c152066;
+  border: 0; border-top: 1px solid #a8c5dd25;
+  border-radius: 0; padding: 5px 0 0;
+}
+main .gsc-reply {
+  padding: 12px 18px 9px;
+  background: linear-gradient(180deg,#23344666,transparent 65%);
+}
+main .gsc-reply + .gsc-reply { border-top: 1px solid #a8c5dd1c; }
+main .gsc-reply .gsc-tl-line { background: #a8c5dd26; width: 1px; }
+main .gsc-reply-header { position: relative; padding: 0 0 6px; margin-bottom: 7px; }
+main .gsc-reply-header::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: min(190px,65%); height: 1px;
+  background: linear-gradient(90deg,#dce9f18c,transparent);
+  pointer-events: none;
+}
+main .gsc-reply-content { padding-bottom: 6px; }
+main .gsc-reply-box { background: transparent; border-top: 1px solid #a8c5dd25; }
+main .gsc-reply-box button { background: #15202d; color: var(--dialogue-muted); border-color: #3a4b5d; }
+main .gsc-comment :is(a,button,textarea):focus-visible {
+  outline: 2px solid #b5dbf4; outline-offset: 2px;
+}
+/* Replace the actual Giscus loading mascot, not completed comments, with a ring. */
+main .gsc-loading-image {
+  width: 22px; height: 22px; box-sizing: border-box;
+  background-image: none;
+  border: 1.5px solid var(--color-border-default);
+  border-top-color: var(--color-accent-fg);
+  border-right-color: var(--color-accent-fg);
+  border-radius: 50%;
+  animation: ginka-giscus-loading .85s linear infinite;
+}
+@keyframes ginka-giscus-loading { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  main .gsc-loading-image { animation: none; }
+}
+@media (max-width: 480px) {
+  main .gsc-comments { gap: 16px; }
+  main .gsc-comment-header { padding: 11px 12px 8px; }
+  main .gsc-comment-header::after { left: 15px; }
+  main .gsc-comment-content { padding: 11px 14px 9px; }
+  main .gsc-comment-footer { padding-inline: 12px; flex-wrap: wrap; }
+  main .gsc-reply { padding-inline: 12px; }
+  main .gsc-reply .gsc-tl-line { left: 24px; }
+  main .gsc-comment-author-avatar::before, main .gsc-reply-author > a:first-child::before { width: 15px; height: 15px; margin-inline-end: 4px; }
+}
+@media (forced-colors: active) {
+  main .gsc-comment > div:first-child { border: 1px solid CanvasText; }
+  main .gsc-comment-header::after, main .gsc-reply-header::after { background: CanvasText; }
+}
+
+/* GINKA message composer: the native form itself is the dialogue window.
+   Keep the real tab order, preview, fixed-width switch and GitHub controls. */
+main .gsc-comment-box,
+main .gsc-comment-box:not(.gsc-comment-box-is-reply) {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(180deg,#293b4c 0,#101721 32px,#141d29 60%,#1a2938 100%);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: none;
+  color: var(--dialogue-ink);
+}
+main .gsc-comment .gsc-comment-box-is-reply {
+  background: linear-gradient(180deg,#243444 0,#111b27 32px,#162332 100%);
+  border-top: 1px solid #a8c5dd26;
+}
+main .gsc-comment-box .gsc-comment-box-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  min-width: 0;
+  min-height: 44px;
+  padding: 7px 18px 6px;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+main .gsc-comment-box-tabs::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg,#e5edf5a0,#e5edf522 70%,transparent);
+  pointer-events: none;
+}
+main .gsc-comment-box-tabs > div:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 13px;
+  margin: 0;
+  min-width: 0;
+}
+main .gsc-comment-box-tabs > div:first-child::before {
+  content: '';
+  flex: 0 0 19px;
+  height: 18px;
+  background: var(--dialogue-motif) center / contain no-repeat;
+  filter: brightness(0) invert(1);
+  opacity: .9;
+}
+main .gsc-comment-box-tabs > div:first-child > button {
+  position: relative;
+  margin: 0;
+  padding: 4px 0;
+  min-height: 28px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--dialogue-muted);
+  font-size: 13px;
+  line-height: 1.6;
+  box-shadow: none;
+}
+main .gsc-comment-box-tabs > div:first-child > button.color-bg-canvas {
+  color: var(--dialogue-ink);
+  font-weight: 600;
+}
+main .gsc-comment-box-tabs > div:first-child > button.color-bg-canvas::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -6px;
+  height: 1px;
+  background: #e5edf5;
+}
+main .gsc-comment-box-tabs > div:first-child > button:hover {
+  color: #fff;
+  text-shadow: 0 0 1px #fff4;
+}
+main .gsc-comment-box-md-toolbar { flex: none; margin: 0; }
+main .gsc-comment-box .gsc-toolbar-item {
+  display: grid; place-items: center;
+  width: 30px; height: 30px; padding: 0;
+  background: transparent; color: var(--dialogue-muted);
+  border: 0; border-radius: 2px; box-shadow: none;
+}
+main .gsc-comment-box .gsc-toolbar-item:hover { background: #ffffff12; color: #fff; }
+main .gsc-comment-box .gsc-toolbar-item svg { width: 16px; height: 16px; }
+main .gsc-comment-box .gsc-comment-box-main {
+  margin: 0;
+  min-width: 0;
+  padding: 8px 22px 0;
+  background: transparent;
+}
+main .gsc-comment-box .gsc-comment-box-write {
+  display: flex; flex-direction: column;
+  min-width: 0; background: transparent; border: 0; border-radius: 0;
+}
+main .gsc-comment-box .gsc-comment-box-write:focus-within { box-shadow: none; }
+main .gsc-comment-box .gsc-comment-box-textarea,
+main .gsc-comment .gsc-comment-box .gsc-comment-box-textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 116px;
+  padding: 9px 0 10px;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--dialogue-ink);
+  caret-color: #d0e7f8;
+  font-size: 14px;
+  line-height: 1.85;
+  box-shadow: none;
+  resize: vertical;
+  scrollbar-width: thin;
+  scrollbar-color: #52677d transparent;
+}
+main .gsc-comment-box .gsc-comment-box-textarea::placeholder { color: #a7b7c8; opacity: 1; }
+main .gsc-comment-box .gsc-comment-box-textarea:disabled { color: #a7b7c8; opacity: 1; cursor: not-allowed; }
+main .gsc-comment-box .gsc-comment-box-textarea-extras,
+main .gsc-comment .gsc-comment-box .gsc-comment-box-textarea-extras {
+  display: flex; justify-content: flex-end; padding: 0 0 6px;
+  background: transparent; border: 0; border-radius: 0; box-shadow: none;
+}
+main .gsc-comment-box .gsc-comment-box-markdown-hint { color: var(--dialogue-muted); }
+main .gsc-comment-box .gsc-comment-box-markdown-hint:hover { color: #fff; }
+main .gsc-comment-box .gsc-comment-box-preview {
+  min-height: 131px; padding: 9px 0 10px; border: 0;
+  background: transparent; color: var(--dialogue-ink);
+  font-size: 14px; line-height: 1.85; overflow-wrap: anywhere;
+}
+main .gsc-comment-box .gsc-comment-box-preview :is(pre,.highlight pre) {
+  max-width: 100%; overflow-x: auto; background: #101923;
+}
+main .gsc-comment-box .gsc-comment-box-preview table { display: block; max-width: 100%; overflow-x: auto; }
+main .gsc-comment-box .gsc-comment-box-preview img { max-width: 100%; height: auto; }
+main .gsc-comment-box .gsc-comment-box-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px 12px;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 18px 9px;
+  border-top: 1px solid #b7cde026;
+  background: #0b121c40;
+}
+main .gsc-comment-box .gsc-comment-box-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px 12px;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 100%;
+  margin-inline-start: auto;
+}
+main .gsc-comment-box-bottom :is(.btn,button,a.btn) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  max-width: 100%;
+  margin: 0;
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--dialogue-muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  box-shadow: none;
+  white-space: normal;
+}
+main .gsc-comment-box-bottom :is(.btn,button,a.btn):hover:not(:disabled) {
+  background: #ffffff10;
+  color: #fff;
+  border-color: #b4c8dc35;
+}
+main .gsc-comment-box-bottom .btn-primary {
+  color: #e5f3ff;
+  border-color: #b4c8dc54;
+  background: #ffffff08;
+}
+main .gsc-comment-box-bottom .btn-primary:disabled {
+  color: #8495a6;
+  border-color: #b4c8dc24;
+  background: transparent;
+  cursor: not-allowed;
+  opacity: 1;
+}
+main .gsc-comment-box-bottom svg { flex: none; width: 15px; height: 15px; }
+main .gsc-comment-box :is(a,button,textarea):focus-visible {
+  outline: 2px solid #b5dbf4;
+  outline-offset: 2px;
+}
+main .gsc-comment-box .gsc-comment-box-textarea:focus-visible {
+  outline: 0; box-shadow: inset 0 -1px #b5dbf4;
+}
+main .gsc-reply-box button {
+  border: 0; border-radius: 0; background: transparent;
+  color: var(--dialogue-muted); box-shadow: none;
+}
+main .gsc-reply-box button:hover { color: #fff; background: #ffffff0a; }
+@media(max-width:480px) {
+  main .gsc-comment-box .gsc-comment-box-tabs { padding-inline: 12px; }
+  main .gsc-comment-box-tabs::after { left: 12px; right: 12px; }
+  main .gsc-comment-box .gsc-comment-box-main { padding-inline: 14px; }
+  main .gsc-comment-box .gsc-comment-box-bottom { padding-inline: 12px; }
+}
+@media(pointer:coarse) {
+  main .gsc-comment-box-tabs > div:first-child > button,
+  main .gsc-comment-box .gsc-toolbar-item,
+  main .gsc-comment-box-bottom :is(.btn,button,a.btn) { min-height: 44px; }
+  main .gsc-comment-box .gsc-toolbar-item { width: 44px; }
+  main .gsc-comment-box .gsc-comment-box-textarea { font-size: 16px; }
+}
+@media(forced-colors:active) {
+  main .gsc-comment-box { border: 1px solid CanvasText; }
+  main .gsc-comment-box-tabs::after { background: CanvasText; }
+  main .gsc-comment-box .gsc-comment-box-textarea:focus-visible { outline: 2px solid Highlight; }
+}
+
+/* Keep actual widget loading and its surrounding controls visually quiet. */
+main .gsc-loading { flex-direction: row; justify-content: center; gap: 9px; min-height: 56px; }
+main .gsc-loading-image { flex: 0 0 16px; width: 16px; height: 16px; background-image: none; }
+main .gsc-loading-text { width: auto; font-size: 12px; white-space: normal; }
+main .gsc-main { gap: 18px; min-width: 0; }
+main .gsc-comment-box-tabs > div:first-child > button:focus-visible { outline-offset: 3px; }
+main .gsc-comment-box .gsc-comment-box-textarea { text-shadow: none; }
+
+/* Backlog-inspired reading surface: a single continuous transcript.
+   No fabricated messages, reordered replies, hidden moderation or nested scroll.
+   The original game UI atlas has not been identified; these are CSS equivalents. */
+main .gsc-comments:has(.gsc-comment) {
+  box-sizing: border-box;
+  min-width: 0;
+  gap: 0;
+  padding: 0 18px;
+  background: #15202c;
+  border: 1px solid #60788d45;
+  border-radius: 2px;
+}
+main .gsc-comments:has(.gsc-comment)::before {
+  content: 'BACKLOG / 历史评论';
+  display: block;
+  padding: 12px 6px 9px;
+  color: #a8c8de;
+  font: 600 11px/1.5 system-ui, sans-serif;
+  letter-spacing: .12em;
+  border-bottom: 1px solid #9fb9ce50;
+}
+main .gsc-comments .gsc-comment {
+  min-width: 0;
+  margin: 0;
+  padding: 13px 0 10px;
+  border: 0;
+}
+main .gsc-comments .gsc-comment + .gsc-comment {
+  border-top: 1px solid #a9bfd326;
+}
+main .gsc-comments .gsc-comment > div:first-child {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+main .gsc-comments .gsc-comment-header {
+  padding: 4px 6px 5px;
+  gap: 8px;
+}
+main .gsc-comments .gsc-comment-header::after,
+main .gsc-comments .gsc-reply-header::after {
+  background: linear-gradient(90deg,#9fb9ce66,transparent);
+  left: 6px;
+  width: min(210px,65%);
+}
+main .gsc-comments .gsc-comment-author-avatar,
+main .gsc-comments .gsc-reply-author > a:first-child {
+  min-width: 0;
+  color: #e5edf4;
+}
+main .gsc-comments .gsc-comment-author-avatar::before,
+main .gsc-comments .gsc-reply-author > a:first-child::before {
+  width: 14px;
+  height: 14px;
+  margin-inline-end: 3px;
+  opacity: .8;
+}
+main .gsc-comments .gsc-comment-author-avatar img,
+main .gsc-comments .gsc-reply-author-avatar img {
+  width: 23px;
+  height: 23px;
+  border: 0;
+}
+main .gsc-comments .gsc-comment-content {
+  padding: 10px 6px 8px 26px;
+  line-height: 1.85;
+}
+main .gsc-comments .gsc-comment-content.minimized { padding: 10px 6px; }
+main .gsc-comments .gsc-comment-content > :last-child,
+main .gsc-comments .gsc-reply-content > :last-child { margin-bottom: 0; }
+main .gsc-comments .gsc-comment-footer {
+  padding: 4px 6px 7px 26px;
+  border: 0;
+  gap: 8px;
+}
+main .gsc-comments .gsc-replies {
+  margin: 2px 6px 4px 26px;
+  padding: 0 0 0 12px;
+  background: transparent;
+  border: 0;
+  border-inline-start: 1px solid #9fb9ce40;
+  border-radius: 0;
+}
+main .gsc-comments .gsc-reply {
+  padding: 12px 0 8px;
+  background: transparent;
+}
+main .gsc-comments .gsc-reply + .gsc-reply { border-top-color: #a9bfd31c; }
+main .gsc-comments .gsc-reply .gsc-tl-line { background: transparent; }
+main .gsc-comments .gsc-reply-header { padding-bottom: 5px; }
+main .gsc-comments .gsc-reply-header::after { left: 0; }
+main .gsc-comments .gsc-reply-box {
+  padding: 4px 6px 5px 26px;
+  background: transparent;
+  border: 0;
+}
+main .gsc-comments .gsc-comment-box-is-reply {
+  margin-top: 7px;
+  background: linear-gradient(180deg,#293b4c 0,#101721 32px,#141d29 60%,#1a2938 100%);
+}
+@media(max-width:480px) {
+  main .gsc-comments:has(.gsc-comment) { padding-inline: 10px; }
+  main .gsc-comments .gsc-comment-content,
+  main .gsc-comments .gsc-comment-footer,
+  main .gsc-comments .gsc-reply-box { padding-inline-start: 6px; }
+  main .gsc-comments .gsc-replies { margin-inline-start: 8px; padding-inline-start: 8px; }
+}
+@media(forced-colors:active) {
+  main .gsc-comments:has(.gsc-comment) { border-color: CanvasText; }
+  main .gsc-comments .gsc-comment + .gsc-comment { border-top-color: CanvasText; }
+  main .gsc-comments .gsc-comment > div:first-child { border: 0; }
+}

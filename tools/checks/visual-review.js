@@ -29,39 +29,46 @@ const routes = [['home','/'],['archives','/archives/'],['tags','/tags/'],['categ
         for (const [name,route] of routes) {
           try {
             const response = await page.goto(new URL(route,base).href,{waitUntil:'domcontentloaded',timeout:25000});
-            await page.waitForFunction(()=>window.GINKA_THEME,{timeout:10000});
+            await page.waitForFunction(()=>window.GINKA_THEME,{}, {timeout:10000});
             await page.waitForTimeout(400);
             await shot(name);
+            if(name==='404'&&!(await page.locator('.journal-not-found').count())) issues.push(width+' '+mode+' missing themed 404');
             const result = await page.evaluate(()=>({
               theme:document.documentElement.dataset.theme,
               overflow:document.documentElement.scrollWidth>innerWidth+1,
               hero:document.querySelector('.journal-hero-art')?.currentSrc||null,
               drawer:document.querySelector('#main-content')?.dataset.sceneKind||null,
-              dialogue:document.querySelectorAll('.journal-dialogue').length
+              dialogue:document.querySelectorAll('.journal-dialogue').length,
+              legacyStyle:!!document.querySelector('link[href*="ginka_style.css"]'),
+              darkHeadings:[...document.querySelectorAll('.post-body h1,.post-body h2,.post-body h3,.journal-about-banner-copy h1,.journal-feedback h2')].filter(el=>{const m=getComputedStyle(el).color.match(/\d+/g);return m&&Math.max(...m.slice(0,3).map(Number))<110}).map(el=>el.textContent.trim())
             }));
             report.push({width,mode,name,status:response?.status(),...result});
-            if (result.theme!==mode||result.overflow||result.dialogue>1) issues.push(width+' '+mode+' '+name+' layout/theme');
+            if (result.theme!==mode||result.overflow||result.dialogue>1||result.legacyStyle||(mode==='moonlit'&&result.darkHeadings.length)) issues.push(width+' '+mode+' '+name+' layout/theme');
             if(name==='article' && (width===390||width===1440)) {
               const code=page.locator('.journal-code').first();
               if(await code.count()){await code.scrollIntoViewIfNeeded();await shot('code');}
               const dialogue=page.locator('.journal-dialogue').first();
               if(await dialogue.count()){
-                await dialogue.scrollIntoViewIfNeeded();await page.waitForTimeout(1000);await shot('comments');
-                const frame=page.locator('.journal-dialogue-frame');
-                const structure=await frame.evaluate(el=>({height:el.getBoundingClientRect().height,hasIframe:!!el.querySelector('iframe'),next:el.nextElementSibling?.classList.contains('journal-dialogue-comments')}));
-                if(structure.hasIframe||!structure.next||structure.height>190)issues.push(width+' '+mode+' dialogue structure');
+                await dialogue.scrollIntoViewIfNeeded();
+                const widget=page.frameLocator('iframe.giscus-frame');
+                await widget.locator('.gsc-comment-box').first().waitFor({state:'visible',timeout:15000}).catch(()=>{});
+                await shot('comments');
+                const structure=await dialogue.evaluate(el=>({intro:el.querySelectorAll('.journal-dialogue-frame,.journal-dialogue-intro').length,widget:!!el.querySelector('#journal-comments .giscus-container'),readingColumn:el.parentElement?.classList.contains('journal-reading-shell'),aligned:Math.abs(el.getBoundingClientRect().left-document.querySelector('.post-body').getBoundingClientRect().left)<4}));
+                if(structure.intro||!structure.widget||!structure.readingColumn||!structure.aligned)issues.push(width+' '+mode+' dialogue structure');
                 const count=await page.locator('iframe.giscus-frame').count();
-                report.push({width,mode,name:'giscus',count,structure});
+                const editor=await page.frameLocator('iframe.giscus-frame').locator('.gsc-comment-box').first().evaluate(el=>({background:getComputedStyle(el).backgroundImage,textarea:!!el.querySelector('textarea')})).catch(()=>null);
+                report.push({width,mode,name:'giscus',count,structure,editor});
+                if(!editor||!editor.background.includes('linear-gradient')) issues.push(width+' '+mode+' live Giscus editor/theme not verified');
                 if(count>1)issues.push(width+' '+mode+' duplicate Giscus');
               }
             }
             if(name==='home'&&(width===390||width===1440)) {
-              const drawer=page.locator('[data-journal-sidebar-open]').first();
+              const drawer=page.locator('.header [data-journal-sidebar-open]:visible, .sidebar-toggle:visible, .journal-sidebar-edge:visible').first();
               if(await drawer.isVisible()){
-                await drawer.click();await page.waitForTimeout(350);await shot('sidebar');
+                await drawer.click();await page.waitForFunction(()=>document.body.classList.contains('sidebar-active'),{}, {timeout:5000});await shot('sidebar');
                 const playlist=page.locator('#music-playlist-toggle');
                 if(await playlist.isVisible()){await playlist.click();await page.waitForTimeout(250);await shot('playlist');}
-                await page.locator('.journal-sidebar-close').click();await page.waitForTimeout(300);
+                await page.locator('.journal-sidebar-close').click();await page.waitForFunction(()=>!document.body.classList.contains('sidebar-active'),{}, {timeout:5000});
               }
               const search=page.locator('.popup-trigger').first();
               if(await search.isVisible()){await search.click();await page.waitForTimeout(400);await shot('search');await page.keyboard.press('Escape');}

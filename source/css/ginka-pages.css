@@ -120,9 +120,9 @@ body.sidebar-active .sidebar-dimmer { display: block; opacity: 1; }
   --music-surface: #eef3f9;
   --music-border: #d5e1ee;
   --music-title: #405b76;
-  --music-text: #677b92;
-  --music-muted: #8f9fae;
-  --music-accent: #5b9bd5;
+  --music-text: var(--body-text);
+  --music-muted: var(--muted);
+  --music-accent: var(--blue);
   --music-accent-soft: #7eb8e6;
   --music-track: #dfe7f0;
   --music-hover: #e6eef7;
@@ -267,3 +267,41 @@ body.sidebar-active .main { margin-left: auto !important; margin-right: auto !im
   body aside#journal-sidebar::-webkit-scrollbar,
   body #journal-sidebar :is(.sidebar-inner, .sidebar-panel-container, .sidebar-panel, .post-toc, .post-toc-wrap, .site-overview-wrap, .music-playlist-items)::-webkit-scrollbar { display: revert; width: auto; height: auto; }
 }
+
+/* Keep one intentional drawer entry; on small screens it belongs in the header. */
+body .header .menu-item-drawer { display: none; }
+body .journal-sidebar-edge { display: none; }
+@media (min-width: 1024px) and (max-width: 1251px) {
+  body .journal-sidebar-edge { display: block; background: var(--journal-surface-soft); border-color: var(--journal-line); box-shadow: none; }
+  body .journal-sidebar-edge:hover { background: var(--control-hover); }
+}
+@media(max-width:1023px) {
+  body .header .menu-item-drawer { display: flex; align-items: center; }
+  body .header .menu-item-drawer button { display: grid; place-items: center; width: 40px; min-height: 40px; padding: 0; color: var(--ink); border: 0; background: transparent; box-shadow: none; }
+  body .header .menu-item-drawer button:hover { color: var(--blue); background: var(--control-hover); }
+  body .sidebar-toggle { display: none !important; }
+}
+@media print { body .header .menu-item-drawer { display:none; } }
+
+.journal-not-found { display:grid; grid-template-columns:minmax(0,1fr) 45%; min-height:320px; margin:0 0 42px; border:1px solid var(--rule); background:var(--paper); }
+.journal-not-found-copy { padding:clamp(24px,5vw,64px); align-self:center; min-width:0; }
+.journal-not-found-copy .journal-eyebrow { display:block; margin-top:30px; }
+.journal-not-found-copy h1 { color:var(--ink); font:400 clamp(28px,4vw,44px)/1.45 var(--font-title); margin:10px 0; }
+.journal-not-found-copy p { color:var(--body-text); margin:0 0 24px; font-size:14px; }
+.journal-not-found-copy nav { display:flex; flex-wrap:wrap; gap:18px; align-items:center; }
+.journal-not-found-copy nav a { font-size:13px; color:var(--blue); }
+.journal-not-found-copy .journal-not-found-primary { background:var(--blue); color:var(--paper)!important; border-radius:3px; padding:9px 14px; }
+@media(max-width:767px){.journal-not-found{grid-template-columns:1fr;min-height:0}.journal-not-found .journal-masthead-art{min-height:160px;grid-row:1}}
+
+/* A failed online playlist must leave a usable recovery control. */
+body #journal-sidebar #music-player[data-ginka-music-state='error'] :is(#music-player-main,#music-playlist-panel,#music-lyrics-panel,#music-mini-btn) { display:none!important; }
+.music-unavailable[hidden] { display:none!important; }
+.music-unavailable { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 10px; border:1px solid var(--music-border); color:var(--music-muted); background:var(--music-bg); border-radius:var(--journal-radius); font-size:12px; line-height:1.6; }
+body #journal-sidebar #music-player .music-unavailable button { flex:none; background:transparent; color:var(--music-accent); border:0; padding:5px 7px; box-shadow:none; font:inherit; cursor:pointer; }
+body #journal-sidebar #music-player .music-unavailable button:hover { background:var(--music-hover); }
+
+/* Music controls follow the same touch contract as reading tools. */
+@media(pointer:coarse) {
+  body #journal-sidebar #music-player-main > button { width:var(--target-touch)!important; height:var(--target-touch)!important; }
+}
+body .journal-sidebar-edge:focus-visible { outline:2px solid var(--journal-focus); outline-offset:2px; }

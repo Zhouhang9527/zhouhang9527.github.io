@@ -20,7 +20,7 @@ const checks = [
   ['autoplay policy is not a media fallback', /error\.name === 'NotAllowedError'/.test(runtime)],
   ['native audio fallback removes CORS before src', /audio\.removeAttribute\('crossorigin'\)[\s\S]*?audio\.src = music\.src/.test(runtime)],
   ['persistent audio is not routed through Web Audio', !/createMediaElementSource\(/.test(runtime)],
-  ['online failure hides player', /if \(!loaded\)[\s\S]*?musicRoot\.style\.display = 'none'/.test(runtime) && !/activateLocalFallback/.test(runtime)],
+  ['online failure keeps a retry action', /setPlaylistState\('error'\)/.test(runtime) && /unavailableRetry\.addEventListener/.test(runtime) && !/musicRoot\.style\.display = 'none'/.test(runtime)],
   ['playlist metadata boots with the page', /Fetch playlist metadata alongside the page[\s\S]*?bootMusic\(\)/.test(runtime)],
   ['icon-only online refresh control', /id="music-source-retry"/.test(layout) && /fa-refresh/.test(layout) && !/music-source-status/.test(layout)]
 ];

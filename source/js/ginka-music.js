@@ -5,7 +5,7 @@
 
     const musicRoot = document.getElementById('music-player');
     if (musicRoot) {
-      musicRoot.setAttribute('data-ginka-music-state', 'ready');
+      musicRoot.setAttribute('data-ginka-music-state', 'loading');
     }
 
     const DEBUG = false;
@@ -113,6 +113,22 @@
       return;
     }
   
+    const unavailable = document.createElement('div');
+    unavailable.className = 'music-unavailable';
+    unavailable.hidden = true;
+    const unavailableText = document.createElement('span');
+    unavailableText.setAttribute('role','status');
+    const unavailableRetry = document.createElement('button');
+    unavailableRetry.type = 'button';
+    unavailableRetry.textContent = '重试';
+    unavailable.append(unavailableText, unavailableRetry);
+    musicRoot.querySelector('.journal-music-heading')?.after(unavailable);
+    function setPlaylistState(state) {
+      musicRoot.dataset.ginkaMusicState = state;
+      unavailable.hidden = state !== 'error';
+      if (state === 'error') unavailableText.textContent = '在线歌单暂时不可用';
+      toggleBtn.disabled = state !== 'ready';
+    }
     const log = (...args) => { if (DEBUG) console.log('[Music]', ...args); };
     const storageGet = (key) => {
       try { return window.localStorage ? localStorage.getItem(key) : null; } catch (_error) { return null; }
@@ -1148,7 +1164,9 @@
       sourceRetryBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        tryOnlinePlaylist({ force: true, activate: audio.paused && currentSource === 'local' });
+        if (musicRoot.dataset.ginkaMusicState === 'loading') return;
+        if (!musicList.length) { recoverPlaylist(true); return; }
+        tryOnlinePlaylist({ force: true, activate: false });
       });
     }
   
@@ -1320,29 +1338,36 @@
         });
       }, 450);
     };
-    {
-      // The player is online-only. Hide it when the initial playlist cannot load.
-      toggleBtn.disabled = true;
+    async function recoverPlaylist(force) {
+      setPlaylistState('loading');
       setLoadingIcon();
-      tryOnlinePlaylist({
+      const loaded = await tryOnlinePlaylist({
+        force,
         activate: true,
-        restore: storedSource === 'online',
+        restore: true,
         trackId: storedTrackId,
-        keepTime: storedSource === 'online'
-      }).then((loaded) => {
-        if (!loaded) {
-          musicRoot.style.display = 'none';
-          return;
-        }
-        toggleBtn.disabled = false;
-        setPlaylistExpanded(wasPlaylistExpanded, false);
-        if (pendingAutoplay) resumeStoredPlayback();
-        else updatePlayIcon(false);
+        keepTime: true
       });
+      if (!loaded) {
+        setPlaylistState('error');
+        updatePlayIcon(false);
+        return;
+      }
+      setPlaylistState('ready');
+      setPlaylistExpanded(wasPlaylistExpanded, false);
+      if (pendingAutoplay) resumeStoredPlayback();
+      else updatePlayIcon(false);
     }
+    unavailableRetry.addEventListener('click', () => {
+      if (musicRoot.dataset.ginkaMusicState === 'error') recoverPlaylist(true);
+    });
+    window.addEventListener('online', () => {
+      if (musicRoot.dataset.ginkaMusicState === 'error') recoverPlaylist(true);
+    });
+    recoverPlaylist(false);
   
     const resumeOnGesture = () => {
-      if (!pendingAutoplay || !audio.paused) return;
+      if (!pendingAutoplay || !audio.paused || !musicList.length) return;
       setLoadingIcon();
       attemptPlay('gesture-resume').then(() => {
         pendingAutoplay = false;

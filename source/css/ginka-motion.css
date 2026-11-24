@@ -1,7 +1,4 @@
 /* A request-scoped page turn and a single home-only atmospheric layer. */
-html.lenis, html.lenis body { height: auto; }
-html.lenis.lenis-smooth { scroll-behavior: auto !important; }
-html.lenis-smooth :is(.search-popup, .sidebar, .journal-outline, .journal-table-scroll, .journal-code) { overscroll-behavior: contain; }
 .ginka-pjax-meter {
   position: fixed; inset: 0 0 auto; z-index: 5000;
   height: 2px; opacity: 0; pointer-events: none;

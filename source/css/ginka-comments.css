@@ -1,120 +1,19 @@
-/* A compact original-game dialogue strip followed by a normal reading surface.
-   One visual grammar in both themes, no stretched comment-list background. */
-.journal-dialogue {
-  margin: 40px 0 36px;
-  min-width: 0;
-  width: 100%;
-}
-.journal-dialogue-frame {
-  position: relative;
-  isolation: isolate;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 13px;
-  min-height: 150px;
-  margin: 0 0 22px;
-  padding: 26px clamp(20px, 3vw, 36px) 34px;
-  border: 0;
-  border-radius: 2px;
-  background: linear-gradient(180deg,#202b3a 0%,#111822 17%,#10151e 74%,#1a2637 100%);
-  color: #eef1f5;
-}
-.journal-dialogue-original { background: #111923 var(--dialogue-frame) center / 100% 100% no-repeat; }
-.journal-dialogue-has-advance .journal-dialogue-next svg { display: none; }
-/* UI-0091: verified 16 cells of 24x24; cell zero is transparent, then
-   alpha increases by 17 per frame. Use the original sprite once, not a loop. */
-.journal-dialogue-has-advance .journal-dialogue-next::after {
-  content: '';
-  width: 24px;
-  height: 24px;
-  background: var(--dialogue-advance) -360px 0 / 384px 24px no-repeat;
-  pointer-events: none;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .journal-dialogue-has-advance .journal-dialogue-next.is-entered::after {
-    animation: ginka-dialogue-advance 480ms steps(15, end) both;
-  }
-}
-@keyframes ginka-dialogue-advance {
-  from { background-position: 0 0; }
-  to { background-position: -360px 0; }
-}
-.journal-dialogue-name {
-  position: relative;
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 128px;
-  padding: 0 12px 8px 0;
-  color: #eef1f5;
-  font: 500 13px/1.5 var(--font-body, sans-serif);
-  letter-spacing: .06em;
-}
-.journal-dialogue-name::before {
-  content: '';
-  width: 22px;
-  height: 22px;
-  flex: none;
-  background: url('../images/ginka/butterfly.png') center / contain no-repeat;
-}
-.journal-dialogue-original .journal-dialogue-name::before { background-image: var(--dialogue-butterfly); }
-.journal-dialogue-name::after {
-  content: '';
-  position: absolute;
-  left: 15px;
-  bottom: 0;
-  width: min(190px, 48vw);
-  height: 1px;
-  background: linear-gradient(90deg,#dbe4f0b3,transparent);
-  pointer-events: none;
-}
-.journal-dialogue-original .journal-dialogue-name::after {
-  height: 6px;
-  bottom: -2px;
-  background: var(--dialogue-line) left bottom / 100% 100% no-repeat;
-}
-.journal-dialogue-intro {
-  margin: 0;
-  padding: 0 0 0 30px;
-  color: #f0f2f5;
-  font: 400 15px/1.8 var(--font-body, sans-serif);
-  letter-spacing: .025em;
-}
-body .journal-dialogue-frame .journal-dialogue-next {
-  position: absolute;
-  right: 13px;
-  bottom: 8px;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  color: #c2d7e8 !important;
-  background: transparent !important;
-  border: 0;
-  border-radius: 3px;
-  box-shadow: none !important;
-  text-shadow: none;
-  transform: none;
-}
-body .journal-dialogue-frame .journal-dialogue-next:is(:hover,:focus-visible) { background: #ffffff12 !important; color: #fff !important; }
-.journal-dialogue-next:focus-visible { outline: 2px solid #a8cce9; outline-offset: 2px; }
-.journal-dialogue-comments { min-width: 0; scroll-margin-top: 18px; }
-.journal-dialogue-comments:focus-visible { outline: 2px solid var(--journal-focus); outline-offset: 4px; }
-body .journal-dialogue :is(.comments,.tabs-comment,.giscus-container) {
-  background: transparent !important; border: 0; border-radius: 0; padding: 0; box-shadow: none;
-}
-.journal-dialogue .giscus-container { min-height: 180px; }
-.journal-dialogue :is(.giscus-container,.giscus,iframe.giscus-frame) { width: 100%; min-width: 0; }
-.journal-comments-status { margin: 0; padding: 20px 0; color: var(--journal-muted); font-size: 13px; }
-.journal-comments-status button { margin-inline-start: 10px; font: inherit; color: var(--journal-blue); background: transparent; border: 0; cursor: pointer; text-decoration: underline; }
-@media(max-width:767px) {
-  .journal-dialogue { margin-block: 30px; }
-  .journal-dialogue-frame { min-height: 124px; padding: 18px 16px 30px; gap: 10px; }
-  .journal-dialogue-intro { font-size: 14px; }
-}
-@media(pointer:coarse) { body .journal-dialogue-frame .journal-dialogue-next { width: 44px; height: 44px; bottom: 0; right: 4px; } }
-@media print { .journal-dialogue { display: none; } }
+/* The real Giscus conversation is the dialogue UI; no introductory scene. */
+.journal-dialogue{box-sizing:border-box;margin:24px auto 36px;min-width:0;width:100%;max-width:72ch;font:400 16px/1.9 var(--font-body,var(--journal-font-body,'Noto Serif SC',serif))}
+.journal-reading-shell>.journal-dialogue{grid-column:1;grid-row:3;justify-self:center;width:calc(100% - 2 * var(--reading-inline-padding,44px));max-width:72ch}
+@keyframes ginka-dialogue-ring{to{transform:rotate(360deg)}}
+.journal-dialogue-comments{min-width:0;scroll-margin-top:calc(var(--book-header,72px) + 16px)}
+.journal-dialogue-comments:focus-visible{outline:2px solid var(--journal-focus);outline-offset:4px}
+body .journal-dialogue :is(.comments,.tabs-comment,.giscus-container){background:transparent!important;border:0;border-radius:0;padding:0;box-shadow:none}
+.journal-dialogue .giscus-container{min-height:84px}
+.journal-dialogue .giscus-container:has(iframe.giscus-frame){min-height:0}
+.journal-dialogue :is(.giscus-container,.giscus,iframe.giscus-frame){width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+.journal-dialogue iframe.giscus-frame{display:block;border:0}
+.journal-comments-status{display:flex;align-items:center;justify-content:center;gap:9px;margin:0;padding:20px 0;color:var(--journal-muted);font-size:12px}
+.journal-comments-status.is-pending::before{content:'';width:15px;height:15px;border:1.5px solid var(--journal-line);border-top-color:var(--journal-blue);border-radius:50%;animation:ginka-dialogue-ring .85s linear infinite}
+@media(prefers-reduced-motion:reduce){.journal-comments-status::before{animation:none!important}}
+.journal-comments-status button{margin-inline-start:10px;font:inherit;color:var(--journal-blue);background:transparent;border:0;cursor:pointer;text-decoration:underline}
+@media(max-width:767px){.journal-dialogue{margin-block:24px;font-size:15px}}
+@media print{.journal-dialogue{display:none}}
+
+.journal-comments-status{flex-wrap:wrap}.journal-comments-status a{color:var(--journal-blue);font-size:12px;text-decoration:underline;text-underline-offset:3px}

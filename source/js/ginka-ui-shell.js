@@ -87,7 +87,8 @@
     const overflow = details?.querySelector('.journal-mobile-links');
     if (!overflow) return;
     // 「更多」现在常驻（内含标签/分类/友链），只把真正溢出的主导航项搬进去。
-    const items = Array.from(row.children).filter(item => !item.matches('.menu-item-more, .menu-item-search, .menu-item-theme'));
+    const items = Array.from(row.children).filter(item => !item.matches('.menu-item-drawer, .menu-item-more, .menu-item-search, .menu-item-theme'));
+    const drawer = row.querySelector('.menu-item-drawer');
     const search = row.querySelector('.menu-item-search');
     const themeToggle = row.querySelector('.menu-item-theme');
     let layoutTimer = 0;
@@ -104,15 +105,16 @@
       more.hidden = false;
       const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
       const widths = items.map(item => item.getBoundingClientRect().width);
-      const searchWidth = search?.getBoundingClientRect().width || 0;
-      const themeWidth = themeToggle?.getBoundingClientRect().width || 0;
+      // More is always present: reserve its width even when every page link fits.
+      // Drawer, theme and search are controls, never movable menu entries.
+      const controls = [drawer, more, themeToggle, search].filter(item => item && item.getBoundingClientRect().width > 0);
       let visible = items.length;
-      let width = widths.reduce((sum, value) => sum + value, 0) + searchWidth + themeWidth + gap * (items.length + (search ? 1 : 0) + (themeToggle ? 1 : 0) - 1);
-      if (width > available + .5) {
-        width += more.getBoundingClientRect().width + gap;
-        while (visible > 1 && width > available + .5) width -= widths[--visible] + gap;
-      }
-      items.slice(visible).forEach(item => overflow.append(item));
+      let width = widths.reduce((sum, value) => sum + value, 0) +
+        controls.reduce((sum, item) => sum + item.getBoundingClientRect().width, 0) +
+        gap * Math.max(0, items.length + controls.length - 1);
+      while (visible > 0 && width > available + .5) width -= widths[--visible] + gap;
+      items.slice(visible).reverse().forEach(item => overflow.prepend(item));
+      row.classList.toggle('journal-nav-tight', width > available + .5);
       const nextHiddenCount = items.length - visible;
       if (hiddenCount !== nextHiddenCount && !wasOpen) details.open = false;
       hiddenCount = nextHiddenCount;
@@ -154,17 +156,37 @@
       notice.addEventListener('click', (event) => {
         if (event.target.closest('[data-update-dismiss]')) { notice.remove(); return; }
         if (!event.target.closest('[data-update-reload]')) return;
-        const done = () => window.location.reload();
-        navigator.serviceWorker?.getRegistration?.().then((registration) => {
-          if (!registration || !registration.waiting) { done(); return; }
-          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-          setTimeout(done, 120);
+        const button = notice.querySelector('[data-update-reload]');
+        if (button.disabled) return;
+        button.disabled = true;
+        button.textContent = '刷新中…';
+        let reloaded = false;
+        let timer;
+        const sw = navigator.serviceWorker;
+        const done = () => {
+          if (reloaded) return;
+          reloaded = true;
+          clearTimeout(timer);
+          sw?.removeEventListener('controllerchange', done);
+          window.location.reload();
+        };
+        if (!sw) { done(); return; }
+        // Register the listener before asking the waiting worker to activate.
+        // A slow activation is bounded, but we never reload on a fixed 120ms guess.
+        sw.getRegistration().then(async registration => {
+          if (!registration) { done(); return; }
+          if (!registration.waiting) await registration.update().catch(()=>{});
+          if (!registration.waiting) { done(); return; }
+          sw.addEventListener('controllerchange', done, {once:true});
+          timer = setTimeout(done, 5000);
+          registration.waiting.postMessage({type:'SKIP_WAITING'});
         }).catch(done);
+
       });
       document.body.appendChild(notice);
     }
     function check() {
-      fetch('/site-version.json?t=' + Date.now(), { cache: 'no-store' })
+      fetch((window.CONFIG?.root || '/') + 'site-version.json?t=' + Date.now(), { cache: 'no-store' })
         .then((response) => (response.ok ? response.json() : null))
         .then((data) => { if (data && data.version && data.version !== build) show(data.version); })
         .catch(() => {});

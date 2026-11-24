@@ -7,6 +7,7 @@ const $ = load(html);
 const motion = fs.readFileSync('source/js/ginka-motion.js', 'utf8');
 // styles.styl 已在本分支清空（旧玻璃滚动条等遗留规则），ginka_style.css 不再产出。
 // 缺失即视为「没有遗留 TTF 引用」，但仍要求构建产物里没有 .ttf 直链。
+// The old stylesheet may still exist in the submodule, but must never be linked.
 const legacyStylesPath = 'public/css/ginka_style.css';
 const legacyStyles = fs.existsSync(legacyStylesPath) ? fs.readFileSync(legacyStylesPath, 'utf8') : '';
 
@@ -52,18 +53,18 @@ const checks = [
     pass: html.includes('/css/ginka-runtime.css') && !html.includes('<style>')
   },
   {
-    name: 'loads one deferred local Lenis before the page motion runtime',
-    pass: $('script[defer][src^="/js/vendor/lenis.min.js"]').length === 1 &&
+    name: 'keeps native scrolling and one deferred page motion runtime',
+    pass: $('script[src*="lenis.min.js"]').length === 0 &&
       $('script[defer][src^="/js/ginka-motion.js"]').length === 1 &&
-      html.indexOf('/js/vendor/lenis.min.js') < html.indexOf('/js/ginka-motion.js')
+      !motion.includes('new window.Lenis(')
   },
   {
     name: 'does not load legacy animation or a second ATRI loader',
     pass: $('script[src*="ginka-effects-loader"], script[src*="ginka-page-effects"], script[src*="ginka-lazy-loader"], script[src*="canvas-nest"], script[src*="gsap"]').length === 0
   },
   {
-    name: 'gates hero motion by route and scroll visibility and leaves Lenis idle on reduced motion',
-    pass: motion.includes("matchMedia('(prefers-reduced-motion: reduce)')") && motion.includes('autoRaf: false') &&
+    name: 'gates hero motion by route, visibility and reduced motion',
+    pass: motion.includes("matchMedia('(prefers-reduced-motion: reduce)')") &&
       motion.includes('observer.observe(hero)') && motion.includes('if (!hero) return;')
   },
   {

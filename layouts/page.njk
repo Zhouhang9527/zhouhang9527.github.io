@@ -3,6 +3,19 @@
 {% block title %}{{ page.title }} | {{ title }}{% endblock %}
 {% block class %}page posts-expand journal-page{% endblock %}
 {% block content %}
+  {% if page.type == '404' %}
+    <section class="journal-not-found">
+      <div class="journal-not-found-copy">
+        <a class="journal-breadcrumb" href="{{ url_for('/') }}">GINKA / mm9527</a>
+        <span class="journal-eyebrow">404 / LOST ON THE ISLAND</span>
+        <h1>迷失在岛上</h1>
+        <p>没有找到这个页面，或许它已经搬到了别处</p>
+        <nav aria-label="返回"><a class="journal-not-found-primary" href="{{ url_for('/') }}">返回首页 ↗</a><a href="{{ url_for('/archives/') }}">浏览归档 ↗</a></nav>
+      </div>
+      {% set scene = ginka_scene(page, 'masthead') %}
+      <div class="journal-masthead-art" aria-hidden="true" style="--scene-day:url('{{ scene.day }}');--scene-night:url('{{ scene.night }}')"></div>
+    </section>
+  {% else %}
   {% set taxonomy = page.type == 'tags' or page.type == 'categories' %}
   {% set isAboutPage = page.source == 'about/index.md' or page.path == 'about/index.html' or page.path == 'about/' %}
   {% set isLinksPage = 'links' in (page.path or '') %}
@@ -29,6 +42,7 @@
     </div>
   {% else %}
     <div class="post-block journal-static-content" lang="{{ page.lang }}"><div class="post-body">{{ page.content }}</div></div>
+  {% endif %}
   {% endif %}
 {% endblock %}
 {% block sidebar %}{{ partial('journal-sidebar.njk', {display_toc: page.toc.enable}) }}{% endblock %}

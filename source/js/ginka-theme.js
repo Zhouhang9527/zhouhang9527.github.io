@@ -209,6 +209,16 @@
     get theme() { return root.getAttribute('data-theme') || resolve(readMode()); },
     set: function (mode) { if (MODES.indexOf(mode) !== -1) apply(mode, true); },
     get commentTheme() { return giscusTheme(root.getAttribute('data-theme') || resolve(readMode())); },
+    async prepareCommentTheme() {
+      var current = root.getAttribute('data-theme') || resolve(readMode());
+      var chosen = giscusTheme(current);
+      if (/^https:/.test(chosen)) return chosen;
+      // A brief wait avoids displaying the native editor before the custom
+      // theme is available. A slow CDN never blocks the comment widget.
+      var pending = Array.from(giscusPending.values());
+      if (pending.length) await Promise.race([Promise.allSettled(pending), new Promise(function (resolve) { setTimeout(resolve, 1500); })]);
+      return giscusTheme(root.getAttribute('data-theme') || resolve(readMode()));
+    },
     cycle: cycle
   };
 

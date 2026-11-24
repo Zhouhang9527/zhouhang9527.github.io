@@ -25,6 +25,9 @@ timezone: Asia/Shanghai
 # ---------------------------------------------------------------
 url: https://www.mm9527.top
 root: /
+# Giscus runs on a different origin; use an immutable public CSS revision.
+# Update this pin when either Giscus theme stylesheet changes.
+ginka_giscus_theme_base: https://cdn.jsdelivr.net/gh/Zhouhang9527/zhouhang9527.github.io@052d362536fc211fe3bcc600d825f7d6f46d377f/source/css/
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:

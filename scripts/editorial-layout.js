@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const sceneMap = require('./ginka-scene-map.json');
+const sceneMap = require('../config/ginka-scene-map.json');
 
 function routeKind(page) {
   page = page || {};
@@ -17,8 +17,11 @@ function routeKind(page) {
 }
 
 function ginkaScene(page, slot) {
-  const pair = sceneMap.routes[routeKind(page)][slot === 'sidebar' ? 'sidebar' : 'masthead'];
-  const width = slot === 'sidebar' ? 640 : routeKind(page) === 'about' ? 1280 : 960;
+  const kind = routeKind(page);
+  const pair = slot === 'dialogue'
+    ? (kind === 'post' ? ['window-room','beach'] : ['torii-sea','torii-close'])
+    : sceneMap.routes[kind][slot === 'sidebar' ? 'sidebar' : 'masthead'];
+  const width = slot === 'dialogue' ? 960 : slot === 'sidebar' ? 640 : kind === 'about' ? 1280 : 960;
   // Extra extracted art is only for the opt-in local server, never a production build.
   const preview = hexo.env.cmd === 'server' && process.env.GINKA_LOCAL_SCENES === '1';
   const candidates = preview ? ['local-preview/' + pair[0], pair[1]] : [pair[1]];
@@ -69,7 +72,8 @@ hexo.extend.filter.register('before_generate', function () {
     'page.njk': 'page.njk',
     'post.njk': 'post.njk',
     'journal-sidebar.njk': 'sidebar.njk',
-    'journal-music.njk': 'music.njk'
+    'journal-music.njk': 'music.njk',
+    'journal-comments.njk': 'comments.njk'
   };
   for (const [view, file] of Object.entries(views)) {
     hexo.theme.setView(view, fs.readFileSync(path.join(hexo.base_dir, 'layouts', file), 'utf8'));
