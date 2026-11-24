@@ -16,7 +16,7 @@
       %}
       {%- for menu, count in badges %}
         {%- if node.name == menu %}
-          {%- set menuBadge = '<span class="badge">' + count + '</span>' %}
+          {%- set menuBadge = '<span class="badge" aria-hidden="true">' + count + '</span>' %}
         {%- endif %}
       {%- endfor %}
     {%- endif %}

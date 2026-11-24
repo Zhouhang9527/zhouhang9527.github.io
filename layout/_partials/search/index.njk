@@ -8,10 +8,11 @@
         <div class="search-input-container">
           <input autocomplete="off" autocapitalize="off" maxlength="80"
                 placeholder="{{ __('search.placeholder') }}" spellcheck="false"
+                aria-label="{{ __('search.placeholder') }}"
                 type="search" class="search-input">
         </div>
-        <span class="popup-btn-close" role="button">
-          <i class="fa fa-times-circle"></i>
+        <span class="popup-btn-close" role="button" tabindex="0" aria-label="关闭搜索">
+          <i class="fa fa-times-circle" aria-hidden="true"></i>
         </span>
       </div>
       <div class="search-result-container">

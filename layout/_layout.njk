@@ -18,6 +18,7 @@
 
 <body itemscope itemtype="http://schema.org/WebPage"{% if theme.motion.enable %} class="use-motion"{% endif %}>
   {{- next_inject('bodyBegin') }}
+  <a class="journal-skip-link" href="#main-content">跳到正文</a>
   <div class="headband"></div>
 
   <main class="main">
@@ -30,7 +31,7 @@
       {%- endif %}
     </div>
 
-    <div class="main-inner {% block class %}{% endblock %}">
+    <div id="main-content" class="main-inner {% block class %}{% endblock %}">
       {%- include '_partials/header/sub-menu.njk' -%}
       {% block content %}{% endblock %}
       {%- include '_partials/comments.njk' -%}
