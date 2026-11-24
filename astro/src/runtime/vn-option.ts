@@ -1,7 +1,7 @@
 // KAG-style option pages. Only settings that actually affect the blog are exposed.
 const TEXT_KEY='ginka.vn.text-size.v1',TAB_KEY='ginka.vn.option-tab.v1';
 const tabs=['display','program','text','sound','dialog','touch','shortcut'];
-const help:Record<string,string>={display:'调整画面尺寸、主题与表现方式',program:'打开阅读索引与存档',text:'调整正文文字大小',sound:'设置背景音乐音量，选择播放曲目',dialog:'管理阅读存档，清除前将确认',touch:'查看触屏操作方式',shortcut:'查看键盘操作方式'};
+const help:Record<string,string>={display:'调整画面尺寸与表现方式',program:'打开阅读索引与存档',text:'调整正文文字大小',sound:'设置背景音乐音量，选择播放曲目',dialog:'管理阅读存档，清除前将确认',touch:'查看触屏操作方式',shortcut:'查看键盘操作方式'};
 let textSize=16;
 function loadText(){try{const value=Number(localStorage.getItem(TEXT_KEY)||16);textSize=Number.isInteger(value)&&value>=14&&value<=22?value:16;}catch{}}
 function applyText(root:Document=document){root.documentElement.style.setProperty('--vn-reader-size',textSize+'px');}

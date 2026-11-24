@@ -551,3 +551,19 @@ html body .vn-stage .vn-gallery-grid .scene-day{display:block!important;opacity:
  [data-vn-backlog-original=true][data-vn-log-open=true] [data-vn-log-scroll=down]{top:80.555556%}
  [data-vn-backlog-original=true][data-vn-log-open=true] [data-vn-log-close]{left:90.78125%;top:89.444444%;width:8.203125cqw;height:5.9375cqw;min-height:0}
 }
+
+/* Script-backed title timings; the unresolved wipe13 logo mask is temporarily
+   an opacity reveal, not an invented claim of exact universal transition. */
+.vn-title[data-vn-title-intro=fresh] .vn-cover-art{animation:vn-appear var(--vn-title-bg-ms) linear both}
+.vn-title[data-vn-title-intro=fresh] .vn-original-logo{animation:vn-appear var(--vn-title-logo-ms) linear var(--vn-title-bg-ms) both}
+.vn-title[data-vn-title-intro=fresh] .vn-title-menu{animation:vn-appear var(--vn-title-menu-ms) linear var(--vn-title-menu-delay) both}
+.vn-title[data-vn-title-intro=restore]{animation:vn-appear var(--vn-title-restore-ms) linear both}
+[data-vn-backlog-original=true] [data-vn-log-scroll=top]{background-image:var(--vn-log-top);background-size:contain;background-position:center}
+[data-vn-backlog-original=true] [data-vn-log-scroll=top]:is(:hover,:focus-visible){background-image:var(--vn-log-top-hover)}
+[data-vn-backlog-original=true] [data-vn-log-scroll=end]{background-image:var(--vn-log-end);background-size:contain;background-position:center}
+[data-vn-backlog-original=true] [data-vn-log-scroll=end]:is(:hover,:focus-visible){background-image:var(--vn-log-end-hover)}
+@media(min-width:960px){
+ [data-vn-backlog-original=true][data-vn-log-open=true] [data-vn-log-scroll=top]{top:5.416667%}
+ [data-vn-backlog-original=true][data-vn-log-open=true] [data-vn-log-scroll=end]{top:85.277778%}
+}
+html[data-theme=moonlit] body .vn-stage .vn-slot-thumbnail{background-image:var(--vn-day-small)}

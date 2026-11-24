@@ -55,6 +55,6 @@ const scripts=['runtime','reading','atri-loader','ui-shell','theme','comments','
  <script is:inline>window.CONFIG = {root:'/'};</script>
  {scripts.map(name=><script is:inline defer src={asset(`js/ginka-${name}.js`)}></script>)}
  <script is:inline defer src={asset('js/astro-shell.js')}></script>
- <script>import '../runtime/vn-progress'; import '../runtime/vn-ui'; import '../runtime/vn-mask'; import '../runtime/vn-music'; import '../runtime/vn-option'; import '../runtime/vn-backlog';</script>
+ <script>import '../runtime/vn-progress'; import '../runtime/vn-ui'; import '../runtime/vn-mask'; import '../runtime/vn-music'; import '../runtime/vn-option'; import '../runtime/vn-backlog'; import '../runtime/vn-title-motion';</script>
 </body>
 </html>

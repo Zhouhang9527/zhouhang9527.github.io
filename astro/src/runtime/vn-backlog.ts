@@ -37,10 +37,11 @@ document.addEventListener('click',event=>{
  if(target.hasAttribute('data-vn-log-close')&&active){event.preventDefault();close();return;}
  if(!target.hasAttribute('data-vn-log-scroll'))return;
  const log=target.closest<HTMLElement>('[data-vn-backlog]');if(!log)return;
- const direction=target.dataset.vnLogScroll==='up'?-1:1;
+ const action=target.dataset.vnLogScroll;
+ const direction=action==='up'?-1:1;
  const behavior:ScrollBehavior=reduced()?'instant':'smooth';
- if(active===log){const port=log.querySelector<HTMLElement>('[data-vn-log-scrollport]');port?.scrollBy({top:direction*port.clientHeight*.8,behavior});}
- else{const bounds=log.getBoundingClientRect(),top=scrollY+bounds.top,bottom=Math.max(top,scrollY+bounds.bottom-innerHeight);window.scrollTo({top:Math.max(top,Math.min(bottom,scrollY+direction*innerHeight*.8)),behavior});}
+ if(active===log){const port=log.querySelector<HTMLElement>('[data-vn-log-scrollport]');if(port){if(action==='top'||action==='end')port.scrollTo({top:action==='top'?0:port.scrollHeight,behavior});else port.scrollBy({top:direction*port.clientHeight*.8,behavior});}}
+ else{const bounds=log.getBoundingClientRect(),top=scrollY+bounds.top,bottom=Math.max(top,scrollY+bounds.bottom-innerHeight);window.scrollTo({top:action==='top'?top:action==='end'?bottom:Math.max(top,Math.min(bottom,scrollY+direction*innerHeight*.8)),behavior});}
 },true);
 document.addEventListener('keydown',event=>{
  if(!active||event.defaultPrevented)return;
