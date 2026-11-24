@@ -137,3 +137,9 @@ console.log('PASS LOAD ten-slot layout and original sprite boundaries');
 for(const key of ['display','program','text','sound','dialog','touch','shortcut'])for(const state of ['normal','selected','hover'])assert.ok(vn.privateUI.slices.optionTabs[key+'-'+state],'Missing option state');
 assert.doesNotMatch(settingsHtml,/optionTabs-.*\.png|Labels-heading\.png/);
 console.log('PASS original option tabs and footer sprite contract');
+
+for(const route of posts){
+ const html=fs.readFileSync(path.join('dist',route,'index.html'),'utf8');
+ if(html.includes('data-vn-backlog')){assert.match(html,/data-vn-log-open/);assert.match(html,/data-vn-log-scrollport/);assert.doesNotMatch(html,/__ginka_local_ui__/);}
+}
+console.log('PASS original reader toolbar and backlog private isolation');

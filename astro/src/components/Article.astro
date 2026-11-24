@@ -6,6 +6,8 @@ import type {Post} from '../lib/types';
 interface Props {post:Post}
 const {post}=Astro.props;
 const {Content,headings}=await render(post);
+const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
+const skin=(key:string)=>original?`--vn-control-normal:url(/__ginka_local_ui__/readerControls-${key}.png);--vn-control-hover:url(/__ginka_local_ui__/readerControls-${key}Hover.png);--vn-control-active:url(/__ginka_local_ui__/readerControls-${key}Active.png)`:undefined;
 const outline=headings.filter(h=>h.depth>=2&&h.depth<=4);
 ---
 <div class="journal-reading-progress" role="progressbar" aria-label="文章阅读进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
@@ -14,8 +16,9 @@ const outline=headings.filter(h=>h.depth>=2&&h.depth<=4);
  <article class="post-block post-content" data-pagefind-body data-vn-article={href(post.data.route)}>
   <header class="post-header"><h1 class="post-title" data-pagefind-meta="title">{post.data.title}</h1><div class="post-meta-container"><div class="post-meta"><time datetime={post.data.date}>{post.data.date}</time>{post.data.categories.map(c=><a href={href('categories/'+tagSlug(c)+'/')}>{c}</a>)}</div></div>{post.data.description&&<p class="post-description">{post.data.description}</p>}</header>
   <div class="post-body"><Content/></div>
+  <nav class="vn-reading-controls" data-vn-reader-original={String(original)} aria-label="游戏阅读控制"><a href="/library/" style={skin('load')}><span>Load</span></a>{post.data.comments!==false&&<a href="#journal-comments" data-vn-log-open style={skin('log')}><span>Log</span></a>}<a href="/settings/" style={skin('system')}><span>System</span></a><button type="button" data-vn-save-position style={skin('save')} hidden><span>Save</span></button><span class="journal-visually-hidden" data-vn-save-feedback aria-live="polite"></span></nav>
   <div class="post-tags">{post.data.tags.map(t=><a href={href('tags/'+tagSlug(t)+'/')}>#{t}</a>)}</div>
- <nav class="vn-reader-actions" aria-label="阅读记录"><button type="button" data-vn-mark hidden aria-pressed="false">标记已读</button><button type="button" data-vn-bookmark hidden aria-pressed="false">收藏</button><a href="/library/">读取存档</a>{post.data.comments!==false&&<a href="#journal-comments">BACKLOG / 历史对话</a>}<a href="/" data-vn-return data-vn-mode-set="game">返回标题界面 ↗</a></nav>
+ <nav class="vn-reader-actions" aria-label="阅读记录"><button type="button" data-vn-mark hidden aria-pressed="false">标记已读</button><button type="button" data-vn-bookmark hidden aria-pressed="false">收藏</button><a href="/library/">读取存档</a>{post.data.comments!==false&&<a href="#journal-comments" data-vn-log-open>BACKLOG / 历史对话</a>}<a href="/" data-vn-return data-vn-mode-set="game">返回标题界面 ↗</a></nav>
  </article>
  {post.data.comments!==false&&<Comments/>}
  {outline.length>0&&<aside class="journal-outline" aria-label="文章章节目录" data-journal-outline><p class="journal-outline-title">目录</p><ol class="journal-outline-list">{outline.map(h=><li style={`padding-inline-start:${(h.depth-2)*10}px`}><a href={'#'+encodeURIComponent(h.slug)}>{h.text}</a></li>)}</ol></aside>}

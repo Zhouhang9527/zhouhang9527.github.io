@@ -37,6 +37,17 @@ try{
    await page.locator('[data-vn-post]').first().click();
    await visible('.post-body');
    await visible('[data-vn-mark]');
+   if(await page.locator('[data-vn-log-open]').count()){
+    await page.locator('[data-vn-log-open]').first().click();
+    await visible('[data-vn-backlog][data-vn-log-open=true]');
+    assert.equal(await page.locator('[data-vn-article]').evaluate(el=>el.inert),true);
+    await shot('backlog');
+    await page.locator('[data-vn-log-close]').click();
+    assert.equal(await page.locator('[data-vn-backlog]').getAttribute('data-vn-log-open'),null);
+    assert.equal(await page.locator('[data-vn-article]').evaluate(el=>el.inert),false);
+   }
+   await page.locator('[data-vn-save-position]').click();
+   assert.equal(await page.locator('[data-vn-save-feedback]').textContent(),'阅读位置已保存');
    const article=page.url();
    const pathname=new URL(article).pathname;
    assert.ok(await page.evaluate(old=>old===document.querySelector('#bg-music'),audio),'Audio replaced by navigation');

@@ -51,6 +51,7 @@ function renderArticle(recordVisit:boolean) {
  if(!isPath(path))return;
  const state=read();
  if(recordVisit)write(visit(state,path,Date.now()));
+ const save=article?.querySelector<HTMLButtonElement>('[data-vn-save-position]');if(save)save.hidden=false;
  const bookmark=article?.querySelector<HTMLButtonElement>('[data-vn-bookmark]');
  if(bookmark){bookmark.hidden=false;showBookmark(bookmark,state.bookmarks.includes(path));}
  const button=article?.querySelector<HTMLButtonElement>('[data-vn-mark]');
@@ -183,8 +184,13 @@ document.addEventListener('astro:before-preparation',()=>{flush();cancelAnimatio
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flush();});
 window.addEventListener('pagehide',flush);
 document.addEventListener('click',event=>{
- const el=(event.target as Element|null)?.closest<HTMLButtonElement>('[data-vn-mark],[data-vn-bookmark],[data-vn-filter],[data-vn-reset],[data-vn-page],[data-vn-page-step]');
+ const el=(event.target as Element|null)?.closest<HTMLButtonElement>('[data-vn-mark],[data-vn-bookmark],[data-vn-filter],[data-vn-reset],[data-vn-page],[data-vn-page-step],[data-vn-save-position]');
  if(!el)return;
+ if(el.hasAttribute('data-vn-save-position')){
+  const article=el.closest<HTMLElement>('[data-vn-article]');const path=article?.dataset.vnArticle;
+  if(article&&isPath(path)){const position=capturePosition(article);if(position){write(savePosition(visit(read(),path,Date.now()),path,position));const feedback=article.querySelector<HTMLElement>('[data-vn-save-feedback]');if(feedback)feedback.textContent='阅读位置已保存';el.dataset.vnSaved='true';window.setTimeout(()=>delete el.dataset.vnSaved,600);}}
+  return;
+ }
  if(el.hasAttribute('data-vn-reset')){
   if(window.confirm('清除本机全部阅读记录和收藏？')){clearTimeout(timer);dirty=false;pendingResume=null;try{sessionStorage.removeItem(RESUME);}catch{}write(empty());refresh();}
   return;

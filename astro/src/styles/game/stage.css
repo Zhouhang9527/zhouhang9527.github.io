@@ -489,3 +489,28 @@ body .post-body{font-size:var(--vn-reader-size,16px)}
  .vn-option[data-vn-ui-original=true] .vn-option-header h1[data-vn-heading-key=shortcut]{--vn-heading-art:var(--vn-heading-shortcut);height:4.84375cqw;width:32.421875cqw}
  .vn-option[data-vn-ui-original=true] .vn-option-footer :is(a,button){min-width:8.2cqw;height:4.6875cqw}
 }
+
+/* Native in-game action icons. Article prose remains a responsive reader. */
+.vn-reading-controls{display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:5px;margin:24px 0}
+html[data-vn-mode=reader] .vn-reading-controls{display:none}
+.vn-reading-controls :is(a,button){display:grid;place-items:center;min-width:62px;height:56px;padding:4px;border:1px solid #4c738d;background:#e8f3fc;color:#172c42!important;font:600 12px/1.2 Arial,sans-serif}
+.vn-reading-controls[data-vn-reader-original=true] :is(a,button){width:64px;min-width:0;height:64px;background:var(--vn-control-normal) center/100% 100% no-repeat;border:0;color:transparent!important}
+.vn-reading-controls[data-vn-reader-original=true] :is(a,button):is(:hover,:focus-visible){background-image:var(--vn-control-hover)}
+.vn-reading-controls[data-vn-reader-original=true] :is(a,button):active,.vn-reading-controls[data-vn-reader-original=true] button[data-vn-saved=true]{background-image:var(--vn-control-active)}
+.vn-reading-controls [hidden]{display:none!important}
+/* Fullscreen BACKLOG uses the same live iframe, never a cloned discussion. */
+[data-vn-backlog][data-vn-log-open=true]{position:fixed!important;inset:0!important;z-index:2147483000!important;margin:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;box-sizing:border-box;display:grid;grid-template-rows:auto minmax(0,1fr);padding:clamp(16px,4vw,48px)!important;color:#edf5ff!important;background:#080c13;animation:vn-appear 300ms ease both;overflow:hidden}
+[data-vn-backlog-original=true][data-vn-log-open=true]{background:#080c13 var(--vn-backlog-base) center/cover no-repeat}
+[data-vn-log-open=true] .vn-backlog-header{color:#eaf3fa;border-bottom:1px solid #83b2d3;padding-bottom:14px}
+[data-vn-log-open=true] .vn-backlog-header h2{color:#eaf3fa!important}
+[data-vn-log-open=true] [data-vn-log-scrollport]{min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-color:#72bbdf #12233a;width:min(100%,1100px);margin:0 auto}
+[data-vn-log-open=true] .journal-comments-status{color:#eaf3fa}
+[data-vn-log-open=true] .vn-backlog-controls{gap:12px}
+[data-vn-backlog-original=true] .vn-backlog-controls button{background-image:var(--vn-log-up);background-size:contain;background-position:center}
+[data-vn-backlog-original=true] .vn-backlog-controls button[data-vn-log-scroll=down]{background-image:var(--vn-log-down);background-position:center}
+[data-vn-backlog-original=true] .vn-backlog-controls button[data-vn-log-scroll=up]:is(:hover,:focus-visible){background-image:var(--vn-log-up-hover)}
+[data-vn-backlog-original=true] .vn-backlog-controls button[data-vn-log-scroll=down]:is(:hover,:focus-visible){background-image:var(--vn-log-down-hover)}
+[data-vn-backlog-original=true] .vn-backlog-controls [data-vn-log-close]{background:var(--vn-log-back) center/contain no-repeat;width:85px;min-height:60px;color:transparent!important}
+[data-vn-backlog-original=true] .vn-backlog-controls [data-vn-log-close]:is(:hover,:focus-visible){background-image:var(--vn-log-back-hover)}
+html[data-vn-motion=reduced] [data-vn-log-open=true]{animation:none}
+@media(prefers-reduced-motion:reduce){[data-vn-log-open=true]{animation:none}}

@@ -203,6 +203,30 @@
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000772_71B2C893A1B6C13CA083F6DAFE2A5993A05A1A8EB67A957A599D1B1089169B6E.png",
         "width": 415,
         "height": 274
+      },
+      "readerControls": {
+        "id": "readerControls",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007b9_9B5B6E65688EB54BCC0F8FD138ABB68DB21EB9C136F6632B31D791E903B03C47.png",
+        "width": 684,
+        "height": 634
+      },
+      "backlogButtons": {
+        "id": "backlogButtons",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000734_545E7C6A32137925FC6E12EB2BD18A3D7FBC9A5C7A0B9CF4F4806AE350AD7F42.png",
+        "width": 287,
+        "height": 304
+      },
+      "backlogDark": {
+        "id": "backlogDark",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000737_CB209C39B0245875A7D31D1AF7E269C50127E357C3DDA21873F95721CE9EA0F6.png",
+        "width": 1280,
+        "height": 720
+      },
+      "textLabels": {
+        "id": "textLabels",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000750_737214E5488A1E8CE7C737E73AE750581DF63272B741CCDCE01761347F03988D.png",
+        "width": 301,
+        "height": 344
       }
     },
     "optionGeometry": {
@@ -418,7 +442,10 @@
       "programLabels",
       "dialogLabels",
       "touchLabels",
-      "shortcutLabels"
+      "shortcutLabels",
+      "readerControls",
+      "backlogButtons",
+      "textLabels"
     ],
     "slices": {
       "loadRows": {
@@ -709,6 +736,120 @@
           0,
           415,
           62
+        ]
+      },
+      "readerControls": {
+        "load": [
+          228,
+          0,
+          114,
+          115
+        ],
+        "loadHover": [
+          456,
+          0,
+          114,
+          115
+        ],
+        "loadActive": [
+          342,
+          0,
+          114,
+          115
+        ],
+        "log": [
+          570,
+          0,
+          114,
+          115
+        ],
+        "logHover": [
+          114,
+          230,
+          114,
+          115
+        ],
+        "logActive": [
+          114,
+          115,
+          114,
+          115
+        ],
+        "system": [
+          342,
+          115,
+          114,
+          115
+        ],
+        "systemHover": [
+          570,
+          115,
+          114,
+          115
+        ],
+        "systemActive": [
+          456,
+          115,
+          114,
+          115
+        ],
+        "save": [
+          342,
+          345,
+          114,
+          115
+        ],
+        "saveHover": [
+          456,
+          345,
+          114,
+          115
+        ],
+        "saveActive": [
+          342,
+          460,
+          114,
+          115
+        ]
+      },
+      "backlogButtons": {
+        "back": [
+          106,
+          152,
+          105,
+          76
+        ],
+        "backHover": [
+          106,
+          228,
+          105,
+          76
+        ]
+      },
+      "backlogAtlas": {
+        "up": [
+          172,
+          230,
+          84,
+          84
+        ],
+        "down": [
+          172,
+          146,
+          84,
+          84
+        ],
+        "upHover": [
+          88,
+          230,
+          84,
+          84
+        ],
+        "downHover": [
+          88,
+          146,
+          84,
+          84
         ]
       }
     },
