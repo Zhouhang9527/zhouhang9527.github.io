@@ -1,15 +1,15 @@
 import {resolveTitleState,localTitleFrame} from '../lib/vn-scenes';
 
 const KEY='ginka.vn.progress.v1';
-type Progress={version:1;completed:string[];last:string|null};
-const empty=():Progress=>({version:1,completed:[],last:null});
+type Progress={version:1;completed:string[];last:string|null;recent:Record<string,number>;bookmarks:string[]};
+const empty=():Progress=>({version:1,completed:[],last:null,recent:{},bookmarks:[]});
 const isPath=(value:unknown):value is string=>typeof value==='string'&&/^\/20\d{2}\/\d{2}\/\d{2}\/[^?#]+\/$/.test(value)&&!value.includes('\\');
 let memory=empty();
 function parse(raw:string|null):Progress {
  try {
   const value=JSON.parse(raw||'null');
   if(value?.version!==1||!Array.isArray(value.completed))return empty();
-  return {version:1,completed:Array.from(new Set<string>(value.completed.filter(isPath))),last:isPath(value.last)?value.last:null};
+  return {version:1,completed:Array.from(new Set<string>(value.completed.filter(isPath))),last:isPath(value.last)?value.last:null,recent:Object.fromEntries(Object.entries(value.recent??{}).filter(([path,stamp])=>isPath(path)&&typeof stamp==='number'&&Number.isFinite(stamp)).sort((a,b)=>Number(b[1])-Number(a[1])).slice(0,100)) as Record<string,number>,bookmarks:Array.isArray(value.bookmarks)?Array.from(new Set<string>(value.bookmarks.filter(isPath))):[]};
  } catch {return empty();}
 }
 function read():Progress {
@@ -54,7 +54,9 @@ function renderArticle(recordVisit:boolean) {
  const path=article?.dataset.vnArticle;
  if(!isPath(path))return;
  const state=read();
- if(recordVisit&&state.last!==path)write({...state,last:path});
+ if(recordVisit){const recent=Object.fromEntries(Object.entries({...state.recent,[path]:Date.now()}).sort((a,b)=>b[1]-a[1]).slice(0,100));write({...state,last:path,recent});}
+ const bookmark=article?.querySelector<HTMLButtonElement>('[data-vn-bookmark]');
+ if(bookmark){bookmark.hidden=false;showBookmark(bookmark,state.bookmarks.includes(path));}
  const button=article?.querySelector<HTMLButtonElement>('[data-vn-mark]');
  if(button){
   const done=state.completed.includes(path);
@@ -63,17 +65,66 @@ function renderArticle(recordVisit:boolean) {
   button.textContent=done?'已读 · 取消标记':'标记已读';
  }
 }
-function mount(){renderTitle();renderArticle(true);}
+function showBookmark(button:HTMLButtonElement,on:boolean){
+ button.setAttribute('aria-pressed',String(on));button.textContent=on?'已收藏':'收藏';
+}
+let libraryFilter='recent';
+function renderLibrary(){
+ const root=document.querySelector<HTMLElement>('[data-vn-library]');
+ if(!root)return;
+ const state=read();
+ const tabs=document.querySelector<HTMLElement>('[data-vn-library-tabs]');
+ if(tabs){tabs.hidden=false;tabs.querySelectorAll<HTMLButtonElement>('[data-vn-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.vnFilter===libraryFilter)));}
+ root.hidden=false;
+ const slots=Array.from(root.querySelectorAll<HTMLElement>('[data-vn-slot]'));
+ let count=0;
+ slots.sort((a,b)=>(state.recent[b.dataset.vnSlot||'']||0)-(state.recent[a.dataset.vnSlot||'']||0));
+ for(const slot of slots){
+  const path=slot.dataset.vnSlot||'';
+  const done=state.completed.includes(path),saved=state.bookmarks.includes(path),stamp=state.recent[path];
+  const visible=libraryFilter==='bookmarks'?saved:libraryFilter==='completed'?done:!!stamp||state.last===path;
+  slot.hidden=!visible;if(visible)count++;
+  const date=slot.querySelector<HTMLElement>('[data-vn-slot-date]');
+  if(date&&stamp)date.textContent=new Date(stamp).toLocaleString();
+  const status=slot.querySelector<HTMLElement>('[data-vn-slot-status]');
+  if(status)status.textContent=done?'已读': '阅读记录';
+  const button=slot.querySelector<HTMLButtonElement>('[data-vn-bookmark]');
+  if(button)showBookmark(button,saved);
+  root.append(slot);
+ }
+ const empty=document.querySelector<HTMLElement>('[data-vn-library-empty]');
+ if(empty){empty.hidden=count>0;empty.textContent=libraryFilter==='bookmarks'?'暂无收藏':libraryFilter==='completed'?'暂无已读记录':'暂无阅读记录';}
+}
+function renderChapter(){
+ const state=read();
+ document.querySelectorAll<HTMLAnchorElement>('[data-vn-post]').forEach(link=>{
+  const path=link.getAttribute('href')||'';
+  link.dataset.vnRead=String(state.completed.includes(path));
+ });
+}
+function refresh(){renderTitle();renderArticle(false);renderLibrary();renderChapter();}
+function mount(){renderArticle(true);renderTitle();renderLibrary();renderChapter();}
 document.addEventListener('click',event=>{
- const button=(event.target as Element|null)?.closest<HTMLButtonElement>('[data-vn-mark]');
- if(!button)return;
- const path=button.closest<HTMLElement>('[data-vn-article]')?.dataset.vnArticle;
+ const el=(event.target as Element|null)?.closest<HTMLButtonElement>('[data-vn-mark],[data-vn-bookmark],[data-vn-filter],[data-vn-reset]');
+ if(!el)return;
+ if(el.hasAttribute('data-vn-reset')){
+  if(window.confirm('清除本机全部阅读记录和收藏？')){write(empty());refresh();}
+  return;
+ }
+ if(el.dataset.vnFilter){libraryFilter=el.dataset.vnFilter;renderLibrary();return;}
+ const path=el.closest<HTMLElement>('[data-vn-slot]')?.dataset.vnSlot||el.closest<HTMLElement>('[data-vn-article]')?.dataset.vnArticle;
  if(!isPath(path))return;
  const state=read();
- const completed=state.completed.includes(path)?state.completed.filter(x=>x!==path):[...state.completed,path];
- write({...state,completed,last:path});renderArticle(false);
+ if(el.hasAttribute('data-vn-bookmark')){
+  const bookmarks=state.bookmarks.includes(path)?state.bookmarks.filter(x=>x!==path):[...state.bookmarks,path];
+  write({...state,bookmarks});
+ }else{
+  const completed=state.completed.includes(path)?state.completed.filter(x=>x!==path):[...state.completed,path];
+  write({...state,completed,last:path});
+ }
+ refresh();
 });
 document.addEventListener('astro:before-swap',event=>{renderTitle((event as Event & {newDocument:Document}).newDocument);});
 document.addEventListener('astro:page-load',mount);
-window.addEventListener('storage',event=>{if(event.key===KEY||event.key===null){renderTitle();renderArticle(false);}});
+window.addEventListener('storage',event=>{if(event.key===KEY||event.key===null)refresh();});
 mount();

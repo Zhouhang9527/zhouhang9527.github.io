@@ -54,3 +54,10 @@ assert.match(vnCss,/--vn-font-menu:/);
 assert.match(vnCss,/--vn-font-ui:/);
 assert.doesNotMatch(vnCss,/__ginka_local_font__|@font-face/);
 console.log('PASS VN typography roles and private font isolation');
+
+for(const [route,screen] of [['library','load'],['gallery','gallery'],['settings','config']]){
+ const html=fs.readFileSync('dist/'+route+'/index.html','utf8');
+ assert.ok(html.includes('data-vn-screen="'+screen+'"'),'Missing VN '+screen);
+ assert.ok(home.includes('href="/'+route+'/"'),'Unreachable VN '+route);
+}
+console.log('PASS VN load, gallery and config routes');

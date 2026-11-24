@@ -59,5 +59,19 @@
         "source": "_hxv4_hash/35CAB850E76B65EF/000001f1_21C8C4A6F235A7C30E2EAF1DB3542C9A10391ADFCDBA6ABD27EBD373D1DA0BE4.png"
       }
     }
-  }
+  },
+  "gallery": [
+    {
+      "slug": "torii-close",
+      "title": "海上鸟居"
+    },
+    {
+      "slug": "beach",
+      "title": "姬之岛海岸"
+    },
+    {
+      "slug": "shop-street",
+      "title": "岛间街道"
+    }
+  ]
 }

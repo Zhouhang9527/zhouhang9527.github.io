@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GamePanel from '../components/game/GamePanel.astro';
+---
+<Layout title="系统设置" kind="home" noindex>
+ <GamePanel heading="系统设置" label="CONFIG" kind="config">
+  <div class="vn-config" data-vn-config hidden>
+   <section class="vn-config-row"><div><h2>界面主题</h2><p>不改变原作完整 CG 的颜色</p></div><button type="button" data-ginka-theme-toggle><span class="journal-theme-toggle-label">跟随系统</span></button></section>
+   <section class="vn-config-row"><div><h2>画面动效</h2><p>减少淡入、场景切换和菜单反馈动画</p></div><fieldset class="vn-motion-options"><legend class="journal-visually-hidden">画面动效</legend><label><input type="radio" name="vn-motion" value="system"/> 跟随系统</label><label><input type="radio" name="vn-motion" value="reduced"/> 减少动效</label></fieldset></section>
+   <section class="vn-config-row"><div><h2>音乐</h2><p>使用全站共享播放器</p></div><button type="button" data-journal-sidebar-open aria-controls="journal-sidebar" aria-expanded="false">打开播放器</button></section>
+   <section class="vn-config-row"><div><h2>阅读存档</h2><p>管理或清除本机阅读记录、收藏和标题进度</p></div><a href="/library/">读取存档</a><button type="button" data-vn-reset>清除记录</button></section>
+  </div>
+  <noscript><p>系统设置需要 JavaScript</p></noscript>
+ </GamePanel>
+</Layout>

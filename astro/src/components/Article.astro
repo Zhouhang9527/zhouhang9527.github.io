@@ -15,7 +15,7 @@ const outline=headings.filter(h=>h.depth>=2&&h.depth<=4);
   <header class="post-header"><h1 class="post-title" data-pagefind-meta="title">{post.data.title}</h1><div class="post-meta-container"><div class="post-meta"><time datetime={post.data.date}>{post.data.date}</time>{post.data.categories.map(c=><a href={href('categories/'+tagSlug(c)+'/')}>{c}</a>)}</div></div>{post.data.description&&<p class="post-description">{post.data.description}</p>}</header>
   <div class="post-body"><Content/></div>
   <div class="post-tags">{post.data.tags.map(t=><a href={href('tags/'+tagSlug(t)+'/')}>#{t}</a>)}</div>
- <nav class="vn-reader-actions" aria-label="阅读记录"><button type="button" data-vn-mark hidden aria-pressed="false">标记已读</button><a href="/" data-vn-return>返回标题界面 ↗</a></nav>
+ <nav class="vn-reader-actions" aria-label="阅读记录"><button type="button" data-vn-mark hidden aria-pressed="false">标记已读</button><button type="button" data-vn-bookmark hidden aria-pressed="false">收藏</button><a href="/library/">读取存档</a><a href="/" data-vn-return>返回标题界面 ↗</a></nav>
  </article>
  {post.data.comments!==false&&<Comments/>}
  {outline.length>0&&<aside class="journal-outline" aria-label="文章章节目录" data-journal-outline><p class="journal-outline-title">目录</p><ol class="journal-outline-list">{outline.map(h=><li style={`padding-inline-start:${(h.depth-2)*10}px`}><a href={'#'+encodeURIComponent(h.slug)}>{h.text}</a></li>)}</ol></aside>}

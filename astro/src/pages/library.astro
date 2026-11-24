@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GamePanel from '../components/game/GamePanel.astro';
+import {allPosts,href} from '../lib/site';
+const posts=await allPosts();
+---
+<Layout title="读取存档" kind="archive" noindex>
+ <GamePanel heading="读取存档" label="LOAD" kind="load">
+  <p class="vn-panel-note">本机的阅读记录和收藏，不会上传到服务器</p>
+  <div class="vn-tabs" role="group" aria-label="存档类型" data-vn-library-tabs hidden><button type="button" data-vn-filter="recent" aria-pressed="true">最近阅读</button><button type="button" data-vn-filter="bookmarks" aria-pressed="false">收藏</button><button type="button" data-vn-filter="completed" aria-pressed="false">已读</button></div>
+  <div class="vn-save-grid" data-vn-library hidden>
+   {posts.map(post=><article class="vn-save-slot" data-vn-slot={href(post.data.route)} hidden><a href={href(post.data.route)} class="vn-save-link"><span class="vn-slot-thumbnail" aria-hidden="true"></span><span class="vn-slot-copy"><span class="vn-slot-label">READING RECORD</span><strong>{post.data.title}</strong><small data-vn-slot-date>{post.data.date}</small><span data-vn-slot-status></span></span></a><button type="button" data-vn-bookmark aria-pressed="false" aria-label={'收藏 '+post.data.title}>收藏</button></article>)}
+  </div>
+  <p class="vn-empty" data-vn-library-empty hidden>暂无记录</p>
+  <noscript><p>启用 JavaScript 后可以查看本机阅读记录</p><a href="/archives/">进入文章归档</a></noscript>
+ </GamePanel>
+</Layout>
