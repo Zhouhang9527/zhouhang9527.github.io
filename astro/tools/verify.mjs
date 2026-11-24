@@ -143,3 +143,12 @@ for(const route of posts){
  if(html.includes('data-vn-backlog')){assert.match(html,/data-vn-log-open/);assert.match(html,/data-vn-log-scrollport/);assert.doesNotMatch(html,/__ginka_local_ui__/);}
 }
 console.log('PASS original reader toolbar and backlog private isolation');
+
+assert.deepEqual(vn.privateUI.titleMenu.origin,[62,240]);
+for(const [i,name] of vn.privateUI.titleMenu.order.entries()){
+ const item=vn.privateUI.titleMenu.states[name];assert.deepEqual(item.bounds,[62,240+i*44,166,38]);
+ for(const key of ['normal','hover','pressed']){const {rect,offset,rotate}=item[key],[x,y,w,h]=rect;assert.ok(x>=0&&y>=0&&x+w<=223&&y+h<=245);assert.ok(offset[0]+(rotate===90?h:w)<=166&&offset[1]+(rotate===90?w:h)<=38);}
+}
+assert.match(home,/href="\/afterstory\/"/);assert.match(home,/data-vn-next-new/);
+assert.match(fs.readFileSync('dist/afterstory/index.html','utf8'),/data-vn-afterstory-content/);
+console.log('PASS exact PBD title states and afterstory route');

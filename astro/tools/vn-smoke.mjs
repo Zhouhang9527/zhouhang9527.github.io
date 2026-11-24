@@ -64,6 +64,8 @@ try{
    await page.locator('[data-vn-return]').click();
    await visible('[data-vn-title]');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-003');
+   await page.evaluate(()=>{const key='ginka.vn.progress.v1',state=JSON.parse(localStorage.getItem(key));state.mainCleared=true;localStorage.setItem(key,JSON.stringify(state));});
+   await page.reload();await visible('[data-vn-next]');
    await page.locator('.vn-menu a[href="/gallery/"]').click();
    await page.locator('.vn-extra-nav a[href="/map/"]').click();
    await visible('[data-vn-map][data-vn-map-phase="first-encounter"]');

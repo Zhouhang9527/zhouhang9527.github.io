@@ -11,14 +11,13 @@ const tabs=[['display','DISPLAY'],['program','PROGRAM'],['text','TEXT'],['sound'
 <Layout title="系统设置" kind="home" noindex>
  <section class="vn-stage vn-option" data-vn-screen="config" data-vn-ui-original={String(original)} style={original?'--vn-option-art:url(/__ginka_local_ui__/option.png);--vn-option-atlas:url(/__ginka_local_ui__/optionAtlas.png)':undefined} aria-labelledby="vn-option-title">
   <div class="vn-option-frame">
-   <header class="vn-option-header vn-panel-header"><h1 id="vn-option-title" data-vn-heading-key="display" style={headingSkin}><span data-vn-option-heading>DISPLAY</span> <small>Setting</small></h1><aside class="vn-option-help" aria-label="设置说明"><span>HELP WINDOW</span><p data-vn-option-help>调整画面尺寸、主题与表现方式</p></aside></header>
+   <header class="vn-option-header vn-panel-header"><h1 id="vn-option-title" data-vn-heading-key="display" style={headingSkin}><span data-vn-option-heading>DISPLAY</span> <small>Setting</small></h1><aside class="vn-option-help" aria-label="设置说明"><span>HELP WINDOW</span><p data-vn-option-help>调整画面尺寸与表现方式</p></aside></header>
    <div data-vn-config hidden>
     <nav class="vn-option-tabs" role="tablist" aria-label="系统设置">{tabs.map(([key,label],i)=><button type="button" id={'vn-tab-'+key} role="tab" aria-controls={'vn-option-'+key} aria-selected={String(i===0)} tabindex={i===0?0:-1} data-vn-option-tab={key} style={tabSkin(key)}><strong>{label}</strong><small>{key==='shortcut'?'List':'Setting'}</small></button>)}</nav>
     <div class="vn-option-body">
      <section id="vn-option-display" role="tabpanel" aria-labelledby="vn-tab-display" data-vn-option-panel="display">
       <div class="vn-option-grid">
        <fieldset><legend>画面尺寸</legend><div class="vn-option-buttons"><button type="button" data-vn-window="window" aria-pressed="true">窗口</button><button type="button" data-vn-window="full" aria-pressed="false">全屏</button></div></fieldset>
-       <fieldset><legend>界面主题</legend><div class="vn-option-buttons"><button type="button" data-vn-theme="system">自动</button><button type="button" data-vn-theme="day">日间</button><button type="button" data-vn-theme="moonlit">夜间</button></div></fieldset>
        <fieldset><legend>画面效果</legend><div class="vn-option-buttons"><label><input type="radio" name="vn-motion" value="system"/> ON</label><label><input type="radio" name="vn-motion" value="reduced"/> OFF</label></div></fieldset>
        <fieldset><legend>画面表现</legend><div class="vn-option-buttons"><label><input type="radio" name="vn-mode" value="game"/> 游戏</label><label><input type="radio" name="vn-mode" value="reader"/> 阅读</label></div></fieldset>
       </div>

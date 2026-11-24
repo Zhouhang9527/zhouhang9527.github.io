@@ -514,3 +514,40 @@ html[data-vn-mode=reader] .vn-reading-controls{display:none}
 [data-vn-backlog-original=true] .vn-backlog-controls [data-vn-log-close]:is(:hover,:focus-visible){background-image:var(--vn-log-back-hover)}
 html[data-vn-motion=reduced] [data-vn-log-open=true]{animation:none}
 @media(prefers-reduced-motion:reduce){[data-vn-log-open=true]{animation:none}}
+
+/* Original PBD layout: fixed game colors independent of blog theme. */
+html[data-theme=moonlit] body .vn-stage :is(.vn-cover-art,.vn-map-picture),html[data-theme=moonlit] body :is(.vn-chapter,.vn-panel){background-image:var(--vn-day)}
+html[data-theme=moonlit] body .vn-title[data-vn-original=true] .vn-cover-art{background-image:var(--vn-original-frame)}
+html[data-theme=moonlit] body .vn-panel[data-vn-ui-original=true][data-vn-screen=gallery]{background-image:var(--vn-extra-art)}
+html[data-theme=moonlit] body .vn-map-picture[data-vn-map-art]{background-image:var(--vn-map-frame,var(--vn-day))}
+html body .vn-stage .vn-gallery-grid .scene-day{display:block!important;opacity:1!important}
+.vn-stage{color-scheme:light}
+.vn-next-new{color:#b05c28;font:700 12px/1 Arial,sans-serif}
+.vn-next-new[hidden]{display:none!important}
+.vn-stage [data-vn-afterstory-content][hidden],.vn-stage [data-vn-afterstory-locked][hidden]{display:none!important}
+@media(min-width:960px){
+ .vn-title[data-vn-original=true] .vn-title-menu{left:4.84375%;top:33.333333%;width:12.96875%;overflow:visible}
+ .vn-title[data-vn-original=true] .vn-menu{gap:.46875cqw}
+ html body .vn-title[data-vn-original=true] .vn-menu > :is(a,span){width:100%;height:2.96875cqw;min-height:0;position:relative;padding:0}
+ .vn-title[data-vn-title-menu-original=true] .vn-menu > :is(a,span)>span{width:100%;height:100%;background:var(--vn-normal-art) center/100% 100% no-repeat}
+ .vn-title[data-vn-title-menu-original=true] .vn-menu > a:is(:hover,:focus-visible)>span{background:var(--vn-hover-art) center/100% 100% no-repeat}
+ .vn-title[data-vn-title-menu-original=true] .vn-menu > a:active>span{background-image:var(--vn-pressed-art)}
+ .vn-title[data-vn-title-menu-original=true] .vn-menu > a:is(:hover,:focus-visible)>span::after{display:none}
+ .vn-title[data-vn-title-menu-original=true] .vn-menu > a:active{filter:none}
+ .vn-title[data-vn-title-menu-original=true] .vn-next-new{position:absolute;left:-3.984375cqw;top:4.296875cqw;width:3.671875cqw;height:1.25cqw;background:var(--vn-new-art) center/contain no-repeat;color:transparent}
+ .vn-load[data-vn-ui-original=true] .vn-load-body{padding:.546875cqw 2.734375cqw 0}
+ .vn-load[data-vn-ui-original=true] .vn-load-grid{grid-template-columns:46.015625cqw 46.015625cqw;grid-auto-rows:7.265625cqw;column-gap:2.5cqw;row-gap:0}
+ .vn-load[data-vn-ui-original=true] .vn-load-grid :is(.vn-save-slot,.vn-load-empty-slot){height:7.265625cqw;min-height:0;aspect-ratio:auto}
+ .vn-load[data-vn-ui-original=true] .vn-load-return{position:absolute;left:81.640625%;top:89.444444%;width:8.28125cqw;height:5.9375cqw}
+ [data-vn-backlog-original=true][data-vn-log-open=true]{width:min(100vw,177.7778dvh)!important;height:auto!important;aspect-ratio:16/9;inset:50% auto auto 50%!important;transform:translate(-50%,-50%);container-type:inline-size;padding:0!important;display:block}
+ [data-vn-backlog-original=true][data-vn-log-open=true] .vn-backlog-header{position:absolute;inset:0;border:0;padding:0;display:block;pointer-events:none}
+ [data-vn-backlog-original=true][data-vn-log-open=true] .vn-backlog-header>span{position:absolute;left:1.875%;top:3.194444%;font-size:2.1cqw}
+ [data-vn-backlog-original=true][data-vn-log-open=true] .vn-backlog-header h2{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ [data-vn-backlog-original=true][data-vn-log-open=true] [data-vn-log-scrollport]{position:absolute;left:1.796875%;top:8.472222%;width:88.984375%;height:80%;margin:0}
+ [data-vn-backlog-original=true][data-vn-log-open=true] .vn-backlog-controls{display:contents}
+ [data-vn-backlog-original=true][data-vn-log-open=true] .vn-backlog-controls>*{position:absolute;pointer-events:auto}
+ [data-vn-backlog-original=true][data-vn-log-open=true] [data-vn-log-scroll]{left:95.859375%;width:2.1875cqw;height:2.265625cqw;min-width:0;min-height:0}
+ [data-vn-backlog-original=true][data-vn-log-open=true] [data-vn-log-scroll=up]{top:10.138889%}
+ [data-vn-backlog-original=true][data-vn-log-open=true] [data-vn-log-scroll=down]{top:80.555556%}
+ [data-vn-backlog-original=true][data-vn-log-open=true] [data-vn-log-close]{left:90.78125%;top:89.444444%;width:8.203125cqw;height:5.9375cqw;min-height:0}
+}

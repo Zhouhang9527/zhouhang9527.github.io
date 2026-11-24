@@ -1,6 +1,6 @@
 import {resolveTitleState,localTitleFrame,resolveMapState,localMapFrame} from '../lib/vn-scenes';
 
-import {KEY,empty,isPath,parse,visit,savePosition,type Progress} from '../domain/reading-state';
+import {KEY,empty,isPath,parse,visit,savePosition,unlockMain,startAfterstory,type Progress} from '../domain/reading-state';
 import {capturePosition,restorePosition} from './vn-reading-position';
 let memory=empty(), volatile=false;
 function read():Progress{
@@ -16,7 +16,8 @@ function renderTitle(root:Document=document) {
  if(!title)return;
  let paths:string[]=[];
  try{paths=JSON.parse(title.dataset.vnPaths||'[]');}catch{}
- const progress=read(),allowed=new Set(paths);
+ const previous=read(),progress=unlockMain(previous,paths),allowed=new Set(paths);
+ if(progress!==previous)write(progress);
  const count=progress.completed.filter(path=>allowed.has(path)).length;
  const state=resolveTitleState(count);
  title.dataset.vnStage=state.id;
@@ -41,9 +42,13 @@ function renderTitle(root:Document=document) {
  if(placeholder)placeholder.hidden=!!target;
  const next=title.querySelector<HTMLAnchorElement>('[data-vn-next]');
  const noNext=title.querySelector<HTMLElement>('[data-vn-no-next]');
- const unread=count>0?paths.find(path=>!progress.completed.includes(path)&&path!==target):undefined;
- if(next){next.hidden=!unread;if(unread)next.href=unread;}
- if(noNext)noNext.hidden=!!unread;
+ const unlocked=progress.mainCleared;
+ title.dataset.vnTitleUnlocked=String(unlocked);
+ if(next)next.hidden=!unlocked;
+ if(noNext)noNext.hidden=unlocked;
+ const extra=title.querySelector<HTMLElement>('[data-vn-extra]'),lockedExtra=title.querySelector<HTMLElement>('[data-vn-no-extra]'),badge=title.querySelector<HTMLElement>('[data-vn-next-new]');
+ if(extra)extra.hidden=!unlocked;if(lockedExtra)lockedExtra.hidden=unlocked;
+ if(badge)badge.hidden=!unlocked||progress.afterstoryStarted;
 }
 function renderArticle(recordVisit:boolean) {
  const article=document.querySelector<HTMLElement>('[data-vn-article]');
@@ -134,7 +139,14 @@ function renderMap(){
   const url=localMapFrame(state.frame);art.style.setProperty('--vn-map-frame',`url('${url}')`);
  }
 }
-function refresh(){renderTitle();renderArticle(false);renderLibrary();renderChapter();renderMap();}
+function renderAfterstory(){
+ const root=document.querySelector<HTMLElement>('[data-vn-afterstory]');if(!root)return;
+ let paths:string[]=[];try{paths=JSON.parse(root.dataset.vnPaths||'[]');}catch{}
+ const previous=read(),state=startAfterstory(unlockMain(previous,paths));if(state!==previous)write(state);
+ root.querySelectorAll<HTMLElement>('[data-vn-afterstory-content]').forEach(el=>el.hidden=!state.mainCleared);
+ root.querySelectorAll<HTMLElement>('[data-vn-afterstory-locked]').forEach(el=>el.hidden=state.mainCleared);
+}
+function refresh(){renderAfterstory();renderTitle();renderArticle(false);renderLibrary();renderChapter();renderMap();}
 const RESUME='ginka.vn.resume.v1';
 let current:HTMLElement|null=null, timer=0, dirty=false, pendingResume:string|null=null, restoreFrame=0;
 function flush(){
@@ -167,7 +179,7 @@ function mount(){
    restoreFrame=requestAnimationFrame(()=>{if(current===next&&next.isConnected)restorePosition(next,position);});
   }
  }else{renderArticle(false);}
- renderTitle();renderLibrary();renderChapter();renderMap();
+ renderTitle();renderLibrary();renderChapter();renderMap();renderAfterstory();
 }
 document.addEventListener('click',event=>{
  if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;

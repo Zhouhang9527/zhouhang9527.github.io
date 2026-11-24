@@ -272,14 +272,14 @@
       "notice": "Background and atlas visually identified from original PNGs. Control rectangles measured from image; web settings group geometry is adapted."
     },
     "titleMenu": {
-      "notice": "Original normal black glyphs verified from decoded titleMenu pixels, including rotated CONTINUE and SYSTEM. Hover blue labels cropped from same sheet; coordinates and progress mapping are adapted to blog.",
+      "notice": "Coordinates and three state slices from original title PBD. Web routing and unlock rules are adapted.",
       "canvas": [
         1280,
         720
       ],
       "origin": [
-        72,
-        250
+        62,
+        240
       ],
       "rowHeight": 44,
       "order": [
@@ -296,59 +296,59 @@
         "CONTINUE": [
           0,
           34,
-          124,
-          32
+          125,
+          34
         ],
         "NEXT": [
-          155,
+          152,
           86,
-          65,
-          32
+          69,
+          34
         ],
         "START": [
           0,
-          103,
-          77,
-          32
+          102,
+          78,
+          34
         ],
         "LOAD": [
           79,
           86,
-          76,
-          32
+          73,
+          34
         ],
         "SYSTEM": [
           125,
           34,
           94,
-          32
+          34
         ],
         "EXTRA": [
           0,
           68,
-          77,
-          32
+          79,
+          34
         ],
         "INFORMATION": [
           0,
           0,
           160,
-          33
+          34
         ],
         "EXIT": [
           79,
           164,
-          57,
-          32
+          58,
+          34
         ]
       },
       "normal": {
         "CONTINUE": {
           "rect": [
-            17,
-            135,
-            17,
-            110
+            18,
+            136,
+            16,
+            107
           ],
           "rotate": 90
         },
@@ -356,16 +356,16 @@
           "rect": [
             79,
             214,
-            54,
+            51,
             16
           ],
           "rotate": 0
         },
         "START": {
           "rect": [
-            154,
+            155,
             200,
-            67,
+            62,
             16
           ],
           "rotate": 0
@@ -374,25 +374,25 @@
           "rect": [
             79,
             198,
-            54,
+            55,
             16
           ],
           "rotate": 0
         },
         "SYSTEM": {
           "rect": [
-            51,
-            135,
-            17,
-            80
+            52,
+            136,
+            16,
+            77
           ],
           "rotate": 90
         },
         "EXTRA": {
           "rect": [
-            154,
+            155,
             216,
-            67,
+            61,
             16
           ],
           "rotate": 0
@@ -401,20 +401,417 @@
           "rect": [
             79,
             120,
-            144,
+            142,
             16
           ],
           "rotate": 0
         },
         "EXIT": {
           "rect": [
-            157,
+            160,
             16,
-            50,
+            40,
             16
           ],
           "rotate": 0
         }
+      },
+      "buttonSize": [
+        166,
+        38
+      ],
+      "pbdSource": "assets/data/_hxv4_hash/AF5FB0494CCF915F/000007cc_7AF5CCD2611C1726B8193DB5792A3EB877375CC5813201541C451502BB4C700F.pbd.json",
+      "states": {
+        "CONTINUE": {
+          "bounds": [
+            62,
+            240,
+            166,
+            38
+          ],
+          "normal": {
+            "rect": [
+              18,
+              136,
+              16,
+              107
+            ],
+            "rotate": 90,
+            "offset": [
+              11,
+              11
+            ]
+          },
+          "pressed": {
+            "rect": [
+              0,
+              136,
+              18,
+              109
+            ],
+            "rotate": 90,
+            "offset": [
+              10,
+              10
+            ]
+          },
+          "hover": {
+            "rect": [
+              0,
+              34,
+              125,
+              34
+            ],
+            "rotate": 0,
+            "offset": [
+              2,
+              2
+            ]
+          }
+        },
+        "NEXT": {
+          "bounds": [
+            62,
+            284,
+            166,
+            38
+          ],
+          "normal": {
+            "rect": [
+              79,
+              214,
+              51,
+              16
+            ],
+            "rotate": 0,
+            "offset": [
+              12,
+              11
+            ]
+          },
+          "pressed": {
+            "rect": [
+              160,
+              136,
+              53,
+              18
+            ],
+            "rotate": 0,
+            "offset": [
+              11,
+              10
+            ]
+          },
+          "hover": {
+            "rect": [
+              152,
+              86,
+              69,
+              34
+            ],
+            "rotate": 0,
+            "offset": [
+              3,
+              2
+            ]
+          }
+        },
+        "START": {
+          "bounds": [
+            62,
+            328,
+            166,
+            38
+          ],
+          "normal": {
+            "rect": [
+              155,
+              200,
+              62,
+              16
+            ],
+            "rotate": 0,
+            "offset": [
+              10,
+              11
+            ]
+          },
+          "pressed": {
+            "rect": [
+              137,
+              164,
+              64,
+              18
+            ],
+            "rotate": 0,
+            "offset": [
+              9,
+              10
+            ]
+          },
+          "hover": {
+            "rect": [
+              0,
+              102,
+              78,
+              34
+            ],
+            "rotate": 0,
+            "offset": [
+              2,
+              2
+            ]
+          }
+        },
+        "LOAD": {
+          "bounds": [
+            62,
+            372,
+            166,
+            38
+          ],
+          "normal": {
+            "rect": [
+              79,
+              198,
+              55,
+              16
+            ],
+            "rotate": 0,
+            "offset": [
+              12,
+              11
+            ]
+          },
+          "pressed": {
+            "rect": [
+              155,
+              182,
+              57,
+              18
+            ],
+            "rotate": 0,
+            "offset": [
+              11,
+              10
+            ]
+          },
+          "hover": {
+            "rect": [
+              79,
+              86,
+              73,
+              34
+            ],
+            "rotate": 0,
+            "offset": [
+              3,
+              2
+            ]
+          }
+        },
+        "SYSTEM": {
+          "bounds": [
+            62,
+            416,
+            166,
+            38
+          ],
+          "normal": {
+            "rect": [
+              52,
+              136,
+              16,
+              77
+            ],
+            "rotate": 90,
+            "offset": [
+              10,
+              11
+            ]
+          },
+          "pressed": {
+            "rect": [
+              34,
+              136,
+              18,
+              79
+            ],
+            "rotate": 90,
+            "offset": [
+              9,
+              10
+            ]
+          },
+          "hover": {
+            "rect": [
+              125,
+              34,
+              94,
+              34
+            ],
+            "rotate": 0,
+            "offset": [
+              2,
+              2
+            ]
+          }
+        },
+        "EXTRA": {
+          "bounds": [
+            62,
+            460,
+            166,
+            38
+          ],
+          "normal": {
+            "rect": [
+              155,
+              216,
+              61,
+              16
+            ],
+            "rotate": 0,
+            "offset": [
+              12,
+              11
+            ]
+          },
+          "pressed": {
+            "rect": [
+              137,
+              182,
+              18,
+              63
+            ],
+            "rotate": 90,
+            "offset": [
+              11,
+              10
+            ]
+          },
+          "hover": {
+            "rect": [
+              0,
+              68,
+              79,
+              34
+            ],
+            "rotate": 0,
+            "offset": [
+              3,
+              2
+            ]
+          }
+        },
+        "INFORMATION": {
+          "bounds": [
+            62,
+            504,
+            166,
+            38
+          ],
+          "normal": {
+            "rect": [
+              79,
+              120,
+              142,
+              16
+            ],
+            "rotate": 0,
+            "offset": [
+              12,
+              11
+            ]
+          },
+          "pressed": {
+            "rect": [
+              79,
+              68,
+              144,
+              18
+            ],
+            "rotate": 0,
+            "offset": [
+              11,
+              10
+            ]
+          },
+          "hover": {
+            "rect": [
+              0,
+              0,
+              160,
+              34
+            ],
+            "rotate": 0,
+            "offset": [
+              3,
+              2
+            ]
+          }
+        },
+        "EXIT": {
+          "bounds": [
+            62,
+            548,
+            166,
+            38
+          ],
+          "normal": {
+            "rect": [
+              160,
+              16,
+              40,
+              16
+            ],
+            "rotate": 0,
+            "offset": [
+              12,
+              11
+            ]
+          },
+          "pressed": {
+            "rect": [
+              34,
+              215,
+              42,
+              18
+            ],
+            "rotate": 0,
+            "offset": [
+              11,
+              10
+            ]
+          },
+          "hover": {
+            "rect": [
+              79,
+              164,
+              58,
+              34
+            ],
+            "rotate": 0,
+            "offset": [
+              3,
+              2
+            ]
+          }
+        }
+      },
+      "newBadge": {
+        "bounds": [
+          11,
+          295,
+          47,
+          16
+        ],
+        "rect": [
+          160,
+          0,
+          47,
+          16
+        ]
       }
     },
     "choiceGeometry": {
@@ -867,7 +1264,105 @@
       "headerHeight": 111,
       "tabsHeight": 40,
       "contentBottom": 660,
-      "notice": "Row sprites and canvas bands identified from original assets. Ten-slot blog pagination and row placement are inferred from available geometry, not yet verified against a running original."
+      "notice": "PBD 00000790: item_pos00=(35,161), item_pos11=(656,254); 10 slots, 15 numbered normal pages plus quick mode. Blog filters remain adapted.",
+      "first": [
+        35,
+        158
+      ],
+      "step": [
+        621,
+        93
+      ],
+      "pages": 16,
+      "help": [
+        757,
+        34,
+        510,
+        69
+      ],
+      "back": [
+        1045,
+        644,
+        106,
+        76
+      ],
+      "tabs": [
+        [
+          71,
+          111,
+          190,
+          40
+        ],
+        [
+          261,
+          111,
+          190,
+          40
+        ],
+        [
+          451,
+          111,
+          190,
+          40
+        ],
+        [
+          641,
+          111,
+          189,
+          40
+        ]
+      ]
+    },
+    "backlogGeometry": {
+      "block": [
+        23,
+        61,
+        1139,
+        164
+      ],
+      "caption": [
+        24,
+        23,
+        225,
+        33
+      ],
+      "top": [
+        1227,
+        39,
+        28,
+        29
+      ],
+      "up": [
+        1227,
+        73,
+        28,
+        29
+      ],
+      "slider": [
+        1201,
+        112,
+        79,
+        460
+      ],
+      "down": [
+        1227,
+        580,
+        28,
+        29
+      ],
+      "end": [
+        1227,
+        614,
+        28,
+        29
+      ],
+      "back": [
+        1162,
+        644,
+        105,
+        76
+      ],
+      "source": "00000735.pbd.json"
     }
   },
   "map": {
@@ -914,8 +1409,16 @@
     "controlMs": 160,
     "systemCrossfadeMs": 300,
     "backlogCrossfadeMs": 300,
-    "backlogJumpMs": 1000,
+    "backlogJumpMs": 300,
     "rulePreviewMs": 300,
-    "notice": "System panel crossfade times measured from extracted KAG scripts; control feedback and optional rule preview are blog adaptations."
+    "notice": "System panel crossfade times measured from extracted KAG scripts; control feedback and optional rule preview are blog adaptations.",
+    "title": {
+      "backgroundMs": 300,
+      "logoMs": 500,
+      "holdMs": 500,
+      "menuMs": 200,
+      "restoreMs": 500,
+      "leaveMs": 1000
+    }
   }
 }

@@ -19,12 +19,16 @@ export function localVNUI(){
      assets.set(prefix+key+'-'+name+'.png',encodePNG(cropAtlas(image,rect)));
     }
     if(key==='titleMenu'){
-     for(const [name,slice] of Object.entries(manifest.privateUI.titleMenu.normal)){
-      assets.set(prefix+'title-normal-'+name.toLowerCase()+'.png',encodePNG(cropAtlas(image,slice.rect,slice.rotate)));
+     for(const [name,button] of Object.entries(manifest.privateUI.titleMenu.states)){
+      for(const state of ['normal','hover','pressed']){
+       const slice=button[state],sprite=cropAtlas(image,slice.rect,slice.rotate),[ox,oy]=slice.offset,[,,width,height]=button.bounds;
+       if(ox<0||oy<0||ox+sprite.width>width||oy+sprite.height>height)throw Error('Invalid logical title button '+name+' '+state);
+       const pixels=Buffer.alloc(width*height*4);
+       for(let y=0;y<sprite.height;y++)sprite.pixels.copy(pixels,((oy+y)*width+ox)*4,y*sprite.width*4,(y+1)*sprite.width*4);
+       assets.set(prefix+'title-'+state+'-'+name.toLowerCase()+'.png',encodePNG({width,height,pixels}));
+      }
      }
-     for(const [name,rect] of Object.entries(manifest.privateUI.titleMenu.hover)){
-      assets.set(prefix+'title-hover-'+name.toLowerCase()+'.png',encodePNG(cropAtlas(image,rect)));
-     }
+     assets.set(prefix+'title-new.png',encodePNG(cropAtlas(image,manifest.privateUI.titleMenu.newBadge.rect)));
     }
    }else assets.set(prefix+kind+key+'.png',bytes);
    }
