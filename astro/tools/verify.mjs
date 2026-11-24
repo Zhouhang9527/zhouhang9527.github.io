@@ -46,3 +46,11 @@ assert.match(home,/data-vn-original="false"/);
 assert.doesNotMatch(home,/data-vn-character-art|--vn-original-frame\s*:/);
 assert.ok(!fs.existsSync('dist/__ginka_local_title__'),'Private original title CG leaked');
 console.log('PASS complete CG frame contract and production isolation');
+
+assert.doesNotMatch(home,/__ginka_local_font__|Ginka Local UI/,'Private font reference leaked');
+assert.ok(!fs.existsSync('dist/__ginka_local_font__'),'Private font files leaked');
+const vnCss=fs.readFileSync('dist/css/vn-stage.css','utf8');
+assert.match(vnCss,/--vn-font-menu:/);
+assert.match(vnCss,/--vn-font-ui:/);
+assert.doesNotMatch(vnCss,/__ginka_local_font__|@font-face/);
+console.log('PASS VN typography roles and private font isolation');
