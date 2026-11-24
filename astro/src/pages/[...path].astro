@@ -1,0 +1,16 @@
+---
+import {render,getEntry} from 'astro:content';
+import {routes} from '../lib/site';
+import Layout from '../layouts/Layout.astro';
+import Article from '../components/Article.astro';
+import Collection from '../components/Collection.astro';
+export async function getStaticPaths(){return routes();}
+const props=Astro.props;
+const {kind,post,title}=props;
+const page=(kind==='about'||kind==='links')?await getEntry('pages',kind):null;
+const rendered=page?await render(page):null;
+const Content=rendered?.Content;
+---
+<Layout title={post?.data.title||title} description={post?.data.description} kind={kind} article={!!post}>
+ {post?<Article post={post}/>:Content?<section class="journal-reading-shell"><article class="post-block"><h1>{title}</h1><div class="post-body"><Content/></div></article></section>:<Collection {...props}/>}
+</Layout>
