@@ -70,6 +70,35 @@ const baseUrl = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4000';
     });
     await article.click();
     await page.waitForLoadState('networkidle');
+    await check('code toolbar icon-only wrap toggle in both themes', async () => {
+      const wrap = page.locator('.journal-code-wrap').first();
+      if (!await wrap.count()) return true; // Article without a code listing.
+      const initialMode = await page.evaluate(() => window.GINKA_THEME.mode);
+      try {
+        for (const mode of ['day', 'moonlit']) {
+          await page.evaluate(mode => window.GINKA_THEME.set(mode), mode);
+          const initial = await wrap.getAttribute('aria-pressed');
+          if (initial === 'true') await wrap.click();
+          const info = await wrap.evaluate(button => {
+            const rect = button.getBoundingClientRect();
+            const copy = button.parentElement.querySelector('.journal-copy').getBoundingClientRect();
+            return { icon: !!button.querySelector('svg[aria-hidden="true"]'),
+              label: button.getAttribute('aria-label'), text: button.textContent.trim(),
+              width: rect.width, height: rect.height, aligned: Math.abs(rect.height - copy.height) < 1 };
+          });
+          if (!info.icon || info.label !== '自动换行' || info.text || info.width < 28 || !info.aligned) return false;
+          await wrap.click();
+          if (await wrap.getAttribute('aria-pressed') !== 'true') return false;
+          if (await wrap.evaluate(button => button.closest('.journal-code').dataset.codeWrap) !== 'on') return false;
+          await wrap.click();
+          if (await wrap.getAttribute('aria-pressed') !== 'false') return false;
+          if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)) return false;
+        }
+        return true;
+      } finally {
+        await page.evaluate(mode => window.GINKA_THEME.set(mode), initialMode);
+      }
+    });
     await check('pjax metadata follows article URL', async () => {
       return page.evaluate(() => {
         const canonical = document.querySelector('link[rel="canonical"]');

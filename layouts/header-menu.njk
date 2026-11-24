@@ -7,7 +7,7 @@
     <li class="menu-item menu-item-about"><a href="{{ url_for('/about/') }}" rel="section">关于</a></li>
     <li class="menu-item menu-item-more">
       <details class="journal-mobile-menu">
-        <summary>更多 <span aria-hidden="true">⌄</span></summary>
+        <summary>更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></summary>
         <ul class="journal-mobile-links">
           {% for node in theme.main_menu %}
             {% if node.name in ['tags', 'categories', 'links', '友链'] %}{{ menu_item.render(node) | trim }}{% endif %}

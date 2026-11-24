@@ -31,8 +31,8 @@ body .post-body .journal-table-hint { font-size: 12px; color: var(--journal-mute
 .journal-table-hint[hidden] { display: none; }
 
 body .post-body .journal-code { margin: 1.5em 0; min-width: 0; max-width: 100%; border: 1px solid var(--journal-line); border-radius: var(--journal-radius-control); overflow: hidden; background: #f6f8fb; }
-.journal-code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 6px 0 14px; min-height: 34px; background: #e9f0f6; border-bottom: 1px solid var(--journal-line); }
-.journal-code-toolbar > span { font: 12px Consolas, monospace; letter-spacing: 1px; color: #526a80; }
+.journal-code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 6px 3px 14px; min-height: 36px; box-sizing: border-box; background: #e9f0f6; border-bottom: 1px solid var(--journal-line); }
+.journal-code-language { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 11px/1.5 var(--font-mono); letter-spacing: .08em; color: var(--journal-muted); }
 body .post-body .journal-code :is(figure.highlight,pre) { margin: 0 !important; padding-top: 0; border: 0; border-radius: 0; box-shadow: none; max-width: 100%; font-size: 14px; line-height: 1.75; }
 body .post-body .journal-code > pre { padding: 14px 16px; overflow-x: auto; white-space: pre; }
 body .post-body .journal-code figure.highlight { overflow-x: auto; padding-bottom: 12px; }
@@ -74,7 +74,7 @@ body #music-player button:not(.music-playlist-item), body .search-popup button, 
 body .journal-copy:hover, body .journal-feedback-actions button:hover { background: var(--music-hover, #e0ebf4) !important; }
 body .journal-copy:disabled { cursor: wait; opacity: .65; }
 .journal-copy-buffer { position: fixed; top: 0; left: -9999px; }
-.journal-code-actions { display: inline-flex; align-items: center; gap: 8px; }
+.journal-code-actions { display: inline-flex; flex: none; align-items: center; gap: 3px; }
 
 .journal-feedback { padding: 24px; margin: 32px 0; border: 1px solid var(--journal-line); border-radius: var(--journal-radius); background: var(--journal-surface-soft); text-align: center; }
 body .journal-feedback h2 { margin: 0 0 16px; font-family: inherit; font-weight: 600; font-size: 17px; line-height: 1.6; color: #354f67; text-shadow: none; }
@@ -232,22 +232,44 @@ body .journal-reading-shell .post-body img {
   background: #fff;
 }
 body .journal-reading-shell .journal-code-toolbar > span { letter-spacing: .08em; }
-body .post-body .journal-code .journal-copy {
+/* The wrap and copy controls share the same glyph, hit target and state system. */
+body .post-body .journal-code .journal-code-actions > button {
   display: inline-grid;
   flex: 0 0 auto;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  min-height: 28px;
+  width: 30px;
+  height: 30px;
+  min-height: 30px;
+  margin: 0;
   padding: 0;
-  border: 0 !important;
-  border-radius: 3px;
+  border: 1px solid transparent !important;
+  border-radius: var(--journal-radius-control);
   background: transparent !important;
+  color: var(--control-ink) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: pointer;
+  line-height: 1;
 }
-body .post-body .journal-code .journal-copy:is(:hover, :focus-visible) { background: #e5eef5 !important; }
-body .post-body .journal-code .journal-copy[data-copy-state='copied'] { color: #39745b !important; }
-body .post-body .journal-code .journal-copy svg { display: block; width: 16px; height: 16px; pointer-events: none; }
-@media (pointer: coarse) { body .post-body .journal-code .journal-copy { width: 36px; height: 36px; min-height: 36px; } }
+body .post-body .journal-code .journal-code-actions > button:is(:hover, :focus-visible) {
+  background: var(--control-hover) !important;
+  color: var(--journal-ink) !important;
+}
+body .post-body .journal-code .journal-code-actions > button:focus-visible {
+  outline: 2px solid var(--journal-focus);
+  outline-offset: 1px;
+}
+body .post-body .journal-code .journal-code-actions > .journal-code-wrap[aria-pressed='true'] {
+  background: var(--control-selected) !important;
+  border-color: var(--control-selected-border) !important;
+  color: var(--journal-blue) !important;
+}
+body .post-body .journal-code .journal-code-actions > .journal-copy[data-copy-state='copied'] { color: var(--control-success) !important; }
+body .post-body .journal-code .journal-code-actions > .journal-copy[data-copy-state='failed'] { color: var(--control-error) !important; }
+body .post-body .journal-code .journal-code-actions > button svg { display: block; width: 17px; height: 17px; pointer-events: none; }
+@media (pointer: coarse) {
+  body .post-body .journal-code .journal-code-actions > button { width: 44px; height: 44px; min-height: 44px; }
+}
 
 .journal-about-banner {
   position: relative;
@@ -312,16 +334,3 @@ body .post-body .journal-code .journal-copy svg { display: block; width: 16px; h
 @media print {
   .journal-reading-progress, .journal-outline { display: none !important; }
 }
-
-/* 代码块「自动换行」开关 */
-.journal-code-wrap {
-  display: inline-flex; align-items: center; gap: 6px;
-  min-height: 28px; margin-right: 6px; padding: 0 9px;
-  border: 1px solid var(--journal-line); border-radius: var(--journal-radius-control);
-  background: var(--journal-surface); color: #4a6478;
-  font: 400 12px/1 var(--font-body); cursor: pointer;
-}
-.journal-code-wrap[aria-pressed='true'] { border-color: #7ba6c2; color: #2d6286; background: #e4eef7; }
-.journal-code-wrap:focus-visible { outline: 2px solid var(--journal-focus); outline-offset: 2px; }
-html[data-theme='moonlit'] .journal-code-wrap { background: #1b2734; border-color: var(--journal-line); color: var(--body-text); }
-html[data-theme='moonlit'] .journal-code-wrap[aria-pressed='true'] { background: #24333f; border-color: #476a8b; color: var(--music-accent, #91c5f4); }

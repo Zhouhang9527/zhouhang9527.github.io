@@ -44,6 +44,12 @@ html[data-theme='moonlit'] {
   --journal-surface: var(--surface-float);
   --journal-surface-soft: var(--surface-nav);
   --journal-focus: var(--blue);
+  --control-ink: var(--muted);
+  --control-hover: var(--surface-float);
+  --control-selected: #253c56;
+  --control-selected-border: #45627e;
+  --control-success: #a8cfc4;
+  --control-error: #e5a1a1;
   --journal-shadow: 0 2px 14px #00000059;
   --content-bg-color: var(--surface-read);
   --text-color: var(--ink);
@@ -416,7 +422,7 @@ html[data-theme='moonlit'] .journal-update-notice button {
 html[data-theme='moonlit'] body .post-body :is(h1, h2, h3, h4) { font-weight: 600; }
 html[data-theme='moonlit'] body .post-body :is(strong, b) { font-weight: 600; }
 /* 浅色 hover / active 残留清理 */
-html[data-theme='moonlit'] :is(.journal-copy:hover, .journal-feedback-actions button:hover) { background: #24333f !important; }
+html[data-theme='moonlit'] .journal-feedback-actions button:hover { background: var(--control-hover) !important; }
 html[data-theme='moonlit'] body .post-body .journal-code-toolbar { border-bottom-color: var(--rule); }
 html[data-theme='moonlit'] :is(.journal-taxonomy-item, .journal-archive-year) :is(a, button):hover { background: #1b2734 !important; }
 html[data-theme='moonlit'] .journal-archive-link:hover { background: #1b2734 !important; }
@@ -491,8 +497,6 @@ html[data-theme='moonlit'] body .post-body .journal-table-scroll tbody tr:hover 
 html[data-theme='moonlit'] body .journal-feedback h2 { color: var(--ink); }
 html[data-theme='moonlit'] body .journal-feedback-actions button { color: var(--body-text) !important; }
 html[data-theme='moonlit'] body .journal-feedback .post-like-btn[aria-pressed="true"] { background: var(--surface-float) !important; border-color: var(--blue) !important; }
-html[data-theme='moonlit'] body .post-body .journal-code .journal-copy:is(:hover, :focus-visible) { background: var(--surface-float) !important; }
-html[data-theme='moonlit'] body .post-body .journal-code .journal-copy[data-copy-state='copied'] { color: #a8cfc4 !important; }
 html[data-theme='moonlit'] body .journal-reading-shell .post-body .journal-code { background: var(--code-bg); }
 html[data-theme='moonlit'] body .post-body .journal-code .journal-code-lines { background: transparent; }
 html[data-theme='moonlit'] body .search-popup .search-header { background: var(--surface-nav) !important; border-color: var(--rule); }
@@ -537,3 +541,15 @@ html[data-theme='moonlit'] #atri-launcher-shell .atri-launcher__status:not(:empt
     background: linear-gradient(180deg, #0c14244d, transparent 22%, transparent 34%, #0c1424a6 52%, var(--bg-canvas) 76%);
   }
 }
+
+/* Small controls should inherit the palette instead of a separate glass theme. */
+html[data-theme='moonlit'] body .journal-sidebar-edge {
+  background: var(--surface-float);
+  border-color: var(--rule);
+  box-shadow: none;
+}
+html[data-theme='moonlit'] body .journal-sidebar-edge:hover { background: var(--control-selected); }
+html[data-theme='moonlit'] body .search-result-list > li { border-color: var(--rule); }
+html[data-theme='moonlit'] body .search-result-title { color: var(--ink) !important; }
+html[data-theme='moonlit'] body .search-keyword { background: var(--control-selected); color: var(--blue); }
+html[data-theme='moonlit'] body .journal-reading-shell .journal-outline { scrollbar-color: #40566d transparent; }

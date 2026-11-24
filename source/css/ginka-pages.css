@@ -74,7 +74,10 @@ body .sidebar .sidebar-inner { padding: 20px 22px 34px !important; border-radius
 .journal-sidebar-cover { position: relative; height: 136px; overflow: hidden; background: linear-gradient(160deg, #e2ebf5, #c9d8e6); }
 #journal-sidebar > .journal-sidebar-cover > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 40% 38%; border: 0; border-radius: 0; padding: 0; margin: 0; box-shadow: none; transform: none; }
 .journal-sidebar-cover > span { position: absolute; bottom: 13px; left: 20px; font: 12px var(--font-mono, Consolas, monospace); color: #334d6b; letter-spacing: 1.5px; }
-.journal-sidebar-close { position: absolute; top: 10px; right: 12px; width: 34px; height: 34px; padding: 0; border-radius: 50%; border: 1px solid #ffffffb0; background: #f7f9fcc9; color: #536a84 !important; font: 23px/1 sans-serif; cursor: pointer; }
+.journal-sidebar-close { position: absolute; top: 10px; right: 12px; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border-radius: var(--journal-radius-control); border: 1px solid var(--journal-line); background: var(--journal-surface); color: var(--control-ink) !important; cursor: pointer; }
+.journal-sidebar-close svg { display: block; width: 17px; height: 17px; pointer-events: none; }
+.journal-sidebar-close:is(:hover, :focus-visible) { background: var(--control-hover); }
+@media (pointer: coarse) { .journal-sidebar-close { width: 44px; height: 44px; } }
 body .sidebar .sidebar-nav { padding: 0 0 14px; margin: 0 0 16px; border-bottom: 1px solid #d7e2ee; }
 body .sidebar .sidebar-nav li { color: #71859b !important; border-radius: var(--journal-radius-tag); font-size: 12px; padding: 4px 8px; }
 body .sidebar .sidebar-toc-active .sidebar-nav-toc, body .sidebar .sidebar-overview-active .sidebar-nav-overview { color: #345977 !important; background: #e5edf6; border-bottom-color: transparent; }
@@ -146,7 +149,7 @@ body #journal-sidebar #music-info { grid-row: 1; grid-column: 2/5; display: flex
 body #music-info > div:first-child { flex-wrap: wrap; gap: 2px 6px; }
 body #music-title { font-size: 13px !important; color: var(--music-title) !important; }
 body #music-time { font-size: 12px !important; color: var(--music-text) !important; white-space: nowrap; margin-left: 0 !important; }
-body #journal-sidebar #music-progress { display: block !important; height: 8px !important; background: var(--music-track) !important; border-radius: var(--journal-radius-tag); }
+body #journal-sidebar #music-progress { display: block !important; height: 5px !important; background: var(--music-track) !important; border-radius: var(--journal-radius-tag); }
 body #music-progress-bar { background: var(--music-accent) !important; }
 body #journal-sidebar #music-player-main > button { display: flex !important; width: 40px !important; height: 40px !important; padding: 0 !important; justify-self: center; background: transparent !important; border: 0 !important; border-radius: var(--journal-radius-control) !important; box-shadow: none !important; }
 body #music-player-main > button:hover { background: var(--music-hover) !important; transform: none !important; }
