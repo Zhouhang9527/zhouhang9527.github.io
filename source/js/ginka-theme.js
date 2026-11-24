@@ -123,6 +123,19 @@
   }
 
   function syncScenes(resolved) {
+    // The drawer survives PJAX. Read its artwork from the newly swapped main.
+    var main = document.getElementById('main-content');
+    var cover = document.querySelector('#journal-sidebar [data-sidebar-src-day]');
+    if (main && cover) {
+      var day = main.getAttribute('data-sidebar-scene-day');
+      var night = main.getAttribute('data-sidebar-scene-night');
+      if (day && night) {
+        cover.setAttribute('data-sidebar-src-day', day);
+        cover.setAttribute('data-sidebar-src-night', night);
+        var chosen = resolved === 'moonlit' ? night : day;
+        if (document.body.classList.contains('sidebar-active') && cover.getAttribute('src') !== chosen) cover.src = chosen;
+      }
+    }
     var links = document.querySelectorAll('.journal-scene-card[data-full-day]');
     for (var index = 0; index < links.length; index += 1) {
       var link = links[index];
@@ -153,7 +166,7 @@
       try { window.localStorage.setItem(STORAGE_KEY, mode); } catch (error) {}
     }
     var colorMeta = document.querySelector('meta[name="theme-color"]:not([media])');
-    if (colorMeta) colorMeta.setAttribute('content', resolved === 'moonlit' ? '#111923' : '#f3f6fa');
+    if (colorMeta) colorMeta.setAttribute('content', resolved === 'moonlit' ? '#111923' : '#f4f7fa');
     syncButtons(mode);
     syncScenes(resolved);
     syncGiscus(resolved);

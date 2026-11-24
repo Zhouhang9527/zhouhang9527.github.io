@@ -8,12 +8,12 @@
   unicode-range: U+0000-00FF, U+2000-206F, U+2190-2199;
 }
 :root {
-  --ink: #1f3145;
-  --blue: #3676a0;
-  --bg-canvas: #f3f6fa;
-  --paper: #fdfdfb;
-  --muted: #52667b;
-  --rule: #d8e2ec;
+  --ink: #263748;
+  --blue: #356c91;
+  --bg-canvas: #f4f7fa;
+  --paper: #fcfdfd;
+  --muted: #596c7e;
+  --rule: #dce4eb;
   --book-width: 1140px;
   --book-gutter: 32px;
   --book-header: 72px;
@@ -27,19 +27,19 @@
   --journal-muted: var(--muted);
   --journal-line: var(--rule);
   --journal-surface: #fff;
-  --journal-surface-soft: #f5f8fc;
+  --journal-surface-soft: #f0f4f7;
   --journal-radius: 6px;
   --journal-radius-control: 4px;
   --journal-radius-tag: 3px;
   --journal-shadow: 0 2px 10px #2c456409;
   --journal-focus: var(--blue);
-  --control-ink: #52667b;
-  --control-hover: #e9f0f6;
-  --control-selected: #e2edf6;
-  --control-selected-border: #a9c2d6;
+  --control-ink: #596c7e;
+  --control-hover: #eaf0f4;
+  --control-selected: #e2edf3;
+  --control-selected-border: #aac2d3;
   --control-success: #39745b;
   --control-error: #a94452;
-  --scroll-thumb: #b5c3d0;
+  --scroll-thumb: #b5c3cc;
   --scroll-thumb-hover: #879caf;
   --surface-divider: #e5ebf1;
   --content-bg-color: #fff;
@@ -225,7 +225,7 @@ body .header .journal-mobile-links :is(a, button):is(:hover, :focus-visible) { b
   inset: 0;
   pointer-events: none;
   background: linear-gradient(90deg, #f8fbfdf7 0%, #f8fbfde8 20%, #f6f9fcbb 34%, #f4f8fc52 48%, #f3f7fb1a 62%, #f3f7fb00 78%),
-              linear-gradient(180deg, #f8fbfd84, transparent 26%, transparent 72%, #f3f6faab 96%, var(--bg-canvas));
+              linear-gradient(180deg, #f8fbfd84, transparent 26%, transparent 72%, #f4f7faab 96%, var(--bg-canvas));
 }
 .journal-hero-light, .journal-hero-dust { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
 .journal-hero-inner { position: relative; z-index: 4; padding: clamp(70px, 11vh, 118px) 0 clamp(84px, 12vh, 134px); }
@@ -432,7 +432,7 @@ body .search-popup .search-header { border-radius: 6px 6px 0 0 !important; backg
   .journal-hero { display: block; min-height: 510px; }
   .journal-hero-image { inset: -5px -5px auto; height: 359px; }
   .journal-hero-art { object-position: 67% 31%; }
-  .journal-hero::before { background: linear-gradient(180deg, #f7fafc85, #f7fafc00 21%, #f4f8fc14 39%, #f3f6faeb 61%, var(--bg-canvas) 76%); }
+  .journal-hero::before { background: linear-gradient(180deg, #f7fafc85, #f7fafc00 21%, #f4f8fc14 39%, #f4f7faeb 61%, var(--bg-canvas) 76%); }
   .journal-hero-inner { padding-top: clamp(169px, 39vw, 217px); padding-bottom: 66px; }
   .journal-hero .journal-game-title { font-size: clamp(31px, 7.5vw, 45px); letter-spacing: .1em; margin: 9px 0 11px; }
   .journal-hero-copy > p { font-size: 13px; margin-bottom: 15px; }

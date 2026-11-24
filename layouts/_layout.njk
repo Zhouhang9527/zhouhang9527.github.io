@@ -31,7 +31,8 @@
       {%- endif %}
     </div>
 
-    <div id="main-content" class="main-inner {% block class %}{% endblock %}">
+    {% set drawerScene = ginka_scene(page, 'sidebar') %}
+    <div id="main-content" class="main-inner {% block class %}{% endblock %}" data-sidebar-scene-day="{{ drawerScene.day }}" data-sidebar-scene-night="{{ drawerScene.night }}" data-scene-kind="{{ drawerScene.kind }}">
       {%- include '_partials/header/sub-menu.njk' -%}
       {% block content %}{% endblock %}
       {% if page.comments %}

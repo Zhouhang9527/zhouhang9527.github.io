@@ -9,18 +9,18 @@ html[data-theme='moonlit'] {
   color-scheme: dark;
 
   /* 基础色板 */
-  --ink: #dce8f5;          /* 月白 · 标题 */
-  --body-text: #bacbdd;    /* 银灰 · 正文 */
-  --muted: #8c9fb3;        /* 远山 · 辅助文字 */
-  --blue: #91c5f4;         /* 月蓝 · 交互强调 */
-  --bg-canvas: #0c1424;    /* 深海 · 页面背景 */
-  --paper: #152237;        /* 蓝墨 · 阅读区域 */
-  --rule: #2c405a;
-  --surface-nav: #111d30;  /* 夜幕 · 导航栏 */
-  --surface-read: #152237;
-  --surface-float: #1d2d44;/* 薄雾 · 悬浮组件 */
-  --code-bg: #0d1727;
-  --code-bar: #16233a;
+  --ink: #e2e9f0;          /* 月白 · 标题 */
+  --body-text: #c2ccd7;    /* 银灰 · 正文 */
+  --muted: #9aaabc;        /* 远山 · 辅助文字 */
+  --blue: #9ac9e8;         /* 月蓝 · 交互强调 */
+  --bg-canvas: #111923;    /* 深海 · 页面背景 */
+  --paper: #192431;        /* 蓝墨 · 阅读区域 */
+  --rule: #334353;
+  --surface-nav: #151f2b;  /* 夜幕 · 导航栏 */
+  --surface-read: #192431;
+  --surface-float: #223040;/* 薄雾 · 悬浮组件 */
+  --code-bg: #121c29;
+  --code-bar: #1b2837;
 
   /* All player components share the resolved site theme. */
   --music-bg: var(--surface-read);
@@ -33,7 +33,7 @@ html[data-theme='moonlit'] {
   --music-accent: var(--blue);
   --music-accent-soft: var(--blue);
   --music-track: var(--rule);
-  --music-hover: #26384d;
+  --music-hover: #2b3c4e;
   --music-on-accent: var(--bg-canvas);
 
   /* 站点变量映射 */
@@ -46,13 +46,13 @@ html[data-theme='moonlit'] {
   --journal-focus: var(--blue);
   --control-ink: var(--muted);
   --control-hover: var(--surface-float);
-  --control-selected: #253c56;
-  --control-selected-border: #45627e;
+  --control-selected: #2a4054;
+  --control-selected-border: #4b6880;
   --control-success: #a8cfc4;
   --control-error: #e5a1a1;
-  --scroll-thumb: #40566d;
+  --scroll-thumb: #4b6176;
   --scroll-thumb-hover: #667f99;
-  --surface-divider: #25364b;
+  --surface-divider: #2b3948;
   --journal-shadow: 0 2px 14px #00000059;
   --content-bg-color: var(--surface-read);
   --text-color: var(--ink);
@@ -60,10 +60,10 @@ html[data-theme='moonlit'] {
 }
 
 html[data-theme='moonlit'] body {
-  background: linear-gradient(180deg, #0a1120 0, var(--bg-canvas) 950px) !important;
+  background: linear-gradient(180deg, #0e1620 0, var(--bg-canvas) 950px) !important;
   color: var(--body-text);
 }
-html[data-theme='moonlit'] { background: #0c1424 !important; }
+html[data-theme='moonlit'] { background: #111923 !important; }
 
 /* ---------------------------------------------------------------- 导航栏 */
 html[data-theme='moonlit'] body .column > header.header::before {
@@ -92,10 +92,10 @@ html[data-theme='moonlit'] body .header .journal-mobile-links {
 
 /* ------------------------------------------------------------------ 首屏 */
 /* 昼夜各用一张场景图，不再靠滤镜压暗，插画细节全部保留。 */
-html[data-theme='moonlit'] .journal-hero { background: #0a1120; }
+html[data-theme='moonlit'] .journal-hero { background: #0e1620; }
 html[data-theme='moonlit'] .journal-hero::before {
-  background: linear-gradient(90deg, #0c1424e6 0%, #0c1424b8 22%, #0c142466 45%, #0c142414 70%),
-              linear-gradient(180deg, #0c14244d 0%, #0c142400 26%, #0c142400 74%, #0c1424cc 100%);
+  background: linear-gradient(90deg, #111923e6 0%, #111923b8 22%, #11192366 45%, #11192314 70%),
+              linear-gradient(180deg, #1119234d 0%, #11192300 26%, #11192300 74%, #111923cc 100%);
 }
 html[data-theme='moonlit'] .journal-hero-dust i { background: #dfe9f4; box-shadow: 0 0 7px #cfe0f03d; }
 html[data-theme='moonlit'] .journal-eyebrow { color: var(--muted) !important; }
@@ -218,13 +218,13 @@ html[data-theme='moonlit'] :is(.hljs-keyword, .hljs-literal, .hljs-selector-tag)
 html[data-theme='moonlit'] :is(.hljs-string, .hljs-regexp, .hljs-addition, .hljs-char.escape_) { color: #a8cfc4; }
 html[data-theme='moonlit'] :is(.hljs-number, .hljs-symbol, .hljs-bullet, .hljs-link) { color: #e8c07a; }
 html[data-theme='moonlit'] :is(.hljs-title, .hljs-section, .hljs-name, .hljs-title.function_, .hljs-title.class_) { color: #9cc7e6; }
-html[data-theme='moonlit'] :is(.hljs-built_in, .hljs-type, .hljs-attr, .hljs-attribute, .hljs-property) { color: #91c5f4; }
-html[data-theme='moonlit'] :is(.hljs-variable, .hljs-template-variable, .hljs-variable.language_, .hljs-variable.constant_) { color: #bacbdd; }
+html[data-theme='moonlit'] :is(.hljs-built_in, .hljs-type, .hljs-attr, .hljs-attribute, .hljs-property) { color: #9ac9e8; }
+html[data-theme='moonlit'] :is(.hljs-variable, .hljs-template-variable, .hljs-variable.language_, .hljs-variable.constant_) { color: #c2ccd7; }
 html[data-theme='moonlit'] :is(.hljs-tag, .hljs-meta, .hljs-selector, .hljs-selector-id, .hljs-selector-class, .hljs-selector-attr, .hljs-selector-pseudo) { color: #b9a6d6; }
 html[data-theme='moonlit'] :is(.hljs-operator, .hljs-punctuation, .hljs-params, .hljs-subst, .hljs-code, .hljs-formula) { color: #cfdce8; }
 html[data-theme='moonlit'] .hljs-deletion { color: #d99a9a; }
 html[data-theme='moonlit'] .hljs-emphasis { font-style: italic; }
-html[data-theme='moonlit'] .hljs-strong { font-weight: 600; color: #dce8f5; }
+html[data-theme='moonlit'] .hljs-strong { font-weight: 600; color: #e2e9f0; }
 /* 元信息里的字符串（如 #include <x>、注解参数）单独压一档，避免整行发亮 */
 html[data-theme='moonlit'] .hljs-meta :is(.hljs-string, .hljs-keyword) { color: #b9a6d6; }
 
@@ -417,8 +417,8 @@ html[data-theme='moonlit'] .journal-update-notice button {
 /* 手机端：纵向渐变遮罩压住标题带，脸和剑刃留在净区 */
 @media (max-width: 767px) {
   html[data-theme='moonlit'] .journal-hero::before {
-    background: linear-gradient(180deg, #0c1424f5 0%, #0c1424d9 22%, #0c142480 38%, #0c142400 52%),
-                linear-gradient(180deg, #0c142400 62%, #0c1424b3 88%, var(--bg-canvas) 100%);
+    background: linear-gradient(180deg, #111923f5 0%, #111923d9 22%, #11192380 38%, #11192300 52%),
+                linear-gradient(180deg, #11192300 62%, #111923b3 88%, var(--bg-canvas) 100%);
   }
 }
 /* 衬线标题在暗底上偏细，提一档字重 */
@@ -442,7 +442,7 @@ html[data-theme='moonlit'] .journal-archive-year { color: var(--muted); }
 html[data-theme='moonlit'] .journal-archive-link,
 html[data-theme='moonlit'] .journal-archive-list :is(a, li) { color: var(--body-text); }
 /* 归档列表：颜色本来就写在 pages 里带 !important，这里在同等层级替换，不改结构 */
-html[data-theme='moonlit'] .journal-archive-list { background: #15223799; }
+html[data-theme='moonlit'] .journal-archive-list { background: #19243199; }
 html[data-theme='moonlit'] .journal-archive-year { color: var(--muted) !important; }
 html[data-theme='moonlit'] .journal-archive-row { border-bottom-color: var(--rule); }
 html[data-theme='moonlit'] .journal-archive-row h3 a { color: var(--ink) !important; }
@@ -490,8 +490,8 @@ html[data-theme='moonlit'] body .journal-contact-card strong,
 html[data-theme='moonlit'] body .link-info h3 { color: var(--ink); }
 html[data-theme='moonlit'] .journal-about-banner { background: var(--surface-nav); }
 html[data-theme='moonlit'] .journal-about-banner::after {
-  background: linear-gradient(90deg, #0c1424e6, #0c14243d 75%),
-              linear-gradient(0deg, #0c142499, transparent 60%);
+  background: linear-gradient(90deg, #111923e6, #1119233d 75%),
+              linear-gradient(0deg, #11192399, transparent 60%);
 }
 html[data-theme='moonlit'] .journal-about-banner-copy h1 { color: var(--ink); }
 html[data-theme='moonlit'] .journal-about-banner-copy > span { color: var(--body-text); }
@@ -538,7 +538,7 @@ html[data-theme='moonlit'] #atri-launcher-shell .atri-launcher__status:not(:empt
 @media (max-width: 767px) {
   /* Keep the upper illustration clear; the title sits over the lower fade. */
   html[data-theme='moonlit'] .journal-hero::before {
-    background: linear-gradient(180deg, #0c14244d, transparent 22%, transparent 34%, #0c1424a6 52%, var(--bg-canvas) 76%);
+    background: linear-gradient(180deg, #1119234d, transparent 22%, transparent 34%, #111923a6 52%, var(--bg-canvas) 76%);
   }
 }
 

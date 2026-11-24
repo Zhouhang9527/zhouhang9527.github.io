@@ -32,3 +32,6 @@ editorial-*-final.jpeg
 
 # 工具生成的报告
 image-optimization-report.json
+
+# Private game artwork: opt-in local preview only
+/source/images/ginka/scenes/local-preview/
