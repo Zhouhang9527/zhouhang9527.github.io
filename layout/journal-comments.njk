@@ -1,11 +1,13 @@
 {% if page.comments and theme.giscus.repo %}
         {% set dialogueSkin = ginka_dialogue_skin() %}
-        <section class="journal-dialogue" aria-labelledby="journal-dialogue-title">
-          <header class="journal-dialogue-heading"><h2 id="journal-dialogue-title">评论</h2><span aria-hidden="true">AFTER STORY</span></header>
-          <div class="journal-dialogue-frame{% if dialogueSkin %} journal-dialogue-original{% endif %}{% if dialogueSkin and dialogueSkin.advance %} journal-dialogue-has-advance{% endif %}"{% if dialogueSkin %} data-dialogue-skin="original" style="--dialogue-frame:url('{{ dialogueSkin.frame }}');--dialogue-butterfly:url('{{ dialogueSkin.butterfly }}');--dialogue-line:url('{{ dialogueSkin.line }}'){% if dialogueSkin.advance %};--dialogue-advance:url('{{ dialogueSkin.advance }}'){% endif %}"{% endif %}>
+        {% set dialogueScene = ginka_scene(page, "dialogue") %}
+        <section class="journal-dialogue" aria-label="评论区">
+          <div class="journal-dialogue-frame{% if dialogueSkin %} journal-dialogue-original{% endif %}{% if dialogueSkin and dialogueSkin.advance %} journal-dialogue-has-advance{% endif %}" data-dialogue-scene="{{ dialogueScene.slug }}"{% if dialogueSkin %} data-dialogue-skin="original"{% endif %} style="--dialogue-scene-day:url('{{ dialogueScene.day }}');--dialogue-scene-night:url('{{ dialogueScene.night }}'){% if dialogueSkin %};--dialogue-frame:url('{{ dialogueSkin.frame }}');--dialogue-butterfly:url('{{ dialogueSkin.butterfly }}');--dialogue-line:url('{{ dialogueSkin.line }}'){% if dialogueSkin.advance %};--dialogue-advance:url('{{ dialogueSkin.advance }}'){% endif %}{% endif %}">
+            <div class="journal-dialogue-panel">
             <div class="journal-dialogue-name">mm9527</div>
-            <p class="journal-dialogue-intro">有什么想法，欢迎在这里留言</p>
+            <p class="journal-dialogue-intro">「有什么想法，欢迎在这里留言」</p>
             <a class="journal-dialogue-next" href="#journal-comments" aria-label="前往评论编辑区" title="前往评论编辑区"><svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true" focusable="false"><path d="M2 2h12L8 10z" fill="currentColor"/></svg></a>
+            </div>
           </div>
           <div id="journal-comments" class="journal-dialogue-comments" tabindex="-1">
             <div class="giscus-container"
