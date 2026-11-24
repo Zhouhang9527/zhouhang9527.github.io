@@ -4,10 +4,11 @@
   "type": "module",
   "scripts": {
     "dev": "node tools/prepare.mjs && astro dev",
-    "build": "node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
+    "build": "npm run check:fonts && node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
     "preview": "astro preview",
     "check": "node tools/verify.mjs",
-    "typecheck": "node tools/prepare.mjs && astro check"
+    "typecheck": "node tools/prepare.mjs && astro check",
+    "check:fonts": "node --test tools/local-font.test.mjs"
   },
   "dependencies": {
     "astro": "5.16.0",
