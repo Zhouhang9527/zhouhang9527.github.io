@@ -110,8 +110,7 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
-- 基线 `33cc372`，真实 VN CI 45461370567：typecheck/build 成功（75 页、62 旧 URL），Playwright 1.56.1 不支持 ubuntu26.04 安装失败，browser 未执行；固定 ubuntu-24.04 后等待新提交结果
-- 私有素材 `30b43e7` 已上传 reference/，标题/对白有视频证据，其余九界面未覆盖；无 mascot manifest。见 VN-SKIN 新章节，保留 PBD 逻辑矩形，原作模式锁定 NEXT 不显示文字
-- 本次新增 tools/pbd-ui.mjs、extract-pbd-ui.mjs、pbd-ui.test.mjs；对真实 7 个 PBD 执行相同解析函数并核对坐标，通过；完整批量本地执行/语言覆盖合并/通用渲染尚未完成。运行 `node tools/extract-pbd-ui.mjs <private-repo> <private-output>`，输出必须在博客仓库之外
-- Node 22 本地可用但 github.com DNS 不通，未完成真实浏览器截图或完整 build；新 fixture 由 CI 运行
-- 下一步：检查本轮 CI，修复 smoke 实际失败，再将解析产物用于 ENGINE-01，继续核对原作资源，勿发布
+- 基线 `36f132d`：上一轮 7 份真实 PBD 的解析检查成功、视频 reference 接入记录与 CI runner 修复已提交；`33cc372` 的 typecheck/build 已通过，浏览器因 Ubuntu 26.04 不支持而失败
+- 本轮 ENGINE-01：新增 vn-control.ts，标题、阅读器、确认框共用状态与坐标适配；统一私有 sprite 逻辑画布合成；补控制/合成单测并纳入构建。当前为增量迁移，不声称通用渲染器全部完成
+- 素材 `30b43e7` 有 title/dialogue 视频参考，其他界面及真实角色包缺失；未修改私有仓库
+- 本轮 CI 尚未确认；本地 GitHub DNS 不通。下一步检查 Actions 实际日志并修复，继续 DATA-01/ENGINE-01 与独立手动存档、真实对白历史

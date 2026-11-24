@@ -55,3 +55,12 @@ export function cropAtlas(image,rect,rotate=0){
  }
  return {width,height,pixels};
 }
+
+// Compose a crop into its original logical control canvas without resizing.
+export function composeLogicalSprite(image,{rect,rotate=0,offset,size}){
+ const sprite=cropAtlas(image,rect,rotate),[ox,oy]=offset,[width,height]=size;
+ if(![ox,oy,width,height].every(Number.isInteger)||ox<0||oy<0||width<1||height<1||width*height>16000000||ox+sprite.width>width||oy+sprite.height>height)throw Error('Invalid logical sprite bounds');
+ const pixels=Buffer.alloc(width*height*4);
+ for(let y=0;y<sprite.height;y++)sprite.pixels.copy(pixels,((oy+y)*width+ox)*4,y*sprite.width*4,(y+1)*sprite.width*4);
+ return {width,height,pixels};
+}

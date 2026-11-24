@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import manifest from '../config/vn-scenes.json' with {type:'json'};
-import {decodePNG,encodePNG,removeMagenta,cropAtlas} from './png-atlas.mjs';
+import {decodePNG,encodePNG,removeMagenta,cropAtlas,composeLogicalSprite} from './png-atlas.mjs';
 const prefix='/__ginka_local_ui__/';
 export function localVNUI(){
  return {name:'ginka-private-ui-skin',apply:'serve',configureServer(server){
@@ -19,20 +19,13 @@ export function localVNUI(){
      assets.set(prefix+key+'-'+name+'.png',encodePNG(cropAtlas(image,rect)));
     }
     for(const [name,slice] of Object.entries(manifest.privateUI.logicalSprites?.[key]??{})){
-     const sprite=cropAtlas(image,slice.rect,slice.rotate),[ox,oy]=slice.offset,[width,height]=slice.size;
-     if(ox<0||oy<0||ox+sprite.width>width||oy+sprite.height>height)throw Error('Invalid logical UI sprite '+key+' '+name);
-     const pixels=Buffer.alloc(width*height*4);
-     for(let y=0;y<sprite.height;y++)sprite.pixels.copy(pixels,((oy+y)*width+ox)*4,y*sprite.width*4,(y+1)*sprite.width*4);
-     assets.set(prefix+key+'-'+name+'.png',encodePNG({width,height,pixels}));
+     assets.set(prefix+key+'-'+name+'.png',encodePNG(composeLogicalSprite(image,slice)));
     }
     if(key==='titleMenu'){
      for(const [name,button] of Object.entries(manifest.privateUI.titleMenu.states)){
       for(const state of ['normal','hover','pressed']){
-       const slice=button[state],sprite=cropAtlas(image,slice.rect,slice.rotate),[ox,oy]=slice.offset,[,,width,height]=button.bounds;
-       if(ox<0||oy<0||ox+sprite.width>width||oy+sprite.height>height)throw Error('Invalid logical title button '+name+' '+state);
-       const pixels=Buffer.alloc(width*height*4);
-       for(let y=0;y<sprite.height;y++)sprite.pixels.copy(pixels,((oy+y)*width+ox)*4,y*sprite.width*4,(y+1)*sprite.width*4);
-       assets.set(prefix+'title-'+state+'-'+name.toLowerCase()+'.png',encodePNG({width,height,pixels}));
+       const slice=button[state],size=button.bounds.slice(2);
+       assets.set(prefix+'title-'+state+'-'+name.toLowerCase()+'.png',encodePNG(composeLogicalSprite(image,{...slice,size})));
       }
      }
      assets.set(prefix+'title-new.png',encodePNG(cropAtlas(image,manifest.privateUI.titleMenu.newBadge.rect)));
