@@ -22,6 +22,20 @@ html[data-theme='moonlit'] {
   --code-bg: #0d1727;
   --code-bar: #16233a;
 
+  /* All player components share the resolved site theme. */
+  --music-bg: var(--surface-read);
+  --music-panel: var(--surface-nav);
+  --music-surface: var(--surface-float);
+  --music-border: var(--rule);
+  --music-title: var(--ink);
+  --music-text: var(--body-text);
+  --music-muted: var(--muted);
+  --music-accent: var(--blue);
+  --music-accent-soft: var(--blue);
+  --music-track: var(--rule);
+  --music-hover: #26384d;
+  --music-on-accent: var(--bg-canvas);
+
   /* 站点变量映射 */
   --journal-ink: var(--ink);
   --journal-blue: var(--blue);

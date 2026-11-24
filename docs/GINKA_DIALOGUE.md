@@ -6,6 +6,8 @@ The existing Giscus discussion mapping and authentication are unchanged. The ext
 - For preview, set `ginka_giscus_theme_base` in a local Hexo config override to an HTTPS directory URL ending in / containing giscus-day.css and giscus-moonlit.css, e.g. a public jsDelivr URL for this exact commit. Remove this override before production if serving the CSS from the site itself. Ensure CORS permits giscus.app.
 - Do not publish game UI assets without authorization; these frames use only CSS.
 
+Run `node tools/checks/ginka-dialogue-regression.js` for the isolated theme initialization, iframe handshake and music token regression before building.
+
 ## Required browser checks
 
 1. Build from a clean checkout and compare day/moonlit article, index, sidebar, search, right click and comment states at 390 and 1440px.
