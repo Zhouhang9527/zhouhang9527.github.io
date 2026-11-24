@@ -120,3 +120,7 @@ npm run check:vn-browser
 - 本轮修复 CG 链接排除 Astro ClientRouter，public-shell 捕获普通点击并打开原生 dialog，保留 Ctrl/Meta/无 JS 链接行为；新增 URL 不变、焦点恢复、BGM DOM identity 断言
 - d1b3ca6 后最新 CI 尚未确认；不要标记完整 browser/原作像素/音频验收完成。下次先查真实日志，再继续 LOAD/SAVE 语言标签和十五页原作 PBD、系统页控件及真实素材包
 - 未修改 main 或私有素材仓库，未发布
+
+### 公共 UI 并行接续（2026-11-25）
+- 基线 5a5d548，保留另一 Agent 的记录和实现。看板娘/语音素材由其负责。本轮修复 TS2367，0000079c 英文 PBD：28 个标签/底部状态、45 个编号页状态，15 页与 00000790 一致，图集边界检查通过；原作模式 SAVE/LOAD/Q.LOAD 独立标题与标签、十五个页码，移动端保留窗口分页，手动槽整行可点。完整视觉及浏览器仍未确认。
+- audit:original 增加 LOAD 检查，smoke 增加第15页和 Q.LOAD，CI 未确认。继续 SYSTEM 和实际 CI，不发布。

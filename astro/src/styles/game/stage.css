@@ -697,3 +697,25 @@ html:not([data-vn-mode=reader]) body:has([data-vn-game-reader]:not([hidden])) .j
 .vn-game-reader[data-vn-dock-inline=true] .vn-reader-reopen[hidden]{display:none!important}
 
 [data-vn-title-departure]{position:fixed;inset:0;z-index:2147482000;background:#000;opacity:0;pointer-events:none}
+
+/* English original SAVE/LOAD/Q.LOAD caption and fifteen common file__pack pages. */
+.vn-load[data-vn-ui-original=true] .vn-load-header h1{background:var(--vn-load-heading) left top/100% 100% no-repeat;color:transparent!important;width:21.40625cqw;height:5.9375cqw}
+.vn-load[data-vn-ui-original=true][data-vn-save-mode=true] .vn-load-header h1{background-image:var(--vn-save-heading)}
+.vn-load[data-vn-ui-original=true][data-vn-library-filter=quick] .vn-load-header h1{background-image:var(--vn-quick-heading)}
+.vn-load[data-vn-ui-original=true] .vn-load-tabs [data-vn-filter=quick]{background:var(--vn-quick-tab) center/100% 100% no-repeat;color:transparent}
+.vn-load[data-vn-ui-original=true] .vn-load-tabs [data-vn-filter=quick][aria-pressed=true]{background-image:var(--vn-quick-tab-selected)}
+.vn-load[data-vn-ui-original=true] .vn-load-tabs [data-vn-filter=quick]:is(:hover,:focus-visible){background-image:var(--vn-quick-tab-hover)}
+.vn-load[data-vn-ui-original=true] .vn-load-tabs [data-vn-filter=manual]:is(:hover,:focus-visible){background-image:var(--vn-load-tab-hover)}
+.vn-load[data-vn-ui-original=true][data-vn-save-mode=true] .vn-load-tabs [data-vn-filter=manual]{background:var(--vn-save-tab) center/100% 100% no-repeat;color:transparent}
+.vn-load[data-vn-ui-original=true] [data-vn-page]{background:var(--vn-normal) center/100% 100% no-repeat;color:transparent!important}
+.vn-load[data-vn-ui-original=true] [data-vn-page]::before{display:none}
+.vn-load[data-vn-ui-original=true] [data-vn-page][aria-current=page]{background-image:var(--vn-selected)}
+.vn-load[data-vn-ui-original=true] [data-vn-page]:is(:hover,:focus-visible){background-image:var(--vn-hover)}
+.vn-load-grid [data-vn-manual-slot] button.vn-save-link{position:relative;inset:auto;min-height:84px;padding:8px 8% 8px 2.4%;display:grid}
+.vn-load[data-vn-ui-original=true] [data-vn-manual-slot] button.vn-save-link{min-height:0;height:100%;padding:0 3% 0 2.55%}
+@media(min-width:960px){
+ .vn-load[data-vn-ui-original=true]{position:relative}
+ .vn-load[data-vn-ui-original=true] [data-vn-full-pages=true] [data-vn-page-step]{display:none}
+ .vn-load[data-vn-ui-original=true] [data-vn-full-pages=true] [data-vn-page]{position:absolute;left:var(--vn-x);top:var(--vn-y);width:var(--vn-w);height:var(--vn-h);min-width:0;min-height:0;padding:0}
+}
+@media(max-width:959px){.vn-load[data-vn-ui-original=true] .vn-load-header h1{width:clamp(140px,35%,274px);height:clamp(42px,10vw,76px)}}

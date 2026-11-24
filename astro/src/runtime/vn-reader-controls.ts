@@ -51,7 +51,7 @@ document.addEventListener('click',async event=>{
  else if(action==='xprev'||action==='next'){stop();jump(action==='next'?1:-1);}
  else if(action==='skip'){stop();const b=article.querySelector('.post-body');if(b)window.scrollTo({top:scrollY+b.getBoundingClientRect().bottom-innerHeight*.5,behavior:'instant'});}
  else if(action==='auto'){if(auto)stop();else{auto=true;last=0;frame=requestAnimationFrame(step);sync();}}
- if(!held&&action!=='auto'&&action!=='hold')showQuick(false);
+ if(!held&&action!=='auto')showQuick(false);
 });
 window.addEventListener('scroll',()=>{queueDock();if(statusFrame)return;statusFrame=requestAnimationFrame(()=>{statusFrame=0;status();});},{passive:true});
 window.addEventListener('resize',queueDock,{passive:true});

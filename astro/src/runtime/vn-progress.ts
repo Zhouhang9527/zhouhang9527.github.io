@@ -1,5 +1,6 @@
 import {navigate} from 'astro:transitions/client';
-import {resolveTitleState,localTitleFrame,resolveMapState,localMapFrame} from '../lib/vn-scenes';
+import {resolveTitleState,localTitleFrame,resolveMapState,localMapFrame,vnScenes} from '../lib/vn-scenes';
+import {rectStyle,stateStyle} from '../lib/vn-control';
 
 import {KEY,empty,isPath,parse,visit,savePosition,unlockMain,startAfterstory,SAVE_KEY,SAVE_PAGES,SAVE_PAGE_SIZE,parseSaveRecord,parseSaveSlots,validSlot,type SaveRecord,type SaveSlots,type Progress} from '../domain/reading-state';
 import {confirmVN} from './vn-confirm';
@@ -108,16 +109,26 @@ function renderPages(pages:number){
  const nav=document.querySelector<HTMLElement>('[data-vn-library-pages]');if(!nav)return;
  nav.hidden=false;nav.querySelectorAll<HTMLButtonElement>('[data-vn-page-step]').forEach(b=>b.disabled=Number(b.dataset.vnPageStep)<0?libraryPage===0:libraryPage===pages-1);
  const numbers=nav.querySelector<HTMLElement>('[data-vn-page-numbers]');if(!numbers)return;
- const first=Math.max(0,Math.min(libraryPage-2,pages-5)),last=Math.min(pages,first+5),existing=Array.from(numbers.querySelectorAll<HTMLButtonElement>('[data-vn-page]'));
+ const original=!!nav.closest('[data-vn-ui-original=true]'),full=original&&libraryFilter==='manual'&&matchMedia('(min-width:960px)').matches;
+ nav.dataset.vnFullPages=String(full);
+ const first=full?0:Math.max(0,Math.min(libraryPage-2,pages-5)),last=full?pages:Math.min(pages,first+5),existing=Array.from(numbers.querySelectorAll<HTMLButtonElement>('[data-vn-page]'));
  if(existing.length!==last-first||existing[0]?.dataset.vnPage!==String(first)){const fragment=document.createDocumentFragment();for(let p=first;p<last;p++){const b=document.createElement('button');b.type='button';b.dataset.vnPage=String(p);b.setAttribute('aria-label','第 '+(p+1)+' 页');b.textContent=String(p+1);fragment.append(b);}numbers.replaceChildren(fragment);}
- numbers.querySelectorAll<HTMLButtonElement>('[data-vn-page]').forEach(b=>{if(Number(b.dataset.vnPage)===libraryPage)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+ numbers.querySelectorAll<HTMLButtonElement>('[data-vn-page]').forEach(b=>{
+ const page=Number(b.dataset.vnPage),key='page'+(page+1);
+ if(page===libraryPage)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+ if(original&&page>=0&&page<SAVE_PAGES){
+  const rect=vnScenes.privateUI.loadGeometry.controls[key as keyof typeof vnScenes.privateUI.loadGeometry.controls];
+  b.style.cssText=rectStyle(rect,[0,0,...vnScenes.privateUI.loadGeometry.canvas])+';'+stateStyle(true,s=>s==='normal'||s==='hover'||s==='selected'?'loadRows-'+key+'-'+s:null);
+ }else b.removeAttribute('style');
+ });
 }
 function renderLibrary(){
  const root=document.querySelector<HTMLElement>('[data-vn-library]');
  if(!root){libraryRoot=null;return;}
  if(libraryRoot!==root){libraryRoot=root;libraryPage=0;libraryFilter='manual';saveMode=new URLSearchParams(location.search).get('mode')==='save'&&!!loadDraft();if(!saveMode)clearDraft();}
  const stage=root.closest<HTMLElement>('[data-vn-screen]');if(stage)stage.dataset.vnSaveMode=String(saveMode);
- const heading=stage?.querySelector<HTMLElement>('#vn-load-title');if(heading)heading.textContent=saveMode?'SAVE':'LOAD';
+ if(stage)stage.dataset.vnLibraryFilter=libraryFilter;
+ const heading=stage?.querySelector<HTMLElement>('#vn-load-title');if(heading)heading.textContent=saveMode?'SAVE':libraryFilter==='quick'?'Q.LOAD':'LOAD';
  const back=stage?.querySelector<HTMLElement>('.vn-load-return'),saveBack=stage?.querySelector<HTMLButtonElement>('[data-vn-save-back]');if(back)back.hidden=saveMode;if(saveBack)saveBack.hidden=!saveMode;
  const state=read();
  const tabs=document.querySelector<HTMLElement>('[data-vn-library-tabs]');
@@ -268,5 +279,6 @@ document.addEventListener('click',event=>{
 });
 document.addEventListener('astro:before-swap',event=>{renderTitle((event as Event & {newDocument:Document}).newDocument);});
 document.addEventListener('astro:page-load',mount);
+matchMedia('(min-width:960px)').addEventListener('change',()=>{if(libraryRoot?.isConnected)renderLibrary();});
 window.addEventListener('storage',event=>{if(event.key===KEY||event.key===null){volatile=false;refresh();}else if(event.key===SAVE_KEY||event.key==='ginka.vn.quick.v1')renderLibrary();});
 mount();

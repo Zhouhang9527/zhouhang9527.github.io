@@ -97,3 +97,7 @@ BACKLOG contains separate real comments and private original dialogue views. The
 
 ### Original source audit and title departure
 Against private revision 30b43e7, 249 comparisons of title, bottom message controls, quick menu and confirmation geometry/crops/rotation/offsets/logical sizes matched exactly. `npm run audit:original -- <private-repo>` reproduces these checks, adds original action and NEW badge checks, and fails on mismatches without exporting scripts. Reader controls use an exact SystemAction allowlist, not dynamic evaluation. `custom.ks` 00000210.txt, title_hide/title_fadeout (1000ms) and 00000891.txt's START/NEXT branch establish the original scene departure; the blog now fades to black for START/NEXT using the verified duration, with Escape/second click/reduced-motion and cancellation support. The persistent blog BGM is not faded or replaced by a guessed original track. The reference video's 1300–1500ms interval is a candidate detection window, not a measured total duration. No new private resources in the blog.
+
+### SAVE/LOAD original English controls
+0000079c 英文 PBD：28 个标签/底部状态、45 个编号页状态，15 页与 00000790 一致，图集边界检查通过；原作模式 SAVE/LOAD/Q.LOAD 独立标题与标签、十五个页码，移动端保留窗口分页，手动槽整行可点。完整视觉及浏览器仍未确认。
+VOICE art recorded but feature reserved for mascot agent; public fallback retains blog indexes.

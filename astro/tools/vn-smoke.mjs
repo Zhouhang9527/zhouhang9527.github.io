@@ -115,6 +115,11 @@ try{
    await visible('[data-vn-manual-grid]');
    assert.equal(await page.locator('[data-vn-manual-slot]:visible').count(),10);
    assert.equal(await page.locator('[data-vn-manual-empty]:visible').count(),9);
+   for(let i=0;i<14;i++){const next=page.locator('[data-vn-page-step="1"]');if(await next.isVisible())await next.click();else await page.locator('[data-vn-page="'+(i+1)+'"]').click();}
+   assert.equal(await page.locator('[data-vn-manual-slot]').first().getAttribute('data-vn-manual-slot'),'140');
+   assert.equal(await page.locator('[data-vn-manual-empty]:visible').count(),10);
+   await page.locator('[data-vn-filter="quick"]').click();assert.equal(await page.locator('#vn-load-title').textContent(),'Q.LOAD');
+   await page.locator('[data-vn-filter="manual"]').click();assert.equal(await page.locator('[data-vn-manual-empty]:visible').count(),9);
    await page.locator('[data-vn-filter="recent"]').click();await visible('[data-vn-slot]:visible');
    assert.equal(await page.locator('[data-vn-slot]:visible,[data-vn-empty-slot]:visible').count(),10);
    await page.locator('[data-vn-filter="bookmarks"]').click();

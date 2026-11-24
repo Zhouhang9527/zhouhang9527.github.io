@@ -32,4 +32,12 @@ for(const [key,source,atlas] of [['bottom',bottom,'gameParts'],['quick',quick,'r
 }
 eq('new badge bounds',ui.titleMenu.newBadge.bounds,title.controls.new.bounds);
 eq('new badge crop',ui.titleMenu.newBadge.rect,title.controls.new.states['(~null~)'].crop);
+const loadUI=load(ui.loadGeometry.englishSource);
+for(const [atlas,sprites] of [['loadLabels',ui.logicalSprites.loadLabels],['loadRows',ui.logicalSprites.loadRows]])for(const [name,s] of Object.entries(sprites)){
+ const key=name.slice(0,name.lastIndexOf('-')),state=name.slice(name.lastIndexOf('-')+1),id=['save','load','quick','voice'].includes(key)?'to_'+key:key,control=loadUI.controls[id];
+ const original=key==='caption'?(state==='quick'?'qload':state):({normal:'off',pressed:'on',selected:'on',hover:'over'})[state],p=control?.states[original];
+ eq(atlas+' '+name+' bounds',ui.loadGeometry.controls[key],control?.bounds);
+ eq(atlas+' '+name+' crop/rotation/offset',{rect:s.rect,rotate:s.rotate,offset:s.offset},p?sprite(p):null);
+ eq(atlas+' '+name+' canvas',s.size,control?.bounds?.slice(2));
+}
 const report={checks,failures};console.log(JSON.stringify(report,null,2));if(failures.length)process.exitCode=1;
