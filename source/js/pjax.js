@@ -31,6 +31,9 @@ const pjax = new Pjax({
 
 const managedHeadSelectors = [
   'meta[name="description"]',
+  'meta[name="robots"]',
+  'meta[name="googlebot"]',
+  'meta[name="baiduspider"]',
   'link[rel="canonical"]',
   'meta[property^="og:"]',
   'meta[name^="twitter:"]',
@@ -90,22 +93,32 @@ function getPjaxResponseText(event) {
   return '';
 }
 
+let headRevision = 0;
+let headRequest = null;
+document.addEventListener('pjax:send', () => { ++headRevision; headRequest?.abort(); });
+
 async function syncHeadAfterPjax(event) {
+  const revision = ++headRevision;
+  headRequest?.abort();
+  const controller = new AbortController();
+  headRequest = controller;
+  const target = window.location.href;
   let html = getPjaxResponseText(event);
   if (!html) {
     try {
-      const response = await fetch(window.location.href, {
+      const response = await fetch(target, {
+        signal: controller.signal,
         credentials: 'same-origin',
         cache: 'force-cache',
         headers: { 'X-GINKA-Head-Sync': '1' }
       });
       if (response.ok) html = await response.text();
     } catch (error) {
-      console.warn('[GINKA PJAX] Unable to fetch page head:', error);
+      if (error.name !== 'AbortError') console.warn('[GINKA PJAX] Unable to fetch page head:', error);
     }
   }
 
-  if (!html) return;
+  if (!html || revision !== headRevision || controller.signal.aborted || window.location.href !== target) return;
   try {
     const parsed = new DOMParser().parseFromString(html, 'text/html');
     syncManagedHead(parsed.head);
