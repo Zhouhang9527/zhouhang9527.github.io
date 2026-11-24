@@ -11,6 +11,7 @@
     <nav class="journal-reading-nav" aria-label="阅读导航"><a href="{{ url_for('/') }}">GINKA / mm9527</a><span>READING / 技术笔记</span><a href="{{ url_for('/archives/') }}">返回归档 ↗</a></nav>
 
     {{ partial('_macro/post.njk', {post: page}) }}
+    {{ partial('journal-comments.njk') }}
 
     {% if page.toc.enable %}
       {% set journalOutline = toc(page.content, {class: 'journal-outline-list', list_number: false, max_depth: page.toc.max_depth}) %}
@@ -23,6 +24,8 @@
     {% endif %}
   </div>
 {% endblock %}
+
+{% block comments %}{% endblock %}
 
 {% block sidebar %}
   {{ partial('journal-sidebar.njk', {display_toc: page.toc.enable}) }}

@@ -69,7 +69,8 @@ hexo.extend.filter.register('before_generate', function () {
     'page.njk': 'page.njk',
     'post.njk': 'post.njk',
     'journal-sidebar.njk': 'sidebar.njk',
-    'journal-music.njk': 'music.njk'
+    'journal-music.njk': 'music.njk',
+    'journal-comments.njk': 'comments.njk'
   };
   for (const [view, file] of Object.entries(views)) {
     hexo.theme.setView(view, fs.readFileSync(path.join(hexo.base_dir, 'layouts', file), 'utf8'));

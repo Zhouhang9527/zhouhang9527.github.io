@@ -1,9 +1,37 @@
 /* A compact original-game dialogue strip followed by a normal reading surface.
    One visual grammar in both themes, no stretched comment-list background. */
 .journal-dialogue {
-  margin: 40px 0 36px;
+  box-sizing: border-box;
+  margin: 36px auto 40px;
   min-width: 0;
   width: 100%;
+  max-width: 72ch;
+  font: 400 16px/1.8 var(--font-body, sans-serif);
+}
+.journal-reading-shell > .journal-dialogue {
+  grid-column: 1;
+  grid-row: 3;
+  justify-self: center;
+  width: calc(100% - 88px);
+}
+.journal-dialogue-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0 0 15px;
+  padding: 0 0 10px;
+  border-bottom: 1px solid var(--journal-line);
+}
+body .journal-dialogue-heading h2 {
+  margin: 0;
+  color: var(--journal-ink);
+  font: 500 19px/1.5 var(--font-title, serif);
+  letter-spacing: .06em;
+}
+.journal-dialogue-heading > span {
+  color: var(--journal-muted);
+  font: 400 10px/1.5 var(--font-mono, monospace);
+  letter-spacing: .12em;
 }
 .journal-dialogue-frame {
   position: relative;
@@ -11,11 +39,12 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 13px;
-  min-height: 150px;
-  margin: 0 0 22px;
-  padding: 26px clamp(20px, 3vw, 36px) 34px;
+  justify-content: flex-start;
+  gap: 9px;
+  min-height: 132px;
+  aspect-ratio: 1280 / 201;
+  margin: 0 0 18px;
+  padding: 23px clamp(18px, 3vw, 30px) 26px;
   border: 0;
   border-radius: 2px;
   background: linear-gradient(180deg,#202b3a 0%,#111822 17%,#10151e 74%,#1a2637 100%);
@@ -47,15 +76,15 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-width: 128px;
-  padding: 0 12px 8px 0;
+  min-width: 152px;
+  padding: 0 12px 7px 0;
   color: #eef1f5;
-  font: 500 13px/1.5 var(--font-body, sans-serif);
+  font: 500 14px/1.5 var(--font-body, sans-serif);
   letter-spacing: .06em;
 }
 .journal-dialogue-name::before {
   content: '';
-  width: 22px;
+  width: 24px;
   height: 22px;
   flex: none;
   background: url('../images/ginka/butterfly.png') center / contain no-repeat;
@@ -64,9 +93,9 @@
 .journal-dialogue-name::after {
   content: '';
   position: absolute;
-  left: 15px;
+  left: 12px;
   bottom: 0;
-  width: min(190px, 48vw);
+  width: min(222px, 55vw);
   height: 1px;
   background: linear-gradient(90deg,#dbe4f0b3,transparent);
   pointer-events: none;
@@ -78,7 +107,7 @@
 }
 .journal-dialogue-intro {
   margin: 0;
-  padding: 0 0 0 30px;
+  padding: 0 24px 0 32px;
   color: #f0f2f5;
   font: 400 15px/1.8 var(--font-body, sans-serif);
   letter-spacing: .025em;
@@ -102,19 +131,22 @@ body .journal-dialogue-frame .journal-dialogue-next {
 }
 body .journal-dialogue-frame .journal-dialogue-next:is(:hover,:focus-visible) { background: #ffffff12 !important; color: #fff !important; }
 .journal-dialogue-next:focus-visible { outline: 2px solid #a8cce9; outline-offset: 2px; }
-.journal-dialogue-comments { min-width: 0; scroll-margin-top: 18px; }
+.journal-dialogue-comments { min-width: 0; scroll-margin-top: calc(var(--book-header, 72px) + 16px); }
 .journal-dialogue-comments:focus-visible { outline: 2px solid var(--journal-focus); outline-offset: 4px; }
 body .journal-dialogue :is(.comments,.tabs-comment,.giscus-container) {
   background: transparent !important; border: 0; border-radius: 0; padding: 0; box-shadow: none;
 }
 .journal-dialogue .giscus-container { min-height: 180px; }
+.journal-dialogue .giscus-container:has(iframe.giscus-frame) { min-height: 0; }
 .journal-dialogue :is(.giscus-container,.giscus,iframe.giscus-frame) { width: 100%; min-width: 0; }
 .journal-comments-status { margin: 0; padding: 20px 0; color: var(--journal-muted); font-size: 13px; }
 .journal-comments-status button { margin-inline-start: 10px; font: inherit; color: var(--journal-blue); background: transparent; border: 0; cursor: pointer; text-decoration: underline; }
 @media(max-width:767px) {
-  .journal-dialogue { margin-block: 30px; }
-  .journal-dialogue-frame { min-height: 124px; padding: 18px 16px 30px; gap: 10px; }
-  .journal-dialogue-intro { font-size: 14px; }
+  .journal-dialogue { margin-block: 30px; font-size: 15px; }
+  .journal-reading-shell > .journal-dialogue { width: calc(100% - 36px); }
+  .journal-dialogue-frame { min-height: 124px; aspect-ratio: auto; padding: 18px 14px 28px; gap: 8px; }
+  .journal-dialogue-intro { font-size: 14px; padding-left: 30px; }
+  body .journal-dialogue-heading h2 { font-size: 18px; }
 }
 @media(pointer:coarse) { body .journal-dialogue-frame .journal-dialogue-next { width: 44px; height: 44px; bottom: 0; right: 4px; } }
 @media print { .journal-dialogue { display: none; } }

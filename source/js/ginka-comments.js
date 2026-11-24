@@ -86,6 +86,8 @@
     const target = document.getElementById('journal-comments');
     if (!target) return;
     event.preventDefault();
+    const container = target.querySelector('.giscus-container');
+    if (container) load(container);
     target.focus({preventScroll:true});
     target.scrollIntoView({block:'start',behavior:'auto'});
   });

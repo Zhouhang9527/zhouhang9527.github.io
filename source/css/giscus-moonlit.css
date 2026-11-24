@@ -36,14 +36,14 @@ main {
   --color-prettylights-syntax-constant-other-reference-link: #96d0ff;
   --color-btn-text: #c2ccd7;
   --color-btn-bg: #223040;
-  --color-btn-border: #4b6880;
+  --color-btn-border: #334353;
   --color-btn-shadow: 0 0 transparent;
   --color-btn-inset-shadow: 0 0 transparent;
-  --color-btn-hover-bg: #2b3c4e;
+  --color-btn-hover-bg: #273647;
   --color-btn-hover-border: #9ac9e8;
-  --color-btn-active-bg: #2b3c4e;
+  --color-btn-active-bg: #273647;
   --color-btn-active-border: #9ac9e8;
-  --color-btn-selected-bg: #2a4054;
+  --color-btn-selected-bg: #223040;
   --color-btn-primary-text: #111923;
   --color-btn-primary-bg: #9ac9e8;
   --color-btn-primary-border: #9ac9e8;
@@ -54,26 +54,26 @@ main {
   --color-btn-primary-selected-bg: #9ac9e8;
   --color-btn-primary-selected-shadow: 0 0 transparent;
   --color-btn-primary-disabled-text: #9aaabc;
-  --color-btn-primary-disabled-bg: #2a4054;
+  --color-btn-primary-disabled-bg: #223040;
   --color-btn-primary-disabled-border: #334353;
-  --color-action-list-item-default-hover-bg: #2b3c4e;
+  --color-action-list-item-default-hover-bg: #273647;
   --color-segmented-control-bg: #121c29;
   --color-segmented-control-button-bg: #192431;
-  --color-segmented-control-button-selected-border: #4b6880;
+  --color-segmented-control-button-selected-border: #334353;
   --color-fg-default: #c2ccd7;
   --color-fg-muted: #9aaabc;
   --color-fg-subtle: #9aaabc;
   --color-canvas-default: #192431;
   --color-canvas-overlay: #192431;
   --color-canvas-inset: #121c29;
-  --color-canvas-subtle: #2a4054;
-  --color-border-default: #4b6880;
+  --color-canvas-subtle: #223040;
+  --color-border-default: #334353;
   --color-border-muted: #334353;
   --color-neutral-muted: #334353;
   --color-accent-fg: #9ac9e8;
   --color-accent-emphasis: #9ac9e8;
-  --color-accent-muted: #4b6880;
-  --color-accent-subtle: #2b3c4e;
+  --color-accent-muted: #334353;
+  --color-accent-subtle: #273647;
   --color-success-fg: #57ab5a;
   --color-attention-fg: #c69026;
   --color-attention-muted: rgb(174 124 20 / 40%);
@@ -86,8 +86,8 @@ main {
   --color-scale-blue-8: #143d79;
 
   /*! Extensions from @primer/css/alerts/flash.scss */
-  --color-social-reaction-bg-hover: #2b3c4e;
-  --color-social-reaction-bg-reacted-hover: #2a4054;
+  --color-social-reaction-bg-hover: #273647;
+  --color-social-reaction-bg-reacted-hover: #223040;
 }
 
 main .pagination-loader-container {
@@ -98,16 +98,25 @@ main .gsc-loading-image {
   background-image: url("https://github.githubassets.com/images/mona-loading-dimmed.gif");
 }
 
-/* GINKA dialogue treatment — retains native controls and real author names. */
+/* Reading-first comment UI: native controls, restrained separators, no colored author banner. */
 main { color-scheme: dark; }
-.gsc-comment-box, .gsc-comment > div:first-child { border-radius: 3px; }
-.gsc-comment-box-tabs, .gsc-comment-header { background: #2a4054; border-radius: 3px 3px 0 0; border-bottom: 1px solid #334353; }
+.gsc-comment-box, .gsc-comment > div:first-child { border-radius: 4px; box-shadow: none; }
+.gsc-comment-box-tabs, .gsc-comment-header {
+  background: transparent;
+  border-radius: 4px 4px 0 0;
+  border-bottom: 1px solid var(--color-border-muted);
+}
 .gsc-comment-header { padding-block: 8px; }
-.gsc-comment-author-avatar { color: #e2e9f0; }
-.gsc-comment-content, .gsc-comment-box-main { background: #192431; }
-.gsc-comment-box-textarea { background: #121c29; border-color: #334353; color: #c2ccd7; border-radius: 3px; }
-.gsc-comment-box-textarea::placeholder { color: #9aaabc; }
-.gsc-comment-box textarea:focus-visible, .gsc-comment-box button:focus-visible, .gsc-comment button:focus-visible, .gsc-comment a:focus-visible { outline: 2px solid #9ac9e8; outline-offset: 2px; }
-.gsc-comment-footer { border-top: 1px solid #334353; }
-.gsc-comment-box :is(.btn, button), .gsc-comment :is(.btn, button) { border-radius: 3px; }
-.gsc-homepage-bg { background-color: #192431; }
+.gsc-comment-content, .gsc-comment-box-main { background: var(--color-canvas-default); }
+.gsc-comment-box-textarea {
+  background: var(--color-canvas-default);
+  border-color: var(--color-border-default);
+  color: var(--color-fg-default);
+  border-radius: 4px;
+  line-height: 1.7;
+}
+.gsc-comment-box-textarea::placeholder { color: var(--color-fg-muted); }
+.gsc-comment-box textarea:focus-visible, .gsc-comment-box button:focus-visible, .gsc-comment button:focus-visible, .gsc-comment a:focus-visible { outline: 2px solid var(--color-accent-fg); outline-offset: 2px; }
+.gsc-comment-footer { border-top: 1px solid var(--color-border-muted); }
+.gsc-comment-box :is(.btn, button), .gsc-comment :is(.btn, button) { border-radius: 4px; box-shadow: none; }
+.gsc-homepage-bg { background-color: var(--color-canvas-default); }
