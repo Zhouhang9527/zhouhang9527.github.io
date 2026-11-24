@@ -2,6 +2,7 @@
 import {render} from 'astro:content';
 import {href,tagSlug} from '../lib/site';
 import Comments from './Comments.astro';
+import ReaderControls from './game/ReaderControls.astro';
 import type {Post} from '../lib/types';
 interface Props {post:Post}
 const {post}=Astro.props;
@@ -17,6 +18,7 @@ const outline=headings.filter(h=>h.depth>=2&&h.depth<=4);
   <header class="post-header"><h1 class="post-title" data-pagefind-meta="title">{post.data.title}</h1><div class="post-meta-container"><div class="post-meta"><time datetime={post.data.date}>{post.data.date}</time>{post.data.categories.map(c=><a href={href('categories/'+tagSlug(c)+'/')}>{c}</a>)}</div></div>{post.data.description&&<p class="post-description">{post.data.description}</p>}</header>
   <div class="post-body"><Content/></div>
   <nav class="vn-reading-controls" data-vn-reader-original={String(original)} aria-label="游戏阅读控制"><a href="/library/" style={skin('load')}><span>Load</span></a>{post.data.comments!==false&&<a href="#journal-comments" data-vn-log-open style={skin('log')}><span>Log</span></a>}<a href="/settings/" style={skin('system')}><span>System</span></a><button type="button" data-vn-save-position style={skin('save')} hidden><span>Save</span></button><span class="journal-visually-hidden" data-vn-save-feedback aria-live="polite"></span></nav>
+  <ReaderControls comments={post.data.comments!==false}/>
   <div class="post-tags">{post.data.tags.map(t=><a href={href('tags/'+tagSlug(t)+'/')}>#{t}</a>)}</div>
  <nav class="vn-reader-actions" aria-label="阅读记录"><button type="button" data-vn-mark hidden aria-pressed="false">标记已读</button><button type="button" data-vn-bookmark hidden aria-pressed="false">收藏</button><a href="/library/">读取存档</a>{post.data.comments!==false&&<a href="#journal-comments" data-vn-log-open>BACKLOG / 历史对话</a>}<a href="/" data-vn-return data-vn-mode-set="game">返回标题界面 ↗</a></nav>
  </article>

@@ -227,6 +227,42 @@
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000750_737214E5488A1E8CE7C737E73AE750581DF63272B741CCDCE01761347F03988D.png",
         "width": 301,
         "height": 344
+      },
+      "gameParts": {
+        "id": "gameParts",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007b4_946A8B29A8509668E2CE95D0AFA460FF3496572C3DC9DE4DB2401D4E1584F8F6.png",
+        "width": 624,
+        "height": 300
+      },
+      "quickBase": {
+        "id": "quickBase",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007b8_74E4AD437BB44B61A818AE9EA3AB50F9E1EC3D664615E682F9129567B5CE3C39.png",
+        "width": 315,
+        "height": 720
+      },
+      "gameWindow": {
+        "id": "gameWindow",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007bc_E6CD197470008AE1CF56C5F5FFA410DA4A469FF805EB333DB80BBD0F39EA4532.png",
+        "width": 617,
+        "height": 71
+      },
+      "gameBase": {
+        "id": "gameBase",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007bb_8A3989B4E2E98FA14F801B429AC25E7C33C5B484FEA11ACFFF83739B501F8184.png",
+        "width": 1280,
+        "height": 201
+      },
+      "confirmBase": {
+        "id": "confirmBase",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000785_60AE30954CDA9D5E3527CD113DF62A6A8C05A7BF6243AA5CAEDF7D4F67C1E5E9.png",
+        "width": 620,
+        "height": 388
+      },
+      "confirmButtons": {
+        "id": "confirmButtons",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000786_54A41A8160FD4E5128BE7301877937BE7347199B516B96EE54099C5102313512.png",
+        "width": 143,
+        "height": 128
       }
     },
     "optionGeometry": {
@@ -842,7 +878,10 @@
       "shortcutLabels",
       "readerControls",
       "backlogButtons",
-      "textLabels"
+      "textLabels",
+      "gameParts",
+      "gameWindow",
+      "confirmButtons"
     ],
     "slices": {
       "loadRows": {
@@ -1278,6 +1317,20 @@
           17,
           460
         ]
+      },
+      "gameWindow": {
+        "frame": [
+          0,
+          0,
+          617,
+          34
+        ],
+        "name": [
+          0,
+          34,
+          304,
+          37
+        ]
       }
     },
     "loadGeometry": {
@@ -1405,6 +1458,1755 @@
         902,
         164
       ]
+    },
+    "logicalSprites": {
+      "gameParts": {
+        "hold-normal": {
+          "rect": [
+            514,
+            232,
+            26,
+            23
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            48,
+            42
+          ]
+        },
+        "hold-pressed": {
+          "rect": [
+            514,
+            255,
+            26,
+            23
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            48,
+            42
+          ]
+        },
+        "hold-hover": {
+          "rect": [
+            101,
+            206,
+            42,
+            48
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            48,
+            42
+          ]
+        },
+        "hold-selected": {
+          "rect": [
+            588,
+            235,
+            24,
+            19
+          ],
+          "rotate": 90,
+          "offset": [
+            16,
+            14
+          ],
+          "size": [
+            48,
+            42
+          ]
+        },
+        "save-normal": {
+          "rect": [
+            413,
+            276,
+            29,
+            23
+          ],
+          "rotate": 0,
+          "offset": [
+            13,
+            12
+          ],
+          "size": [
+            51,
+            39
+          ]
+        },
+        "save-pressed": {
+          "rect": [
+            540,
+            265,
+            24,
+            30
+          ],
+          "rotate": 90,
+          "offset": [
+            13,
+            11
+          ],
+          "size": [
+            51,
+            39
+          ]
+        },
+        "save-hover": {
+          "rect": [
+            260,
+            206,
+            39,
+            51
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            51,
+            39
+          ]
+        },
+        "load-normal": {
+          "rect": [
+            376,
+            269,
+            23,
+            29
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            50,
+            39
+          ]
+        },
+        "load-pressed": {
+          "rect": [
+            564,
+            235,
+            24,
+            30
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            11
+          ],
+          "size": [
+            50,
+            39
+          ]
+        },
+        "load-hover": {
+          "rect": [
+            221,
+            206,
+            39,
+            50
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            50,
+            39
+          ]
+        },
+        "qsave-normal": {
+          "rect": [
+            588,
+            254,
+            23,
+            29
+          ],
+          "rotate": 90,
+          "offset": [
+            13,
+            12
+          ],
+          "size": [
+            50,
+            39
+          ]
+        },
+        "qsave-pressed": {
+          "rect": [
+            540,
+            235,
+            24,
+            30
+          ],
+          "rotate": 90,
+          "offset": [
+            13,
+            11
+          ],
+          "size": [
+            50,
+            39
+          ]
+        },
+        "qsave-hover": {
+          "rect": [
+            299,
+            206,
+            39,
+            50
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            50,
+            39
+          ]
+        },
+        "qload-normal": {
+          "rect": [
+            338,
+            269,
+            23,
+            29
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            50,
+            39
+          ]
+        },
+        "qload-pressed": {
+          "rect": [
+            592,
+            206,
+            30,
+            24
+          ],
+          "rotate": 0,
+          "offset": [
+            12,
+            11
+          ],
+          "size": [
+            50,
+            39
+          ]
+        },
+        "qload-hover": {
+          "rect": [
+            143,
+            206,
+            39,
+            50
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            50,
+            39
+          ]
+        },
+        "xprev-normal": {
+          "rect": [
+            143,
+            256,
+            22,
+            22
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            46,
+            37
+          ]
+        },
+        "xprev-pressed": {
+          "rect": [
+            143,
+            278,
+            22,
+            22
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            46,
+            37
+          ]
+        },
+        "xprev-hover": {
+          "rect": [
+            450,
+            252,
+            37,
+            46
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            46,
+            37
+          ]
+        },
+        "next-normal": {
+          "rect": [
+            514,
+            278,
+            21,
+            22
+          ],
+          "rotate": 0,
+          "offset": [
+            13,
+            12
+          ],
+          "size": [
+            46,
+            37
+          ]
+        },
+        "next-pressed": {
+          "rect": [
+            299,
+            279,
+            22,
+            21
+          ],
+          "rotate": 90,
+          "offset": [
+            13,
+            12
+          ],
+          "size": [
+            46,
+            37
+          ]
+        },
+        "next-hover": {
+          "rect": [
+            450,
+            206,
+            37,
+            46
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            46,
+            37
+          ]
+        },
+        "auto-normal": {
+          "rect": [
+            0,
+            258,
+            46,
+            18
+          ],
+          "rotate": 0,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            70,
+            37
+          ]
+        },
+        "auto-pressed": {
+          "rect": [
+            0,
+            276,
+            46,
+            18
+          ],
+          "rotate": 0,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            70,
+            37
+          ]
+        },
+        "auto-hover": {
+          "rect": [
+            413,
+            206,
+            37,
+            70
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            70,
+            37
+          ]
+        },
+        "skip-normal": {
+          "rect": [
+            299,
+            256,
+            39,
+            23
+          ],
+          "rotate": 0,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            63,
+            38
+          ]
+        },
+        "skip-pressed": {
+          "rect": [
+            260,
+            257,
+            39,
+            23
+          ],
+          "rotate": 0,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            63,
+            38
+          ]
+        },
+        "skip-hover": {
+          "rect": [
+            338,
+            206,
+            38,
+            63
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            63,
+            38
+          ]
+        },
+        "log-normal": {
+          "rect": [
+            182,
+            259,
+            22,
+            38
+          ],
+          "rotate": 90,
+          "offset": [
+            13,
+            12
+          ],
+          "size": [
+            63,
+            37
+          ]
+        },
+        "log-pressed": {
+          "rect": [
+            221,
+            256,
+            22,
+            38
+          ],
+          "rotate": 90,
+          "offset": [
+            13,
+            12
+          ],
+          "size": [
+            63,
+            37
+          ]
+        },
+        "log-hover": {
+          "rect": [
+            376,
+            206,
+            37,
+            63
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            63,
+            37
+          ]
+        },
+        "option-normal": {
+          "rect": [
+            540,
+            206,
+            26,
+            29
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            53,
+            39
+          ]
+        },
+        "option-pressed": {
+          "rect": [
+            566,
+            206,
+            26,
+            29
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            53,
+            39
+          ]
+        },
+        "option-hover": {
+          "rect": [
+            182,
+            206,
+            39,
+            53
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            53,
+            39
+          ]
+        },
+        "hide-normal": {
+          "rect": [
+            278,
+            280,
+            18,
+            18
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            42,
+            42
+          ]
+        },
+        "hide-pressed": {
+          "rect": [
+            260,
+            280,
+            18,
+            18
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            42,
+            42
+          ]
+        },
+        "hide-hover": {
+          "rect": [
+            51,
+            256,
+            42,
+            42
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            42,
+            42
+          ]
+        },
+        "vreplay-normal": {
+          "rect": [
+            487,
+            262,
+            26,
+            26
+          ],
+          "rotate": 90,
+          "offset": [
+            13,
+            12
+          ],
+          "size": [
+            50,
+            50
+          ]
+        },
+        "vreplay-pressed": {
+          "rect": [
+            514,
+            206,
+            26,
+            26
+          ],
+          "rotate": 90,
+          "offset": [
+            13,
+            12
+          ],
+          "size": [
+            50,
+            50
+          ]
+        },
+        "vreplay-hover": {
+          "rect": [
+            51,
+            206,
+            50,
+            50
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            50,
+            50
+          ]
+        },
+        "vsave-normal": {
+          "rect": [
+            487,
+            206,
+            27,
+            28
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            52,
+            51
+          ]
+        },
+        "vsave-pressed": {
+          "rect": [
+            487,
+            234,
+            27,
+            28
+          ],
+          "rotate": 90,
+          "offset": [
+            12,
+            12
+          ],
+          "size": [
+            52,
+            51
+          ]
+        },
+        "vsave-hover": {
+          "rect": [
+            0,
+            206,
+            51,
+            52
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            52,
+            51
+          ]
+        }
+      },
+      "readerControls": {
+        "save-normal": {
+          "rect": [
+            342,
+            345,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "save-pressed": {
+          "rect": [
+            342,
+            460,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "save-hover": {
+          "rect": [
+            456,
+            345,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "load-normal": {
+          "rect": [
+            228,
+            0,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "load-pressed": {
+          "rect": [
+            342,
+            0,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "load-hover": {
+          "rect": [
+            456,
+            0,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "qsave-normal": {
+          "rect": [
+            342,
+            230,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "qsave-pressed": {
+          "rect": [
+            456,
+            230,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "qsave-hover": {
+          "rect": [
+            570,
+            230,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "qload-normal": {
+          "rect": [
+            228,
+            230,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "qload-pressed": {
+          "rect": [
+            228,
+            345,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "qload-hover": {
+          "rect": [
+            228,
+            460,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "xprev-normal": {
+          "rect": [
+            0,
+            345,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "xprev-pressed": {
+          "rect": [
+            0,
+            460,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "xprev-hover": {
+          "rect": [
+            114,
+            0,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "next-normal": {
+          "rect": [
+            114,
+            345,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "next-pressed": {
+          "rect": [
+            114,
+            460,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "next-hover": {
+          "rect": [
+            228,
+            115,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "auto-normal": {
+          "rect": [
+            0,
+            0,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "auto-pressed": {
+          "rect": [
+            0,
+            230,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "auto-hover": {
+          "rect": [
+            0,
+            115,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "auto-selected": {
+          "rect": [
+            0,
+            115,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "skip-normal": {
+          "rect": [
+            570,
+            345,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "skip-pressed": {
+          "rect": [
+            570,
+            460,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "skip-hover": {
+          "rect": [
+            456,
+            460,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "skip-selected": {
+          "rect": [
+            456,
+            460,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "log-normal": {
+          "rect": [
+            570,
+            0,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "log-pressed": {
+          "rect": [
+            114,
+            115,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "log-hover": {
+          "rect": [
+            114,
+            230,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "option-normal": {
+          "rect": [
+            342,
+            115,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "option-pressed": {
+          "rect": [
+            456,
+            115,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "option-hover": {
+          "rect": [
+            570,
+            115,
+            114,
+            115
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            114,
+            115
+          ]
+        },
+        "hide-normal": {
+          "rect": [
+            228,
+            575,
+            29,
+            30
+          ],
+          "rotate": 0,
+          "offset": [
+            12,
+            13
+          ],
+          "size": [
+            53,
+            53
+          ]
+        },
+        "hide-pressed": {
+          "rect": [
+            257,
+            575,
+            29,
+            30
+          ],
+          "rotate": 0,
+          "offset": [
+            12,
+            13
+          ],
+          "size": [
+            53,
+            53
+          ]
+        },
+        "hide-hover": {
+          "rect": [
+            515,
+            575,
+            53,
+            53
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            53,
+            53
+          ]
+        },
+        "vreplay-normal": {
+          "rect": [
+            379,
+            575,
+            34,
+            35
+          ],
+          "rotate": 0,
+          "offset": [
+            13,
+            14
+          ],
+          "size": [
+            59,
+            59
+          ]
+        },
+        "vreplay-pressed": {
+          "rect": [
+            413,
+            575,
+            34,
+            35
+          ],
+          "rotate": 0,
+          "offset": [
+            13,
+            14
+          ],
+          "size": [
+            59,
+            59
+          ]
+        },
+        "vreplay-hover": {
+          "rect": [
+            456,
+            575,
+            59,
+            59
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            59,
+            59
+          ]
+        },
+        "vsave-normal": {
+          "rect": [
+            630,
+            575,
+            37,
+            36
+          ],
+          "rotate": 0,
+          "offset": [
+            11,
+            13
+          ],
+          "size": [
+            60,
+            59
+          ]
+        },
+        "vsave-pressed": {
+          "rect": [
+            342,
+            575,
+            37,
+            36
+          ],
+          "rotate": 0,
+          "offset": [
+            11,
+            13
+          ],
+          "size": [
+            60,
+            59
+          ]
+        },
+        "vsave-hover": {
+          "rect": [
+            570,
+            575,
+            60,
+            59
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            60,
+            59
+          ]
+        }
+      },
+      "confirmButtons": {
+        "yes-normal": {
+          "rect": [
+            0,
+            108,
+            43,
+            20
+          ],
+          "rotate": 0,
+          "offset": [
+            31,
+            33
+          ],
+          "size": [
+            107,
+            86
+          ]
+        },
+        "yes-pressed": {
+          "rect": [
+            0,
+            0,
+            75,
+            54
+          ],
+          "rotate": 0,
+          "offset": [
+            16,
+            16
+          ],
+          "size": [
+            107,
+            86
+          ]
+        },
+        "yes-hover": {
+          "rect": [
+            0,
+            54,
+            75,
+            54
+          ],
+          "rotate": 0,
+          "offset": [
+            16,
+            16
+          ],
+          "size": [
+            107,
+            86
+          ]
+        },
+        "no-normal": {
+          "rect": [
+            75,
+            108,
+            34,
+            20
+          ],
+          "rotate": 0,
+          "offset": [
+            33,
+            33
+          ],
+          "size": [
+            100,
+            86
+          ]
+        },
+        "no-pressed": {
+          "rect": [
+            75,
+            54,
+            68,
+            54
+          ],
+          "rotate": 0,
+          "offset": [
+            16,
+            16
+          ],
+          "size": [
+            100,
+            86
+          ]
+        },
+        "no-hover": {
+          "rect": [
+            75,
+            0,
+            68,
+            54
+          ],
+          "rotate": 0,
+          "offset": [
+            16,
+            16
+          ],
+          "size": [
+            100,
+            86
+          ]
+        }
+      }
+    },
+    "gameControls": {
+      "sources": [
+        "000007ba_494E598CC3D194D6359A093980CA5759C9EDE01D502978ECE5018F5D32DB7AD1.pbd.json",
+        "000007b7_0DF2D4E5BAEB53D09307346299CC281F328A507066F3249994C296F77453A6E4.pbd.json",
+        "0000077e_549EE5CF421CAE2FC4D1A25397049EA4195B2B0BF0BB9AABDD98B81CE1D149BB.pbd.json"
+      ],
+      "base": [
+        0,
+        458,
+        1280,
+        262
+      ],
+      "text": [
+        265,
+        543,
+        890,
+        141
+      ],
+      "name": [
+        250,
+        487,
+        284,
+        50
+      ],
+      "quickBase": [
+        965,
+        0,
+        315,
+        720
+      ],
+      "bottom": {
+        "hold": [
+          675,
+          678,
+          48,
+          42
+        ],
+        "save": [
+          727,
+          681,
+          51,
+          39
+        ],
+        "load": [
+          780,
+          681,
+          50,
+          39
+        ],
+        "qsave": [
+          832,
+          681,
+          50,
+          39
+        ],
+        "qload": [
+          885,
+          681,
+          50,
+          39
+        ],
+        "xprev": [
+          942,
+          683,
+          46,
+          37
+        ],
+        "next": [
+          996,
+          683,
+          46,
+          37
+        ],
+        "auto": [
+          1044,
+          683,
+          70,
+          37
+        ],
+        "skip": [
+          1109,
+          682,
+          63,
+          38
+        ],
+        "log": [
+          1167,
+          683,
+          63,
+          37
+        ],
+        "option": [
+          1224,
+          681,
+          53,
+          39
+        ],
+        "hide": [
+          1230,
+          527,
+          42,
+          42
+        ],
+        "vreplay": [
+          1227,
+          575,
+          50,
+          50
+        ],
+        "vsave": [
+          1227,
+          624,
+          52,
+          51
+        ]
+      },
+      "quick": {
+        "save": [
+          1025,
+          74,
+          114,
+          115
+        ],
+        "load": [
+          1145,
+          74,
+          114,
+          115
+        ],
+        "qsave": [
+          1025,
+          192,
+          114,
+          115
+        ],
+        "qload": [
+          1145,
+          192,
+          114,
+          115
+        ],
+        "xprev": [
+          1025,
+          311,
+          114,
+          115
+        ],
+        "next": [
+          1145,
+          311,
+          114,
+          115
+        ],
+        "auto": [
+          1025,
+          430,
+          114,
+          115
+        ],
+        "skip": [
+          1145,
+          430,
+          114,
+          115
+        ],
+        "log": [
+          1025,
+          548,
+          114,
+          115
+        ],
+        "option": [
+          1145,
+          548,
+          114,
+          115
+        ],
+        "hide": [
+          1036,
+          17,
+          53,
+          53
+        ],
+        "vreplay": [
+          1109,
+          14,
+          59,
+          59
+        ],
+        "vsave": [
+          1186,
+          14,
+          60,
+          59
+        ]
+      },
+      "dialog": {
+        "yes": [
+          513,
+          262,
+          107,
+          86
+        ],
+        "no": [
+          668,
+          262,
+          100,
+          86
+        ]
+      }
     }
   },
   "map": {

@@ -1,6 +1,7 @@
 import {resolveTitleState,localTitleFrame,resolveMapState,localMapFrame} from '../lib/vn-scenes';
 
 import {KEY,empty,isPath,parse,visit,savePosition,unlockMain,startAfterstory,type Progress} from '../domain/reading-state';
+import {confirmVN} from './vn-confirm';
 import {capturePosition,restorePosition} from './vn-reading-position';
 let memory=empty(), volatile=false;
 function read():Progress{
@@ -204,7 +205,7 @@ document.addEventListener('click',event=>{
   return;
  }
  if(el.hasAttribute('data-vn-reset')){
-  if(window.confirm('清除本机全部阅读记录和收藏？')){clearTimeout(timer);dirty=false;pendingResume=null;try{sessionStorage.removeItem(RESUME);}catch{}write(empty());refresh();}
+  void confirmVN('清除本机全部阅读记录和收藏？').then(ok=>{if(!ok)return;clearTimeout(timer);dirty=false;pendingResume=null;try{sessionStorage.removeItem(RESUME);localStorage.removeItem('ginka.vn.quick.v1');}catch{}write(empty());refresh();document.dispatchEvent(new Event('vn:progress-reset'));});
   return;
  }
  if(el.dataset.vnFilter){libraryFilter=el.dataset.vnFilter;libraryPage=0;renderLibrary();return;}

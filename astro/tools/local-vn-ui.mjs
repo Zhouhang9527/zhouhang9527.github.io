@@ -18,6 +18,13 @@ export function localVNUI(){
     for(const [name,rect] of Object.entries(manifest.privateUI.slices?.[key]??{})){
      assets.set(prefix+key+'-'+name+'.png',encodePNG(cropAtlas(image,rect)));
     }
+    for(const [name,slice] of Object.entries(manifest.privateUI.logicalSprites?.[key]??{})){
+     const sprite=cropAtlas(image,slice.rect,slice.rotate),[ox,oy]=slice.offset,[width,height]=slice.size;
+     if(ox<0||oy<0||ox+sprite.width>width||oy+sprite.height>height)throw Error('Invalid logical UI sprite '+key+' '+name);
+     const pixels=Buffer.alloc(width*height*4);
+     for(let y=0;y<sprite.height;y++)sprite.pixels.copy(pixels,((oy+y)*width+ox)*4,y*sprite.width*4,(y+1)*sprite.width*4);
+     assets.set(prefix+key+'-'+name+'.png',encodePNG({width,height,pixels}));
+    }
     if(key==='titleMenu'){
      for(const [name,button] of Object.entries(manifest.privateUI.titleMenu.states)){
       for(const state of ['normal','hover','pressed']){

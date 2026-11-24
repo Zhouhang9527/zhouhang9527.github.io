@@ -1,0 +1,11 @@
+---
+const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
+const style=(key:string)=>original?['normal','hover','pressed'].map(state=>'--vn-'+state+':url(/__ginka_local_ui__/confirmButtons-'+key+'-'+state+'.png)').join(';'):undefined;
+---
+<dialog class="vn-confirm" data-vn-confirm data-vn-confirm-original={String(original)} aria-labelledby="vn-confirm-message" style={original?'--vn-confirm-bg:url(/__ginka_local_ui__/confirmBase.png)':undefined}>
+ <form method="dialog" class="vn-confirm-frame">
+  <p id="vn-confirm-message" data-vn-confirm-message></p>
+  <button type="submit" value="yes" data-vn-confirm-yes style={style('yes')} aria-label="确认"><span>YES</span></button>
+  <button type="submit" value="no" data-vn-confirm-no style={style('no')} autofocus aria-label="取消"><span>NO</span></button>
+ </form>
+</dialog>

@@ -152,3 +152,9 @@ for(const [i,name] of vn.privateUI.titleMenu.order.entries()){
 assert.match(home,/href="\/afterstory\/"/);assert.match(home,/data-vn-next-new/);
 assert.match(fs.readFileSync('dist/afterstory/index.html','utf8'),/data-vn-afterstory-content/);
 console.log('PASS exact PBD title states and afterstory route');
+
+for(const [atlas,sprites] of Object.entries(vn.privateUI.logicalSprites)){
+ const a=vn.privateUI.assets[atlas];for(const [name,s] of Object.entries(sprites)){const [x,y,w,h]=s.rect,[ox,oy]=s.offset,[W,H]=s.size;assert.ok(x>=0&&y>=0&&x+w<=a.width&&y+h<=a.height&&ox>=0&&oy>=0&&ox+(s.rotate===90?h:w)<=W&&oy+(s.rotate===90?w:h)<=H,'PBD sprite '+atlas+' '+name);}
+}
+for(const route of posts){const html=fs.readFileSync(path.join('dist',route,'index.html'),'utf8');assert.match(html,/data-vn-game-reader/);assert.match(html,/data-vn-game-action="qsave"/);assert.match(html,/data-vn-confirm/);assert.doesNotMatch(html,/__ginka_local_ui__/);}
+console.log('PASS original game control and confirmation sprite contracts');
