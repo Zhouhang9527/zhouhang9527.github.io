@@ -48,3 +48,8 @@ Set `GINKA_VN_UI_DATA` to the extracted data folder containing _hxv4_hash and ru
 
 ## Island map preview
 Set GINKA_MAP_DATA to the extracted bgimage directory (the folder containing _hxv4_hash). The 1280x720 island overview variants bgimage-124/125/126 are mapped by reading completion in config/vn-scenes.json. The mapping is provisional; these are confirmed overview images, not verified original map UI or story order. The map remains functional without the private images. Use localhost only.
+
+## VN acceptance
+Start a production preview in one terminal (`npm run build && npm run preview -- --host 127.0.0.1`).
+In a second terminal, run `npx playwright install chromium`, then `npm run check:vn-browser`.
+The local-only smoke test blocks remote dependencies and captures title, chapter, map, save, gallery, search, music, config, reader screenshots at mobile and desktop sizes. It checks persistence and navigation, not original-game pixel parity. The preexisting tools/browser.mjs additionally exercises real Giscus. Visual review with original resources remains separate.

@@ -82,3 +82,7 @@ assert.doesNotMatch(mapHtml,/__ginka_local_ui__/);
 assert.ok(home.includes('href="/map/"'));
 for(const state of vn.map.states)assert.ok(Object.hasOwn(vn.map.frames,state.frame),'Unknown map frame');
 console.log('PASS map state manifest and private isolation');
+
+const sitemap=fs.readFileSync('dist/sitemap.xml','utf8');
+for(const route of ['library','settings','search','music-room'])assert.ok(!sitemap.includes('/'+route+'/</loc>'),'Private UI route in sitemap '+route);
+console.log('PASS noindex page sitemap exclusion');
