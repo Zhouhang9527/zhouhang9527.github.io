@@ -1,7 +1,7 @@
 # GINKA VN — 跨会话开发接续
 
 更新：2026-11-25  
-本记录编写基线：`33cc372c51b7045d8fdf70efe0f5ebbcaa71d7a9`（不是最新 HEAD 的固定值，接手时必须重新获取）
+本记录编写基线：`20eb48e44a666c5f186302bd9941918cbf81a35b`（不是最新 HEAD 的固定值，接手时必须重新获取）
 
 ## 1. 新会话启动协议
 
@@ -48,7 +48,7 @@
 | 私有素材服务 | astro/tools/private-preview.mjs、local-vn-ui.mjs、local-title-art.mjs、local-font.mjs、png-atlas.mjs |
 | 验收 | astro/tools/verify.mjs、vn-smoke.mjs、各 *.test.mjs、分支 CI |
 
-重要：上述功能有代码，不等于通过测试或达到原作 1:1。当前没有可确认的完整构建、typecheck、真实浏览器验收或实际原作语音播放结果。
+重要：上述功能有代码，不等于通过测试或达到原作 1:1。20eb48e 已通过完整构建和 typecheck；真实浏览器完整验收仍失败，原作语音仍缺素材。
 
 ## 4. 已知原作证据与素材定位
 
@@ -74,7 +74,7 @@ PBD 使用带类型标记的 dictionary/array，解码后从 result、packlist�
 
 ## 5. 外部素材依赖
 
-- 用户已安排本地 Agent 提取 B 站原作视频参考（以私有仓库实际新增文件为准，尚未核实上传完成）；期望 reference/screens、layouts、timelines、asset-matches、contact-sheets、reports
+- 用户已安排本地 Agent 提取 B 站原作视频参考（私有仓库 30b43e7 已核实上传，title/dialogue 有视频参考，其他九界面缺失）；期望 reference/screens、layouts、timelines、asset-matches、contact-sheets、reports
 - 小银花/大银花的真实透明立绘差分、动作及逐句对白/voice storage ID 尚未建立可验证的映射，不要误把特效图集当立绘
 - 角色包约定：私有仓库 `reference/mascot/manifest.json`，schema 见 MASCOT-PACK.md；缺失时看板娘隐藏/功能降级，不用替代图片假装完成
 - 私有预览：从 astro/ 执行 `npm run dev:original -- "<私有素材仓库路径>"`，原作素材仅由 localhost 中间件提供；可用 GINKA_MASCOT_MANIFEST 指定实际素材包
@@ -110,8 +110,7 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
-- 真实 CI：3a1da8f 的 VN CI 45462268727 typecheck/build 均已通过，浏览器安装被下一提交取消。6d2e63a 已实现独立 150 手动存档槽、确认和精确恢复，CI 尚未确认
-- 本轮 LOG-03 / CHAR-09 / AUDIO-04：voice-history.ts 与单测；BACKLOG 真实评论/原作对白分栏；只保存实际成功开始的语音 ID、时间、路径；回放/收藏/后日谈 gating 共用控制器；隐藏页暂停、清理眨眼及嘴部差分计时器。无私有包时无对白页签
-- 素材 HEAD 30b43e7，有 title/dialogue 视频参考，其余九界面未覆盖，无 verified mascot pack；未发布素材
-- 仍未实测完整浏览器和真实语音；本地 GitHub DNS 不通，必须检查新 CI 结果，相关 TODO 未勾选
-- 下一步：先让新 CI 完整运行，修复实际浏览器问题；继续全量 PBD 审计、原作控件状态/角色包接入
+- 基线 20eb48e：VN CI 45462718982 和 Astro review 45462718980 均 typecheck、build、所有构建单测、Chromium 安装通过；VN browser 390px 返回标题被固定 dock 遮挡，1440px 通用返回选择器超时；无 JS 通过。旧 review 在游戏标题页测试隐藏阅读侧栏失败，真实 Giscus 尚未验收
+- BASE-02/04/10：将 ReaderControls 移至文章导航之后，固定 dock 遇页尾转为流内，ResizeObserver/滚动/焦点与路由清理，动态滚动安全区；两套浏览器测试按真实模式及路由执行，明确记录失败 URL/截图节点，不使用强制点击
+- 素材仍为 30b43e7，用户已确认参考库交付；只有标题和对白视频，九个菜单界面缺实测，角色包/SE 未确认，不重复提取
+- 下一步：等待最新 CI 实际结果，修复尚余失败；继续 DATA-01/02/03 全量 PBD 与动作映射审计。未发布，未修改 main

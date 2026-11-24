@@ -45,11 +45,16 @@ try {
    await page.locator('#astro-results a').first().waitFor({timeout:12000});
    await page.keyboard.press('Escape');
    await page.waitForFunction(()=>!document.querySelector('.astro-search').open,{}, {timeout:3000});
+   // The original title hides the reader shell; exercise the sidebar in its real mode.
+   await page.locator('[data-vn-mode-set="reader"][href="#latest"]').click();
+   await page.waitForFunction(()=>document.documentElement.dataset.vnMode==='reader');
    const trigger=page.locator('[data-journal-sidebar-open]:visible').first();
    await trigger.click();
    await page.waitForFunction(()=>document.body.classList.contains('sidebar-active'));
    await page.locator('.journal-sidebar-close').click();
    await page.waitForFunction(()=>!document.body.classList.contains('sidebar-active'));
+   await page.locator('[data-vn-mode-toggle]:visible').first().click();
+   await page.waitForFunction(()=>document.documentElement.dataset.vnMode==='game');
    const old=await page.evaluateHandle(()=>document.querySelector('#bg-music'));
    await page.locator('[data-vn-start]').click();
    await page.waitForURL(base+'/archives/');
@@ -102,13 +107,17 @@ try {
    if(width===390){
     await page.locator('.vn-menu a[href="/library/"]').click();
     await page.locator('[data-vn-screen="load"]').waitFor();
-    await page.locator('[data-vn-slot]:visible').first().waitFor();
+    await page.locator('[data-vn-manual-grid]:visible').waitFor();
+    assert.equal(await page.locator('[data-vn-manual-slot]:visible').count(),10);
     await page.locator('[data-vn-filter="bookmarks"]').click();
     assert.equal(await page.locator('[data-vn-slot]:visible').count(),1);
     assert.ok(!await overflow(page),'load overflow');
     await page.screenshot({path:`artifacts/${width}-${mode}-load.png`});
-    await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible').first().click();
-    await page.locator('.vn-menu a[href="/gallery/"]').click();
+    await page.locator('.vn-load-return:visible').click();
+    await page.waitForURL(base+'/');
+    assert.equal(await page.locator('[data-vn-extra]').isVisible(),false);
+    // EXTRA is locked on title, but the public gallery remains reachable.
+    await page.goto(base+'/gallery/',{waitUntil:'domcontentloaded'});
     await page.locator('[data-vn-screen="gallery"]').waitFor();
     await page.locator('.vn-gallery-grid .journal-scene-card').first().click();
     await page.locator('.astro-gallery[open]').waitFor();
@@ -116,7 +125,8 @@ try {
     await page.locator('.astro-gallery').waitFor({state:'hidden'});
     assert.ok(!await overflow(page),'gallery overflow');
     await page.screenshot({path:`artifacts/${width}-${mode}-gallery.png`});
-    await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible').first().click();
+    await page.locator('[data-vn-screen="gallery"] .vn-panel-header .vn-return').click();
+    await page.waitForURL(base+'/');
     await page.locator('.vn-menu a[href="/settings/"]').click();
     await page.locator('[data-vn-config]:visible').waitFor();
     await page.locator('[data-vn-option-tab="sound"]').click();
@@ -125,7 +135,8 @@ try {
     await page.locator('input[name="vn-motion"][value="reduced"]').check();
     await page.waitForFunction(()=>document.documentElement.dataset.vnMotion==='reduced');
     await page.screenshot({path:`artifacts/${width}-${mode}-config.png`});
-    await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible').first().click();
+    await page.locator('[data-vn-option-back]').click();
+    await page.waitForURL(base+'/');
     await page.reload({waitUntil:'domcontentloaded'});
     await page.locator('[data-vn-title][data-vn-cover="torii"][data-vn-stage="first-encounter"]').waitFor();
     await page.locator('[data-vn-continue]').click();
@@ -136,7 +147,7 @@ try {
    }
    result.ok=true;
   } catch(error) {
-   result.error=String(error);
+   result.url=page.url();result.error=String(error);
    await page.screenshot({path:`artifacts/${width}-${mode}-failure.png`}).catch(()=>{});
   } finally {results.push(result);await page.close();}
  }

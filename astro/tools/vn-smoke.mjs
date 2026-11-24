@@ -20,7 +20,9 @@ try{
   const result={width,mode:original?'original':'public',errors,privateRequests,privateFailures,ok:false};
   const visible=selector=>page.locator(selector).first().waitFor({state:'visible'});
   const go=async(path,selector)=>{await page.goto(base+path,{waitUntil:'domcontentloaded'});await visible(selector);};
+  const back=async(selector)=>{result.step='return from '+new URL(page.url()).pathname;await page.locator(selector).click();await page.waitForURL(url=>url.pathname==='/');await visible('[data-vn-title]');};
   const shot=async name=>{
+   result.lastScreenshot=name;result.url=page.url();
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Horizontal overflow: '+name);
    await page.screenshot({path:'artifacts/vn/'+width+'-'+name+'.png'});
   };
@@ -84,6 +86,9 @@ try{
    assert.ok(await page.evaluate(old=>old===document.querySelector('#bg-music'),audio),'Audio replaced by navigation');
    await page.locator('[data-vn-bookmark]').click();
    await page.locator('[data-vn-mark]').click();
+   // The footer is genuinely clickable, not covered by the fixed dock.
+   await page.locator('[data-vn-return]').scrollIntoViewIfNeeded();
+   await page.waitForFunction(()=>{const link=document.querySelector('[data-vn-return]'),r=link?.getBoundingClientRect();if(!r)return false;const top=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return !!top&&link.contains(top);});
    await page.waitForFunction(()=>document.querySelector('[data-vn-mark]')?.getAttribute('aria-pressed')==='true');
    // Persist a deterministic position to test explicit resume independent of
    // article length, remote image loading and scroll animation.
@@ -92,8 +97,7 @@ try{
     state.positions[path]={ratio:.55,heading:null,section:.55};
     localStorage.setItem(key,JSON.stringify(state));
    },pathname);
-   await page.locator('[data-vn-return]').click();
-   await visible('[data-vn-title]');
+   await back('[data-vn-return]');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-003');
    await page.evaluate(()=>{const key='ginka.vn.progress.v1',state=JSON.parse(localStorage.getItem(key));state.mainCleared=true;localStorage.setItem(key,JSON.stringify(state));});
    await page.reload();await visible('[data-vn-next]');await visible('[data-vn-extra]');await visible('[data-vn-next-new]');
@@ -106,7 +110,7 @@ try{
    await page.locator('.vn-extra-nav a[href="/map/"]').click();
    await visible('[data-vn-map][data-vn-map-phase="first-encounter"]');
    await shot('map');
-   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible,.vn-load-return:visible').first().click();
+   await back('[data-vn-screen="map"] .vn-panel-header .vn-return');
    await page.locator('.vn-menu a[href="/library/"]').click();
    await visible('[data-vn-manual-grid]');
    assert.equal(await page.locator('[data-vn-manual-slot]:visible').count(),10);
@@ -120,7 +124,7 @@ try{
    await visible('.post-body');
    assert.equal(page.url(),article);
    await page.waitForFunction(()=>!sessionStorage.getItem('ginka.vn.resume.v1'));
-   await page.locator('[data-vn-return]').click();
+   await back('[data-vn-return]');
    await page.locator('.vn-menu a[href="/gallery/"]').click();
    await visible('[data-vn-screen="gallery"]');
    await page.locator('.vn-gallery-grid .journal-scene-card').first().click();
@@ -128,14 +132,14 @@ try{
    await page.keyboard.press('Escape');
    await page.locator('.astro-gallery').waitFor({state:'hidden'});
    await shot('gallery');
-   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible,.vn-load-return:visible').first().click();
+   await back('[data-vn-screen="gallery"] .vn-panel-header .vn-return');
    await page.locator('.vn-menu a[href="/gallery/"]').click();
    await page.locator('.vn-extra-nav a[href="/search/"]').click();
    await visible('[data-vn-query]');
    await page.locator('[data-vn-query]').fill('Android');
    await visible('[data-vn-results] a');
    await shot('search');
-   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible,.vn-load-return:visible').first().click();
+   await back('[data-vn-screen="search"] .vn-panel-header .vn-return');
    await page.locator('.vn-menu a[href="/settings/"]').click();
    await visible('[data-vn-config]');
    await page.locator('[data-vn-option-tab="sound"]').click();
@@ -151,8 +155,9 @@ try{
    assert.equal(await page.locator('[data-vn-view="game"]').isVisible(),false);
    await shot('reader');
    await go('/settings/','[data-vn-config]');
+   await page.locator('[data-vn-option-tab="display"]').click();
    await page.locator('input[name="vn-mode"][value="game"]').check();
-   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible,.vn-load-return:visible').first().click();
+   await back('[data-vn-option-back]');
    await visible('[data-vn-title]');
    await page.reload();
    await visible('[data-vn-continue]');
@@ -162,7 +167,7 @@ try{
    if(original)assert.ok(privateRequests.some(url=>url.includes('/__ginka_local_title__/')),'Original title art not requested');
    else assert.deepEqual(privateRequests,[],'Production preview requested private assets');
    result.ok=true;
-  }catch(error){result.error=String(error);await page.screenshot({path:'artifacts/vn/'+width+'-failure.png'}).catch(()=>{});}
+  }catch(error){result.url=page.url();result.error=String(error);await page.screenshot({path:'artifacts/vn/'+width+'-failure.png'}).catch(()=>{});}
   finally{results.push(result);await page.close();}
  }
  const page=await browser.newPage({javaScriptEnabled:false,viewport:{width:390,height:900}});

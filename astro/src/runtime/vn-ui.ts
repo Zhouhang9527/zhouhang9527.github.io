@@ -11,7 +11,7 @@ function mount(){
  document.querySelectorAll<HTMLButtonElement>('[data-vn-mode-toggle]').forEach(el=>{el.hidden=false;el.textContent=view==='game'?'阅读模式':'游戏模式';el.setAttribute('aria-label',view==='game'?'切换到阅读模式':'切换到游戏模式');});
 }
 function setView(value:'game'|'reader'){
- view=value;try{localStorage.setItem(VIEW_KEY,view);}catch{}mount();
+ view=value;try{localStorage.setItem(VIEW_KEY,view);}catch{}mount();document.dispatchEvent(new Event('vn:view-change'));
 }
 load();mount();
 document.addEventListener('click',event=>{

@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25：`20eb48e` 的 [VN CI](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45462718982) 与 [Astro review](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45462718980) 均 typecheck、build、单测、Chromium 安装成功；VN smoke 的 390px 在返回标题被固定消息窗拦截，1440px 在通用返回选择器超时，无 JS 通过。旧 browser review 在游戏标题测试普通阅读侧栏失败。本轮 BASE-02/04/10：消息窗遇到正文末端导航改为流内位置，按真实高度设置滚动安全区、焦点可达；浏览器测试按实际游戏/阅读模式与 LOAD/EXTRA 语义执行、明确各路由返回及故障位置。完整浏览器验收未完成，未勾选。
+
 2026-11-25 LOG-03 / CHAR-09 / AUDIO-04：原作对白历史只记录成功启动的已验证本地音频 ID、时间及页面；最近 100 条，BACKLOG 评论与对白分栏保留同一 Giscus iframe，回放/收藏使用同一语音控制器，重置历史、防剧透和隐藏页暂停加入。素材包缺失时不显示对白页签，未完成真实音频/视觉验收。
 
 2026-11-25 SAVE-02/03/05/06 增量：独立 version 1 手动存档（15 页×10 槽），游戏 SAVE 捕获真实位置进入存档页，LOAD 默认为普通存档、快速/最近/收藏/已读独立；读取、覆盖、删除有确认，回退/跨路由恢复、重置及 storage 同步接入。未提供真实截图，SAVE 标题暂用文本，语义/视觉和浏览器验收未完成；相关 TODO 不勾选。
