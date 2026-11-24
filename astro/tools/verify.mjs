@@ -26,7 +26,19 @@ for(const [asset,hash] of Object.entries(versions)){
 console.log('PASS content-hashed asset manifest');
 
 const vn=JSON.parse(fs.readFileSync('config/vn-scenes.json','utf8'));
-for(const spec of [...vn.covers,vn.chapter])for(const mode of ['day','night'])for(const w of vn.widths)assert.ok(fs.existsSync(path.join('dist','images/ginka/scenes',spec.slug+'-'+mode+'-'+w+'.webp')),'Missing VN scene '+spec.slug);
+for(const spec of [vn.title.background,vn.chapter])for(const mode of ['day','night'])for(const w of vn.widths)assert.ok(fs.existsSync(path.join('dist','images/ginka/scenes',spec.slug+'-'+mode+'-'+w+'.webp')),'Missing VN scene '+spec.slug);
 assert.match(home,/data-vn-start/);
 assert.match(fs.readFileSync('dist/archives/index.html','utf8'),/data-vn-post/);
 console.log('PASS VN scene manifest and navigation entry points');
+
+assert.equal(vn.title.background.id,'torii');
+assert.equal(vn.title.states[0].minCompleted,0);
+assert.equal(vn.title.states[0].present,false);
+for(const [i,state] of vn.title.states.entries()){
+ assert.ok(!i||state.minCompleted>vn.title.states[i-1].minCompleted,'Title progress thresholds must increase');
+ assert.equal(state.present,typeof state.expression==='string');
+ assert.ok(!('slug' in state),'Title progress may not replace the background');
+ if(state.asset){assert.ok(state.present);assert.ok(state.asset.src.startsWith('/images/ginka/'));assert.ok(fs.existsSync(path.join('dist',state.asset.src)),'Missing verified character difference');}
+}
+assert.match(home,/data-vn-cover="torii"/);
+console.log('PASS fixed torii title and independent character state contract');

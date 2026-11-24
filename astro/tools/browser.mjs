@@ -26,9 +26,12 @@ try {
    await page.waitForFunction(m=>window.GINKA_THEME?.theme===m&&document.documentElement.dataset.theme===m,mode);
    await page.evaluate(()=>document.fonts.ready);
    assert.ok(!await overflow(page),JSON.stringify(await page.evaluate(()=>({error:'home overflow',width:innerWidth,scroll:document.documentElement.scrollWidth,offenders:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.right>innerWidth+2&&getComputedStyle(e).position!=='fixed'&&!e.closest('.journal-scene-strip,.sidebar,.journal-mobile-links')}).slice(0,12).map(e=>({tag:e.tagName,class:e.className?.toString(),right:e.getBoundingClientRect().right}))}))));
-   await page.locator('[data-vn-title][data-vn-cover="arrival"]').waitFor();
+   await page.locator('[data-vn-title][data-vn-cover="torii"][data-vn-stage="arrival"]').waitFor();
    assert.equal(await page.locator('.header').isVisible(),false,'traditional header on title screen');
    assert.equal(await page.locator('[data-vn-continue]').isVisible(),false,'continue visible without a save');
+   const fixedCover=await page.locator('[data-vn-art]').evaluate(el=>getComputedStyle(el).backgroundImage);
+   assert.ok(fixedCover.includes('torii-close-'),'title must use fixed torii scene');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-present'),'false');
    const feed=await page.locator('.journal-feed').evaluate(el=>({width:el.getBoundingClientRect().width,layout:el.parentElement.getBoundingClientRect().width}));
    assert.ok(width>960||feed.width>=feed.layout-2,'mobile feed squeezed: '+JSON.stringify(feed));
    await page.screenshot({path:`artifacts/${width}-${mode}-home.png`});
@@ -78,23 +81,28 @@ try {
    await page.locator('[data-vn-chapter]').waitFor();
    assert.ok(await page.evaluate(audio=>audio===document.querySelector('#bg-music'),old),'audio replaced on back');
    await page.locator('.vn-return').click();
-   await page.locator('[data-vn-title][data-vn-cover="shore"]').waitFor();
+   await page.locator('[data-vn-title][data-vn-cover="torii"][data-vn-stage="first-encounter"]').waitFor();
    assert.equal(await page.locator('[data-vn-art]:visible').count(),1,'multiple active cover art layers');
+   assert.equal(await page.locator('[data-vn-art]').evaluate(el=>getComputedStyle(el).backgroundImage),fixedCover,'progress changed title background');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-present'),'true');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-expression'),'neutral');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-render'),'unavailable');
+   assert.equal(await page.locator('[data-vn-character-art]').isVisible(),false,'unverified asset must remain hidden');
    await page.screenshot({path:`artifacts/${width}-${mode}-unlocked.png`});
    await page.locator('[data-vn-continue]').click();
    await page.waitForURL(articleURL);
    await page.locator('[data-vn-mark][aria-pressed="true"]').waitFor();
    await page.locator('[data-vn-return]').click();
-   await page.locator('[data-vn-title][data-vn-cover="shore"]').waitFor();
+   await page.locator('[data-vn-title][data-vn-cover="torii"][data-vn-stage="first-encounter"]').waitFor();
    assert.ok(await page.evaluate(audio=>audio===document.querySelector('#bg-music'),old),'audio replaced on title return');
    if(width===390){
     await page.reload({waitUntil:'domcontentloaded'});
-    await page.locator('[data-vn-title][data-vn-cover="shore"]').waitFor();
+    await page.locator('[data-vn-title][data-vn-cover="torii"][data-vn-stage="first-encounter"]').waitFor();
     await page.locator('[data-vn-continue]').click();
     await page.locator('[data-vn-mark][aria-pressed="true"]').click();
     await page.locator('[data-vn-mark][aria-pressed="false"]').waitFor();
     await page.locator('[data-vn-return]').click();
-    await page.locator('[data-vn-title][data-vn-cover="arrival"]').waitFor();
+    await page.locator('[data-vn-title][data-vn-cover="torii"][data-vn-stage="arrival"]').waitFor();
    }
    result.ok=true;
   } catch(error) {

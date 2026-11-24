@@ -1,4 +1,4 @@
-import manifest from '../../config/vn-scenes.json';
+import {resolveTitleState} from '../lib/vn-scenes';
 
 const KEY='ginka.vn.progress.v1';
 type Progress={version:1;completed:string[];last:string|null};
@@ -27,11 +27,26 @@ function renderTitle(root:Document=document) {
  try{paths=JSON.parse(title.dataset.vnPaths||'[]');}catch{}
  const progress=read(),allowed=new Set(paths);
  const count=progress.completed.filter(path=>allowed.has(path)).length;
- const cover=[...manifest.covers].reverse().find(spec=>count>=spec.minCompleted)||manifest.covers[0];
- title.dataset.vnCover=cover.id;
- title.querySelectorAll<HTMLElement>('[data-vn-art]').forEach(art=>{art.hidden=art.dataset.vnArt!==cover.id;});
+ const state=resolveTitleState(count);
+ title.dataset.vnStage=state.id;
+ title.dataset.vnCharacterPresent=String(state.present);
+ title.dataset.vnExpression=state.expression??'none';
+ const character=title.querySelector<HTMLImageElement>('[data-vn-character-art]');
+ // A missing verified character difference must never substitute another location
+ // or unrelated story illustration. Keep the fixed torii composition.
+ const src=state.present?state.asset?.src:null;
+ title.dataset.vnCharacterRender=src?'asset':state.present?'unavailable':'none';
+ if(character){
+  if(src){
+   if(character.getAttribute('src')!==src)character.setAttribute('src',src);
+   character.hidden=false;
+  }else{
+   character.hidden=true;
+   character.removeAttribute('src');
+  }
+ }
  const label=title.querySelector<HTMLElement>('[data-vn-progress]');
- if(label)label.textContent=`阅读记录 ${count} / ${paths.length} · ${cover.label}`;
+ if(label)label.textContent=`阅读记录 ${count} / ${paths.length}`;
  const resume=title.querySelector<HTMLAnchorElement>('[data-vn-continue]');
  const placeholder=title.querySelector<HTMLElement>('[data-vn-no-save]');
  const target=progress.last&&allowed.has(progress.last)?progress.last:null;

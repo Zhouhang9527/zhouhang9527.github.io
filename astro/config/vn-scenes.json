@@ -1,36 +1,6 @@
 {
-  "schemaVersion": 1,
-  "notice": "Provisional adaptation using existing tracked preview assets; original title-stage map and public permissions not verified.",
-  "covers": [
-    {
-      "id": "arrival",
-      "minCompleted": 0,
-      "slug": "hero-katana",
-      "label": "初见",
-      "focal": "67% 40%"
-    },
-    {
-      "id": "shore",
-      "minCompleted": 1,
-      "slug": "beach",
-      "label": "海岸",
-      "focal": "50% 50%"
-    },
-    {
-      "id": "torii",
-      "minCompleted": 3,
-      "slug": "torii-close",
-      "label": "鸟居",
-      "focal": "50% 50%"
-    },
-    {
-      "id": "island",
-      "minCompleted": 8,
-      "slug": "panorama",
-      "label": "姬之岛",
-      "focal": "50% 50%"
-    }
-  ],
+  "schemaVersion": 2,
+  "notice": "Title composition: fixed torii backdrop; only GINKA presence and expression change with progress (user-confirmed). The tracked torii image, stage thresholds and expression order are provisional. Original character/title differences and rights remain unverified.",
   "chapter": {
     "slug": "beach",
     "focal": "50% 50%"
@@ -42,5 +12,42 @@
   "ui": {
     "logo": "/images/ginka/header-logo.png",
     "wing": "/images/ginka/butterfly.png"
+  },
+  "title": {
+    "background": {
+      "id": "torii",
+      "slug": "torii-close",
+      "focal": "50% 50%"
+    },
+    "states": [
+      {
+        "id": "arrival",
+        "minCompleted": 0,
+        "present": false,
+        "expression": null,
+        "asset": null
+      },
+      {
+        "id": "first-encounter",
+        "minCompleted": 1,
+        "present": true,
+        "expression": "neutral",
+        "asset": null
+      },
+      {
+        "id": "familiar",
+        "minCompleted": 3,
+        "present": true,
+        "expression": "smile",
+        "asset": null
+      },
+      {
+        "id": "reunion",
+        "minCompleted": 8,
+        "present": true,
+        "expression": "smile-alternate",
+        "asset": null
+      }
+    ]
   }
 }

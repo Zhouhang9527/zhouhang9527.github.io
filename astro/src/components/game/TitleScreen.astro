@@ -1,14 +1,16 @@
 ---
-import {vnScenes,sceneVars} from '../../lib/vn-scenes';
+import {vnScenes,sceneVars,resolveTitleState} from '../../lib/vn-scenes';
 import {href} from '../../lib/site';
 import type {Post} from '../../lib/types';
 interface Props {posts:Post[]}
 const {posts}=Astro.props;
-const defaultCover=vnScenes.covers[0];
+const background=vnScenes.title.background;
+const initial=resolveTitleState(0);
 ---
-<section class="vn-stage vn-title" data-vn-title data-vn-cover={defaultCover.id} data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} aria-labelledby="vn-title-heading">
+<section class="vn-stage vn-title" data-vn-title data-vn-cover={background.id} data-vn-stage={initial.id} data-vn-character-present={String(initial.present)} data-vn-expression={initial.expression??"none"} data-vn-character-render="none" data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} aria-labelledby="vn-title-heading">
  <div class="vn-cover" aria-hidden="true">
- {vnScenes.covers.map(cover=><div class="vn-cover-art" data-vn-art={cover.id} style={sceneVars(cover.slug,cover.focal)} hidden={cover.id!==defaultCover.id}/>)}
+  <div class="vn-cover-art" data-vn-art={background.id} style={sceneVars(background.slug,background.focal)}></div>
+  <img class="vn-character-art" data-vn-character-art alt="" decoding="async" hidden/>
  </div>
  <div class="vn-title-content">
   <div class="vn-title-menu">
