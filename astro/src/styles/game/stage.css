@@ -6,6 +6,7 @@ body .main-inner.ginka-home:has([data-vn-title]){margin-top:0!important}
  --vn-font-ui:var(--vn-font-original, "Noto Sans SC"), "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
  --vn-font-meta:var(--font-mono);
  font-family:var(--vn-font-ui);
+ font-synthesis:none;
  position:relative;isolation:isolate;overflow:hidden;background:#101a26;color:#e2e9f0}
 .vn-title{min-height:100svh;display:grid;align-items:center}
 .vn-cover,.vn-cover-art{position:absolute;inset:0;pointer-events:none;z-index:-2}
@@ -66,3 +67,19 @@ body .vn-choices a:is(:hover,:focus-visible),.vn-tabs a:focus-visible,.vn-title-
    verified day/moonlit variants; theme changes must not recolor it. */
 .vn-cover-art{z-index:0}
 html body .vn-title[data-vn-original="true"] .vn-cover-art{background-image:var(--vn-original-frame);background-position:50% 50%;background-size:cover}
+
+/* Original full-frame title art must remain visually intact: the fallback
+   gradient is only for the provisional public illustration. */
+.vn-title[data-vn-original="true"]::before{background:none}
+.vn-title[data-vn-original="true"] .vn-title-menu{
+ background:linear-gradient(90deg,rgba(10,19,29,.74),rgba(10,19,29,.18));
+ border-radius:4px;padding:clamp(12px,2vw,22px);
+}
+.vn-stage :is(.vn-menu,.vn-chapter h1){font-synthesis:none}
+.vn-menu > :is(a,button,span){font-kerning:normal}
+@media(max-width:680px){
+ .vn-title[data-vn-original="true"]::before{
+  background:linear-gradient(180deg,transparent 0%,rgba(10,19,29,.08) 20%,rgba(10,19,29,.94) 58%);
+ }
+ .vn-title[data-vn-original="true"] .vn-title-menu{background:none;padding:0}
+}
