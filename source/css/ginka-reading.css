@@ -17,13 +17,12 @@ body .post-body .journal-heading-link:hover, body .post-body .journal-heading-li
 body .post-body :not(pre) > code { font-family: Consolas, 'SFMono-Regular', monospace; font-size: .9em; word-break: break-word; }
 body .post-body img { max-width: 100%; height: auto; }
 
-body .post-body .journal-table-scroll { width: 100%; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; margin: 1.2em 0 1.5em; border: 1px solid var(--journal-line); border-radius: var(--journal-radius-control); background: var(--journal-surface); -webkit-overflow-scrolling: touch; }
+body .post-body .journal-table-scroll { width: 100%; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; margin: 1.2em 0 1.5em; border-block: 1px solid var(--journal-line); border-inline: 0; border-radius: 0; background: transparent; scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; -webkit-overflow-scrolling: touch; }
 body .post-body .journal-table-scroll > .table-container { overflow: visible; margin: 0; }
 body .post-body .journal-table-scroll table { display: table; border-collapse: collapse; width: 100%; margin: 0; font-size: 14px; line-height: 1.75; }
-body .post-body .journal-table-scroll :is(th,td) { min-width: 100px; max-width: 420px; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--journal-line); vertical-align: top; overflow-wrap: break-word; word-break: normal; }
-body .post-body .journal-table-scroll th { background: #e9f0f6; color: #354f67; font-weight: 600; }
-body .post-body .journal-table-scroll tbody tr:nth-child(even) { background: var(--journal-surface-soft); }
-body .post-body .journal-table-scroll tbody tr:hover { background: #edf4f9; }
+body .post-body .journal-table-scroll :is(th,td) { min-width: 100px; max-width: 420px; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--surface-divider); vertical-align: top; overflow-wrap: break-word; word-break: normal; }
+body .post-body .journal-table-scroll th { background: var(--journal-surface-soft); color: var(--journal-ink); font-weight: 600; }
+body .post-body .journal-table-scroll tbody tr:hover { background: var(--control-hover); }
 body .post-body .journal-table-scroll tr:last-child td { border-bottom: 0; }
 body .post-body .journal-table-scroll caption { padding: 12px 16px; text-align: left; color: var(--journal-muted); }
 body .post-body .journal-table-scroll:focus-visible { outline: 3px solid #80adcb; outline-offset: 3px; }
@@ -146,10 +145,11 @@ body .main-inner.post .journal-reading-shell > .post-block {
   min-width: 0;
   max-height: min(380px, calc(100vh - 120px));
   overflow: auto;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   padding: 0 0 0 12px;
   border-left: 1px solid var(--journal-line, #dce5ed);
 }
+.journal-reading-shell > .journal-outline::-webkit-scrollbar { display: none; width: 0; height: 0; }
 .journal-outline-title {
   margin: 0 0 8px;
   color: var(--journal-muted, #77889a);
@@ -170,8 +170,8 @@ body .main-inner.post .journal-reading-shell > .post-block {
   padding: 2px 0;
   border: 0;
   color: var(--journal-muted, #718399) !important;
-  font-size: 11px;
-  line-height: 1.5;
+  font-size: 12px;
+  line-height: 1.6;
   text-decoration: none;
   overflow-wrap: anywhere;
   transition: color .18s ease;
@@ -334,3 +334,7 @@ body .post-body .journal-code .journal-code-actions > button svg { display: bloc
 @media print {
   .journal-reading-progress, .journal-outline { display: none !important; }
 }
+
+/* Preserve horizontal discoverability for actual code and data overflow. */
+body .post-body .journal-code :is(pre, figure.highlight) { scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; }
+@media (forced-colors: active) { .journal-reading-shell > .journal-outline { scrollbar-width: auto; } .journal-reading-shell > .journal-outline::-webkit-scrollbar { display: revert; width: auto; height: auto; } }

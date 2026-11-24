@@ -61,7 +61,11 @@ body .link-info p { margin: 0; color: var(--journal-muted); font-size: 12px; lin
 /* Persistent user-controlled drawer: remains available on post, archive, and mobile routes. */
 body aside.sidebar { display: block !important; position: fixed !important; inset: 0 auto 0 0 !important; margin: 0 !important; width: 300px !important; height: 100vh !important; height: 100dvh !important; padding: 0 !important; background: var(--journal-surface-soft) !important; transform: translateX(-102%) !important; transition: transform .22s var(--ease-art, ease); overflow: auto !important; visibility: hidden; pointer-events: none; z-index: 3000 !important; box-shadow: 8px 0 35px #233a5920 !important; backdrop-filter: none !important; }
 body.sidebar-active aside.sidebar { transform: translateX(0) !important; visibility: visible; pointer-events: auto; }
-body aside#journal-sidebar.sidebar { border: 0; border-radius: 0; scrollbar-width: thin; scrollbar-color: #b8cad9 transparent; }
+body aside#journal-sidebar.sidebar { border: 0; border-radius: 0; scrollbar-width: none; }
+/* These compact panels still scroll by wheel, touch and keyboard; only the chrome disappears. */
+body #journal-sidebar :is(.sidebar-inner, .sidebar-panel-container, .sidebar-panel, .post-toc, .post-toc-wrap, .site-overview-wrap, .music-playlist-items) { scrollbar-width: none; }
+body aside#journal-sidebar::-webkit-scrollbar,
+body #journal-sidebar :is(.sidebar-inner, .sidebar-panel-container, .sidebar-panel, .post-toc, .post-toc-wrap, .site-overview-wrap, .music-playlist-items)::-webkit-scrollbar { display: none; width: 0; height: 0; }
 body .journal-sidebar-edge {
   position: fixed; z-index: 2998; left: 0; top: 38vh; width: 10px; height: 24vh;
   min-height: 48px; padding: 0; border: 0; border-radius: 0;
@@ -70,7 +74,7 @@ body .journal-sidebar-edge {
 body.sidebar-active .journal-sidebar-edge { visibility: hidden; }
 body .journal-sidebar-edge:focus-visible { background: #e4eef7; outline: 1px solid #82a5c1; outline-offset: -1px; }
 body.sidebar-active .main, body.sidebar-active .footer { transform: none !important; padding-left: 0 !important; padding-right: 0 !important; }
-body .sidebar .sidebar-inner { padding: 20px 22px 34px !important; border-radius: 0; box-shadow: none; overflow: visible !important; backdrop-filter: none !important; }
+body .sidebar .sidebar-inner { padding: 16px 18px 28px !important; border: 0; border-radius: 0; background: transparent !important; box-shadow: none; overflow: visible !important; backdrop-filter: none !important; }
 .journal-sidebar-cover { position: relative; height: 136px; overflow: hidden; background: linear-gradient(160deg, #e2ebf5, #c9d8e6); }
 #journal-sidebar > .journal-sidebar-cover > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 40% 38%; border: 0; border-radius: 0; padding: 0; margin: 0; box-shadow: none; transform: none; }
 .journal-sidebar-cover > span { position: absolute; bottom: 13px; left: 20px; font: 12px var(--font-mono, Consolas, monospace); color: #334d6b; letter-spacing: 1.5px; }
@@ -81,10 +85,10 @@ body .sidebar .sidebar-inner { padding: 20px 22px 34px !important; border-radius
 body .sidebar .sidebar-nav { padding: 0 0 14px; margin: 0 0 16px; border-bottom: 1px solid #d7e2ee; }
 body .sidebar .sidebar-nav li { color: #71859b !important; border-radius: var(--journal-radius-tag); font-size: 12px; padding: 4px 8px; }
 body .sidebar .sidebar-toc-active .sidebar-nav-toc, body .sidebar .sidebar-overview-active .sidebar-nav-overview { color: #345977 !important; background: #e5edf6; border-bottom-color: transparent; }
-.journal-sidebar-links { display: grid; gap: 2px; margin: 0 0 24px; }
-.journal-sidebar-links a { display: flex; justify-content: space-between; padding: 10px 8px; border-bottom: 1px solid #e1e8f1 !important; color: #48617a !important; font-size: 13px; }
+.journal-sidebar-links { display: grid; gap: 2px; margin: 0 0 20px; }
+.journal-sidebar-links a { display: flex; justify-content: space-between; padding: 8px 10px; border-bottom: 0 !important; border-radius: var(--journal-radius-control); color: #48617a !important; font-size: 13px; }
 .journal-sidebar-links a span { font: 12px/2 var(--font-mono, Consolas, monospace); color: var(--journal-muted); }
-.journal-sidebar-links a:hover { background: #e9f0f8; }
+.journal-sidebar-links a:is(:hover, :focus-visible) { background: var(--control-hover); }
 body .sidebar .site-author-image { width: 62px; height: 62px; border: 3px solid white; padding: 0; }
 body .sidebar .site-author-name { font-family: inherit; font-size: 20px; color: #344d66 !important; margin: 12px 0 4px; }
 body .sidebar .site-description { font-size: 12px; line-height: 1.8; color: var(--journal-muted); }
@@ -142,7 +146,7 @@ body.sidebar-active .sidebar-dimmer { display: block; opacity: 1; }
 body #journal-sidebar #music-player { position: static !important; inset: auto !important; z-index: auto !important; width: auto !important; max-width: none !important; margin: 0 18px; transform: none !important; transition: none; text-align: left; }
 .journal-music-heading { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 10px; color: var(--music-title) !important; font-size: 14px; }
 .journal-music-heading span { font: 12px var(--font-mono, Consolas, monospace); letter-spacing: 2px; color: var(--music-muted); }
-body #journal-sidebar #music-player-main { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; max-width: none; box-sizing: border-box; padding: 12px !important; gap: 8px !important; background: var(--music-bg) !important; border: 1px solid var(--music-border) !important; border-radius: var(--journal-radius) !important; box-shadow: none !important; backdrop-filter: none !important; }
+body #journal-sidebar #music-player-main { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; max-width: none; box-sizing: border-box; padding: 10px !important; gap: 6px !important; background: var(--music-bg) !important; border: 1px solid var(--music-border) !important; border-radius: var(--journal-radius) !important; box-shadow: none !important; backdrop-filter: none !important; }
 body #music-player-main::before { content: none; }
 body #journal-sidebar #music-cover { display: block !important; grid-row: 1; grid-column: 1; align-self: center; width: 40px !important; height: 40px !important; border-radius: var(--journal-radius-control) !important; box-shadow: none !important; }
 body #journal-sidebar #music-info { grid-row: 1; grid-column: 2/5; display: flex !important; min-width: 0 !important; max-width: none !important; width: 100%; gap: 3px !important; }
@@ -251,3 +255,11 @@ body .search-keyword { color: #376484; background: #e1edf8; padding: 1px 3px; }
 }
 @media print { .journal-masthead > img, .journal-sidebar-cover, .sidebar-toggle, .journal-reading-nav { display: none !important; } }
 body.sidebar-active .main { margin-left: auto !important; margin-right: auto !important; }
+
+/* Respect system high-contrast settings; never remove the scroll mechanism. */
+@media (forced-colors: active) {
+  body aside#journal-sidebar.sidebar,
+  body #journal-sidebar :is(.sidebar-inner, .sidebar-panel-container, .sidebar-panel, .post-toc, .post-toc-wrap, .site-overview-wrap, .music-playlist-items) { scrollbar-width: auto; }
+  body aside#journal-sidebar::-webkit-scrollbar,
+  body #journal-sidebar :is(.sidebar-inner, .sidebar-panel-container, .sidebar-panel, .post-toc, .post-toc-wrap, .site-overview-wrap, .music-playlist-items)::-webkit-scrollbar { display: revert; width: auto; height: auto; }
+}

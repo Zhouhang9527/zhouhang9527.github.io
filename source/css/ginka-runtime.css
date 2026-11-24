@@ -760,12 +760,12 @@
 .music-playlist-item {
   width: 100%;
   border: 1px solid transparent;
-  border-radius: 12px;
+  border-radius: var(--journal-radius-control);
   background: transparent;
   color: var(--music-text);
   text-align: left;
-  padding: 9px 11px;
-  margin: 3px 0;
+  padding: 7px 9px;
+  margin: 2px 0;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -782,8 +782,8 @@
 
 .music-playlist-item.is-active {
   background: var(--music-hover);
-  border-color: var(--music-accent);
-  box-shadow: none;
+  border-color: transparent;
+  box-shadow: inset 2px 0 var(--music-accent);
 }
 
 .music-playlist-title {

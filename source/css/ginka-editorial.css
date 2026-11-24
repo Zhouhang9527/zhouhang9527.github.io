@@ -39,11 +39,19 @@
   --control-selected-border: #a9c2d6;
   --control-success: #39745b;
   --control-error: #a94452;
+  --scroll-thumb: #b5c3d0;
+  --scroll-thumb-hover: #879caf;
+  --surface-divider: #e5ebf1;
   --content-bg-color: #fff;
   --text-color: var(--ink);
   --link-color: var(--blue);
 }
-html { scroll-padding-top: calc(var(--book-header) + 15px); background: var(--bg-canvas) !important; }
+html { scroll-padding-top: calc(var(--book-header) + 15px); background: var(--bg-canvas) !important; scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; }
+/* Keep useful scrollbars flat and quiet; do not force overflow or scrollbars globally. */
+:where(html, .journal-code pre, .journal-code figure.highlight, .journal-table-scroll, .search-result-container)::-webkit-scrollbar { width: 6px; height: 6px; }
+:where(html, .journal-code pre, .journal-code figure.highlight, .journal-table-scroll, .search-result-container)::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 6px; }
+:where(html, .journal-code pre, .journal-code figure.highlight, .journal-table-scroll, .search-result-container)::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
+:where(html, .journal-code pre, .journal-code figure.highlight, .journal-table-scroll, .search-result-container)::-webkit-scrollbar-track { background: transparent; }
 html body {
   margin: 0;
   background: linear-gradient(180deg, #fafcfe 0, var(--bg-canvas) 950px) !important;
@@ -279,15 +287,15 @@ body .header .journal-mobile-links :is(a, button):is(:hover, :focus-visible) { b
   letter-spacing: .12em;
 }
 .journal-wing { display: inline-block; width: 24px; height: 24px; margin: 0; opacity: .72; }
-.journal-count { box-sizing: border-box; color: var(--muted); font: 400 11px/1.6 var(--font-mono); letter-spacing: .04em; padding: 2px 6px; border: 1px solid var(--rule); border-radius: 3px; }
+.journal-count { box-sizing: border-box; color: var(--muted); font: 400 11px/1.6 var(--font-mono); letter-spacing: .04em; padding: 2px 4px; font-variant-numeric: tabular-nums; }
 .journal-section-heading > a { font-size: 12px; white-space: nowrap; color: #315e7f !important; }
 .journal-section-heading > a span { margin-left: 5px; }
 .journal-filters { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 8px; }
 .journal-filters button[data-journal-filter] {
   --filter-ink: #3e566d;
-  border: 1px solid #cbd9e5;
-  border-radius: 100px;
-  background: #fafcfe;
+  border: 1px solid transparent;
+  border-radius: var(--journal-radius-control);
+  background: transparent;
   /* NexT's legacy button rule forces white text and a raised hover state. */
   color: var(--filter-ink) !important;
   padding: 6px 12px;
@@ -298,12 +306,12 @@ body .header .journal-mobile-links :is(a, button):is(:hover, :focus-visible) { b
   transition: none;
   cursor: pointer;
 }
-.journal-filters button[data-journal-filter]:is(:hover, :focus-visible) { background: #eef4f9; border-color: #98b3c8; }
+.journal-filters button[data-journal-filter]:is(:hover, :focus-visible) { background: var(--control-hover); border-color: transparent; }
 .journal-filters button[data-journal-filter][aria-pressed='true'] {
   --filter-ink: #234b6a;
-  background: #e2edf6;
-  border-color: #82a5c1;
-  font-weight: 600;
+  background: var(--control-selected);
+  border-color: var(--control-selected-border);
+  font-weight: 500;
 }
 .journal-entry {
   position: relative;
@@ -312,7 +320,7 @@ body .header .journal-mobile-links :is(a, button):is(:hover, :focus-visible) { b
   gap: 24px;
   align-items: start;
   margin: 0 -18px 0 -20px;
-  padding: 25px 18px 25px 20px;
+  padding: 21px 18px 21px 20px;
   border-bottom: 1px solid var(--rule);
 }
 .journal-entry::before {
@@ -340,7 +348,7 @@ body .header .journal-mobile-links :is(a, button):is(:hover, :focus-visible) { b
 .journal-entry-arrow { align-self: center; color: #2d648b; font-size: 17px; opacity: 0; transform: translateX(-7px); transition: opacity 300ms var(--ease-art), transform 300ms var(--ease-art); }
 .journal-entry:is(:hover, :focus-within) .journal-entry-arrow { opacity: 1; transform: translateX(0); }
 .journal-aside { position: sticky; top: calc(var(--book-header) + 22px); display: grid; gap: 26px; }
-.journal-profile, .journal-game-note { margin: 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); box-shadow: var(--journal-shadow); }
+.journal-profile, .journal-game-note { margin: 0; border: 1px solid var(--rule); border-radius: var(--journal-radius); background: var(--paper); box-shadow: none; }
 .journal-profile { padding: 27px 23px 22px; }
 .journal-profile > img { display: block; border: 1px solid var(--rule); border-radius: 50%; margin: 17px 0 10px; object-fit: cover; }
 .ginka-home .journal-profile h2 { margin: 0 0 6px; font: 500 24px/1.5 var(--font-title); letter-spacing: .02em; }

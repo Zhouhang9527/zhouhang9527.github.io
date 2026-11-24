@@ -60,6 +60,15 @@ const baseUrl = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4000';
     return page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
   });
 
+  await check('drawer hides decorative scrollbar without disabling scrolling', async () => {
+    return page.evaluate(() => {
+      const drawer = document.querySelector('#journal-sidebar');
+      if (!drawer) return false;
+      const style = getComputedStyle(drawer);
+      return style.scrollbarWidth === 'none' && ['auto', 'scroll'].includes(style.overflowY);
+    });
+  });
+
   const article = page.locator('.journal-entry h3 a, .post-title-link').first();
   if (await article.count()) {
     const audioBeforePjax = await page.locator('#bg-music').elementHandle();

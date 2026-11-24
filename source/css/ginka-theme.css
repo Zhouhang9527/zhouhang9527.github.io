@@ -50,6 +50,9 @@ html[data-theme='moonlit'] {
   --control-selected-border: #45627e;
   --control-success: #a8cfc4;
   --control-error: #e5a1a1;
+  --scroll-thumb: #40566d;
+  --scroll-thumb-hover: #667f99;
+  --surface-divider: #25364b;
   --journal-shadow: 0 2px 14px #00000059;
   --content-bg-color: var(--surface-read);
   --text-color: var(--ink);
@@ -130,17 +133,17 @@ html[data-theme='moonlit'] .journal-entry-tags a { color: var(--blue) !important
 html[data-theme='moonlit'] .journal-entry-arrow { color: var(--blue); }
 html[data-theme='moonlit'] .journal-filters button[data-journal-filter] {
   --filter-ink: var(--body-text);
-  background: var(--surface-float);
-  border-color: var(--rule);
+  background: transparent;
+  border-color: transparent;
 }
 html[data-theme='moonlit'] .journal-filters button[data-journal-filter]:is(:hover, :focus-visible) {
-  background: #24333f;
-  border-color: #3c5266;
+  background: var(--control-hover);
+  border-color: transparent;
 }
 html[data-theme='moonlit'] .journal-filters button[data-journal-filter][aria-pressed='true'] {
   --filter-ink: var(--ink);
-  background: #24405a;
-  border-color: #476a8b;
+  background: var(--control-selected);
+  border-color: var(--control-selected-border);
 }
 
 /* ------------------------------------------------------------ 侧边卡片 */
@@ -504,13 +507,10 @@ html[data-theme='moonlit'] body .search-popup button { color: var(--body-text) !
 html[data-theme='moonlit'] body .search-popup .search-result { color: var(--body-text); }
 html[data-theme='moonlit'] body .search-popup mark { background: var(--surface-read); color: var(--blue); }
 html[data-theme='moonlit'] .journal-colophon a { color: var(--body-text) !important; }
-html[data-theme='moonlit'] body aside#journal-sidebar.sidebar { scrollbar-color: #40566d transparent; }
-html[data-theme='moonlit'] body #journal-sidebar .sidebar-inner { background: var(--surface-nav) !important; }
+html[data-theme='moonlit'] body #journal-sidebar .sidebar-inner { background: transparent !important; }
 html[data-theme='moonlit'] body #journal-sidebar .sidebar-nav { border-color: var(--rule); }
 html[data-theme='moonlit'] body #journal-sidebar .post-toc .active > a { background: var(--surface-float); color: var(--blue) !important; }
 html[data-theme='moonlit'] body #journal-sidebar .site-author-image { border-color: var(--rule); }
-html[data-theme='moonlit'] body #journal-sidebar::-webkit-scrollbar-thumb { background: #40566d; }
-html[data-theme='moonlit'] body #journal-sidebar::-webkit-scrollbar-track { background: var(--surface-nav); }
 html[data-theme='moonlit'] body .sidebar-dimmer { background: #00000065 !important; }
 html[data-theme='moonlit'] #custom-context-menu {
   background: var(--surface-float) !important;
@@ -552,4 +552,4 @@ html[data-theme='moonlit'] body .journal-sidebar-edge:hover { background: var(--
 html[data-theme='moonlit'] body .search-result-list > li { border-color: var(--rule); }
 html[data-theme='moonlit'] body .search-result-title { color: var(--ink) !important; }
 html[data-theme='moonlit'] body .search-keyword { background: var(--control-selected); color: var(--blue); }
-html[data-theme='moonlit'] body .journal-reading-shell .journal-outline { scrollbar-color: #40566d transparent; }
+
