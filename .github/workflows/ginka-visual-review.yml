@@ -1,7 +1,7 @@
 name: GINKA visual review
 on:
   push:
-    branches: [ginka-art-direction, ginka-dialogue-polish]
+    branches: [ginka-art-direction, ginka-dialogue-polish, ginka-comments-refine]
   workflow_dispatch:
 permissions:
   contents: read
@@ -33,6 +33,7 @@ jobs:
           GINKA_TEST_BASE_URL: http://127.0.0.1:4004
         run: |
           export GINKA_CHROME_PATH="$(node -e "console.log(require('playwright').chromium.executablePath())")"
+          node tools/checks/comment-layout-regression.js
           npm run check:browser
           npm run check:motion
       - name: Capture all routes and interactions
