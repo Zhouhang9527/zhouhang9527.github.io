@@ -193,7 +193,7 @@
     svg('stop', { offset: '1', 'stop-color': '#b8dfff', 'stop-opacity': '0' }, soft);
     const streak = svg('g', { 'clip-path': 'url(#ginka-blade-clip)' }, stage);
     const moving = svg('g', { class: 'ginka-sword-trace' }, streak);
-    if (hero.dataset.streakArt) {
+    if (desktop.matches && hero.dataset.streakArt) {
       svg('image', { href: hero.dataset.streakArt, x: '-25', y: '-35', width: '50', height: '70',
         transform: 'rotate(50)' }, moving);
     } else {
@@ -203,7 +203,7 @@
     }
     const star = svg('g', { class: 'ginka-sword-star' }, stage);
     // The original night CG has its strongest glint at (119, 216).
-    if (hero.dataset.glintArt) {
+    if (desktop.matches && hero.dataset.glintArt) {
       svg('image', { href: hero.dataset.glintArt, x: '64', y: '185', width: '110', height: '62' }, star);
     } else {
       svg('ellipse', { cx: '119', cy: '216', rx: '37', ry: '10', fill: 'url(#ginka-glint-soft)' }, star);
@@ -256,6 +256,7 @@
           ], { duration: 450, delay: 270, easing: 'ease-out' })
         ];
         Promise.all(cue.filter(Boolean).map(a => a.finished.catch(() => {}))).then(() => {
+          cue = null;
           if (!dead) layer.classList.remove('ginka-sword-live');
         });
       }, 680);

@@ -76,7 +76,8 @@ const checks = [
       $('[data-journal-gallery] [data-fancybox="ginka-island"]').length === 3 &&
       $('[data-journal-gallery] [data-fancybox="ginka-island"] .scene-night').length === 3 &&
       $('[data-journal-gallery] .journal-scene-label').length === 3 &&
-      $('.journal-hero-dust i').length === 6
+      $('.journal-hero-dust i').length === 0 &&
+      $('.journal-hero-light').length === 1 && !html.includes('local-preview/hero-')
   },
   {
     name: 'publishes flat navigation and removes the cover side inscription',

@@ -37,8 +37,7 @@ html.lenis-smooth :is(.search-popup, .sidebar, .journal-outline, .journal-table-
   .journal-hero-light { z-index: 1; opacity: 1; overflow: hidden; }
   .ginka-sword-stage { position: absolute; max-width: none; max-height: none; overflow: visible; pointer-events: none; }
   .ginka-sword-trace, .ginka-sword-star { opacity: 0; transform-origin: 0 0; }
-  .ginka-hero-previous { position: absolute; z-index: 0; pointer-events: none; display: block; object-fit: cover; }
-  .ginka-hero-image:has(+ .ginka-hero-previous) { z-index: 0; }
+  .ginka-hero-previous { position: absolute; pointer-events: none; display: block; object-fit: cover; }
   .ginka-hero-previous { z-index: 1; }
   .journal-hero-dust { display: none; }
   /* Bokeh is a quiet edge accent, not a second full-screen particle system. */
