@@ -20,9 +20,9 @@ document.addEventListener('click',event=>{
  if(!target)return;
  if(target.hasAttribute('data-vn-mode-toggle')){
   setView(view==='game'?'reader':'game');
-  if(location.pathname==='/')window.scrollTo({top:0,behavior:'instant'});
+  if(location.pathname==='/'){window.scrollTo({top:0,behavior:'instant'});const next=document.querySelector<HTMLElement>(view==='game'?'[data-vn-start]':'#main-content');next?.focus({preventScroll:true});}
  }else{setView(target.dataset.vnModeSet==='reader'?'reader':'game');}
-});
+},true);
 document.addEventListener('change',event=>{
  const input=event.target;
  if(!(input instanceof HTMLInputElement))return;
@@ -47,3 +47,17 @@ document.addEventListener('keydown',event=>{
  const next=event.key==='Home'?0:event.key==='End'?items.length-1:(i+(event.key==='ArrowDown'?1:-1)+items.length)%items.length;
  event.preventDefault();items[next].focus();
 });
+
+function fullscreenState(){
+ const button=document.querySelector<HTMLButtonElement>('[data-vn-fullscreen]');
+ if(button){button.hidden=!document.fullscreenEnabled;button.textContent=document.fullscreenElement?'退出全屏':'全屏';}
+}
+document.addEventListener('fullscreenchange',fullscreenState);
+document.addEventListener('astro:page-load',fullscreenState);
+document.addEventListener('click',event=>{
+ const button=(event.target as Element|null)?.closest('[data-vn-fullscreen]');
+ if(!button)return;
+ if(document.fullscreenElement)void document.exitFullscreen().catch(()=>{});
+ else if(document.fullscreenEnabled)void document.documentElement.requestFullscreen().catch(()=>{});
+});
+fullscreenState();

@@ -1,0 +1,13 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GamePanel from '../components/game/GamePanel.astro';
+---
+<Layout title="音乐鉴赏" kind="home" noindex>
+ <GamePanel heading="音乐鉴赏" label="MUSIC" kind="music">
+  <div class="vn-music-room" data-vn-music hidden>
+   <div class="vn-music-cover"><img data-vn-music-cover alt="" width="180" height="180" hidden/><span aria-hidden="true">♪</span></div>
+   <div class="vn-music-info"><p class="vn-kicker">NOW PLAYING</p><h2 data-vn-music-title>正在读取歌单</h2><p data-vn-music-artist></p><div class="vn-music-time"><span data-vn-music-time>0:00 / 0:00</span><progress data-vn-music-progress max="1" value="0" aria-label="播放进度"></progress></div><div class="vn-tabs"><button type="button" data-vn-music-action="music-toggle">播放 / 暂停</button><button type="button" data-vn-music-action="music-next">下一首</button><button type="button" data-vn-music-action="music-volume-toggle">静音切换</button><button type="button" data-journal-sidebar-open aria-controls="journal-sidebar" aria-expanded="false">完整歌单</button></div></div>
+  </div>
+  <noscript><p>音乐播放器需要 JavaScript</p></noscript>
+ </GamePanel>
+</Layout>

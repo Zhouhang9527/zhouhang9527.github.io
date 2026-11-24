@@ -81,7 +81,7 @@ function renderLibrary(){
   if(status){const pos=state.positions[path];status.textContent=done?'已读':pos?'阅读进度 '+Math.round(pos.ratio*100)+'%':'阅读记录';}
   const button=slot.querySelector<HTMLButtonElement>('[data-vn-bookmark]');
   if(button)showBookmark(button,saved);
-  root.append(slot);
+  if(root.children[slots.indexOf(slot)]!==slot)root.insertBefore(slot,root.children[slots.indexOf(slot)]||null);
  }
  const empty=document.querySelector<HTMLElement>('[data-vn-library-empty]');
  if(empty){empty.hidden=count>0;empty.textContent=libraryFilter==='bookmarks'?'暂无收藏':libraryFilter==='completed'?'暂无已读记录':'暂无阅读记录';}
@@ -98,7 +98,7 @@ const RESUME='ginka.vn.resume.v1';
 let current:HTMLElement|null=null, timer=0, dirty=false, pendingResume:string|null=null, restoreFrame=0;
 function flush(){
  clearTimeout(timer);timer=0;
- if(!dirty||!current)return;
+ if(!dirty||!current?.isConnected)return;
  dirty=false;
  const path=current.dataset.vnArticle;
  if(!isPath(path))return;
@@ -134,7 +134,7 @@ document.addEventListener('click',event=>{
  if(!link||link.origin!==location.origin||!isPath(link.pathname)||link.target&&link.target!=='_self')return;
  pendingResume=link.pathname;
  try{sessionStorage.setItem(RESUME,JSON.stringify({path:link.pathname,at:Date.now()}));}catch{}
-});
+},true);
 window.addEventListener('scroll',()=>{
  if(!current||!current.isConnected)return;
  dirty=true;clearTimeout(timer);timer=window.setTimeout(flush,600);
@@ -146,7 +146,7 @@ document.addEventListener('click',event=>{
  const el=(event.target as Element|null)?.closest<HTMLButtonElement>('[data-vn-mark],[data-vn-bookmark],[data-vn-filter],[data-vn-reset]');
  if(!el)return;
  if(el.hasAttribute('data-vn-reset')){
-  if(window.confirm('清除本机全部阅读记录和收藏？')){write(empty());refresh();}
+  if(window.confirm('清除本机全部阅读记录和收藏？')){clearTimeout(timer);dirty=false;pendingResume=null;try{sessionStorage.removeItem(RESUME);}catch{}write(empty());refresh();}
   return;
  }
  if(el.dataset.vnFilter){libraryFilter=el.dataset.vnFilter;renderLibrary();return;}

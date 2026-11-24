@@ -33,19 +33,20 @@
  },true);
  document.addEventListener('close',e=>{if(e.target.matches('.astro-search,.astro-gallery')){++queryToken;const target=opener;opener=null;if(target?.isConnected)target.focus({preventScroll:true});}},true);
  document.addEventListener('input',async e=>{
-  if(e.target.id!=='astro-query')return;const q=e.target.value.trim(),token=++queryToken,results=$('#astro-results');results.replaceChildren();if(!q)return;
+  if(e.target.id!=='astro-query'&&!e.target.matches?.('[data-vn-query]'))return;const q=e.target.value.trim(),token=++queryToken,results=e.target.id==='astro-query'?$('#astro-results'):$('[data-vn-results]');if(!results)return;results.replaceChildren();if(!q)return;
   results.textContent='检索中…';
   try{
    searchModule ||= import('/pagefind/pagefind.js').then(async m=>{await m.init();return m;});
    const index=await searchModule, data=await index.search(q);
    const hits=await Promise.all(data.results.slice(0,20).map(r=>r.data()));
-   if(token!==queryToken)return;results.replaceChildren();
+   if(token!==queryToken||!results.isConnected)return;results.replaceChildren();
    if(!hits.length){results.textContent='没有匹配的文章';return;}
    for(const hit of hits){const a=document.createElement('a');a.href=hit.url;const title=document.createElement('strong');title.textContent=hit.meta.title||hit.url;const p=document.createElement('p');const fragment=new DOMParser().parseFromString(hit.excerpt||'','text/html');p.textContent=fragment.body.textContent;a.append(title,p);results.append(a);}
   }catch(err){if(token===queryToken){searchModule=null;results.textContent='搜索暂时不可用，请重试';}}
  });
  document.addEventListener('astro:before-preparation',()=>{++queryToken;drawer(false);document.querySelectorAll('dialog[open]').forEach(d=>d.close());});
  document.addEventListener('astro:after-swap',()=>{try{window.GINKA_THEME?.set(localStorage.getItem('ginka-theme')||'system');}catch{}drawer(false);});
- document.addEventListener('astro:page-load',updateOutline);
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',updateOutline,{once:true});else updateOutline();
+ function mount(){updateOutline();const search=$('[data-vn-search]');if(search)search.hidden=false;}
+ document.addEventListener('astro:page-load',mount);
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();

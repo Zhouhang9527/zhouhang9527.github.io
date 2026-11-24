@@ -67,3 +67,10 @@ for(const route of ['index.html','gallery/index.html','library/index.html','sett
  assert.doesNotMatch(fs.readFileSync('dist/'+route,'utf8'),/__ginka_local_ui__|data-vn-ui-original="true"/,'Private UI reference leaked');
 }
 console.log('PASS private UI build isolation');
+
+for(const [route,screen] of [['search','search'],['music-room','music']]){
+ const html=fs.readFileSync('dist/'+route+'/index.html','utf8');
+ assert.ok(html.includes('data-vn-screen="'+screen+'"'),'Missing VN '+screen);
+ assert.ok(home.includes('href="/'+route+'/"'),'Unreachable VN '+route);
+}
+console.log('PASS VN search and music entry points');

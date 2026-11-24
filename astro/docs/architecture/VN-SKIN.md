@@ -20,3 +20,6 @@ Status: functional provisional skin; original screenshot/atlas calibration pendi
 - `ginka.vn.mode.v1`: explicit game/reader choice. Homepage INDEX opens the journal; article TITLE returns to game mode. Archive routes retain the same URL and switch only the presentation.
 - v1 reading state is extended with bounded section-relative positions. Resume is explicit (CONTINUE / LOAD), never automatic on normal links, direct URLs, anchors or browser history.
 - Position records store article fraction and heading-relative fraction, not raw viewport pixels. No cloud synchronization. Domain parser and migration tests run before build.
+
+## Additional game surfaces
+Search has its own route and shares the existing Pagefind loader with the search dialog. MUSIC reads the persistent audio controller and delegates controls to it; the playlist remains in the existing sidebar. BACKLOG exposes the real Giscus iframe and original pathname mapping, without inventing dialogue or introducing an iframe DOM hack. Fullscreen is an explicit browser action. Taxonomy pages use the game choices in game mode and the artbook list in reader mode.

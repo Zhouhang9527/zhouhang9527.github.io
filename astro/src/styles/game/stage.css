@@ -160,3 +160,30 @@ html[data-vn-mode=reader] .ginka-home .journal-chapters{padding-top:16px}
 body .header [data-vn-mode-toggle]{min-height:44px;border:0;background:transparent;font-size:12px;padding:0 7px;white-space:nowrap}
 body .header [data-vn-mode-toggle][hidden]{display:none!important}
 @media(max-width:680px){body .header .menu-item-mode{display:none}}
+
+/* Full game routes keep shared controls functional, without an unrelated
+   character overlay covering the actual game CG or the panels. */
+html:not([data-vn-mode=reader]) body:has([data-vn-title], [data-vn-screen], [data-vn-chapter]) :is(#atri-launcher-shell,#atri-live2d-widget){display:none!important}
+.vn-title-tools [hidden]{display:none!important}
+.vn-title-content{padding-block:clamp(18px,4vh,48px) 24px}
+.vn-menu{gap:2px}
+body .vn-menu > :is(a,button,span){min-height:42px;padding-block:7px}
+.vn-year-tabs{margin-top:4px}.vn-year-tabs a{min-height:36px}
+.vn-search-area{display:grid;gap:14px}
+.vn-search-area input{width:100%;min-height:44px;border:1px solid var(--vn-border);background:#142638;color:#e9f3fa;padding:10px 12px;font-size:16px}
+.vn-search-results a{display:block;padding:12px 8px;border-bottom:1px solid var(--vn-border);color:#e4eff8!important;overflow-wrap:anywhere}
+.vn-search-results a p{font-size:13px;color:#becfdf;margin:4px 0 0}
+.vn-music-room{display:grid;grid-template-columns:minmax(100px,180px) minmax(0,1fr);align-items:center;gap:24px}
+.vn-music-cover{position:relative;display:grid;place-items:center;aspect-ratio:1;background:linear-gradient(135deg,#223b55,#0f1b2c);border:1px solid var(--vn-border);font-size:42px;color:#9cb6cc}
+.vn-music-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vn-music-info h2{font:400 21px/1.4 var(--vn-font-menu);color:#e6f0fa!important;overflow-wrap:anywhere;margin:8px 0}
+.vn-music-info p{color:#c7d8e6}
+.vn-music-time{display:grid;gap:6px;font-size:12px}
+.vn-music-time progress{width:100%;height:6px;accent-color:#a6cee8}
+.vn-backlog-header{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--rule);padding:0 0 10px;margin-bottom:12px;color:var(--muted)}
+.vn-backlog-header h2{font-size:17px;font-weight:500;margin:0}.vn-backlog-header span{font:11px/1.4 var(--font-mono);letter-spacing:.1em}.vn-backlog-header a{margin-left:auto;font-size:12px}
+@media(max-width:680px){
+ .vn-title-content{padding-block:clamp(170px,38svh,310px) max(24px,env(safe-area-inset-bottom))}
+ .vn-music-room{grid-template-columns:1fr;gap:12px}
+ .vn-music-cover{width:min(160px,100%);justify-self:center}
+}
