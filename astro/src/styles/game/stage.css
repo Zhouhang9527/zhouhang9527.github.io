@@ -657,3 +657,5 @@ html:not([data-vn-mode=reader]) body:has([data-vn-title],[data-vn-screen]) #gink
 html[data-vn-motion=reduced] .ginka-mascot-portrait{animation:none}
 @media(prefers-reduced-motion:reduce){.ginka-mascot-portrait{animation:none}}
 @media(max-width:700px){.ginka-mascot-character{width:130px;height:220px}.ginka-mascot-window{padding:8px 12px 32px}.ginka-mascot-window p{font-size:13px}.ginka-mascot-name{height:26px;font-size:12px}.ginka-mascot-window nav button{min-height:32px}}
+
+.vn-option-buttons select{max-width:100%;background:#d6eaf6;color:#142b46;border:1px solid #6ca5c6;padding:4px 8px}

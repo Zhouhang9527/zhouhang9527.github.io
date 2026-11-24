@@ -72,7 +72,7 @@ copy(path.join(project,'src/styles/game/stage.css'),path.join(out,'css/vn-stage.
 fs.writeFileSync(path.join(out,'.nojekyll'),'');
 
 const assetVersions = {};
-for(const relative of ['css/astro-base.css','css/vn-stage.css',...['editorial','pages','reading','runtime','motion','theme','comments'].map(n=>'css/ginka-'+n+'.css'),...['theme-init','runtime','reading','atri-loader','ui-shell','theme','comments','controls','motion','music'].map(n=>'js/ginka-'+n+'.js'),'js/astro-shell.js']){
+for(const relative of ['css/astro-base.css','css/vn-stage.css',...['editorial','pages','reading','runtime','motion','theme','comments'].map(n=>'css/ginka-'+n+'.css'),...['theme-init','runtime','reading','ui-shell','theme','comments','controls','motion','music'].map(n=>'js/ginka-'+n+'.js'),'js/astro-shell.js']){
  const bytes=fs.readFileSync(path.join(out,relative));
  assetVersions[relative]=createHash('sha256').update(bytes).digest('hex').slice(0,10);
 }

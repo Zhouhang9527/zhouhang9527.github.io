@@ -12,6 +12,12 @@ Manifest structure (placeholders only, not a usable pack):
   "defaultPose": "neutral",
   "poses": {
     "neutral": {
+      "character": "child",
+      "phase": "main",
+      "outfit": "verified outfit ID",
+      "expression": "verified expression ID",
+      "gesture": "verified gesture ID",
+      "motion": [],
       "base": "poses/neutral.png",
       "blink": null,
       "mouth": null,
@@ -35,3 +41,6 @@ Manifest structure (placeholders only, not a usable pack):
 ```
 
 A local agent must replace every placeholder with verified data. Do not distribute the pack publicly without authorization. The public build contains the shell and settings only, not original voice, dialogue or portraits. Validate with npm run dev:original -- <private-repo> and exercise portrait animation, next/replay/save, independent volume and post-clear gating. The mouth animation uses RMS-driven full-frame switching, not Live2D deformation or phoneme synchronization.
+
+## Character variants
+Every pose must declare character=child or adult, outfit, expression, gesture, and phase. These are independent dimensions; do not infer outfit or age from a hashed path. Use stable IDs such as child_<outfit>_<expression>_<gesture> after visual verification. Each pose may include an optional ordered motion array of {"image":"poses/frame.png","ms":120} entries representing verified full-frame original animation; idle frames play after voice ends, while blink/mouth use aligned expression frames. No unverified character/outfit combinations are synthesized. Program settings filter the actual dialogue pool by character and outfit; afterstory variants are excluded until main clear. Lines bind to a concrete pose and exact voice ID. For the extraction agent, produce a contact sheet grouped by character/outfit/gesture, and evidence linking original scenario line and voice, including phase. Keep adult/child nonsexual, spoiler-safe samples. Do not put placeholder text in the real pack.

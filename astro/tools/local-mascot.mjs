@@ -6,24 +6,29 @@ const mime={'.png':'image/png','.webp':'image/webp','.ogg':'audio/ogg','.wav':'a
 export function loadMascotPack(input){
  const manifest=fs.realpathSync(input),root=path.dirname(manifest),raw=JSON.parse(fs.readFileSync(manifest,'utf8'));
  if(raw.version!==1||!raw.poses||!Array.isArray(raw.lines)||!raw.lines.length||raw.lines.length>500||!idPattern.test(raw.defaultPose))throw Error('Invalid mascot pack');
- const files=new Map(),poses={},lines=[],ids=new Set();
+ const files=new Map(),poses=Object.create(null),lines=[],ids=new Set(),registered=new Map();
  function register(relative,kind){
   if(typeof relative!=='string'||path.isAbsolute(relative)||relative.includes('\\')||relative.split('/').some(s=>!s||s==='..'||s==='.'))throw Error('Invalid mascot asset path');
   const file=fs.realpathSync(path.join(root,relative)),rel=path.relative(root,file);
   if(rel.startsWith('..'+path.sep)||rel==='..'||path.isAbsolute(rel)||!fs.statSync(file).isFile())throw Error('Asset outside mascot pack');
   const ext=path.extname(file).toLowerCase(),type=mime[ext];
   if(!type||!type.startsWith(kind+'/'))throw Error('Unsupported mascot asset '+relative);
-  const key='asset-'+files.size+ext;files.set(key,{file,type,size:fs.statSync(file).size});return prefix+key;
+  if(registered.has(file))return registered.get(file);
+  const size=fs.statSync(file).size;if(!size)throw Error('Empty asset');const key='asset-'+files.size+ext;files.set(key,{file,type,size});registered.set(file,prefix+key);return prefix+key;
  }
  for(const [id,pose] of Object.entries(raw.poses)){
   if(!idPattern.test(id)||!pose||typeof pose.source!=='string'||!pose.source.trim())throw Error('Invalid pose evidence');
+  if(!['child','adult'].includes(pose.character)||!['main','afterstory'].includes(pose.phase)||!['outfit','expression','gesture'].every(k=>typeof pose[k]==='string'&&pose[k].trim()&&pose[k].length<=80))throw Error('Missing character/wardrobe/expression/gesture metadata: '+id);
   const base=register(pose.base,'image');
-  poses[id]={base,blink:pose.blink?register(pose.blink,'image'):null,mouth:pose.mouth?register(pose.mouth,'image'):null,source:pose.source};
+  const motion=pose.motion??[];
+  if(!Array.isArray(motion)||motion.length>120)throw Error('Invalid pose motion');
+  const frames=motion.map(frame=>{if(!frame||!Number.isInteger(frame.ms)||frame.ms<40||frame.ms>10000)throw Error('Invalid frame timing');return {image:register(frame.image,'image'),ms:frame.ms};});
+  poses[id]={character:pose.character,phase:pose.phase,outfit:pose.outfit,expression:pose.expression,gesture:pose.gesture,base,blink:pose.blink?register(pose.blink,'image'):null,mouth:pose.mouth?register(pose.mouth,'image'):null,motion:frames,source:pose.source};
  }
- if(!Object.hasOwn(poses,raw.defaultPose))throw Error('Unknown default pose');
+ if(!Object.hasOwn(poses,raw.defaultPose)||poses[raw.defaultPose].phase!=='main')throw Error('Unknown default pose');
  for(const line of raw.lines){
   if(!line||!idPattern.test(line.id)||ids.has(line.id)||typeof line.text!=='string'||!line.text.trim()||line.text.length>600||typeof line.speaker!=='string'||!line.speaker.trim()||!Object.hasOwn(poses,line.pose)||typeof line.source!=='string'||!line.source.trim()||typeof line.voiceSource!=='string'||!line.voiceSource.trim()||line.verified!==true)throw Error('Unverified or invalid dialogue entry');
-  if(!['main','afterstory'].includes(line.phase))throw Error('Invalid unlock phase');
+  if(!['main','afterstory'].includes(line.phase)||(line.phase==='main'&&poses[line.pose].phase==='afterstory'))throw Error('Invalid unlock phase');
   ids.add(line.id);lines.push({id:line.id,speaker:line.speaker,text:line.text,pose:line.pose,phase:line.phase,voice:register(line.voice,'audio'),source:line.source,voiceSource:line.voiceSource});
  }
  return {files,manifest:{version:1,defaultPose:raw.defaultPose,poses,lines}};

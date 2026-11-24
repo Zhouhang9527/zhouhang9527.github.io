@@ -165,3 +165,5 @@ assert.doesNotMatch(home,/__ginka_local_mascot__/);
 assert.ok(!fs.existsSync('dist/__ginka_local_mascot__'));
 assert.match(settingsHtml,/data-vn-voice-volume/);
 console.log('PASS mascot shell, voice settings and private pack isolation');
+
+assert.match(settingsHtml,/data-vn-mascot-character/);assert.match(settingsHtml,/data-vn-mascot-outfit/);
