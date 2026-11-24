@@ -31,21 +31,73 @@ body .journal-dialogue :is(.comments, .tabs-comment) { background: transparent !
 
 /* Opt-in local artwork: nine-slice the real frame so it grows with comments.
    The embedded Giscus editor stays on a readable opaque surface. */
-.journal-dialogue-original { isolation: isolate; border: 0; border-radius: 0; box-shadow: none; padding: 30px clamp(18px, 4vw, 38px) 28px; }
+/* 原作对话框（本地预览素材）：UI-0093 完整渐变框体，按编辑区尺寸拉伸，不做九宫格 */
+.journal-dialogue-original {
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: none;
+  background: transparent;
+  padding: 84px clamp(16px, 3.4vw, 34px) 30px;
+  min-width: 0;
+}
 .journal-dialogue-original::before {
   content: '';
   position: absolute;
-  z-index: -1;
   inset: 0;
+  z-index: -1;
+  border-radius: inherit;
   pointer-events: none;
-  border: 18px solid transparent;
-  border-image: var(--dialogue-art) var(--dialogue-slice) fill / 18px / 0 stretch;
+  background: var(--dialogue-frame) center / 100% 100% no-repeat;
+}
+/* 姓名栏：原作蝴蝶 + 角色名 + 渐变细横线，不用外凸矩形姓名牌 */
+.journal-dialogue-original .journal-dialogue-name {
+  position: absolute;
+  left: clamp(12px, 2.2vw, 26px);
+  top: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 0 6px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: #efe7d9;
+  font: 500 12px/1.4 var(--font-mono, monospace);
+  letter-spacing: .12em;
+  text-shadow: 0 1px 3px #000000a6;
+}
+.journal-dialogue-original .journal-dialogue-name::before {
+  content: '';
+  width: 30px;
+  height: 28px;
+  flex: none;
+  background: var(--dialogue-butterfly) center / contain no-repeat;
+  opacity: .95;
+}
+.journal-dialogue-original .journal-dialogue-name::after {
+  content: '';
+  position: absolute;
+  left: 30px;
+  right: 0;
+  bottom: -2px;
+  height: 8px;
+  background: var(--dialogue-line) left bottom / 100% 100% no-repeat;
+  opacity: .85;
+  pointer-events: none;
 }
 .journal-dialogue-original .journal-dialogue-intro {
-  display: inline-block;
-  padding: 5px 10px;
-  background: var(--dialogue-bg);
-  border-radius: 3px;
+  display: block;
+  margin: 0 0 16px;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  color: #d9e2ec;
+  font: 400 14px/1.85 var(--font-body, sans-serif);
+  text-shadow: 0 1px 2px #00000066;
 }
-.journal-dialogue-original :is(.comments, .tabs-comment) { background: var(--dialogue-bg) !important; padding: 12px; }
-@media (max-width: 767px) { .journal-dialogue-original { padding: 24px 14px 18px; } .journal-dialogue-original::before { border-width: 12px; border-image-width: 12px; } }
+.journal-dialogue-original :is(.comments, .tabs-comment) { background: transparent !important; padding: 0; }
+/* 框体内部编辑器统一深色，与框体一致；列表仍由 Giscus 主题决定 */
+.journal-dialogue-original :is(.giscus, iframe.giscus-frame) { background: transparent; }
+@media (max-width: 767px) { .journal-dialogue-original { padding: 56px 14px 22px; } .journal-dialogue-original .journal-dialogue-name { top: 8px; } }

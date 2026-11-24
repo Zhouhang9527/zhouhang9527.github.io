@@ -42,7 +42,7 @@
             <h2 id="journal-dialogue-title">岛间来信</h2>
           </header>
           {% set dialogueSkin = ginka_dialogue_skin() %}
-          <div class="journal-dialogue-frame{% if dialogueSkin %} journal-dialogue-original{% endif %}"{% if dialogueSkin %} style="--dialogue-art:url('{{ dialogueSkin.url }}');--dialogue-slice:{{ dialogueSkin.slice }}"{% endif %}>
+          <div class="journal-dialogue-frame{% if dialogueSkin %} journal-dialogue-original{% endif %}"{% if dialogueSkin %} data-dialogue-skin="original" style="--dialogue-frame:url('{{ dialogueSkin.frame }}');--dialogue-butterfly:url('{{ dialogueSkin.butterfly }}');--dialogue-line:url('{{ dialogueSkin.line }}')"{% endif %}>
             <span class="journal-dialogue-name">GINKA / mm9527</span>
             <p class="journal-dialogue-intro">读到这里，有什么想说的吗？</p>
             {%- include '_partials/comments.njk' -%}

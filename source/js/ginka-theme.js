@@ -33,6 +33,8 @@
   var giscusVerified = new Map();
   var giscusPending = new Map();
   function giscusTheme(resolved) {
+    // 原作对话框框体本身是深色，日间也用深色自定义主题，避免深底深字。
+    if (document.querySelector('[data-dialogue-skin="original"]')) resolved = 'moonlit';
     var fallback = resolved === 'moonlit' ? 'dark_dimmed' : 'light';
     var meta = document.querySelector('meta[name="ginka-giscus-theme-base"]');
     var configured = meta && meta.content;

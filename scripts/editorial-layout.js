@@ -32,14 +32,11 @@ function ginkaScene(page, slot) {
 function ginkaDialogueSkin() {
   if (hexo.env.cmd !== 'server' || process.env.GINKA_LOCAL_SCENES !== '1') return null;
   const prefix = 'images/ginka/scenes/local-preview/';
-  const file = path.join(hexo.source_dir, prefix + 'dialogue-skin.json');
-  try {
-    const skin = JSON.parse(fs.readFileSync(file, 'utf8'));
-    if (!Array.isArray(skin.slice) || skin.slice.length !== 4 ||
-        !skin.slice.every(n => Number.isInteger(n) && n > 0 && n <= 2048) ||
-        !fs.existsSync(path.join(hexo.source_dir, prefix + 'dialogue-frame.webp'))) return null;
-    return { url: hexo.extend.helper.get('url_for').call({ config: hexo.config }, '/' + prefix + 'dialogue-frame.webp'), slice: skin.slice.join(' ') };
-  } catch (_) { return null; }
+  const need = ['dialogue-frame.webp', 'dialogue-butterfly.webp', 'dialogue-name-line.webp'];
+  if (!need.every(name => fs.existsSync(path.join(hexo.source_dir, prefix + name)))) return null;
+  const url = name => hexo.extend.helper.get('url_for').call(
+    { config: hexo.config }, '/' + prefix + name);
+  return {frame: url(need[0]), butterfly: url(need[1]), line: url(need[2])};
 }
 hexo.extend.helper.register('ginka_dialogue_skin', ginkaDialogueSkin);
 hexo.extend.helper.register('ginka_scene', ginkaScene);
