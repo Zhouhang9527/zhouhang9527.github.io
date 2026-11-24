@@ -122,3 +122,14 @@ for(const [key,slice] of Object.entries(vn.privateUI.titleMenu.normal)){
 }
 assert.doesNotMatch(home,/title-(normal|hover)-.*\.png/);
 console.log('PASS original normal glyph slices and isolation');
+
+assert.equal(vn.privateUI.loadGeometry.columns*vn.privateUI.loadGeometry.rows,10);
+const libraryHtml=fs.readFileSync('dist/library/index.html','utf8');
+assert.equal((libraryHtml.match(/data-vn-empty-slot/g)||[]).length,10);
+assert.match(libraryHtml,/data-vn-library-pages/);
+assert.doesNotMatch(libraryHtml,/__ginka_local_ui__/);
+for(const [key,slices] of Object.entries(vn.privateUI.slices))for(const [name,rect] of Object.entries(slices)){
+ const [x,y,w,h]=rect,asset=vn.privateUI.assets[key];
+ assert.ok(x>=0&&y>=0&&w>0&&h>0&&x+w<=asset.width&&y+h<=asset.height,'Atlas bounds '+key+' '+name);
+}
+console.log('PASS LOAD ten-slot layout and original sprite boundaries');

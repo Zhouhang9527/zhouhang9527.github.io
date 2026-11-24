@@ -57,9 +57,10 @@ try{
    await page.locator('.vn-extra-nav a[href="/map/"]').click();
    await visible('[data-vn-map][data-vn-map-phase="first-encounter"]');
    await shot('map');
-   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible').first().click();
+   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible,.vn-load-return:visible').first().click();
    await page.locator('.vn-menu a[href="/library/"]').click();
    await visible('[data-vn-slot]:visible');
+   assert.equal(await page.locator('[data-vn-slot]:visible,[data-vn-empty-slot]:visible').count(),10);
    await page.locator('[data-vn-filter="bookmarks"]').click();
    assert.equal(await page.locator('[data-vn-slot]:visible').count(),1);
    await shot('load');
@@ -75,14 +76,14 @@ try{
    await page.keyboard.press('Escape');
    await page.locator('.astro-gallery').waitFor({state:'hidden'});
    await shot('gallery');
-   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible').first().click();
+   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible,.vn-load-return:visible').first().click();
    await page.locator('.vn-menu a[href="/gallery/"]').click();
    await page.locator('.vn-extra-nav a[href="/search/"]').click();
    await visible('[data-vn-query]');
    await page.locator('[data-vn-query]').fill('Android');
    await visible('[data-vn-results] a');
    await shot('search');
-   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible').first().click();
+   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible,.vn-load-return:visible').first().click();
    await page.locator('.vn-menu a[href="/settings/"]').click();
    await visible('[data-vn-config]');
    await page.locator('[data-vn-option-tab="sound"]').click();
@@ -99,7 +100,7 @@ try{
    await shot('reader');
    await go('/settings/','[data-vn-config]');
    await page.locator('input[name="vn-mode"][value="game"]').check();
-   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible').first().click();
+   await page.locator('.vn-panel-header .vn-return:visible,[data-vn-option-back]:visible,.vn-load-return:visible').first().click();
    await visible('[data-vn-title]');
    await page.reload();
    await visible('[data-vn-continue]');

@@ -137,6 +137,36 @@
         "source": "_hxv4_hash/AF5FB0494CCF915F/000007b2_F9A5B8701F3C06129A2976318141998B763431894EC05D12A0AAA20AE67A162F.png",
         "width": 1280,
         "height": 720
+      },
+      "loadBase": {
+        "id": "loadBase",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007ac_6B4ED2C7AD8F454627FD3F14470F5C22AF339B7AC93DC063909650EAB9AD22CF.png",
+        "width": 1280,
+        "height": 720
+      },
+      "loadRows": {
+        "id": "loadRows",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007ad_F0487075EAAA40A54EDF9EAE8053B888C8D820845593EB32E61D70D4DD68BDA3.png",
+        "width": 730,
+        "height": 713
+      },
+      "loadLabels": {
+        "id": "loadLabels",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/0000079d_C307AB59990992CBD77CE3723A2FF4F3D2E65FE761EE7C6272E973A12B9F2907.png",
+        "width": 506,
+        "height": 539
+      },
+      "galleryLabels": {
+        "id": "galleryLabels",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/0000078b_21896D0EA35199CD33430FA70B51444D494A5E44F5CE82698F9D476FBF7B3FD1.png",
+        "width": 800,
+        "height": 1024
+      },
+      "galleryControls": {
+        "id": "galleryControls",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/0000078f_7A7CC43367975FD81263BE003D04AEEE46A7EE00B890B0F0BBFE2DAFFE052990.png",
+        "width": 347,
+        "height": 435
       }
     },
     "optionGeometry": {
@@ -342,8 +372,116 @@
       "titleMenu",
       "choice",
       "optionAtlas",
-      "backlogAtlas"
-    ]
+      "backlogAtlas",
+      "loadRows",
+      "loadLabels",
+      "galleryLabels",
+      "galleryControls"
+    ],
+    "slices": {
+      "loadRows": {
+        "empty": [
+          0,
+          0,
+          589,
+          92
+        ],
+        "record": [
+          0,
+          93,
+          589,
+          93
+        ],
+        "recordInactive": [
+          0,
+          371,
+          589,
+          91
+        ],
+        "pageNormal": [
+          0,
+          553,
+          59,
+          55
+        ]
+      },
+      "loadLabels": {
+        "heading": [
+          0,
+          76,
+          195,
+          62
+        ],
+        "back": [
+          190,
+          219,
+          105,
+          76
+        ],
+        "backHover": [
+          296,
+          219,
+          105,
+          76
+        ],
+        "loadTab": [
+          0,
+          139,
+          190,
+          40
+        ],
+        "loadTabSelected": [
+          190,
+          139,
+          190,
+          40
+        ]
+      },
+      "galleryLabels": {
+        "heading": [
+          546,
+          0,
+          254,
+          49
+        ],
+        "back": [
+          231,
+          0,
+          105,
+          105
+        ],
+        "backHover": [
+          336,
+          0,
+          105,
+          76
+        ]
+      },
+      "galleryControls": {
+        "focus": [
+          0,
+          0,
+          230,
+          128
+        ]
+      }
+    },
+    "loadGeometry": {
+      "canvas": [
+        1280,
+        720
+      ],
+      "columns": 2,
+      "rows": 5,
+      "slot": [
+        589,
+        93
+      ],
+      "headerHeight": 111,
+      "tabsHeight": 40,
+      "contentBottom": 660,
+      "notice": "Row sprites and canvas bands identified from original assets. Ten-slot blog pagination and row placement are inferred from available geometry, not yet verified against a running original."
+    }
   },
   "map": {
     "notice": "Island overview frames confirmed visually. Completion thresholds and sequence are provisional blog adaptation, not verified game progress map.",

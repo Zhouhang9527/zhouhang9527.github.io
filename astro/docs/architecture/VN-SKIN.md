@@ -55,3 +55,9 @@ Reference: 2023 PC version review https://weekly.ascii.jp/elem/000/004/165/41652
 
 ### Native title label unpacking
 Pixel inspection of 000007ce confirmed 6073 opaque exact-magenta packing pixels, separate from transparent and antialiased glyph pixels. Both black normal and blue-backed highlight labels now use independently cropped original PNGs. CONTINUE and SYSTEM are packed 90 degrees counter-clockwise and are unpacked clockwise. The private middleware removes only exact opaque magenta, not arbitrary pink/red or translucent edges; source files are unchanged. PNG decoder/crop round-trip fixtures run before build. The earlier note about browser-text normal labels is superseded for desktop local original preview. Mobile and public fallback retain accessible text.
+
+## LOAD native row geometry
+- 000007ac is the system base with HELP WINDOW, not the earlier EXTRA backdrop candidate.
+- 000007ad contains 589px wide horizontal record and No Data sprites. 0000079d contains English LOAD header, tab states and Back button. Crops are registered in privateUI.slices and emitted only by localhost middleware.
+- LOAD displays ten entries per page, actual recent/bookmarked/completed records first, then inactive No Data slots. Two columns × five rows on desktop are a geometry-based adaptation; precise game record ordering and positions require a reference screenshot. Mobile uses one column.
+- Gallery uses the original EXTRA base and distinct gallery heading atlas. No new music route.

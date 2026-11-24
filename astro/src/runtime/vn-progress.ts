@@ -64,32 +64,56 @@ function renderArticle(recordVisit:boolean) {
 function showBookmark(button:HTMLButtonElement,on:boolean){
  button.setAttribute('aria-pressed',String(on));button.textContent=on?'已收藏':'收藏';
 }
-let libraryFilter='recent';
+let libraryFilter='recent',libraryPage=0,libraryRoot:HTMLElement|null=null;
+const PAGE_SIZE=10;
 function renderLibrary(){
  const root=document.querySelector<HTMLElement>('[data-vn-library]');
- if(!root)return;
+ if(!root){libraryRoot=null;return;}
+ if(libraryRoot!==root){libraryRoot=root;libraryPage=0;libraryFilter='recent';}
  const state=read();
  const tabs=document.querySelector<HTMLElement>('[data-vn-library-tabs]');
  if(tabs){tabs.hidden=false;tabs.querySelectorAll<HTMLButtonElement>('[data-vn-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.vnFilter===libraryFilter)));}
  root.hidden=false;
- const slots=Array.from(root.querySelectorAll<HTMLElement>('[data-vn-slot]'));
- let count=0;
- slots.sort((a,b)=>(state.recent[b.dataset.vnSlot||'']||0)-(state.recent[a.dataset.vnSlot||'']||0));
+ const slots=Array.from(root.querySelectorAll<HTMLElement>('[data-vn-slot]')).sort((a,b)=>(state.recent[b.dataset.vnSlot||'']||0)-(state.recent[a.dataset.vnSlot||'']||0));
+ const matching=slots.filter(slot=>{
+  const path=slot.dataset.vnSlot||'';
+  return libraryFilter==='bookmarks'?state.bookmarks.includes(path):libraryFilter==='completed'?state.completed.includes(path):!!state.recent[path]||state.last===path;
+ });
+ const pages=Math.max(1,Math.ceil(matching.length/PAGE_SIZE));
+ libraryPage=Math.max(0,Math.min(libraryPage,pages-1));
+ const visible=new Set(matching.slice(libraryPage*PAGE_SIZE,(libraryPage+1)*PAGE_SIZE));
  for(const slot of slots){
   const path=slot.dataset.vnSlot||'';
   const done=state.completed.includes(path),saved=state.bookmarks.includes(path),stamp=state.recent[path];
-  const visible=libraryFilter==='bookmarks'?saved:libraryFilter==='completed'?done:!!stamp||state.last===path;
-  slot.hidden=!visible;if(visible)count++;
+  slot.hidden=!visible.has(slot);
   const date=slot.querySelector<HTMLElement>('[data-vn-slot-date]');
   if(date)date.textContent=stamp?new Date(stamp).toLocaleString():date.dataset.published||'';
   const status=slot.querySelector<HTMLElement>('[data-vn-slot-status]');
   if(status){const pos=state.positions[path];status.textContent=done?'已读':pos?'阅读进度 '+Math.round(pos.ratio*100)+'%':'阅读记录';}
   const button=slot.querySelector<HTMLButtonElement>('[data-vn-bookmark]');
   if(button)showBookmark(button,saved);
-  if(root.children[slots.indexOf(slot)]!==slot)root.insertBefore(slot,root.children[slots.indexOf(slot)]||null);
  }
+ let i=0;
+ for(const slot of slots){if(root.children[i]!==slot)root.insertBefore(slot,root.children[i]||null);i++;}
+ root.querySelectorAll<HTMLElement>('[data-vn-empty-slot]').forEach((slot,i)=>slot.hidden=i>=PAGE_SIZE-visible.size);
  const empty=document.querySelector<HTMLElement>('[data-vn-library-empty]');
- if(empty){empty.hidden=count>0;empty.textContent=libraryFilter==='bookmarks'?'暂无收藏':libraryFilter==='completed'?'暂无已读记录':'暂无阅读记录';}
+ if(empty){empty.hidden=matching.length>0;empty.textContent=libraryFilter==='bookmarks'?'暂无收藏':libraryFilter==='completed'?'暂无已读记录':'暂无阅读记录';}
+ const nav=document.querySelector<HTMLElement>('[data-vn-library-pages]');
+ if(nav){
+  nav.hidden=false;
+  nav.querySelectorAll<HTMLButtonElement>('[data-vn-page-step]').forEach(b=>b.disabled=Number(b.dataset.vnPageStep)<0?libraryPage===0:libraryPage===pages-1);
+  const numbers=nav.querySelector<HTMLElement>('[data-vn-page-numbers]');
+  if(numbers){
+   const first=Math.max(0,Math.min(libraryPage-2,pages-5)),last=Math.min(pages,first+5);
+   const existing=Array.from(numbers.querySelectorAll<HTMLButtonElement>('[data-vn-page]'));
+   if(existing.length!==last-first||existing[0]?.dataset.vnPage!==String(first)){
+    const fragment=document.createDocumentFragment();
+    for(let p=first;p<last;p++){const b=document.createElement('button');b.type='button';b.dataset.vnPage=String(p);b.setAttribute('aria-label','第 '+(p+1)+' 页');b.textContent=String(p+1);fragment.append(b);}
+    numbers.replaceChildren(fragment);
+   }
+   numbers.querySelectorAll<HTMLButtonElement>('[data-vn-page]').forEach(b=>{if(Number(b.dataset.vnPage)===libraryPage)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  }
+ }
 }
 function renderChapter(){
  const state=read();
@@ -159,13 +183,14 @@ document.addEventListener('astro:before-preparation',()=>{flush();cancelAnimatio
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flush();});
 window.addEventListener('pagehide',flush);
 document.addEventListener('click',event=>{
- const el=(event.target as Element|null)?.closest<HTMLButtonElement>('[data-vn-mark],[data-vn-bookmark],[data-vn-filter],[data-vn-reset]');
+ const el=(event.target as Element|null)?.closest<HTMLButtonElement>('[data-vn-mark],[data-vn-bookmark],[data-vn-filter],[data-vn-reset],[data-vn-page],[data-vn-page-step]');
  if(!el)return;
  if(el.hasAttribute('data-vn-reset')){
   if(window.confirm('清除本机全部阅读记录和收藏？')){clearTimeout(timer);dirty=false;pendingResume=null;try{sessionStorage.removeItem(RESUME);}catch{}write(empty());refresh();}
   return;
  }
- if(el.dataset.vnFilter){libraryFilter=el.dataset.vnFilter;renderLibrary();return;}
+ if(el.dataset.vnFilter){libraryFilter=el.dataset.vnFilter;libraryPage=0;renderLibrary();return;}
+ if(el.dataset.vnPage!==undefined||el.dataset.vnPageStep!==undefined){libraryPage=el.dataset.vnPage!==undefined?Number(el.dataset.vnPage):libraryPage+Number(el.dataset.vnPageStep);renderLibrary();return;}
  const path=el.closest<HTMLElement>('[data-vn-slot]')?.dataset.vnSlot||el.closest<HTMLElement>('[data-vn-article]')?.dataset.vnArticle;
  if(!isPath(path))return;
  const state=read();

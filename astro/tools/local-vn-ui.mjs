@@ -15,6 +15,9 @@ export function localVNUI(){
    if(!kind&&manifest.privateUI.keyedAtlases.includes(key)){
     const image=removeMagenta(decodePNG(bytes));
     assets.set(prefix+key+'.png',encodePNG(image));
+    for(const [name,rect] of Object.entries(manifest.privateUI.slices?.[key]??{})){
+     assets.set(prefix+key+'-'+name+'.png',encodePNG(cropAtlas(image,rect)));
+    }
     if(key==='titleMenu'){
      for(const [name,slice] of Object.entries(manifest.privateUI.titleMenu.normal)){
       assets.set(prefix+'title-normal-'+name.toLowerCase()+'.png',encodePNG(cropAtlas(image,slice.rect,slice.rotate)));
