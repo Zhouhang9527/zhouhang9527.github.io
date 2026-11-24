@@ -4,7 +4,7 @@
 开发分支：`feature/ginka-vn`  
 记录基线：`b12f60397bd72d25f6253390118ec210c6f777f8`
 
-本文件是后续开发的唯一任务清单，架构契约见 [GINKA-VN.md](GINKA-VN.md)，已有实现及原作证据见 [VN-SKIN.md](VN-SKIN.md)，角色素材接入见 [MASCOT-PACK.md](MASCOT-PACK.md)
+新对话或新 Agent 先读 [HANDOFF.md](HANDOFF.md)，获取当前仓库状态、产品约束、原作证据与接续顺序。本文件是后续开发的唯一任务清单，架构契约见 [GINKA-VN.md](GINKA-VN.md)，已有实现及原作证据见 [VN-SKIN.md](VN-SKIN.md)，角色素材接入见 [MASCOT-PACK.md](MASCOT-PACK.md)
 
 ## 任务管理
 

@@ -1,3 +1,6 @@
 # GINKA development
 This branch contains the Astro migration. Active site code lives in `astro/`; the root Hexo/NexT code is rollback/reference and the shared Markdown/art/runtime source during migration. Do not reintroduce NexT or PJAX into new Astro features.
 Read `astro/AGENTS.md`, `astro/README.md` and `design-system/ginka/MASTER.md` plus the matching page override before changing UI. Keep original GINKA art direction and existing article paths, Giscus mapping and persistent audio. Never edit generated `astro/public`, `astro/.generated`, or `astro/dist`. No automatic production deployment. Keep untracked extracted assets private.
+
+## VN continuation across agents and chats
+When asked to continue GINKA, use `feature/ginka-vn` and read [HANDOFF](astro/docs/architecture/HANDOFF.md), [TODO](astro/docs/architecture/TODO.md), and [VN-SKIN](astro/docs/architecture/VN-SKIN.md) before editing. Fetch the current branch HEAD and private asset revision; do not rely on a stale chat. HANDOFF is the concise current context, TODO the sole checklist. After every development batch, update task status/evidence and the latest handoff record in the same commit. Never mark tests passed without real results. For the VN branch, original game colors supersede old day/moonlit design guidance; reader mode retains theme support. Do not deploy or publish private original assets.
