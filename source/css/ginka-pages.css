@@ -120,9 +120,9 @@ body.sidebar-active .sidebar-dimmer { display: block; opacity: 1; }
   --music-surface: #eef3f9;
   --music-border: #d5e1ee;
   --music-title: #405b76;
-  --music-text: #677b92;
-  --music-muted: #8f9fae;
-  --music-accent: #5b9bd5;
+  --music-text: var(--body-text);
+  --music-muted: var(--muted);
+  --music-accent: var(--blue);
   --music-accent-soft: #7eb8e6;
   --music-track: #dfe7f0;
   --music-hover: #e6eef7;
@@ -299,3 +299,9 @@ body #journal-sidebar #music-player[data-ginka-music-state='error'] :is(#music-p
 .music-unavailable { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 10px; border:1px solid var(--music-border); color:var(--music-muted); background:var(--music-bg); border-radius:var(--journal-radius); font-size:12px; line-height:1.6; }
 body #journal-sidebar #music-player .music-unavailable button { flex:none; background:transparent; color:var(--music-accent); border:0; padding:5px 7px; box-shadow:none; font:inherit; cursor:pointer; }
 body #journal-sidebar #music-player .music-unavailable button:hover { background:var(--music-hover); }
+
+/* Music controls follow the same touch contract as reading tools. */
+@media(pointer:coarse) {
+  body #journal-sidebar #music-player-main > button { width:var(--target-touch)!important; height:var(--target-touch)!important; }
+}
+body .journal-sidebar-edge:focus-visible { outline:2px solid var(--journal-focus); outline-offset:2px; }

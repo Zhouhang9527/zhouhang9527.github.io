@@ -224,27 +224,27 @@ body .journal-reading-shell .post-body {
   box-sizing: border-box;
   min-width: 0;
   width: 100%;
-  max-width: 72ch;
+  max-width: var(--reading-measure);
   margin-inline: auto;
-  color: var(--ink, #263748);
+  color: var(--body-text);
   font-family: var(--font-body, var(--journal-font-body, "Noto Serif SC", serif));
-  font-size: 16px;
-  line-height: 1.9;
+  font-size: var(--reading-font-size);
+  line-height: var(--reading-line-height);
 }
 body .journal-reading-shell .post-body p,
 body .journal-reading-shell .post-body li,
-body .journal-reading-shell .post-body blockquote { line-height: 1.9; }
+body .journal-reading-shell .post-body blockquote { line-height: var(--reading-line-height); }
 body .journal-reading-shell .post-body :is(h1,h2,h3,h4,h5,h6) {
   color: var(--ink, #263748);
   font-family: var(--font-title, "Noto Serif SC", "Songti SC", serif);
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.55;
   scroll-margin-top: 10px;
 }
 body .journal-reading-shell .post-body :is(h2,h3,h4) { max-width: 72ch; }
 body .journal-reading-shell .post-body figure.highlight,
-body .journal-reading-shell .post-body .journal-code { background: #f6f8fa; border-color: #d8dee4; }
-body .journal-reading-shell .post-body .journal-code-toolbar { background: #f0f2f4; border-bottom-color: #d8dee4; }
+body .journal-reading-shell .post-body .journal-code { background: var(--code-bg); border-color: #d8dee4; }
+body .journal-reading-shell .post-body .journal-code-toolbar { background: var(--code-bar); border-bottom-color: #d8dee4; }
 body .journal-reading-shell .post-body img {
   border: 1px solid var(--journal-line, #dce5ed);
   border-radius: 6px;
@@ -345,7 +345,7 @@ body .post-body .journal-code .journal-code-actions > button svg { display: bloc
   body .main-inner.post.posts-expand { width: calc(100% - 28px) !important; }
   .journal-reading-shell { --reading-inline-padding: 18px; }
   body .main-inner.post .journal-reading-shell > .post-block { padding: 24px var(--reading-inline-padding) !important; }
-  body .journal-reading-shell .post-body { font-size: 15px; }
+  body .journal-reading-shell .post-body { font-size: var(--reading-font-size); }
 }
 @media (prefers-reduced-motion: reduce) {
   .journal-outline-list a,
