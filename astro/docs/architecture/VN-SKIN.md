@@ -39,3 +39,8 @@ Normal navigation now uses the confirmed crossfade duration; rule-mask transitio
 
 ## PC option UI calibration
 Reference: 2023 PC version review https://weekly.ascii.jp/elem/000/004/165/4165221/2/ and https://oniji.hatenablog.com/entry/2023/11/11/210000 (DISPLAY, PROGRAM, TEXT, DIALOG screenshots). The option screen uses navy header, cyan tab strip, twin-column cyan group captions, white selected controls, diamond footer and the matching local geometric background. Seven tabs follow the original visual taxonomy; only actual blog features are implemented, not simulated VN text/voice/skip settings. Exact button sprite atlas, positions and typography still require measurement. SOUND is part of SYSTEM, not a title menu route; legacy /music-room/ redirects. The persistent player remains mounted in the sidebar but its old UI is hidden, and the option screen delegates real controls, volume and playlist selection. Title primary links follow the game/continue/load/option/extra structure; blog-specific map/search/index/about are reachable from EXTRA.
+
+### Verified option assets
+- data-099 (0000077c): actual 1280x720 option background, including HELP WINDOW at x755/y14 and cyan tabs at y111–150.
+- 0000077d: original 593x158 controls atlas. The caption and the three button states are sampled via CSS background crops. The fallback skin is retained for the public build; neither file is copied.
+- The local desktop layout scales the complete original frame and aligns header, tab strip and footer to its canvas. Touch reflow and adapted settings group placement are intentional departures, not pixel-parity claims.

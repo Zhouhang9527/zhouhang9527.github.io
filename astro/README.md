@@ -62,3 +62,5 @@ npm run dev:original -- "D:\\ginka-xp3-assets"
 The tool validates the exact known source files, sets local roots, selects a font only if exactly one valid standalone OTF/TTF candidate exists (otherwise specify GINKA_UI_FONT), and binds to 127.0.0.1. It does not copy resources into the blog. The original title logo uses the full 1280x720 canvas at its original location on desktop. System panel timing is now 300ms crossfade from the extracted KAG reference scripts. Set GINKA_RULE_PREVIEW=1 only to study the optional rule-texture effect.
 
 Music is now under SYSTEM → SOUND; /music-room/ redirects to /settings/#sound. The original PC settings layout is the reference for the seven-tab option screen; unsupported game features are not represented by fake controls. Mobile layout reflows for touch targets.
+
+The original preview also validates and uses data-099 (option background) and the 593×158 option control atlas; the public build contains only the CSS fallback.

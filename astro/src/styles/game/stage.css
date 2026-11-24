@@ -282,3 +282,46 @@ body .post-body{font-size:var(--vn-reader-size,16px)}
  .vn-option-footer{justify-content:center;gap:4px}
  .vn-option-footer :is(a,button){min-width:68px}
 }
+
+/* The real option base and sprite atlas are loaded only by localhost middleware.
+   Unlike the earlier EXTRA candidate, option.png has the original HELP WINDOW
+   and the 111px / 40px tab band already painted into the 1280x720 frame. */
+.vn-option-help{position:relative;width:min(41%,514px);margin-left:auto;background:#fff;color:#0a1623;border:1px solid #172333;border-radius:5px;align-self:stretch;min-height:62px;font:12px/1.4 Arial,sans-serif}
+.vn-option-help>span{display:block;padding:0 5px;border-bottom:1px solid #111;font-weight:700}
+.vn-option-help p{margin:8px;color:#1b2b3a;font-family:var(--vn-font-ui);font-size:12px}
+.vn-option[data-vn-ui-original=true] .vn-option-grid legend{
+ background-image:var(--vn-option-atlas);
+ background-size:100.5085% 564.2857%;
+ background-position:left top;background-repeat:no-repeat;
+ border:0;box-shadow:none;border-radius:0;padding-left:23px;
+}
+.vn-option[data-vn-ui-original=true] .vn-option-grid legend::before{display:none}
+.vn-option[data-vn-ui-original=true] .vn-option-buttons :is(button,a,label){
+ --atlas-y:70%;background-image:var(--vn-option-atlas);
+ background-size:506.8376% 564.2857%;
+ background-position:63.8655% var(--atlas-y);background-repeat:no-repeat;
+ background-color:transparent;border:0;box-shadow:none;border-radius:0;
+}
+.vn-option[data-vn-ui-original=true] .vn-option-buttons :is(button[aria-pressed=true],label:has(input:checked)){--atlas-y:92.3077%;color:#101820!important;text-shadow:none}
+.vn-option[data-vn-ui-original=true] .vn-option-buttons :is(button,a,label):is(:hover,:focus-within){--atlas-y:47.6923%;color:#fff!important;text-shadow:0 1px 1px #193b4e}
+@media(min-width:960px){
+ .vn-option[data-vn-ui-original=true]{min-height:0;aspect-ratio:16/9}
+ .vn-option[data-vn-ui-original=true] .vn-option-frame{min-height:0;aspect-ratio:16/9;background:var(--vn-option-art) center/100% 100% no-repeat;grid-template-rows:8.671875cqw minmax(0,1fr)}
+ .vn-option[data-vn-ui-original=true] .vn-option-header{position:relative;padding:0;min-height:0;background:none;align-items:flex-start}
+ .vn-option[data-vn-ui-original=true] .vn-option-header h1{padding:0;font-size:5.7cqw!important}
+ .vn-option[data-vn-ui-original=true] .vn-option-help{position:absolute;left:59.0%;top:1.09375cqw;width:40.15625%;height:7.109375cqw;min-height:0;margin:0;border:0;background:none;overflow:hidden}
+ .vn-option[data-vn-ui-original=true] .vn-option-help>span{visibility:hidden;border:0;height:1.4cqw;padding:0}
+ .vn-option[data-vn-ui-original=true] .vn-option-help p{margin:.7cqw .6cqw;font-size:1.05cqw}
+ .vn-option[data-vn-ui-original=true] [data-vn-config]{grid-template-rows:3.125cqw minmax(0,1fr) 4.6875cqw}
+ .vn-option[data-vn-ui-original=true] .vn-option-tabs{background:none;border:0;padding-inline:3.5%}
+ .vn-option[data-vn-ui-original=true] .vn-option-tabs button{min-height:0;font-size:1.6cqw}
+ .vn-option[data-vn-ui-original=true] .vn-option-body{background:none;border:0;min-height:0;overflow:auto;padding:1.35cqw 6%}
+ .vn-option[data-vn-ui-original=true] .vn-option-grid{gap:1.6cqw 9%}
+ .vn-option[data-vn-ui-original=true] .vn-option-grid legend{height:2.1875cqw;padding:.35cqw .5cqw .35cqw 1.9cqw;font-size:1.2cqw}
+ .vn-option[data-vn-ui-original=true] .vn-option-buttons{padding:1.05cqw 0 0}
+ .vn-option[data-vn-ui-original=true] .vn-option-buttons :is(button,a,label){min-width:9.14cqw;min-height:2.1875cqw;padding:0 .8cqw;font-size:1.1cqw}
+ .vn-option[data-vn-ui-original=true] .vn-option-footer{background:none;padding:0 4%;gap:1.4cqw}
+ .vn-option[data-vn-ui-original=true] .vn-option-footer :is(a,button){min-height:0;height:4.6875cqw;min-width:5.6cqw}
+ .vn-option[data-vn-ui-original=true] .vn-option-footer :is(a,button)::before{width:2.8cqw;height:2.8cqw}
+}
+@media(max-width:680px){.vn-option-help{display:none}.vn-option-header.vn-panel-header{min-height:82px}}

@@ -96,3 +96,10 @@ assert.doesNotMatch(home,/__ginka_local_title__|vn-original-logo/,'Original titl
 assert.equal(vn.motion.systemCrossfadeMs,300);
 assert.equal(vn.motion.backlogCrossfadeMs,300);
 console.log('PASS original UI timing and title logo isolation');
+
+assert.equal(vn.privateUI.assets.option.width,1280);
+assert.equal(vn.privateUI.assets.optionAtlas.width,593);
+assert.equal(vn.privateUI.assets.optionAtlas.height,158);
+assert.match(settingsHtml,/data-vn-option-help/);
+assert.equal((settingsHtml.match(/data-vn-option-tab=/g)||[]).length,7);
+console.log('PASS original option background and atlas contract');

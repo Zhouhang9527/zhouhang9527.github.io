@@ -95,7 +95,61 @@
         "source": "_hxv4_hash/72A487EDE974DA88/0000025b_059FA143F4C13FBC83C47D9399EF9502AAD6D610F7B48CBE72969C78B6CCE96C.png",
         "width": 1280,
         "height": 720
+      },
+      "option": {
+        "id": "data-099",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/0000077c_C4053C1D516A1D4E07394AB94FE866B2A94DD5BCF233E68704FD68AB2940972B.png",
+        "width": 1280,
+        "height": 720
+      },
+      "optionAtlas": {
+        "id": "option-atlas",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/0000077d_EC1B1D66186B2D359BBB063B1719B80F64B5CC5767396684487B8147B1CC0E37.png",
+        "width": 593,
+        "height": 158
       }
+    },
+    "optionGeometry": {
+      "canvas": [
+        1280,
+        720
+      ],
+      "headerHeight": 111,
+      "tabsHeight": 40,
+      "contentBottom": 660,
+      "help": [
+        755,
+        14,
+        514,
+        91
+      ],
+      "atlas": {
+        "caption": [
+          0,
+          0,
+          590,
+          28
+        ],
+        "buttonHover": [
+          304,
+          62,
+          117,
+          28
+        ],
+        "buttonNormal": [
+          304,
+          91,
+          117,
+          28
+        ],
+        "buttonSelected": [
+          304,
+          120,
+          117,
+          28
+        ]
+      },
+      "notice": "Background and atlas visually identified from original PNGs. Control rectangles measured from image; web settings group geometry is adapted."
     }
   },
   "map": {
