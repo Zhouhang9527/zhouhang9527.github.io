@@ -1,0 +1,12 @@
+---
+import { config } from '../lib/site';
+const g = config.giscus;
+---
+<section class="journal-dialogue" aria-label="评论区">
+  <div id="journal-comments" class="journal-dialogue-comments" tabindex="-1">
+    <div class="giscus-container" data-repo={g.repo} data-repo-id={g.repoId} data-category={g.category} data-category-id={g.categoryId} data-mapping={g.mapping} data-strict={g.strict} data-reactions-enabled={g.reactions} data-emit-metadata={g.metadata} data-lang={g.lang} data-input-position={g.inputPosition} data-loading="lazy">
+      <p class="journal-comments-status" role="status">评论加载中…</p>
+      <noscript><a href={'https://github.com/'+g.repo+'/discussions'}>在 GitHub 查看讨论</a></noscript>
+    </div>
+  </div>
+</section>

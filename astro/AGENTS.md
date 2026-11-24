@@ -1,0 +1,7 @@
+# Astro development contract
+- Node 22, Astro 5 static output. TypeScript in src/lib, Astro templates in src/components/layouts/pages, no React hydration for static content. Use explicit Props; route properties are discriminated unions.
+- Site constants and public integration IDs: config/site.json. Old published URL contract: config/legacy-routes.json. Do not regenerate old URLs from titles or alter Giscus pathname mapping.
+- Markdown stays in ../source/_posts until the content cutover is separately approved. Assets and posts must be tracked to build. Do not edit generated folders.
+- New browser features own lifecycle explicitly: mount once for persistent components, route setup on astro:page-load, abort/cleanup on astro:before-preparation; reset references on astro:after-swap. Never rely on old NexT globals. tools/runtime-compat.mjs is temporary and only for existing runtime; migrate one feature at a time with tests.
+- Keep semantic design tokens and page overrides; native buttons/links and dialog; no extra visual effects or framework migration. Verify 320/390/768/1440/1920, both themes, keyboard, reduced motion, content overflow, code blocks, real comments, search, history and audio identity.
+- Before merge: npm run build, npm run typecheck, browser review in CI. Dist artifact is preview only. Check actual errors rather than widening assertions or replacing live integration with mocks.

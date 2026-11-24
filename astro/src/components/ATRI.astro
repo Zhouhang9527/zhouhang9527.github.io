@@ -1,0 +1,19 @@
+<div transition:persist="atri-launcher" id="atri-launcher-shell" class="atri-launcher-shell" hidden>
+  <button id="atri-launcher" class="atri-launcher__badge" type="button" aria-label="打开看板娘" aria-expanded="false" aria-controls="atri-live2d-widget" data-atri-script="/js/ginka-atri.js">
+    <img src="/images/ginka/butterfly.png" alt="" width="36" height="36" decoding="async"/>
+  </button>
+  <span id="atri-launcher-status" class="atri-launcher__status" role="status"></span>
+</div>
+
+<div transition:persist="atri-model" id="atri-live2d-widget" role="region" aria-label="ATRI 看板娘" hidden>
+  <canvas id="atri-canvas" width="220" height="314" aria-label="ATRI 看板娘"></canvas>
+  <div id="atri-message-box" role="status" aria-live="polite" style="display:none">
+    <div class="atri-message-content"></div>
+  </div>
+  <div id="atri-controls" aria-label="ATRI 控制">
+    <button class="atri-control-btn" id="atri-toggle" type="button" title="收起看板娘" aria-label="收起看板娘">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="m4 4 8 8m0-8-8 8"/></svg>
+    </button>
+  </div>
+</div>
+

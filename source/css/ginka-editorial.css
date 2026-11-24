@@ -418,7 +418,7 @@ body .search-popup { background: #fbfdff !important; backdrop-filter: none !impo
 body .search-popup .search-header { border-radius: 6px 6px 0 0 !important; background: #edf4fa !important; backdrop-filter: none !important; }
 
 @media (max-width: 960px) {
-  .journal-layout { padding-block: 49px 54px; }
+  .journal-layout { grid-template-columns: minmax(0, 1fr); padding-block: 49px 54px; }
   .journal-aside { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
   .journal-game-note .journal-scene { max-height: 208px; }
   .journal-island { padding-block: 34px 36px; }

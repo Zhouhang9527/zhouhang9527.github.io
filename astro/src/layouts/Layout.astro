@@ -1,0 +1,56 @@
+---
+import {ClientRouter} from 'astro:transitions';
+import Header from '../components/Header.astro';
+import Sidebar from '../components/Sidebar.astro';
+import ATRI from '../components/ATRI.astro';
+import {scene,site,config} from '../lib/site';
+import type { SceneKind } from '../lib/types';
+interface Props { title: string; description?: string; kind?: SceneKind; article?: boolean; home?: boolean; noindex?: boolean }
+import build from '../../.generated/build.json';
+import {asset} from '../lib/assets';
+import '@fontsource-variable/noto-serif-sc';
+import '@fontsource-variable/jetbrains-mono';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
+const {title,description=config.description,kind='post',article=false,home=false,noindex=false}=Astro.props;
+const art=scene(kind);
+const canonical=new URL(Astro.url.pathname,site).href;
+const styles=['editorial','pages','reading','runtime','motion','theme','comments'] as const;
+const scripts=['runtime','reading','atri-loader','ui-shell','theme','comments','controls','motion','music'] as const;
+---
+<!doctype html>
+<html lang={config.language}>
+<head>
+ <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+ <title>{title} | GINKA</title><meta name="description" content={description}/><meta name="author" content={config.author}/><meta name="robots" content={noindex?'noindex, follow':'index, follow'}/>
+ <link rel="canonical" href={canonical}/><meta property="og:url" content={canonical}/><meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:type" content={article?'article':'website'}/><meta property="og:image" content={site+'/images/avatar.png'}/>
+ <meta name="twitter:card" content="summary"/><meta name="theme-color" content="#f4f7fa"/><meta name="ginka-build" content={build.version}/><meta name="ginka-giscus-theme-base" content={config.giscus.themeBase}/>
+ <link rel="alternate" type="application/atom+xml" title="GINKA" href="/atom.xml"/>
+ <link rel="icon" href="/images/favicon.png"/><link rel="manifest" href="/manifest.webmanifest"/>
+ <script is:inline src={asset("js/ginka-theme-init.js")}></script>
+ <link rel="stylesheet" href={asset('css/astro-base.css')}/>
+ {styles.map(name=><link rel="stylesheet" href={asset(`css/ginka-${name}.css`)}/>)}
+ <ClientRouter/>
+</head>
+<body>
+ <a class="journal-skip-link" href="#main-content">跳到正文</a>
+ <main class="main"><div class="column"><Header/><Sidebar art={art}/></div><div id="main-content" tabindex="-1" class:list={['main-inner',article?'post posts-expand':home?'index posts-expand ginka-home':'page']} data-sidebar-scene-day={art.day} data-sidebar-scene-night={art.night} data-scene-kind={kind}><slot/></div></main>
+ <footer class="footer"><div class="book-width journal-colophon"><p>GINKA / mm9527 · <a href="https://github.com/Zhouhang9527">GitHub</a> · ©Frontwing / ©bushiroad（游戏画面）</p></div></footer>
+ <ATRI/>
+ <div id="custom-context-menu" transition:persist="context-menu">
+  <div class="context-menu-item" data-action="back"><i class="fa fa-arrow-left"></i><span>后退</span></div>
+  <div class="context-menu-item" data-action="forward"><i class="fa fa-arrow-right"></i><span>前进</span></div>
+  <div class="context-menu-item" data-action="refresh"><i class="fa fa-sync-alt"></i><span>刷新页面</span></div>
+  <div class="context-menu-divider"></div>
+  <div class="context-menu-item" data-action="home"><i class="fa fa-home"></i><span>返回首页</span></div>
+  <div class="context-menu-item" data-action="top"><i class="fa fa-arrow-up"></i><span>回到顶部</span></div>
+  <div class="context-menu-divider"></div>
+  <div class="context-menu-item" data-action="music"><i class="fa fa-music"></i><span>切换音乐播放</span></div>
+</div>
+ <dialog class="astro-search" aria-labelledby="astro-search-title" transition:persist="search"><form method="dialog" class="astro-search-head"><strong id="astro-search-title">搜索文章</strong><button aria-label="关闭搜索" value="close">×</button></form><label class="journal-visually-hidden" for="astro-query">关键词</label><input id="astro-query" type="search" placeholder="搜索标题与正文" autocomplete="off"/><div id="astro-results" aria-live="polite"></div></dialog>
+ <dialog class="astro-gallery" aria-label="岛影画廊" transition:persist="gallery"><button type="button" aria-label="关闭图片" data-gallery-close>×</button><img alt=""/><p></p></dialog>
+ <script is:inline>window.CONFIG = {root:'/'};</script>
+ {scripts.map(name=><script is:inline defer src={asset(`js/ginka-${name}.js`)}></script>)}
+ <script is:inline defer src={asset('js/astro-shell.js')}></script>
+</body>
+</html>

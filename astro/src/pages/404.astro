@@ -1,0 +1,8 @@
+---
+import Layout from '../layouts/Layout.astro';
+import {scene} from '../lib/site';
+const art=scene('archive','masthead');
+---
+<Layout title="页面未找到" kind="archive" noindex>
+ <section class="journal-not-found"><div class="journal-not-found-copy"><span class="journal-eyebrow">404 / LOST ON THE ISLAND</span><h1>迷失在岛上</h1><p>没有找到这个页面，或许它已经搬到了别处</p><nav><a class="journal-not-found-primary" href="/">返回首页 ↗</a><a href="/archives/">浏览归档 ↗</a></nav></div><div class="journal-masthead-art" style={`--scene-day:url('${art.day}');--scene-night:url('${art.night}')`}></div></section>
+</Layout>
