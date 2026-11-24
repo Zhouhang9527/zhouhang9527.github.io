@@ -27,7 +27,7 @@ url: https://www.mm9527.top
 root: /
 # Giscus runs on a different origin; use an immutable public CSS revision.
 # Update this pin when either Giscus theme stylesheet changes.
-ginka_giscus_theme_base: https://cdn.jsdelivr.net/gh/Zhouhang9527/zhouhang9527.github.io@48728b3c7f3da427d4e567a3611e41222b21424a/source/css/
+ginka_giscus_theme_base: https://cdn.jsdelivr.net/gh/Zhouhang9527/zhouhang9527.github.io@bdacb088c378ee247ccabcd7fc7f82d8efef4139/source/css/
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
