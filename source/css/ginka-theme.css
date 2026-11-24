@@ -553,3 +553,8 @@ html[data-theme='moonlit'] body .search-result-list > li { border-color: var(--r
 html[data-theme='moonlit'] body .search-result-title { color: var(--ink) !important; }
 html[data-theme='moonlit'] body .search-keyword { background: var(--control-selected); color: var(--blue); }
 
+
+/* All semantic heading levels use the resolved palette. */
+html[data-theme='moonlit'] body :is(.post-body,.journal-about-banner-copy,.journal-feedback,.journal-not-found) :is(h1,h2,h3,h4,h5,h6) { color:var(--ink); }
+html[data-theme='moonlit'] body .header .menu-item-drawer button { color:var(--body-text); }
+html[data-theme='moonlit'] body .journal-sidebar-cover > span { color:var(--ink); text-shadow:0 1px 3px #101923; }

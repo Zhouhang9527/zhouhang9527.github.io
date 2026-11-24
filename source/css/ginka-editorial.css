@@ -224,8 +224,8 @@ body .header .journal-mobile-links :is(a, button):is(:hover, :focus-visible) { b
   z-index: 2;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(90deg, #f8fbfdf7 0%, #f8fbfde8 20%, #f6f9fcbb 34%, #f4f8fc52 48%, #f3f7fb1a 62%, #f3f7fb00 78%),
-              linear-gradient(180deg, #f8fbfd84, transparent 26%, transparent 72%, #f4f7faab 96%, var(--bg-canvas));
+  background: linear-gradient(90deg, #f8fbfdf7 0%, #f8fbfddc 20%, #f6f9fc99 34%, #f4f8fc30 48%, #f3f7fb0a 62%, #f3f7fb00 78%),
+              linear-gradient(180deg, #f8fbfd42, transparent 26%, transparent 76%, #f4f7fa92 96%, var(--bg-canvas));
 }
 .journal-hero-light, .journal-hero-dust { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
 .journal-hero-inner { position: relative; z-index: 4; padding: clamp(70px, 11vh, 118px) 0 clamp(84px, 12vh, 134px); }

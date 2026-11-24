@@ -1,6 +1,7 @@
 {% import 'menu-item.njk' as menu_item with context %}
 <nav class="site-nav" aria-label="主导航">
   <ul class="main-menu menu">
+    <li class="menu-item menu-item-drawer"><button type="button" data-journal-sidebar-open aria-label="打开侧栏" aria-controls="journal-sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></li>
     <li class="menu-item menu-item-home"><a href="{{ config.root }}" rel="start">首页</a></li>
     <li class="menu-item menu-item-archives"><a href="{{ url_for('/archives/') }}" rel="section">归档</a></li>
     <li class="menu-item menu-item-gallery"><a href="{{ config.root }}#ginka-scenes">画廊</a></li>
