@@ -110,7 +110,8 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
-- 基线 d9c53b5：20eb48e 两 CI 构建/typecheck/单测/Chromium 安装均通过，浏览器失败为 390px dock 遮挡、1440px 返回通用选择器超时及旧侧栏模式错误；d9c53b5 修复 dock 末端避让、路由清理、实际模式测试。VN CI 45466158145 typecheck/build/Chromium 安装通过，browser 当时正在执行
-- 素材 30b43e7：视频参考 title/dialogue，另外九个菜单界面缺视频。实测私有四份 PBD 与配置 249 项比较均一致；新增 audit:original 审计（含额外 action/NEW 检查）、SystemAction 精确白名单、1000ms START/NEXT 淡出及正常动效 smoke。后两项以 custom.ks 00000210 和 00000891 文本为证据；不猜音效及 wipe13，保留持续 BGM
-- 新提交尚未运行完整 CI，未完成原作像素/音频验收；没有发布或修改 main、私有素材仓库
-- 下一步：检查最新完整 CI，继续 LOAD/SAVE 的四种语言标签/15页 PBD、系统页控件状态、私有原作截图及角色包
+- 基线 d1b3ca6：原作四份 PBD 的 249 项几何/裁切/偏移/旋转/画布比对一致；新增 audit:original、精确 SystemAction 白名单、custom.ks 明确的 START/NEXT 1000ms 淡出。私有素材 HEAD 30b43e7，视频只覆盖 title/dialogue，其他九界面和角色/SE 证据缺失
+- d9c53b5 VN CI 45466158145 typecheck/build/Chromium 成功，390/1440 都走过此前 dock/存档故障进入 gallery，发现 CG 打开后实际导航至 webp，导致返回失败；旧 review 浏览器被后续提交取消
+- 本轮修复 CG 链接排除 Astro ClientRouter，public-shell 捕获普通点击并打开原生 dialog，保留 Ctrl/Meta/无 JS 链接行为；新增 URL 不变、焦点恢复、BGM DOM identity 断言
+- d1b3ca6 后最新 CI 尚未确认；不要标记完整 browser/原作像素/音频验收完成。下次先查真实日志，再继续 LOAD/SAVE 语言标签和十五页原作 PBD、系统页控件及真实素材包
+- 未修改 main 或私有素材仓库，未发布

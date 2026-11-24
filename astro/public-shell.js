@@ -21,10 +21,19 @@
   if(el.matches('[data-drawer-close]'))window.dispatchEvent(new Event('sidebar:hide'));
   if(el.matches('.popup-trigger'))search();
   if(el.matches('[data-gallery-close]'))$('.astro-gallery')?.close();
-  if(el.matches('.journal-scene-card')&&!e.ctrlKey&&!e.metaKey&&!e.shiftKey&&!e.altKey){
-   e.preventDefault();const dialog=$('.astro-gallery');const img=dialog.querySelector('img');img.src=el.href;img.alt=el.dataset.caption||'';dialog.querySelector('p').textContent=el.dataset.caption||'';opener=el;dialog.showModal();
-  }
  });
+ // Claim normal gallery activations before Astro's document-level navigation.
+ // Modified clicks and no-JS links still open the actual image.
+ document.addEventListener('click',e=>{
+  if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;
+  const el=e.target.closest?.('a.journal-scene-card');if(!el)return;
+  const dialog=$('.astro-gallery');if(!dialog||typeof dialog.showModal!=='function')return;
+  const img=dialog.querySelector('img'),caption=dialog.querySelector('p');if(!img||!caption)return;
+  e.preventDefault();if(dialog.open)return;
+  const night=document.documentElement.dataset.vnMode==='reader'&&document.documentElement.dataset.theme==='moonlit';
+  img.src=(night?el.dataset.fullNight:el.dataset.fullDay)||el.href;img.alt=el.dataset.caption||'';caption.textContent=el.dataset.caption||'';
+  opener=el;dialog.showModal();
+ },true);
  // Explicit escape handling avoids the search input consuming its first Escape.
  document.addEventListener('keydown',e=>{
   if(e.key!=='Escape')return;

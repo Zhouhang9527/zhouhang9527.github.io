@@ -127,10 +127,15 @@ try{
    await back('[data-vn-return]');
    await page.locator('.vn-menu a[href="/gallery/"]').click();
    await visible('[data-vn-screen="gallery"]');
-   await page.locator('.vn-gallery-grid .journal-scene-card').first().click();
+   const galleryCard=page.locator('.vn-gallery-grid .journal-scene-card').first();
+   await galleryCard.click();
    await visible('.astro-gallery[open]');
+   assert.equal(new URL(page.url()).pathname,'/gallery/','CG preview must not navigate to an image document');
    await page.keyboard.press('Escape');
    await page.locator('.astro-gallery').waitFor({state:'hidden'});
+   await page.waitForFunction(()=>document.activeElement?.matches('.vn-gallery-grid .journal-scene-card'));
+   assert.equal(new URL(page.url()).pathname,'/gallery/');
+   assert.ok(await page.evaluate(old=>old===document.querySelector('#bg-music'),audio),'CG preview replaced persistent BGM');
    await shot('gallery');
    await back('[data-vn-screen="gallery"] .vn-panel-header .vn-return');
    await page.locator('.vn-menu a[href="/gallery/"]').click();

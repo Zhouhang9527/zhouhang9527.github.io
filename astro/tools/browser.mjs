@@ -121,8 +121,10 @@ try {
     await page.locator('[data-vn-screen="gallery"]').waitFor();
     await page.locator('.vn-gallery-grid .journal-scene-card').first().click();
     await page.locator('.astro-gallery[open]').waitFor();
+    assert.equal(new URL(page.url()).pathname,'/gallery/');
     await page.keyboard.press('Escape');
     await page.locator('.astro-gallery').waitFor({state:'hidden'});
+    assert.equal(new URL(page.url()).pathname,'/gallery/');
     assert.ok(!await overflow(page),'gallery overflow');
     await page.screenshot({path:`artifacts/${width}-${mode}-gallery.png`});
     await page.locator('[data-vn-screen="gallery"] .vn-panel-header .vn-return').click();

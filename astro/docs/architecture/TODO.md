@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 EXTRA-02 / BASE-02/04/10：`d9c53b5` 的 [VN CI](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45466158145) typecheck/build/Chromium 成功；390/1440 均越过此前文章导航、存档阻塞，已至 gallery 截图，但实际 URL 变为 CG 图片，导致返回失败。图片链接排除 ClientRouter、捕获阶段先接管普通点击，保留修饰键与无 JS 原生访问；新增 URL、焦点、持续音频回归断言，最新 CI 未确认。
+
 2026-11-25：DATA-02/03、ENGINE-02/05、TITLE-02：私有 `30b43e7` 与博客配置的 249 项原始 PBD 坐标、裁切、旋转、偏移、画布尺寸比对一致；新增 `npm run audit:original -- <private-repo>` 可重复审计并扩展 action/NEW 检查，原作 SystemAction 采用精确白名单，START/NEXT 使用 custom.ks 确认的 1000ms 淡出且支持跳过，新增正常动效 smoke；未将原作素材复制入博客，完整原作渲染及新 CI 尚未验收。
 
 2026-11-25：`20eb48e` 的 [VN CI](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45462718982) 与 [Astro review](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45462718980) 均 typecheck、build、单测、Chromium 安装成功；VN smoke 的 390px 在返回标题被固定消息窗拦截，1440px 在通用返回选择器超时，无 JS 通过。旧 browser review 在游戏标题测试普通阅读侧栏失败。本轮 BASE-02/04/10：消息窗遇到正文末端导航改为流内位置，按真实高度设置滚动安全区、焦点可达；浏览器测试按实际游戏/阅读模式与 LOAD/EXTRA 语义执行、明确各路由返回及故障位置。完整浏览器验收未完成，未勾选。
