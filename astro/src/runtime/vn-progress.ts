@@ -1,24 +1,15 @@
 import {resolveTitleState,localTitleFrame} from '../lib/vn-scenes';
 
-const KEY='ginka.vn.progress.v1';
-type Progress={version:1;completed:string[];last:string|null;recent:Record<string,number>;bookmarks:string[]};
-const empty=():Progress=>({version:1,completed:[],last:null,recent:{},bookmarks:[]});
-const isPath=(value:unknown):value is string=>typeof value==='string'&&/^\/20\d{2}\/\d{2}\/\d{2}\/[^?#]+\/$/.test(value)&&!value.includes('\\');
-let memory=empty();
-function parse(raw:string|null):Progress {
- try {
-  const value=JSON.parse(raw||'null');
-  if(value?.version!==1||!Array.isArray(value.completed))return empty();
-  return {version:1,completed:Array.from(new Set<string>(value.completed.filter(isPath))),last:isPath(value.last)?value.last:null,recent:Object.fromEntries(Object.entries(value.recent??{}).filter(([path,stamp])=>isPath(path)&&typeof stamp==='number'&&Number.isFinite(stamp)).sort((a,b)=>Number(b[1])-Number(a[1])).slice(0,100)) as Record<string,number>,bookmarks:Array.isArray(value.bookmarks)?Array.from(new Set<string>(value.bookmarks.filter(isPath))):[]};
- } catch {return empty();}
-}
-function read():Progress {
- try {memory=parse(localStorage.getItem(KEY));} catch {}
+import {KEY,empty,isPath,parse,visit,savePosition,type Progress} from '../domain/reading-state';
+import {capturePosition,restorePosition} from './vn-reading-position';
+let memory=empty(), volatile=false;
+function read():Progress{
+ if(!volatile){try{memory=parse(localStorage.getItem(KEY));}catch{volatile=true;}}
  return memory;
 }
-function write(value:Progress) {
+function write(value:Progress){
  memory=value;
- try{localStorage.setItem(KEY,JSON.stringify(value));}catch{}
+ try{localStorage.setItem(KEY,JSON.stringify(value));volatile=false;}catch{volatile=true;}
 }
 function renderTitle(root:Document=document) {
  const title=root.querySelector<HTMLElement>('[data-vn-title]');
@@ -54,7 +45,7 @@ function renderArticle(recordVisit:boolean) {
  const path=article?.dataset.vnArticle;
  if(!isPath(path))return;
  const state=read();
- if(recordVisit){const recent=Object.fromEntries(Object.entries({...state.recent,[path]:Date.now()}).sort((a,b)=>b[1]-a[1]).slice(0,100));write({...state,last:path,recent});}
+ if(recordVisit)write(visit(state,path,Date.now()));
  const bookmark=article?.querySelector<HTMLButtonElement>('[data-vn-bookmark]');
  if(bookmark){bookmark.hidden=false;showBookmark(bookmark,state.bookmarks.includes(path));}
  const button=article?.querySelector<HTMLButtonElement>('[data-vn-mark]');
@@ -85,9 +76,9 @@ function renderLibrary(){
   const visible=libraryFilter==='bookmarks'?saved:libraryFilter==='completed'?done:!!stamp||state.last===path;
   slot.hidden=!visible;if(visible)count++;
   const date=slot.querySelector<HTMLElement>('[data-vn-slot-date]');
-  if(date&&stamp)date.textContent=new Date(stamp).toLocaleString();
+  if(date)date.textContent=stamp?new Date(stamp).toLocaleString():date.dataset.published||'';
   const status=slot.querySelector<HTMLElement>('[data-vn-slot-status]');
-  if(status)status.textContent=done?'已读': '阅读记录';
+  if(status){const pos=state.positions[path];status.textContent=done?'已读':pos?'阅读进度 '+Math.round(pos.ratio*100)+'%':'阅读记录';}
   const button=slot.querySelector<HTMLButtonElement>('[data-vn-bookmark]');
   if(button)showBookmark(button,saved);
   root.append(slot);
@@ -103,7 +94,54 @@ function renderChapter(){
  });
 }
 function refresh(){renderTitle();renderArticle(false);renderLibrary();renderChapter();}
-function mount(){renderArticle(true);renderTitle();renderLibrary();renderChapter();}
+const RESUME='ginka.vn.resume.v1';
+let current:HTMLElement|null=null, timer=0, dirty=false, pendingResume:string|null=null, restoreFrame=0;
+function flush(){
+ clearTimeout(timer);timer=0;
+ if(!dirty||!current)return;
+ dirty=false;
+ const path=current.dataset.vnArticle;
+ if(!isPath(path))return;
+ const position=capturePosition(current);
+ if(position)write(savePosition(read(),path,position));
+}
+function consumeResume(path:string|null){
+ let target=pendingResume;pendingResume=null;
+ try{
+  const stored=JSON.parse(sessionStorage.getItem(RESUME)||'null');
+  sessionStorage.removeItem(RESUME);
+  if(stored&&typeof stored.at==='number'&&Date.now()-stored.at<15000&&isPath(stored.path))target=stored.path;
+ }catch{}
+ return !!path&&target===path&&!location.hash;
+}
+function mount(){
+ const next=document.querySelector<HTMLElement>('[data-vn-article]');
+ if(next!==current){
+  clearTimeout(timer);timer=0;dirty=false;cancelAnimationFrame(restoreFrame);current=next;
+  const path=next?.dataset.vnArticle||null;
+  const resume=consumeResume(path);
+  const position=path&&resume?read().positions[path]:null;
+  renderArticle(true);
+  if(next&&position){
+   restoreFrame=requestAnimationFrame(()=>{if(current===next&&next.isConnected)restorePosition(next,position);});
+  }
+ }else{renderArticle(false);}
+ renderTitle();renderLibrary();renderChapter();
+}
+document.addEventListener('click',event=>{
+ if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
+ const link=(event.target as Element|null)?.closest<HTMLAnchorElement>('a[data-vn-resume]');
+ if(!link||link.origin!==location.origin||!isPath(link.pathname)||link.target&&link.target!=='_self')return;
+ pendingResume=link.pathname;
+ try{sessionStorage.setItem(RESUME,JSON.stringify({path:link.pathname,at:Date.now()}));}catch{}
+});
+window.addEventListener('scroll',()=>{
+ if(!current||!current.isConnected)return;
+ dirty=true;clearTimeout(timer);timer=window.setTimeout(flush,600);
+},{passive:true});
+document.addEventListener('astro:before-preparation',()=>{flush();cancelAnimationFrame(restoreFrame);});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flush();});
+window.addEventListener('pagehide',flush);
 document.addEventListener('click',event=>{
  const el=(event.target as Element|null)?.closest<HTMLButtonElement>('[data-vn-mark],[data-vn-bookmark],[data-vn-filter],[data-vn-reset]');
  if(!el)return;
@@ -126,5 +164,5 @@ document.addEventListener('click',event=>{
 });
 document.addEventListener('astro:before-swap',event=>{renderTitle((event as Event & {newDocument:Document}).newDocument);});
 document.addEventListener('astro:page-load',mount);
-window.addEventListener('storage',event=>{if(event.key===KEY||event.key===null)refresh();});
+window.addEventListener('storage',event=>{if(event.key===KEY||event.key===null){volatile=false;refresh();}});
 mount();

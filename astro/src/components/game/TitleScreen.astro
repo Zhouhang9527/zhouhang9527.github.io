@@ -19,10 +19,10 @@ const coverStyle=sceneVars(background.slug,background.focal)+(localOriginal?`;--
    <p class="vn-kicker">MM9527 / PERSONAL ARCHIVE</p>
    <nav class="vn-menu" aria-label="标题菜单">
     <a data-vn-start href="/archives/"><span>START</span><small>开始阅读</small></a>
-    <a data-vn-continue href="/archives/" hidden><span>CONTINUE</span><small>继续阅读</small></a>
+    <a data-vn-continue data-vn-resume href="/archives/" hidden><span>CONTINUE</span><small>继续阅读</small></a>
     <span class="vn-menu-disabled" data-vn-no-save aria-disabled="true"><span>CONTINUE</span><small>暂无阅读记录</small></span>
     <a href="/library/"><span>LOAD</span><small>读取存档</small></a>
-    <a href="#latest"><span>INDEX</span><small>快速阅读索引</small></a>
+    <a href="#latest" data-vn-mode-set="reader"><span>INDEX</span><small>快速阅读索引</small></a>
     <a href="/gallery/"><span>GALLERY</span><small>岛影鉴赏</small></a>
     <button type="button" class="popup-trigger" aria-label="搜索文章"><span>SEARCH</span><small>全文搜索</small></button>
     <a href="/settings/"><span>CONFIG</span><small>系统设置</small></a>

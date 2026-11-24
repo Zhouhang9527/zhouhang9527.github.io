@@ -32,6 +32,7 @@ const scripts=['runtime','reading','atri-loader','ui-shell','theme','comments','
  {styles.map(name=><link rel="stylesheet" href={asset(`css/ginka-${name}.css`)}/>)}
  <link rel="stylesheet" href={asset('css/vn-stage.css')}/>
  {import.meta.env.DEV&&process.env.GINKA_UI_FONT&&<link rel="stylesheet" href="/__ginka_local_font__/ui.css"/>}
+ <script is:inline>try{document.documentElement.dataset.vnMode=localStorage.getItem('ginka.vn.mode.v1')==='reader'?'reader':'game';document.documentElement.dataset.vnMotion=localStorage.getItem('ginka.vn.motion.v1')==='reduced'?'reduced':'system';}catch{document.documentElement.dataset.vnMode='game';}</script>
  <ClientRouter/>
 </head>
 <body data-vn-mask={import.meta.env.DEV&&process.env.GINKA_VN_UI_DATA?'/__ginka_local_ui__/wipe.png':undefined}>

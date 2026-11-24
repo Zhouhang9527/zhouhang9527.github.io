@@ -1,6 +1,6 @@
 /* Provisional VN skin. All selectors are scoped to game surfaces. */
-body:has([data-vn-title]) .column > header.header{display:none!important}
-body .main-inner.ginka-home:has([data-vn-title]){margin-top:0!important}
+html:not([data-vn-mode=reader]) body:has([data-vn-title]) .column > header.header{display:none!important}
+html:not([data-vn-mode=reader]) body .main-inner.ginka-home:has([data-vn-title]){margin-top:0!important}
 .vn-stage{
  --vn-font-menu:var(--vn-font-original, "Noto Serif SC Variable"), "Noto Serif SC", "Yu Mincho", "Hiragino Mincho ProN", SimSun, Georgia, serif;
  --vn-font-ui:var(--vn-font-original, "Noto Sans SC"), "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
@@ -151,3 +151,12 @@ html body .vn-panel[data-vn-ui-original=true]{background-image:var(--vn-extra-ar
 .vn-rule-transition{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:8}
 @media(prefers-reduced-motion:reduce){.vn-rule-transition{display:none!important}}
 html[data-vn-motion=reduced] .vn-rule-transition{display:none!important}
+
+/* Two presentation modes, one content model and URL set. */
+[data-vn-view=reader]{display:none}
+html[data-vn-mode=reader] [data-vn-title],html[data-vn-mode=reader] [data-vn-view=game]{display:none!important}
+html[data-vn-mode=reader] [data-vn-view=reader]{display:block}
+html[data-vn-mode=reader] .ginka-home .journal-chapters{padding-top:16px}
+body .header [data-vn-mode-toggle]{min-height:44px;border:0;background:transparent;font-size:12px;padding:0 7px;white-space:nowrap}
+body .header [data-vn-mode-toggle][hidden]{display:none!important}
+@media(max-width:680px){body .header .menu-item-mode{display:none}}

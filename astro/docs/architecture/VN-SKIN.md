@@ -15,3 +15,8 @@ Status: functional provisional skin; original screenshot/atlas calibration pendi
 - visual-index/data-01.jpg data-021: original grayscale transition rule; local threshold wipe, 320ms provisional timing, no interaction lock, cancels on navigation/reduced motion.
 - bgimage2-03.jpg bgimage2-085/086/087: island overview evening/day/night candidates, not confirmed progress-map UI. Do not conflate time-of-day variants with story progression.
 - Browser acceptance includes library, gallery modal and reduced-motion config. Run against a real built preview before publishing.
+
+## Reading mode and resume
+- `ginka.vn.mode.v1`: explicit game/reader choice. Homepage INDEX opens the journal; article TITLE returns to game mode. Archive routes retain the same URL and switch only the presentation.
+- v1 reading state is extended with bounded section-relative positions. Resume is explicit (CONTINUE / LOAD), never automatic on normal links, direct URLs, anchors or browser history.
+- Position records store article fraction and heading-relative fraction, not raw viewport pixels. No cloud synchronization. Domain parser and migration tests run before build.
