@@ -12,6 +12,7 @@ const coverStyle=sceneVars(background.slug,background.focal)+(localOriginal?`;--
 <section class="vn-stage vn-title" data-vn-title data-vn-cover={background.id} data-vn-stage={initial.id} data-vn-character-present={String(initial.present)} data-vn-expression={initial.expression??"none"} data-vn-frame={initial.frame} data-vn-original={String(localOriginal)} data-vn-frame-render={localOriginal?"original":"fallback"} data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} aria-labelledby="vn-title-heading">
  <div class="vn-cover" aria-hidden="true">
   <div class="vn-cover-art" data-vn-art={background.id} style={coverStyle}></div>
+  {localOriginal&&<div class="vn-original-logo" style="--vn-logo-art:url(/__ginka_local_title__/logo.png)"></div>}
  </div>
  <div class="vn-title-content">
   <div class="vn-title-menu">

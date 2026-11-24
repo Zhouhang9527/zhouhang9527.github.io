@@ -58,6 +58,13 @@
         "height": 720,
         "source": "_hxv4_hash/35CAB850E76B65EF/000001f1_21C8C4A6F235A7C30E2EAF1DB3542C9A10391ADFCDBA6ABD27EBD373D1DA0BE4.png"
       }
+    },
+    "logo": {
+      "id": "title-logo-overlay",
+      "source": "_hxv4_hash/35CAB850E76B65EF/000001f2_2BB7701BEB58831C7056B6DB785DA9B745E2415B7E89700E7243BA4492A46A2D.png",
+      "width": 1280,
+      "height": 720,
+      "notice": "Original full-canvas GINKA logo overlay at lower left, not a character layer."
     }
   },
   "gallery": [
@@ -130,5 +137,13 @@
         "height": 720
       }
     }
+  },
+  "motion": {
+    "controlMs": 160,
+    "systemCrossfadeMs": 300,
+    "backlogCrossfadeMs": 300,
+    "backlogJumpMs": 1000,
+    "rulePreviewMs": 300,
+    "notice": "System panel crossfade times measured from extracted KAG scripts; control feedback and optional rule preview are blog adaptations."
   }
 }

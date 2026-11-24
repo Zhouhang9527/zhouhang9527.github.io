@@ -26,3 +26,13 @@ Search has its own route and shares the existing Pagefind loader with the search
 
 ## Map
 Map screen uses original complete island overview frames bgimage-124, 125, 126 in optional private preview. Completion phase drives the selected full scene, independently of day/night theme. This is an explicitly provisional adaptation; original map overlays and scenario timing still require the UI/script archive.
+
+## Original script verification (private asset revision e4b85e4)
+- 0000063b: backlog open/page/close crossfade 300ms; backlog jump crossfade 1000ms (alternate branch 500ms).
+- 00000672: load open/page/close 300ms crossfade.
+- 00000681: option open/page/close 300ms crossfade.
+- 0000068c: save open/page/close 300ms crossfade.
+- 0000064a / 0000069c: CG / sound open/page 300ms crossfade.
+- 00000690: scenario selection open/page/close 300ms crossfade.
+- 000001f2: original full title logo overlay, bottom-left. This is a UI overlay, not character compositing.
+Normal navigation now uses the confirmed crossfade duration; rule-mask transition is opt-in for research rather than applied to all screens. Exact title menu layout and full animation sequencing remain unverified.

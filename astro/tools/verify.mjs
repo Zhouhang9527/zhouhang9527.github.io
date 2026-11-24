@@ -86,3 +86,8 @@ console.log('PASS map state manifest and private isolation');
 const sitemap=fs.readFileSync('dist/sitemap.xml','utf8');
 for(const route of ['library','settings','search','music-room'])assert.ok(!sitemap.includes('/'+route+'/</loc>'),'Private UI route in sitemap '+route);
 console.log('PASS noindex page sitemap exclusion');
+
+assert.doesNotMatch(home,/__ginka_local_title__|vn-original-logo/,'Original title overlay leaked');
+assert.equal(vn.motion.systemCrossfadeMs,300);
+assert.equal(vn.motion.backlogCrossfadeMs,300);
+console.log('PASS original UI timing and title logo isolation');

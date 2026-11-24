@@ -53,3 +53,10 @@ Set GINKA_MAP_DATA to the extracted bgimage directory (the folder containing _hx
 Start a production preview in one terminal (`npm run build && npm run preview -- --host 127.0.0.1`).
 In a second terminal, run `npx playwright install chromium`, then `npm run check:vn-browser`.
 The local-only smoke test blocks remote dependencies and captures title, chapter, map, save, gallery, search, music, config, reader screenshots at mobile and desktop sizes. It checks persistence and navigation, not original-game pixel parity. The preexisting tools/browser.mjs additionally exercises real Giscus. Visual review with original resources remains separate.
+
+## One-command private reference preview
+After cloning the private asset repository separately, run:
+```powershell
+npm run dev:original -- "D:\\ginka-xp3-assets"
+```
+The tool validates the exact known source files, sets local roots, selects a font only if exactly one valid standalone OTF/TTF candidate exists (otherwise specify GINKA_UI_FONT), and binds to 127.0.0.1. It does not copy resources into the blog. The original title logo uses the full 1280x720 canvas at its original location on desktop. System panel timing is now 300ms crossfade from the extracted KAG reference scripts. Set GINKA_RULE_PREVIEW=1 only to study the optional rule-texture effect.

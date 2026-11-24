@@ -88,7 +88,7 @@ html body .vn-title[data-vn-original="true"] .vn-cover-art{background-image:var(
    calibration; no game sprites or proprietary fonts enter the public build. */
 .vn-stage{
  --vn-accent:#dbeaf3;--vn-border:#a9c5d688;--vn-panel:#102235e8;
- --vn-hover:160ms;--vn-enter:260ms;--vn-ease:cubic-bezier(.2,.65,.3,1);
+ --vn-hover:160ms;--vn-enter:300ms;--vn-ease:cubic-bezier(.2,.65,.3,1);
 }
 .vn-stage [hidden],.vn-reader-actions [hidden]{display:none!important}
 .vn-title-content{position:relative;z-index:1}
@@ -128,7 +128,7 @@ html[data-theme=moonlit] .vn-slot-thumbnail{background-image:var(--vn-night-smal
 .vn-config-row>div{flex:1 1 180px}.vn-config-row h2{font:400 17px/1.4 var(--vn-font-menu);margin:0;color:#e7f1fa!important}.vn-config-row p{font-size:12px;color:#becfdd;margin:5px 0 0}
 .vn-motion-options{border:0;display:flex;gap:12px;margin:0;padding:0;flex-wrap:wrap}.vn-motion-options label{display:flex;align-items:center;min-height:44px;gap:6px}.vn-motion-options input{accent-color:#adcce1}
 .vn-choices a[data-vn-read=true] .vn-choice-no{color:#e9f6ff}.vn-choices a[data-vn-read=true] .vn-choice-arrow::before{content:"✓";font-size:12px;margin-right:4px}
-@keyframes vn-appear{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes vn-appear{from{opacity:0}to{opacity:1}}
 .vn-panel-inner,.vn-chapter-content{animation:vn-appear var(--vn-enter) var(--vn-ease) both}
 @media(max-width:680px){
  .vn-panel-inner{width:calc(100% - 24px);padding:16px 0}
@@ -198,3 +198,27 @@ html body .vn-map[data-vn-map-original=true] .vn-map-picture{background-image:va
 .vn-map-links a{display:flex;align-items:center;justify-content:space-between;min-height:44px;border:1px solid var(--vn-border);padding:8px 12px;background:var(--vn-panel);color:#e3edf6!important}
 .vn-map-links a:is(:hover,:focus-visible){background:#345a73}
 @media(max-width:680px){.vn-map-links{grid-template-columns:1fr}}
+
+/* Reference: data/35CAB.../000001f2 places the original logo at the lower-left
+   of a complete 1280x720 canvas. Keep the CG and UI overlay in the same frame.
+   Menu positions are still provisional until the title UI script is resolved. */
+.vn-original-logo{display:none}
+@media(min-width:960px){
+ html body .vn-title[data-vn-original=true]{aspect-ratio:16/9;min-height:0;container-type:inline-size}
+ .vn-title[data-vn-original=true] .vn-cover{height:100%;width:100%}
+ html body .vn-title[data-vn-original=true] .vn-cover-art{background-size:contain;background-repeat:no-repeat}
+ .vn-title[data-vn-original=true] .vn-original-logo{display:block;position:absolute;inset:0;background:var(--vn-logo-art) center/contain no-repeat;z-index:1}
+ .vn-title[data-vn-original=true] .vn-title-content{position:absolute;inset:0;width:100%;min-height:0;padding:0;margin:0;display:block}
+ .vn-title[data-vn-original=true] .vn-title-menu{position:absolute;left:3.5%;top:5.5%;width:32%;padding:0;background:transparent;max-height:74%;overflow:auto}
+ .vn-title[data-vn-original=true] .vn-title-menu h1 img{visibility:hidden;width:0;height:0}
+ .vn-title[data-vn-original=true] .vn-title-menu h1{height:0}
+ .vn-title[data-vn-original=true] .vn-kicker{margin:0 0 8px;color:#162e48!important;text-shadow:0 1px 2px #fff}
+ html body .vn-title[data-vn-original=true] .vn-menu > :is(a,button,span){min-height:0;padding:clamp(5px,.52cqw,9px) 10px;line-height:1.25;font-size:clamp(12px,1.32cqw,19px);background:#ffffffb8;color:#173653!important;border-bottom-color:#367aa28c;letter-spacing:.08em}
+ html body .vn-title[data-vn-original=true] .vn-menu > * small{font-size:clamp(10px,.95cqw,13px);color:#264f69}
+ html body .vn-title[data-vn-original=true] .vn-menu > :is(a,button):is(:hover,:focus-visible){background:#d8f3ff;color:#102e4a!important;outline-color:#2c719c}
+ .vn-title[data-vn-original=true] .vn-save-status{color:#183e58;text-shadow:0 1px 2px #fff;margin:8px 0 0}
+ .vn-title[data-vn-original=true] .vn-title-tools{position:absolute;right:2%;bottom:2%;margin:0;max-width:57%;justify-content:flex-end;text-shadow:0 1px 3px #142638}
+}
+html:has(.vn-stage)::view-transition-old(root),html:has(.vn-stage)::view-transition-new(root){animation-duration:300ms}
+@media(prefers-reduced-motion:reduce){html:has(.vn-stage)::view-transition-old(root),html:has(.vn-stage)::view-transition-new(root){animation:none!important}}
+html[data-vn-motion=reduced]::view-transition-old(root),html[data-vn-motion=reduced]::view-transition-new(root){animation:none!important}

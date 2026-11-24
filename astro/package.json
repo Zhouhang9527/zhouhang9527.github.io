@@ -10,7 +10,8 @@
     "typecheck": "node tools/prepare.mjs && astro check",
     "check:fonts": "node --test tools/local-font.test.mjs",
     "check:reading": "node --experimental-strip-types --test tools/reading-state.test.mjs",
-    "check:vn-browser": "node tools/vn-smoke.mjs"
+    "check:vn-browser": "node tools/vn-smoke.mjs",
+    "dev:original": "node tools/private-preview.mjs"
   },
   "dependencies": {
     "astro": "5.16.0",

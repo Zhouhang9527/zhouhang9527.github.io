@@ -1,6 +1,6 @@
 // Optional original grayscale rule texture. The blend is a threshold wipe,
-// not a crossfade. Duration/softness are a provisional blog adaptation.
-const W=320,H=180,DURATION=320,SOFTNESS=.13;
+// not a crossfade. Normal original system panels use crossfade; this rule is a separate opt-in study effect.
+const W=320,H=180,DURATION=300,SOFTNESS=.13;
 let rule:Uint8Array|null=null,source='',pending=0,frame=0,canvas:HTMLCanvasElement|null=null;
 function clear(){cancelAnimationFrame(frame);frame=0;canvas?.remove();canvas=null;}
 function reduced(){return matchMedia('(prefers-reduced-motion: reduce)').matches||document.documentElement.dataset.vnMotion==='reduced';}

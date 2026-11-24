@@ -11,7 +11,7 @@ export function localTitleArt(){
    if(!input)return;
    const root=path.resolve(input);
    const frames=new Map();
-   for(const [id,spec] of Object.entries(manifest.title.frames)){
+   for(const [id,spec] of Object.entries({...manifest.title.frames,logo:manifest.title.logo})){
     const file=path.join(root,spec.source);
     const bytes=fs.readFileSync(file);
     if(bytes.length<24||bytes.subarray(0,8).toString('hex')!=='89504e470d0a1a0a'||bytes.readUInt32BE(16)!==spec.width||bytes.readUInt32BE(20)!==spec.height)throw Error('Invalid original title CG: '+file);
@@ -26,7 +26,7 @@ export function localTitleArt(){
     res.setHeader('Content-Type','image/png');res.setHeader('Cache-Control','no-store');res.setHeader('Content-Length',bytes.length);
     res.end(req.method==='HEAD'?undefined:bytes);
    });
-   console.log('GINKA: three original full title CGs available on local dev server only');
+   console.log('GINKA: three original full title CGs and original logo available on local dev server only');
   }
  };
 }
