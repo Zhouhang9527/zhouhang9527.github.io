@@ -32,3 +32,13 @@ Keep old published paths, Markdown and image attachments, Giscus pathname mappin
 
 ## Original title CG (private local study)
 The three identified full images are data-003, data-004 and data-005, not character sprites. Set GINKA_TITLE_DATA to the original extracted data folder (the folder containing _hxv4_hash), then run npm run dev on localhost. See config/vn-scenes.json for exact original hash filenames. The Vite dev middleware serves the original bytes without copying to public or dist. Do not expose this private dev server on a network. The release build keeps a single provisional torii fallback until rights are confirmed; no private images are included. Progress thresholds are provisional, not a verified original sequence.
+
+## Original font inspection (private local study)
+The extracted data archive contains a large OTF (about 23 MB according to the private asset README), but its family, coverage and role in the game are not verified. List the actual OpenType/TrueType files and their embedded name IDs (1 family, 2 subfamily, 4 full name, 6 PostScript, 16/17 typographic family/style):
+```powershell
+cd astro
+node tools/local-font.mjs "D:\\GINKA-study\\assets\\data"
+$env:GINKA_UI_FONT = "D:\\GINKA-study\\assets\\data\\<actual-font-file>.otf"
+npm run dev -- --host 127.0.0.1
+```
+Use the real path from the scan, not the placeholder. The optional font is served only by the local dev middleware, never copied to the site. It affects VN menu and UI text, not technical article text or code. A single regular face is provisionally mapped to both roles; original font assignments and Chinese glyph coverage still require local visual verification. Browser fallback handles missing glyphs. Unset GINKA_UI_FONT to compare against the production font stack; do not expose the dev server through a proxy or tunnel. No original font is approved for public release by this change.
