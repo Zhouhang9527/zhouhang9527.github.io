@@ -13,7 +13,7 @@ const tabs=[['display','DISPLAY'],['program','PROGRAM'],['text','TEXT'],['sound'
   <div class="vn-option-frame">
    <header class="vn-option-header vn-panel-header"><h1 id="vn-option-title" data-vn-heading-key="display" style={headingSkin}><span data-vn-option-heading>DISPLAY</span> <small>Setting</small></h1><aside class="vn-option-help" aria-label="设置说明"><span>HELP WINDOW</span><p data-vn-option-help>调整画面尺寸与表现方式</p></aside></header>
    <div data-vn-config hidden>
-    <nav class="vn-option-tabs" role="tablist" aria-label="系统设置">{tabs.map(([key,label],i)=><button type="button" id={'vn-tab-'+key} role="tab" aria-controls={'vn-option-'+key} aria-selected={String(i===0)} tabindex={i===0?0:-1} data-vn-option-tab={key} style={tabSkin(key)}><strong>{label}</strong><small>{key==='shortcut'?'List':'Setting'}</small></button>)}</nav>
+    <nav class="vn-option-tabs" role="tablist" aria-label="系统设置">{tabs.map(([key,label],i)=><button type="button" id={'vn-tab-'+key} role="tab" aria-controls={'vn-option-'+key} aria-selected={i===0} tabindex={i===0?0:-1} data-vn-option-tab={key} style={tabSkin(key)}><strong>{label}</strong><small>{key==='shortcut'?'List':'Setting'}</small></button>)}</nav>
     <div class="vn-option-body">
      <section id="vn-option-display" role="tabpanel" aria-labelledby="vn-tab-display" data-vn-option-panel="display">
       <div class="vn-option-grid">

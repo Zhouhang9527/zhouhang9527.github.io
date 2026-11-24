@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 接续：基线 `8c8062f` 的 [VN CI](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45460932472) 实际在 SYSTEM 页 `aria-selected` 类型检查失败；[Astro review](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45460932413) 的 build 已通过，typecheck 失败，浏览器均未执行。本次修复该类型错误、BACKLOG 的真实触发器焦点恢复及快速读取异步路由竞态；smoke 新增锁定/后日谈 NEW/无语音包/私有请求检查。可使用 `GINKA_TEST_ORIGINAL=1` 对本地原作预览执行同一 smoke；原作模式仍需要真实运行。BASE-01/02、BASE-04、LOG-04 保持未勾选，等待当前提交 CI 与私有素材实测。私有仓库 HEAD `e4b85e4`，`reference/` 尚未发现。
+
 | 模块 | 已有实现 | 尚未确认 |
 |---|---|---|
 | TITLE | 完整 CG、原作 PBD 按钮矩形/状态、脚本时序 | wipe13、标题语音、通关前后完整界面 |

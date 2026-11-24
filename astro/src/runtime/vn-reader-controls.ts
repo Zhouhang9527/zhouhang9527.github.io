@@ -27,9 +27,9 @@ document.addEventListener('click',async event=>{
  else if(action==='load'){void navigate('/library/');}
  else if(action==='option'){void navigate('/settings/');}
  else if(action==='vreplay'||action==='vsave'){document.dispatchEvent(new CustomEvent('vn:voice-action',{detail:action==='vreplay'?'replay':'save'}));}
- else if(action==='log'){article.querySelector<HTMLAnchorElement>('[data-vn-log-open]')?.click();}
+ else if(action==='log'){stop();showQuick(false);const opener=target.closest('[data-vn-quick-menu]')?find('[data-vn-quick-toggle]'):target;document.dispatchEvent(new CustomEvent('vn:backlog-open',{detail:opener}));}
  else if(action==='qsave'){const path=article.dataset.vnArticle,position=capturePosition(article);if(!isPath(path)||!position)return;const q={path,position,title:article.querySelector('h1')?.textContent?.trim()||'阅读记录',at:Date.now()};try{localStorage.setItem(KEY,JSON.stringify(q));preview(q);feedback('快速存档已保存');sync();}catch{feedback('无法写入本机快速存档');}}
- else if(action==='qload'){const q=readQuick();if(!q||!await confirmVN('读取快速存档？'))return;stop();if(article?.dataset.vnArticle===q.path){restorePosition(article,q.position);status();}else{try{sessionStorage.setItem(PENDING,JSON.stringify({path:q.path,at:Date.now()}));}catch{}void navigate(q.path);}}
+ else if(action==='qload'){const q=readQuick();if(!q)return;const owner=article;if(!await confirmVN('读取快速存档？')||article!==owner||!owner.isConnected)return;stop();if(article?.dataset.vnArticle===q.path){restorePosition(article,q.position);status();}else{try{sessionStorage.setItem(PENDING,JSON.stringify({path:q.path,at:Date.now()}));}catch{}void navigate(q.path);}}
  else if(action==='xprev'||action==='next'){stop();jump(action==='next'?1:-1);}
  else if(action==='skip'){stop();const b=article.querySelector('.post-body');if(b)window.scrollTo({top:scrollY+b.getBoundingClientRect().bottom-innerHeight*.5,behavior:'instant'});}
  else if(action==='auto'){if(auto)stop();else{auto=true;last=0;frame=requestAnimationFrame(step);sync();}}
@@ -43,6 +43,7 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!document.q
 document.addEventListener('astro:before-preparation',()=>{stop();clearTimeout(previewTimer);cancelAnimationFrame(statusFrame);statusFrame=0;});
 document.addEventListener('astro:page-load',mount);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
+document.addEventListener('vn:backlog-open',stop);
 document.addEventListener('vn:progress-reset',sync);
 document.addEventListener('vn:voice-state',sync);
 window.addEventListener('storage',sync);

@@ -8,7 +8,12 @@ function close(restoreFocus=true){
  active=null;delete log.dataset.vnLogOpen;log.removeAttribute('role');log.removeAttribute('aria-modal');log.removeAttribute('aria-labelledby');
  for(const node of inerted)node.inert=false;inerted=[];
  document.documentElement.style.overflow=previousOverflow;delete document.documentElement.dataset.vnBacklogOpen;
- if(restoreFocus&&trigger?.isConnected)trigger.focus({preventScroll:true});trigger=null;
+ if(restoreFocus&&trigger?.isConnected){
+  const fallback=document.querySelector<HTMLElement>('[data-vn-log-open]:not([hidden])');
+  const target=trigger.getClientRects().length?trigger:fallback;
+  if(target?.getClientRects().length)target.focus({preventScroll:true});
+ }
+ trigger=null;
 }
 function open(log:HTMLElement,from:HTMLElement){
  if(active)return;active=log;trigger=from;
@@ -25,6 +30,11 @@ function open(log:HTMLElement,from:HTMLElement){
  }
  log.querySelector<HTMLElement>('[data-vn-log-close]')?.focus({preventScroll:true});
 }
+document.addEventListener('vn:backlog-open',event=>{
+ const from=(event as CustomEvent<unknown>).detail;
+ const log=document.querySelector<HTMLElement>('[data-vn-backlog]');
+ if(from instanceof HTMLElement&&from.isConnected&&log&&document.documentElement.dataset.vnMode!=='reader')open(log,from);
+});
 document.addEventListener('click',event=>{
  if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
  const target=(event.target as Element|null)?.closest<HTMLElement>('[data-vn-log-open],[data-vn-log-close],[data-vn-log-scroll]');

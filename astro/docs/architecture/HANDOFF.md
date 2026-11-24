@@ -110,8 +110,8 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
-- 本次：将 94 项任务集中到 TODO，新增跨会话接续协议、AGENTS 指令与 README 入口
-- 当前功能基线：b12f603（角色/服装/动作协议）；上一文档提交：96c27da
-- 已确认：两仓库 HEAD 与文档路径可读取；本次只写文档
-- 未验证：完整构建/typecheck/浏览器；素材真实角色差分和对白语音包尚未核实
-- 下一步：BASE-01/02，或用户指定的 TODO 任务；先重新读取仓库最新 HEAD
+- 接续基线：`8c8062fce10b6232e278760e54f38ca73a74a78c`；素材 HEAD `e4b85e4f771e3e94c65a7f8f143a47b0bc80c5bd`，reference/ 返回 404，未发现新增视频参考或角色包
+- 真实 CI：基线 Astro review（45460932413）build 成功，typecheck 因 SYSTEM aria-selected 类型错误失败；VN CI（45460932472）同样失败，两个浏览器步骤均跳过
+- 本次提交：settings.astro 修复 aria-selected 类型；vn-reader-controls.ts、vn-backlog.ts 使用真实 LOG 触发器恢复焦点、停止自动阅读并防止快速读取确认后跨路由执行；vn-smoke.mjs 覆盖后日谈锁定/NEW、无语音包、BACKLOG 焦点和公共/原作预览私有请求检查；同步 TODO
+- 当前会话 Node 22 可用，但容器无法解析 github.com，无法完整 clone/install/运行 Astro；本次代码静态检查，未声称测试通过。由分支 CI 验证公开构建；私有模式需本地 `npm run dev:original` 后设 `GINKA_TEST_ORIGINAL=1` 执行 smoke
+- 下一步：读取本提交实际 Actions 日志，修复 BASE-01/02 后继续 DATA-01/ENGINE-01；素材包上传后核实 reference/ 的实际文件，不猜原作资源
