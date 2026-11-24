@@ -44,3 +44,11 @@ Reference: 2023 PC version review https://weekly.ascii.jp/elem/000/004/165/41652
 - data-099 (0000077c): actual 1280x720 option background, including HELP WINDOW at x755/y14 and cyan tabs at y111–150.
 - 0000077d: original 593x158 controls atlas. The caption and the three button states are sampled via CSS background crops. The fallback skin is retained for the public build; neither file is copied.
 - The local desktop layout scales the complete original frame and aligns header, tab strip and footer to its canvas. Touch reflow and adapted settings group placement are intentional departures, not pixel-parity claims.
+
+## Title, choices, load, backlog assets (e4b85e4)
+- titleMenu 000007ce: packed 223×245 English title label atlas. Use original menu order and estimated PC screenshot coordinates x72/y250, row 44, at 1280×720. Hover sprites are direct crops; normal text is a browser approximation. Screenshot reference: https://www.9game.cn/news/9224089.html (2023 title capture).
+- NEXT appears after completing a blog article when another unread article is available; EXIT switches to reader mode, never closes the browser. INFORMATION opens about; music remains in SOUND.
+- choice 000007ca: three 768×87 original choice states; normal/selected/hover, with actual article links.
+- saveFrame 000007b6: original 189×123 SAVE DATA frame, with a scene preview, real article title/time/progress, not a screenshot of the article. Gallery backdrop reused as a candidate for load, exact load layout unverified.
+- backlogAtlas 00000738: original BACKLOG/SCENE SELECT control sheet; original arrow sprites and candidate dark background 000007b2 are used on the host-side comment surface. Giscus remote iframe content is not modified by private asset URLs. Comment identity, moderation and editor remain native.
+- Desktop original title frame hides the journal below it; EXIT returns to the journal. Public fallback remains usable without private assets. Mobile reflow is intentional. Original title hover, save and backlog geometry require browser screenshot validation.

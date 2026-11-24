@@ -325,3 +325,58 @@ body .post-body{font-size:var(--vn-reader-size,16px)}
  .vn-option[data-vn-ui-original=true] .vn-option-footer :is(a,button)::before{width:2.8cqw;height:2.8cqw}
 }
 @media(max-width:680px){.vn-option-help{display:none}.vn-option-header.vn-panel-header{min-height:82px}}
+
+/* PC title capture: left-column black labels on the complete torii CG,
+   with the 1280x720 logo overlay anchored at the original lower-left. */
+@media(min-width:960px){
+ html:not([data-vn-mode=reader]) body:has([data-vn-title][data-vn-original=true]) .main-inner{
+  max-width:none!important;width:100%!important;padding:0!important;margin:0!important;background:#0a1623;
+ }
+ html:not([data-vn-mode=reader]) body:has([data-vn-title][data-vn-original=true]) .ginka-home{min-height:100svh;display:grid;place-items:center}
+ html:not([data-vn-mode=reader]) body:has([data-vn-title][data-vn-original=true]) :is(.journal-chapters,.journal-layout,.journal-island,footer.footer){display:none!important}
+ html body .vn-title[data-vn-original=true]{width:min(100%,177.7778svh);height:auto;aspect-ratio:16/9;margin:auto;min-height:0}
+ .vn-title[data-vn-original=true] .vn-title-menu{left:5.625%;top:34.7222%;width:26%;max-height:none;overflow:visible}
+ .vn-title[data-vn-original=true] .vn-title-menu .vn-kicker,.vn-title[data-vn-original=true] .vn-save-status{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;margin:0}
+ .vn-title[data-vn-original=true] .vn-menu{gap:0}
+ html body .vn-title[data-vn-original=true] .vn-menu > :is(a,span){display:flex;justify-content:flex-start;min-height:0;height:3.4375cqw;width:max-content;max-width:100%;padding:0 0;line-height:1;letter-spacing:-.035em;background:none;border:0;outline-offset:0;color:#101820!important;font:400 1.71875cqw/1 Arial,sans-serif;text-shadow:0 0 2px #efffff}
+ .vn-title[data-vn-original=true] .vn-menu > * small{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}
+ html body .vn-title[data-vn-original=true] .vn-menu > .vn-menu-disabled{opacity:.43}
+ html body .vn-title[data-vn-original=true] .vn-menu > a:is(:hover,:focus-visible){background:none;color:#1d6898!important;outline:0}
+ .vn-title[data-vn-original=true] .vn-menu > a::before{display:none}
+ .vn-title[data-vn-title-menu-original=true] .vn-menu > a:is(:hover,:focus-visible)>span{
+  display:block;width:calc(var(--sprite-w)*.078125cqw);height:calc(var(--sprite-h)*.078125cqw);
+  background-image:var(--vn-title-menu-atlas);background-size:var(--sprite-size);background-position:var(--sprite-pos);background-repeat:no-repeat;color:transparent!important;text-shadow:none;
+ }
+ .vn-title[data-vn-original=true] .vn-menu > a:focus-visible>span{outline:2px solid #0b3d65;outline-offset:2px}
+ .vn-title[data-vn-original=true] .vn-title-tools{bottom:2%;right:2%}
+ .vn-title[data-vn-original=true] .vn-title-tools button{display:none}
+}
+/* The original choice atlas has three 768x87 button states. Keep the
+   complete sprite proportions on a desktop; wrap article titles on mobile. */
+.vn-chapter[data-vn-choice-original=true] .vn-choices a{
+ background-image:var(--vn-choice-atlas);background-size:100% 300%;background-position:0 0;background-repeat:no-repeat;
+ background-color:transparent;border:0;border-radius:0;min-height:70px;padding:15px 22px;
+}
+.vn-chapter[data-vn-choice-original=true] .vn-choices a:is(:hover,:focus-visible){background-position:0 100%;color:#fff!important}
+.vn-chapter[data-vn-choice-original=true] .vn-choices a[data-vn-read=true]:not(:hover):not(:focus-visible){background-position:0 50%;color:#133456!important}
+.vn-chapter[data-vn-choice-original=true] .vn-choices a[data-vn-read=true]:not(:hover):not(:focus-visible) :is(time,.vn-choice-no,.vn-choice-arrow){color:#163b60}
+@media(min-width:960px){.vn-chapter[data-vn-choice-original=true] .vn-choices a{aspect-ratio:768/87}}
+/* Original SAVE DATA frame, not a fabricated screenshot of an article.
+   Actual article names, timestamps and reading state remain live text. */
+.vn-slot-frame{display:block;aspect-ratio:189/123;position:relative;background:#3b4868}
+.vn-slot-frame .vn-slot-thumbnail{position:absolute;left:15.34%;top:12.2%;width:70.37%;height:61.78%;aspect-ratio:auto}
+.vn-panel[data-vn-screen=load][data-vn-ui-original=true] .vn-slot-frame{background:var(--vn-save-art) center/100% 100% no-repeat}
+.vn-panel[data-vn-screen=load][data-vn-ui-original=true] .vn-save-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.vn-panel[data-vn-screen=load][data-vn-ui-original=true] .vn-save-slot{background:transparent;border-color:#5fb9d5}
+.vn-panel[data-vn-screen=load][data-vn-ui-original=true] .vn-save-link{grid-template-columns:1fr;gap:8px}
+.vn-panel[data-vn-screen=load][data-vn-ui-original=true] .vn-slot-frame{width:100%;max-width:240px;margin:auto}
+.vn-backlog-controls{display:flex;align-items:center;gap:7px;margin-left:auto}
+.vn-backlog-controls button{min-width:30px;min-height:30px;color:#fff;border:1px solid #67a6ce;background:#123260}
+.vn-backlog-controls button:hover{background:#4b98c7}
+[data-vn-backlog-original=true]{background:var(--vn-backlog-base) center/cover no-repeat;padding:20px;color:#edf3f9}
+[data-vn-backlog-original=true] .vn-backlog-header{color:#edf3f9;border-color:#597998}
+[data-vn-backlog-original=true] .vn-backlog-header a{color:#b7dbff!important}
+[data-vn-backlog-original=true] .vn-backlog-controls button{width:32px;height:32px;padding:0;border:0;background-image:var(--vn-backlog-atlas);background-size:304.7619% 690.4762%;background-repeat:no-repeat;color:transparent}
+[data-vn-backlog-original=true] .vn-backlog-controls button[data-vn-log-scroll=up]{background-position:100% 45.1613%}
+[data-vn-backlog-original=true] .vn-backlog-controls button[data-vn-log-scroll=down]{background-position:100% 29.4355%}
+@media(max-width:680px){.vn-panel[data-vn-screen=load][data-vn-ui-original=true] .vn-save-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vn-backlog-controls{flex-wrap:wrap}[data-vn-backlog-original=true]{padding:10px}}

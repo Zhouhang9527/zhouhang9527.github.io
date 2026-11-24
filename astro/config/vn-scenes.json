@@ -107,6 +107,36 @@
         "source": "_hxv4_hash/AF5FB0494CCF915F/0000077d_EC1B1D66186B2D359BBB063B1719B80F64B5CC5767396684487B8147B1CC0E37.png",
         "width": 593,
         "height": 158
+      },
+      "titleMenu": {
+        "id": "titleMenu",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007ce_6F59B13FB9F6CEDE487C582B44BBB88DC974F0C5C4940C0602F04BBA0C332868.png",
+        "width": 223,
+        "height": 245
+      },
+      "choice": {
+        "id": "choice",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007ca_2363C81F522930591EA437D04CEF12920B8125DA911DB61FE8CC036D59801F15.png",
+        "width": 768,
+        "height": 261
+      },
+      "saveFrame": {
+        "id": "saveFrame",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007b6_F270AB228B2B4EE1745ADE1D14EF39DBD0B5327720E12247F7628F66E3B0F917.png",
+        "width": 189,
+        "height": 123
+      },
+      "backlogAtlas": {
+        "id": "backlogAtlas",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000738_A2FE5096AC95A853B18E4A2BDD8FBAAF6D2B65ECD7D0719D6069BEB3DCAFEC05.png",
+        "width": 256,
+        "height": 580
+      },
+      "backlogBase": {
+        "id": "backlogBase",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007b2_F9A5B8701F3C06129A2976318141998B763431894EC05D12A0AAA20AE67A162F.png",
+        "width": 1280,
+        "height": 720
       }
     },
     "optionGeometry": {
@@ -150,6 +180,89 @@
         ]
       },
       "notice": "Background and atlas visually identified from original PNGs. Control rectangles measured from image; web settings group geometry is adapted."
+    },
+    "titleMenu": {
+      "notice": "Order and placement estimated against PC title capture; blue hover labels are cropped from original atlas, regular black labels remain browser text. NEXT and EXIT are adapted to blog functionality.",
+      "canvas": [
+        1280,
+        720
+      ],
+      "origin": [
+        72,
+        250
+      ],
+      "rowHeight": 44,
+      "order": [
+        "CONTINUE",
+        "NEXT",
+        "START",
+        "LOAD",
+        "SYSTEM",
+        "EXTRA",
+        "INFORMATION",
+        "EXIT"
+      ],
+      "hover": {
+        "CONTINUE": [
+          0,
+          34,
+          124,
+          32
+        ],
+        "NEXT": [
+          155,
+          86,
+          65,
+          32
+        ],
+        "START": [
+          0,
+          103,
+          77,
+          32
+        ],
+        "LOAD": [
+          79,
+          86,
+          76,
+          32
+        ],
+        "SYSTEM": [
+          125,
+          34,
+          94,
+          32
+        ],
+        "EXTRA": [
+          0,
+          68,
+          77,
+          32
+        ],
+        "INFORMATION": [
+          0,
+          0,
+          160,
+          33
+        ],
+        "EXIT": [
+          79,
+          164,
+          57,
+          32
+        ]
+      }
+    },
+    "choiceGeometry": {
+      "frame": [
+        768,
+        87
+      ],
+      "rows": [
+        "normal",
+        "selected",
+        "hover"
+      ]
     }
   },
   "map": {

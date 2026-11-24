@@ -64,3 +64,5 @@ The tool validates the exact known source files, sets local roots, selects a fon
 Music is now under SYSTEM → SOUND; /music-room/ redirects to /settings/#sound. The original PC settings layout is the reference for the seven-tab option screen; unsupported game features are not represented by fake controls. Mobile layout reflows for touch targets.
 
 The original preview also validates and uses data-099 (option background) and the 593×158 option control atlas; the public build contains only the CSS fallback.
+
+Original preview now also includes title-menu, choice, SAVE DATA and backlog control atlases. Title NEXT navigates to unread content after completion; EXIT switches to reader mode. No additional game resource is embedded into the public build.

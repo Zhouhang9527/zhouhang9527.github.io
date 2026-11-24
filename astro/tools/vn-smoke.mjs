@@ -22,6 +22,8 @@ try{
   try{
    await go('/','[data-vn-title]');
    assert.equal(await page.locator('[data-vn-continue]').isVisible(),false);
+   assert.equal(await page.locator('[data-vn-next]').isVisible(),false);
+   assert.deepEqual(await page.locator('.vn-menu > :visible > span').allTextContents(),['CONTINUE','NEXT','START','LOAD','SYSTEM','EXTRA','INFORMATION','EXIT']);
    await page.locator('[data-vn-start]').focus();
    await page.keyboard.press('ArrowDown');
    assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('href')),'/library/');

@@ -63,3 +63,13 @@ document.addEventListener('click',event=>{
 fullscreenState();
 
 export {};
+
+document.addEventListener('click',event=>{
+ const button=(event.target as Element|null)?.closest<HTMLButtonElement>('[data-vn-log-scroll]');
+ if(!button)return;
+ const log=button.closest<HTMLElement>('[data-vn-backlog]');if(!log)return;
+ const bounds=log.getBoundingClientRect(),offset=scrollY;
+ const top=offset+bounds.top,bottom=offset+bounds.bottom-innerHeight;
+ const target=Math.max(top,Math.min(Math.max(top,bottom),offset+(button.dataset.vnLogScroll==='up'?-1:1)*innerHeight*.8));
+ window.scrollTo({top:target,behavior:mode==='reduced'||matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+});

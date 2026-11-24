@@ -39,6 +39,11 @@ function renderTitle(root:Document=document) {
  const target=progress.last&&allowed.has(progress.last)?progress.last:null;
  if(resume){resume.hidden=!target;if(target)resume.href=target;}
  if(placeholder)placeholder.hidden=!!target;
+ const next=title.querySelector<HTMLAnchorElement>('[data-vn-next]');
+ const noNext=title.querySelector<HTMLElement>('[data-vn-no-next]');
+ const unread=count>0?paths.find(path=>!progress.completed.includes(path)&&path!==target):undefined;
+ if(next){next.hidden=!unread;if(unread)next.href=unread;}
+ if(noNext)noNext.hidden=!!unread;
 }
 function renderArticle(recordVisit:boolean) {
  const article=document.querySelector<HTMLElement>('[data-vn-article]');

@@ -4,9 +4,10 @@ import {href,config,tagSlug,allPosts} from '../../lib/site';
 import type {CollectionProps} from '../../lib/types';
 type Props=CollectionProps;
 const {kind,title,posts,names,page=1,totalPages=1,base='archives/'}=Astro.props;
+const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
 const years=kind==='archive'?Array.from(new Set((await allPosts()).map(p=>p.data.date.slice(0,4)))):[];
 ---
-<section class="vn-stage vn-chapter" data-vn-chapter aria-labelledby="vn-chapter-heading" style={sceneVars(vnScenes.chapter.slug,vnScenes.chapter.focal)}>
+<section class="vn-stage vn-chapter" data-vn-chapter data-vn-choice-original={String(original)} aria-labelledby="vn-chapter-heading" style={sceneVars(vnScenes.chapter.slug,vnScenes.chapter.focal)+(original?";--vn-choice-atlas:url(/__ginka_local_ui__/choice.png)":"")}>
  <div class="vn-chapter-content">
   <header><a class="vn-return" href="/">← TITLE / 返回标题</a><p class="vn-kicker">CHAPTER SELECT</p><h1 id="vn-chapter-heading">{title}</h1><p>选择一篇记录，进入阅读手册</p></header>
   <nav class="vn-tabs" aria-label="章节索引"><a href="/archives/" aria-current={kind==='archive'?'page':undefined}>时间归档</a><a href="/tags/" aria-current={kind==='tags'?'page':undefined}>主题标签</a><a href="/categories/" aria-current={kind==='categories'?'page':undefined}>内容分类</a><a href="/library/">读取存档</a><a href="/map/">岛屿地图</a></nav>

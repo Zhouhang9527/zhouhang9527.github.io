@@ -1,9 +1,10 @@
 ---
 import { config } from '../lib/site';
 const g = config.giscus;
+const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
 ---
-<section class="journal-dialogue" aria-label="历史对话">
-  <header class="vn-backlog-header"><span>BACKLOG</span><h2>历史对话</h2><a href="#main-content">返回正文 〉</a></header>
+<section class="journal-dialogue" data-vn-backlog data-vn-backlog-original={String(original)} style={original?"--vn-backlog-base:url(/__ginka_local_ui__/backlogBase.png);--vn-backlog-atlas:url(/__ginka_local_ui__/backlogAtlas.png)":undefined} aria-label="历史对话">
+  <header class="vn-backlog-header"><span>BACKLOG</span><h2>历史对话</h2><nav class="vn-backlog-controls" aria-label="历史对话导航"><button type="button" data-vn-log-scroll="up" aria-label="向上翻阅">▲</button><button type="button" data-vn-log-scroll="down" aria-label="向下翻阅">▼</button><a href="#main-content">返回正文 〉</a></nav></header>
   <div id="journal-comments" class="journal-dialogue-comments" tabindex="-1">
     <div class="giscus-container" data-repo={g.repo} data-repo-id={g.repoId} data-category={g.category} data-category-id={g.categoryId} data-mapping={g.mapping} data-strict={g.strict} data-reactions-enabled={g.reactions} data-emit-metadata={g.metadata} data-lang={g.lang} data-input-position={g.inputPosition} data-loading="lazy">
       <p class="journal-comments-status" role="status">评论加载中…</p>

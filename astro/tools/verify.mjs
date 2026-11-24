@@ -103,3 +103,14 @@ assert.equal(vn.privateUI.assets.optionAtlas.height,158);
 assert.match(settingsHtml,/data-vn-option-help/);
 assert.equal((settingsHtml.match(/data-vn-option-tab=/g)||[]).length,7);
 console.log('PASS original option background and atlas contract');
+
+assert.deepEqual(vn.privateUI.titleMenu.order,['CONTINUE','NEXT','START','LOAD','SYSTEM','EXTRA','INFORMATION','EXIT']);
+assert.match(home,/data-vn-next/);assert.match(home,/data-vn-no-next/);
+assert.match(home,/data-vn-title-menu-original="false"/);
+for(const [key,rect] of Object.entries(vn.privateUI.titleMenu.hover)){
+ const [x,y,w,h]=rect;assert.ok(x>=0&&y>=0&&w>0&&h>0&&x+w<=223&&y+h<=245,'Title atlas bounds '+key);
+}
+assert.equal(vn.privateUI.assets.choice.height,261);
+assert.equal(vn.privateUI.assets.saveFrame.width,189);
+assert.doesNotMatch(fs.readFileSync('dist/archives/index.html','utf8'),/__ginka_local_ui__/);
+console.log('PASS title, choice and save atlas manifest');
