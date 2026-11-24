@@ -28,3 +28,24 @@ body .journal-dialogue :is(.comments, .tabs-comment) { background: transparent !
 /* An existing small game motif, not a new artwork download. */
 .journal-dialogue-heading h2 { display: flex; align-items: center; gap: 10px; }
 .journal-dialogue-heading h2::before { content: ''; display: inline-block; width: 19px; height: 19px; flex: none; background: url('../images/ginka/butterfly.png') center / contain no-repeat; opacity: .78; }
+
+/* Opt-in local artwork: nine-slice the real frame so it grows with comments.
+   The embedded Giscus editor stays on a readable opaque surface. */
+.journal-dialogue-original { isolation: isolate; border: 0; border-radius: 0; box-shadow: none; padding: 30px clamp(18px, 4vw, 38px) 28px; }
+.journal-dialogue-original::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  border: 18px solid transparent;
+  border-image: var(--dialogue-art) var(--dialogue-slice) fill / 18px / 0 stretch;
+}
+.journal-dialogue-original .journal-dialogue-intro {
+  display: inline-block;
+  padding: 5px 10px;
+  background: var(--dialogue-bg);
+  border-radius: 3px;
+}
+.journal-dialogue-original :is(.comments, .tabs-comment) { background: var(--dialogue-bg) !important; padding: 12px; }
+@media (max-width: 767px) { .journal-dialogue-original { padding: 24px 14px 18px; } .journal-dialogue-original::before { border-width: 12px; border-image-width: 12px; } }

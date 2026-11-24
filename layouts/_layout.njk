@@ -41,7 +41,8 @@
             <span class="journal-dialogue-eyebrow">AFTER STORY / 余谈</span>
             <h2 id="journal-dialogue-title">岛间来信</h2>
           </header>
-          <div class="journal-dialogue-frame">
+          {% set dialogueSkin = ginka_dialogue_skin() %}
+          <div class="journal-dialogue-frame{% if dialogueSkin %} journal-dialogue-original{% endif %}"{% if dialogueSkin %} style="--dialogue-art:url('{{ dialogueSkin.url }}');--dialogue-slice:{{ dialogueSkin.slice }}"{% endif %}>
             <span class="journal-dialogue-name">GINKA / mm9527</span>
             <p class="journal-dialogue-intro">读到这里，有什么想说的吗？</p>
             {%- include '_partials/comments.njk' -%}
