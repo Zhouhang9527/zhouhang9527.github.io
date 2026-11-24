@@ -24,6 +24,12 @@ jobs:
           node-version: 22
       - run: npm install --no-audit --no-fund
       - run: npm run build
+      - run: npm run typecheck
+      - uses: actions/upload-artifact@v4
+        with:
+          name: astro-dependency-lock-candidate
+          path: astro/package-lock.json
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         with:
           name: astro-preview-dist

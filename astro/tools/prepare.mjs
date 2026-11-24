@@ -2,8 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import matter from 'gray-matter';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+import {stageRuntimeCompatibility} from './runtime-compat.mjs';
 import legacy from '../config/legacy-routes.json' with {type:'json'};
-const root=path.resolve('..'), out=path.resolve('public'), stage=path.resolve('.generated');
+const project=fileURLToPath(new URL('../',import.meta.url));
+const root=path.resolve(project,'..'), out=path.join(project,'public'), stage=path.join(project,'.generated');
 const source=path.join(root,'source');
 const excluded=new Set(['images/background.mp4','images/ginka-static-background.webp','fonts/LxgwWenKai.ttf','fonts/OppoSans.ttf','fonts/OppoSans-Bold.ttf','live2d/ATRI/ATRI.cmo3','live2d/ATRI/ATRI.psd','live2d/ATRI/ATRI.4096/texture_00.png']);
 for(const dir of [out,stage]) {fs.rmSync(dir,{recursive:true,force:true});fs.mkdirSync(dir,{recursive:true});}
@@ -22,7 +26,10 @@ const routeByStem=new Map(legacy.filter(r=>/^20\d\d\//.test(r)).map(r=>[r.replac
 const rows=[];
 fs.mkdirSync(path.join(stage,'posts'),{recursive:true});
 fs.mkdirSync(path.join(stage,'pages'),{recursive:true});
-for(const file of fs.readdirSync(postDir).filter(n=>n.endsWith('.md'))){
+for(const file of fs.readdirSync(postDir).filter(n=>n.endsWith('.md')).sort()){
+ // Only tracked articles enter the production staging tree. Drafts and extracted
+ // material cannot be accidentally published by a local build.
+ if(!tracked.includes('source/_posts/'+file))continue;
  const stem=file.slice(0,-3), parsed=matter(fs.readFileSync(path.join(postDir,file),'utf8'));
  const date=String(parsed.matter.match(/^date:\s*['"]?(\d{4}-\d\d-\d\d)/m)?.[1]||'');
  if(!date)throw Error('Missing original date: '+file);
@@ -52,22 +59,20 @@ for(const slug of ['about','links']){
 const missing=legacy.filter(r=>/^20\d\d\//.test(r)&&!rows.some(p=>p.route===r));
 if(missing.length)throw Error('Lost historical post routes: '+missing.join(', '));
 fs.writeFileSync(path.join(stage,'routes.json'),JSON.stringify(rows,null,2));
-let build='dev';try{build=execFileSync('git',['rev-parse','--short','HEAD'],{cwd:root,encoding:'utf8'}).trim()}catch{}
+let build='dev';try{build=execFileSync('git',['rev-parse','--short=10','HEAD'],{cwd:root,encoding:'utf8'}).trim()}catch{}
 fs.writeFileSync(path.join(out,'site-version.json'),JSON.stringify({version:build}));
 fs.writeFileSync(path.join(stage,'build.json'),JSON.stringify({version:build}));
 // Preserve the current pinned remote theme. Local new assets never enter this staging directory.
 console.log('Prepared',rows.length,'original posts and tracked public assets');
 
-// Port only lifecycle hooks in the reused project-owned runtime. No NexT code is loaded.
-for(const name of ['reading','atri-loader','ui-shell','theme','comments','controls','motion']){
- const file=path.join(out,'js/ginka-'+name+'.js');let code=fs.readFileSync(file,'utf8');
- code=code.replaceAll('pjax:send','astro:before-preparation').replaceAll('pjax:success','astro:after-swap').replaceAll('pjax:complete','astro:page-load').replaceAll('pjax:error','astro:page-load');
- if(name==='motion'){
-  code=code.replace('const body = document.body;','let body = document.body;').replace("  document.addEventListener('astro:page-load', arrive);","  document.addEventListener('astro:after-swap', () => { body=document.body; body.append(meter); });\n  document.addEventListener('astro:page-load', () => { discardTrip(); mount(false); });").replace("  document.addEventListener('astro:page-load', arrive);","");
- }
- if(name==='reading')code=code.replace("const language = classes.match", "const language = block.dataset.language || classes.match");
- fs.writeFileSync(file,code);
-}
-copy(path.resolve('public-shell.js'),path.join(out,'js/astro-shell.js'));
-copy(path.resolve('src/styles/base.css'),path.join(out,'css/astro-base.css'));
+stageRuntimeCompatibility(out);
+copy(path.join(project,'public-shell.js'),path.join(out,'js/astro-shell.js'));
+copy(path.join(project,'src/styles/base.css'),path.join(out,'css/astro-base.css'));
 fs.writeFileSync(path.join(out,'.nojekyll'),'');
+
+const assetVersions = {};
+for(const relative of ['css/astro-base.css',...['editorial','pages','reading','runtime','motion','theme','comments'].map(n=>'css/ginka-'+n+'.css'),...['theme-init','runtime','reading','atri-loader','ui-shell','theme','comments','controls','motion','music'].map(n=>'js/ginka-'+n+'.js'),'js/astro-shell.js']){
+ const bytes=fs.readFileSync(path.join(out,relative));
+ assetVersions[relative]=createHash('sha256').update(bytes).digest('hex').slice(0,10);
+}
+fs.writeFileSync(path.join(stage,'assets.json'),JSON.stringify(assetVersions,null,2));

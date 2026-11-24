@@ -7,6 +7,7 @@ import {scene,site,config} from '../lib/site';
 import type { SceneKind } from '../lib/types';
 interface Props { title: string; description?: string; kind?: SceneKind; article?: boolean; home?: boolean; noindex?: boolean }
 import build from '../../.generated/build.json';
+import {asset} from '../lib/assets';
 import '@fontsource-variable/noto-serif-sc';
 import '@fontsource-variable/jetbrains-mono';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -14,8 +15,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 const {title,description=config.description,kind='post',article=false,home=false,noindex=false}=Astro.props;
 const art=scene(kind);
 const canonical=new URL(Astro.url.pathname,site).href;
-const styles=['editorial','pages','reading','runtime','motion','theme','comments'];
-const scripts=['runtime','reading','atri-loader','ui-shell','theme','comments','controls','motion','music'];
+const styles=['editorial','pages','reading','runtime','motion','theme','comments'] as const;
+const scripts=['runtime','reading','atri-loader','ui-shell','theme','comments','controls','motion','music'] as const;
 ---
 <!doctype html>
 <html lang={config.language}>
@@ -26,9 +27,9 @@ const scripts=['runtime','reading','atri-loader','ui-shell','theme','comments','
  <meta name="twitter:card" content="summary"/><meta name="theme-color" content="#f4f7fa"/><meta name="ginka-build" content={build.version}/><meta name="ginka-giscus-theme-base" content={config.giscus.themeBase}/>
  <link rel="alternate" type="application/atom+xml" title="GINKA" href="/atom.xml"/>
  <link rel="icon" href="/images/favicon.png"/><link rel="manifest" href="/manifest.webmanifest"/>
- <script is:inline src="/js/ginka-theme-init.js"></script>
- <link rel="stylesheet" href={'/css/astro-base.css?v='+build.version}/>
- {styles.map(name=><link rel="stylesheet" href={'/css/ginka-'+name+'.css?v='+build.version}/>)}
+ <script is:inline src={asset("js/ginka-theme-init.js")}></script>
+ <link rel="stylesheet" href={asset('css/astro-base.css')}/>
+ {styles.map(name=><link rel="stylesheet" href={asset(`css/ginka-${name}.css`)}/>)}
  <ClientRouter/>
 </head>
 <body>
@@ -49,7 +50,7 @@ const scripts=['runtime','reading','atri-loader','ui-shell','theme','comments','
  <dialog class="astro-search" aria-labelledby="astro-search-title" transition:persist="search"><form method="dialog" class="astro-search-head"><strong id="astro-search-title">搜索文章</strong><button aria-label="关闭搜索" value="close">×</button></form><label class="journal-visually-hidden" for="astro-query">关键词</label><input id="astro-query" type="search" placeholder="搜索标题与正文" autocomplete="off"/><div id="astro-results" aria-live="polite"></div></dialog>
  <dialog class="astro-gallery" aria-label="岛影画廊" transition:persist="gallery"><button type="button" aria-label="关闭图片" data-gallery-close>×</button><img alt=""/><p></p></dialog>
  <script is:inline>window.CONFIG = {root:'/'};</script>
- {scripts.map(name=><script is:inline defer src={'/js/ginka-'+name+'.js?v='+build.version}></script>)}
- <script is:inline defer src={'/js/astro-shell.js?v='+build.version}></script>
+ {scripts.map(name=><script is:inline defer src={asset(`js/ginka-${name}.js`)}></script>)}
+ <script is:inline defer src={asset('js/astro-shell.js')}></script>
 </body>
 </html>

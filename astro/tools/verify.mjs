@@ -15,3 +15,12 @@ for(const route of posts){
  }
 }
 console.log('PASS',legacy.length,'legacy routes, article comments and local images');
+
+const versions=JSON.parse(fs.readFileSync('.generated/assets.json','utf8'));
+const {createHash}=await import('node:crypto');
+const home=fs.readFileSync('dist/index.html','utf8');
+for(const [asset,hash] of Object.entries(versions)){
+ assert.equal(createHash('sha256').update(fs.readFileSync(path.join('dist',asset))).digest('hex').slice(0,10),hash,'Asset hash mismatch '+asset);
+ assert.ok(home.includes('/'+asset+'?v='+hash),'Asset not versioned in home '+asset);
+}
+console.log('PASS content-hashed asset manifest');
