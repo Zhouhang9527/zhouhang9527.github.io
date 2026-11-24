@@ -603,3 +603,117 @@ main .gsc-loading-text { width: auto; font-size: 12px; white-space: normal; }
 main .gsc-main { gap: 18px; min-width: 0; }
 main .gsc-comment-box-tabs > div:first-child > button:focus-visible { outline-offset: 3px; }
 main .gsc-comment-box .gsc-comment-box-textarea { text-shadow: none; }
+
+/* Backlog-inspired reading surface: a single continuous transcript.
+   No fabricated messages, reordered replies, hidden moderation or nested scroll.
+   The original game UI atlas has not been identified; these are CSS equivalents. */
+main .gsc-comments:has(.gsc-comment) {
+  box-sizing: border-box;
+  min-width: 0;
+  gap: 0;
+  padding: 0 18px;
+  background: #15202c;
+  border: 1px solid #60788d45;
+  border-radius: 2px;
+}
+main .gsc-comments:has(.gsc-comment)::before {
+  content: 'BACKLOG / 历史评论';
+  display: block;
+  padding: 12px 6px 9px;
+  color: #a8c8de;
+  font: 600 11px/1.5 system-ui, sans-serif;
+  letter-spacing: .12em;
+  border-bottom: 1px solid #9fb9ce50;
+}
+main .gsc-comments .gsc-comment {
+  min-width: 0;
+  margin: 0;
+  padding: 13px 0 10px;
+  border: 0;
+}
+main .gsc-comments .gsc-comment + .gsc-comment {
+  border-top: 1px solid #a9bfd326;
+}
+main .gsc-comments .gsc-comment > div:first-child {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+main .gsc-comments .gsc-comment-header {
+  padding: 4px 6px 5px;
+  gap: 8px;
+}
+main .gsc-comments .gsc-comment-header::after,
+main .gsc-comments .gsc-reply-header::after {
+  background: linear-gradient(90deg,#9fb9ce66,transparent);
+  left: 6px;
+  width: min(210px,65%);
+}
+main .gsc-comments .gsc-comment-author-avatar,
+main .gsc-comments .gsc-reply-author > a:first-child {
+  min-width: 0;
+  color: #e5edf4;
+}
+main .gsc-comments .gsc-comment-author-avatar::before,
+main .gsc-comments .gsc-reply-author > a:first-child::before {
+  width: 14px;
+  height: 14px;
+  margin-inline-end: 3px;
+  opacity: .8;
+}
+main .gsc-comments .gsc-comment-author-avatar img,
+main .gsc-comments .gsc-reply-author-avatar img {
+  width: 23px;
+  height: 23px;
+  border: 0;
+}
+main .gsc-comments .gsc-comment-content {
+  padding: 10px 6px 8px 26px;
+  line-height: 1.85;
+}
+main .gsc-comments .gsc-comment-content.minimized { padding: 10px 6px; }
+main .gsc-comments .gsc-comment-content > :last-child,
+main .gsc-comments .gsc-reply-content > :last-child { margin-bottom: 0; }
+main .gsc-comments .gsc-comment-footer {
+  padding: 4px 6px 7px 26px;
+  border: 0;
+  gap: 8px;
+}
+main .gsc-comments .gsc-replies {
+  margin: 2px 6px 4px 26px;
+  padding: 0 0 0 12px;
+  background: transparent;
+  border: 0;
+  border-inline-start: 1px solid #9fb9ce40;
+  border-radius: 0;
+}
+main .gsc-comments .gsc-reply {
+  padding: 12px 0 8px;
+  background: transparent;
+}
+main .gsc-comments .gsc-reply + .gsc-reply { border-top-color: #a9bfd31c; }
+main .gsc-comments .gsc-reply .gsc-tl-line { background: transparent; }
+main .gsc-comments .gsc-reply-header { padding-bottom: 5px; }
+main .gsc-comments .gsc-reply-header::after { left: 0; }
+main .gsc-comments .gsc-reply-box {
+  padding: 4px 6px 5px 26px;
+  background: transparent;
+  border: 0;
+}
+main .gsc-comments .gsc-comment-box-is-reply {
+  margin-top: 7px;
+  background: linear-gradient(180deg,#293b4c 0,#101721 32px,#141d29 60%,#1a2938 100%);
+}
+@media(max-width:480px) {
+  main .gsc-comments:has(.gsc-comment) { padding-inline: 10px; }
+  main .gsc-comments .gsc-comment-content,
+  main .gsc-comments .gsc-comment-footer,
+  main .gsc-comments .gsc-reply-box { padding-inline-start: 6px; }
+  main .gsc-comments .gsc-replies { margin-inline-start: 8px; padding-inline-start: 8px; }
+}
+@media(forced-colors:active) {
+  main .gsc-comments:has(.gsc-comment) { border-color: CanvasText; }
+  main .gsc-comments .gsc-comment + .gsc-comment { border-top-color: CanvasText; }
+  main .gsc-comments .gsc-comment > div:first-child { border: 0; }
+}
