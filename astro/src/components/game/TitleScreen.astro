@@ -1,7 +1,6 @@
 ---
 import {vnScenes,sceneVars,resolveTitleState,localTitleFrame} from '../../lib/vn-scenes';
 import {href} from '../../lib/site';
-import {spriteVars,type Rect} from '../../lib/sprite';
 import type {Post} from '../../lib/types';
 interface Props {posts:Post[]}
 const {posts}=Astro.props;
@@ -9,7 +8,12 @@ const background=vnScenes.title.background;
 const initial=resolveTitleState(0);
 const localOriginal=import.meta.env.DEV&&!!process.env.GINKA_TITLE_DATA;
 const menuOriginal=localOriginal&&!!process.env.GINKA_VN_UI_DATA;
-const menuStyle=(key:keyof typeof vnScenes.privateUI.titleMenu.hover)=>menuOriginal?spriteVars(vnScenes.privateUI.titleMenu.hover[key] as unknown as Rect,223,245):undefined;
+const menuStyle=(key:keyof typeof vnScenes.privateUI.titleMenu.normal)=>{
+ if(!menuOriginal)return undefined;
+ const normal=vnScenes.privateUI.titleMenu.normal[key],hover=vnScenes.privateUI.titleMenu.hover[key];
+ const width=normal.rotate===90?normal.rect[3]:normal.rect[2],height=normal.rotate===90?normal.rect[2]:normal.rect[3],id=key.toLowerCase();
+ return `--vn-normal-art:url(/__ginka_local_ui__/title-normal-${id}.png);--vn-hover-art:url(/__ginka_local_ui__/title-hover-${id}.png);--vn-normal-w:${width};--vn-normal-h:${height};--vn-hover-w:${hover[2]};--vn-hover-h:${hover[3]}`;
+};
 const coverStyle=sceneVars(background.slug,background.focal)+(localOriginal?`;--vn-original-frame:url('${localTitleFrame(initial.frame)}')`:'');
 ---
 <section class="vn-stage vn-title" data-vn-title data-vn-title-menu-original={String(menuOriginal)} data-vn-cover={background.id} data-vn-stage={initial.id} data-vn-character-present={String(initial.present)} data-vn-expression={initial.expression??"none"} data-vn-frame={initial.frame} data-vn-original={String(localOriginal)} data-vn-frame-render={localOriginal?"original":"fallback"} data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} aria-labelledby="vn-title-heading">
@@ -21,11 +25,11 @@ const coverStyle=sceneVars(background.slug,background.focal)+(localOriginal?`;--
   <div class="vn-title-menu">
    <h1 id="vn-title-heading"><img src={vnScenes.ui.logo} alt="GINKA" width="196" height="48"/><span class="journal-visually-hidden">逆向工程与二进制安全</span></h1>
    <p class="vn-kicker">MM9527 / PERSONAL ARCHIVE</p>
-   <nav class="vn-menu" aria-label="标题菜单" style={menuOriginal?'--vn-title-menu-atlas:url(/__ginka_local_ui__/titleMenu.png)':undefined}>
+   <nav class="vn-menu" aria-label="标题菜单">
     <a data-vn-continue data-vn-resume href="/archives/" hidden><span style={menuStyle('CONTINUE')}>CONTINUE</span><small>继续阅读</small></a>
-    <span class="vn-menu-disabled" data-vn-no-save aria-disabled="true"><span>CONTINUE</span><small>暂无阅读记录</small></span>
+    <span class="vn-menu-disabled" data-vn-no-save aria-disabled="true"><span style={menuStyle('CONTINUE')}>CONTINUE</span><small>暂无阅读记录</small></span>
     <a data-vn-next href="/archives/" hidden><span style={menuStyle('NEXT')}>NEXT</span><small>继续探索</small></a>
-    <span class="vn-menu-disabled" data-vn-no-next aria-disabled="true"><span>NEXT</span><small>继续探索</small></span>
+    <span class="vn-menu-disabled" data-vn-no-next aria-disabled="true"><span style={menuStyle('NEXT')}>NEXT</span><small>继续探索</small></span>
     <a data-vn-start href="/archives/"><span style={menuStyle('START')}>START</span><small>开始阅读</small></a>
     <a href="/library/"><span style={menuStyle('LOAD')}>LOAD</span><small>读取存档</small></a>
     <a href="/settings/"><span style={menuStyle('SYSTEM')}>SYSTEM</span><small>系统设置</small></a>

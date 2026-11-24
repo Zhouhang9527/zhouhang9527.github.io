@@ -114,3 +114,11 @@ assert.equal(vn.privateUI.assets.choice.height,261);
 assert.equal(vn.privateUI.assets.saveFrame.width,189);
 assert.doesNotMatch(fs.readFileSync('dist/archives/index.html','utf8'),/__ginka_local_ui__/);
 console.log('PASS title, choice and save atlas manifest');
+
+assert.deepEqual(Object.keys(vn.privateUI.titleMenu.normal).sort(),vn.privateUI.titleMenu.order.slice().sort());
+for(const [key,slice] of Object.entries(vn.privateUI.titleMenu.normal)){
+ const [x,y,w,h]=slice.rect;
+ assert.ok(x>=0&&y>=0&&x+w<=223&&y+h<=245&&[0,90].includes(slice.rotate),'Normal title glyph '+key);
+}
+assert.doesNotMatch(home,/title-(normal|hover)-.*\.png/);
+console.log('PASS original normal glyph slices and isolation');

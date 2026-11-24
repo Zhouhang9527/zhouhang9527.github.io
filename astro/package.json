@@ -4,14 +4,15 @@
   "type": "module",
   "scripts": {
     "dev": "node tools/prepare.mjs && astro dev",
-    "build": "npm run check:fonts && npm run check:reading && node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
+    "build": "npm run check:fonts && npm run check:reading && npm run check:atlas && node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
     "preview": "astro preview",
     "check": "node tools/verify.mjs",
     "typecheck": "node tools/prepare.mjs && astro check",
     "check:fonts": "node --test tools/local-font.test.mjs",
     "check:reading": "node --experimental-strip-types --test tools/reading-state.test.mjs",
     "check:vn-browser": "node tools/vn-smoke.mjs",
-    "dev:original": "node tools/private-preview.mjs"
+    "dev:original": "node tools/private-preview.mjs",
+    "check:atlas": "node --test tools/png-atlas.test.mjs"
   },
   "dependencies": {
     "astro": "5.16.0",

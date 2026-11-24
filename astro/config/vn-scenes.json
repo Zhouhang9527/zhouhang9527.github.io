@@ -182,7 +182,7 @@
       "notice": "Background and atlas visually identified from original PNGs. Control rectangles measured from image; web settings group geometry is adapted."
     },
     "titleMenu": {
-      "notice": "Order and placement estimated against PC title capture; blue hover labels are cropped from original atlas, regular black labels remain browser text. NEXT and EXIT are adapted to blog functionality.",
+      "notice": "Original normal black glyphs verified from decoded titleMenu pixels, including rotated CONTINUE and SYSTEM. Hover blue labels cropped from same sheet; coordinates and progress mapping are adapted to blog.",
       "canvas": [
         1280,
         720
@@ -251,6 +251,80 @@
           57,
           32
         ]
+      },
+      "normal": {
+        "CONTINUE": {
+          "rect": [
+            17,
+            135,
+            17,
+            110
+          ],
+          "rotate": 90
+        },
+        "NEXT": {
+          "rect": [
+            79,
+            214,
+            54,
+            16
+          ],
+          "rotate": 0
+        },
+        "START": {
+          "rect": [
+            154,
+            200,
+            67,
+            16
+          ],
+          "rotate": 0
+        },
+        "LOAD": {
+          "rect": [
+            79,
+            198,
+            54,
+            16
+          ],
+          "rotate": 0
+        },
+        "SYSTEM": {
+          "rect": [
+            51,
+            135,
+            17,
+            80
+          ],
+          "rotate": 90
+        },
+        "EXTRA": {
+          "rect": [
+            154,
+            216,
+            67,
+            16
+          ],
+          "rotate": 0
+        },
+        "INFORMATION": {
+          "rect": [
+            79,
+            120,
+            144,
+            16
+          ],
+          "rotate": 0
+        },
+        "EXIT": {
+          "rect": [
+            157,
+            16,
+            50,
+            16
+          ],
+          "rotate": 0
+        }
       }
     },
     "choiceGeometry": {
@@ -263,7 +337,13 @@
         "selected",
         "hover"
       ]
-    }
+    },
+    "keyedAtlases": [
+      "titleMenu",
+      "choice",
+      "optionAtlas",
+      "backlogAtlas"
+    ]
   },
   "map": {
     "notice": "Island overview frames confirmed visually. Completion thresholds and sequence are provisional blog adaptation, not verified game progress map.",
