@@ -6,8 +6,6 @@
   {% set taxonomy = page.type == 'tags' or page.type == 'categories' %}
   {% set isAboutPage = page.source == 'about/index.md' or page.path == 'about/index.html' or page.path == 'about/' %}
   {% set isLinksPage = 'links' in (page.path or '') %}
-  {% set wash_slug = 'beach' if isAboutPage else ('courtyard' if isLinksPage else ('house' if page.type == 'tags' else ('classroom' if page.type == 'categories' else 'panorama'))) %}
-  {{ partial('journal-page-wash.njk', {wash: wash_slug}) }}
   {% if isAboutPage %}
     <header class="journal-about-banner">
       <img class="scene-day" src="{{ url_for('/images/ginka/scenes/beach-day-1280.webp') }}" srcset="{{ url_for('/images/ginka/scenes/beach-day-640.webp') }} 640w, {{ url_for('/images/ginka/scenes/beach-day-960.webp') }} 960w, {{ url_for('/images/ginka/scenes/beach-day-1280.webp') }} 1280w" sizes="(max-width: 990px) 94vw, 920px" alt="姬之岛的夏日海岸" width="2560" height="1440" loading="eager" fetchpriority="high" decoding="async">

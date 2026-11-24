@@ -164,8 +164,12 @@ body #journal-sidebar #music-playlist-panel, body #journal-sidebar #music-lyrics
 body #journal-sidebar #music-playlist-panel { display: none; }
 body #journal-sidebar #music-playlist-panel.is-open { display: block; max-height: none; }
 body #journal-sidebar .music-playlist-items { max-height: 180px; overflow-y: auto; }
-body .music-playlist-item { font-family: inherit !important; }
-body .music-playlist-item.is-active { background: var(--music-hover) !important; }
+/* main.css 的 button{color:white!important} 会盖住列表项，这里在同一个覆盖层里统一 */
+body .music-playlist-item { font-family: inherit !important; color: var(--music-text) !important; background: transparent !important; }
+body .music-playlist-item:hover { background: var(--music-hover) !important; color: var(--music-title) !important; }
+body .music-playlist-item.is-active { background: var(--music-hover) !important; color: var(--music-accent) !important; }
+body .music-playlist-item .music-playlist-title { color: var(--music-title) !important; }
+body .music-playlist-item .music-playlist-meta { color: var(--music-muted) !important; }
 body #journal-sidebar #music-lyrics-panel { display: none !important; padding: 12px; max-height: 140px; }
 body #journal-sidebar #music-player.is-playing #music-lyrics-panel { display: block !important; }
 body #music-lyrics-viewport { height: 85px !important; }
@@ -176,9 +180,6 @@ body #journal-sidebar #music-player :focus-visible { outline: 2px solid var(--mu
 .music-playlist-header { background: var(--music-surface); color: var(--music-title); border-bottom: 1px solid var(--music-border); }
 .music-playlist-header span { color: inherit; }
 #music-playlist-count { background: var(--music-surface); border-color: var(--music-border); color: var(--music-title); }
-.music-playlist-item { color: var(--music-text); }
-.music-playlist-item:hover { background: var(--music-hover); }
-.music-playlist-item.is-active { background: var(--music-hover); color: var(--music-accent); box-shadow: inset 0 0 0 1px var(--music-border); }
 .music-playlist-meta { color: var(--music-muted); }
 .music-playlist-items::-webkit-scrollbar-thumb { background: var(--music-border); }
 .music-playlist-items::-webkit-scrollbar-track { background: transparent; }

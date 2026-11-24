@@ -6,7 +6,6 @@
 {% block class %}post posts-expand{% endblock %}
 
 {% block content %}
-  {{ partial('journal-page-wash.njk', {wash: 'window-room'}) }}
   <div class="journal-reading-progress" role="progressbar" aria-label="文章阅读进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
   <div class="journal-reading-shell">
     <nav class="journal-reading-nav" aria-label="阅读导航"><a href="{{ url_for('/') }}">GINKA / mm9527</a><span>READING / 技术笔记</span><a href="{{ url_for('/archives/') }}">返回归档 ↗</a></nav>

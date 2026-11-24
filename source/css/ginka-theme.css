@@ -340,154 +340,6 @@ html[data-theme='moonlit'] .scene-night { display: block !important; }
 /* 夜色图本身已经是低饱和夜景，不再叠滤镜 */
 html[data-theme='moonlit'] .journal-scene-card img { filter: none; }
 
-/* ------------------------------------------------------------- 页面场景底图 */
-/* 归档 / 标签 / 分类 / 文章 / 关于 / 友链各自一张场景图，日间一张、月夜一张。 */
-.journal-page-wash { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.journal-page-wash img {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; object-position: 50% 26%;
-  opacity: .5;
-  filter: saturate(.86) contrast(.98);
-}
-.journal-page-wash::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, #f8fbfdd9 0%, #f6f9fce6 42%, var(--bg-canvas) 82%);
-}
-html[data-theme='moonlit'] .journal-page-wash img { opacity: .66; filter: none; }
-html[data-theme='moonlit'] .journal-page-wash::after {
-  background: linear-gradient(180deg, #0c1424d9 0%, #0c1424e8 46%, #0c1424f7 88%, var(--bg-canvas) 100%);
-}
-body .main-inner, body .footer { position: relative; z-index: 1; }
-@media print { .journal-page-wash { display: none; } }
-
-/* 关于页横幅：用原生夜色场景图，不再靠亮度滤镜模拟夜景 */
-html[data-theme='moonlit'] .journal-about-banner { position: relative; }
-html[data-theme='moonlit'] .journal-about-banner::after {
-  content: '';
-  position: absolute; inset: 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, #0c142433 0%, #0c1424aa 62%, var(--bg-canvas) 100%);
-}
-
-/* ---------------------------------------------------- ATRI 与歌词（月夜） */
-  html[data-theme='moonlit'] #atri-message-box {
-    background: rgba(29, 45, 68, 0.9);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    color: #dce8f5;
-    border: 1px solid rgba(190, 219, 242, 0.24);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  html[data-theme='moonlit'] #atri-message-box::after {
-    border-top-color: rgba(29, 45, 68, 0.9);
-  }
-
-  html[data-theme='moonlit'] .atri-msg-zh {
-    color: #f2f9ff !important;
-    text-shadow: 0 1px 3px rgba(2, 7, 14, 0.62);
-  }
-
-  html[data-theme='moonlit'] .atri-msg-ja {
-    color: #d8ecff !important;
-    text-shadow: 0 1px 2px rgba(5, 12, 22, 0.5);
-  }
-
-  /* 暗色模式下的控制按钮 */
-  html[data-theme='moonlit'] .atri-control-btn {
-    background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.34) 0%,
-      rgba(255, 255, 255, 0.18) 100%);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-color: rgba(255, 255, 255, 0.45);
-    color: rgba(126, 184, 230, 0.98);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(91, 155, 213, 0.18);
-  }
-
-  html[data-theme='moonlit'] .atri-control-btn i {
-    color: rgba(126, 184, 230, 0.98) !important;
-    text-shadow: 0 0 8px rgba(91, 155, 213, 0.28);
-  }
-
-  html[data-theme='moonlit'] .atri-control-btn:hover {
-    background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.46) 0%,
-      rgba(255, 255, 255, 0.28) 100%);
-    color: #b7deff;
-    border-color: rgba(255, 255, 255, 0.65);
-    box-shadow: 0 14px 34px rgba(91, 155, 213, 0.2), 0 6px 14px rgba(0, 0, 0, 0.14);
-  }
-
-  html[data-theme='moonlit'] .atri-control-btn:hover i {
-    color: #b7deff !important;
-  }
-
-  html[data-theme='moonlit'] #atri-controls::before {
-    background: linear-gradient(180deg,
-      rgba(255, 255, 255, 0.30) 0%,
-      rgba(255, 255, 255, 0.18) 100%);
-    border-color: rgba(255, 255, 255, 0.28);
-  }
-
-
-/* ------------------------------------------------------------ 音乐播放器（月夜） */
-/* 只换变量：组件规则在 ginka-pages.css，日间观感不变。 */
-html[data-theme='moonlit'] {
-  --music-bg: #152237;
-  --music-panel: #111d30;
-  --music-surface: #1d2d44;
-  --music-border: #2c405a;
-  --music-title: #dce8f5;
-  --music-text: #bacbdd;
-  --music-muted: #8c9fb3;
-  --music-accent: #91c5f4;
-  --music-accent-soft: #91c5f4;
-  --music-track: #2c405a;
-  --music-hover: #26384d;
-  --music-on-accent: #0c1424;
-}
-/* 深蓝半透明材质，去掉浅色玻璃高光与白色内阴影 */
-html[data-theme='moonlit'] body #journal-sidebar #music-player-main {
-  background: var(--music-bg) !important;
-  border-color: var(--music-border) !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-html[data-theme='moonlit'] #music-playlist-panel,
-html[data-theme='moonlit'] #music-lyrics-panel {
-  background: var(--music-panel) !important;
-  border-color: var(--music-border) !important;
-  box-shadow: 0 12px 32px #00000059 !important;
-  backdrop-filter: blur(6px) !important;
-  -webkit-backdrop-filter: blur(6px) !important;
-}
-html[data-theme='moonlit'] body #journal-sidebar :is(#music-playlist-panel, #music-lyrics-panel) {
-  background: var(--music-panel) !important;
-  border-color: var(--music-border) !important;
-}
-html[data-theme='moonlit'] #music-player-main > button:hover,
-html[data-theme='moonlit'] #music-mini-btn:hover { background: var(--music-hover) !important; }
-html[data-theme='moonlit'] #journal-sidebar #music-player :focus-visible { outline-color: var(--music-accent); }
-
-/* 首屏 <picture> 只下载当前主题的一张 */
-picture.journal-hero-image { display: block; }
-
-/* 系统要求减少动态效果时，关掉非必要动画 */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: .001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .001ms !important;
-    scroll-behavior: auto !important;
-  }
-  .journal-hero-dust i,
-  .journal-hero-light { display: none !important; }
-  .ginka-await-reveal { opacity: 1 !important; transform: none !important; }
-}
-
 /* ---------------------------------------------------------- 新版本提示条 */
 .journal-update-notice {
   position: fixed;
@@ -557,3 +409,19 @@ html[data-theme='moonlit'] .journal-archive-link:hover { background: #1b2734 !im
 html[data-theme='moonlit'] body .post-body a:hover { color: #b7dcff; }
 html[data-theme='moonlit'] .ginka-home :is(.journal-section-heading, .journal-island-heading) h2 { color: var(--ink); }
 html[data-theme='moonlit'] .ginka-home .journal-island-heading .journal-wing { opacity: .55; filter: brightness(0) invert(1); }
+
+/* ------------------------------------------------ 索引页页首（归档/标签/分类） */
+html[data-theme='moonlit'] .journal-masthead { background: var(--surface-float); border: 1px solid var(--rule); }
+html[data-theme='moonlit'] .journal-masthead h1 { color: var(--ink) !important; }
+html[data-theme='moonlit'] .journal-masthead p { color: var(--body-text); }
+html[data-theme='moonlit'] .journal-page-nav a { color: var(--body-text) !important; }
+html[data-theme='moonlit'] .journal-archive-year { color: var(--muted); }
+html[data-theme='moonlit'] .journal-archive-link,
+html[data-theme='moonlit'] .journal-archive-list :is(a, li) { color: var(--body-text); }
+/* 归档列表：颜色本来就写在 pages 里带 !important，这里在同等层级替换，不改结构 */
+html[data-theme='moonlit'] .journal-archive-list { background: #15223799; }
+html[data-theme='moonlit'] .journal-archive-year { color: var(--muted) !important; }
+html[data-theme='moonlit'] .journal-archive-row { border-bottom-color: var(--rule); }
+html[data-theme='moonlit'] .journal-archive-row h3 a { color: var(--ink) !important; }
+html[data-theme='moonlit'] .journal-archive-row h3 a:hover { color: var(--blue) !important; }
+html[data-theme='moonlit'] .journal-archive-row > span { color: var(--muted); }

@@ -49,7 +49,7 @@ body .main { width: 100%; margin: 0; padding: 0; }
 body .column { margin: 0; padding: 0; background: transparent !important; border: 0; }
 body .main-inner {
   width: min(920px, calc(100% - 2 * var(--book-gutter))) !important;
-  margin: calc(var(--book-header) + 42px) auto 64px !important;
+  margin: calc(var(--book-header) + 22px) auto 64px !important;
   padding: 0 !important;
   background: none !important;
 }

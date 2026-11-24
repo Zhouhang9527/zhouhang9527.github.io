@@ -24,7 +24,6 @@ hexo.extend.filter.register('before_generate', function () {
     'page.njk': 'page.njk',
     'post.njk': 'post.njk',
     'journal-sidebar.njk': 'sidebar.njk',
-    'journal-page-wash.njk': '_partials/journal-page-wash.njk',
     'journal-music.njk': 'music.njk'
   };
   for (const [view, file] of Object.entries(views)) {
