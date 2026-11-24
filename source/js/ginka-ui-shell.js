@@ -154,17 +154,37 @@
       notice.addEventListener('click', (event) => {
         if (event.target.closest('[data-update-dismiss]')) { notice.remove(); return; }
         if (!event.target.closest('[data-update-reload]')) return;
-        const done = () => window.location.reload();
-        navigator.serviceWorker?.getRegistration?.().then((registration) => {
-          if (!registration || !registration.waiting) { done(); return; }
-          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-          setTimeout(done, 120);
+        const button = notice.querySelector('[data-update-reload]');
+        if (button.disabled) return;
+        button.disabled = true;
+        button.textContent = '刷新中…';
+        let reloaded = false;
+        let timer;
+        const sw = navigator.serviceWorker;
+        const done = () => {
+          if (reloaded) return;
+          reloaded = true;
+          clearTimeout(timer);
+          sw?.removeEventListener('controllerchange', done);
+          window.location.reload();
+        };
+        if (!sw) { done(); return; }
+        // Register the listener before asking the waiting worker to activate.
+        // A slow activation is bounded, but we never reload on a fixed 120ms guess.
+        sw.getRegistration().then(async registration => {
+          if (!registration) { done(); return; }
+          if (!registration.waiting) await registration.update().catch(()=>{});
+          if (!registration.waiting) { done(); return; }
+          sw.addEventListener('controllerchange', done, {once:true});
+          timer = setTimeout(done, 5000);
+          registration.waiting.postMessage({type:'SKIP_WAITING'});
         }).catch(done);
+
       });
       document.body.appendChild(notice);
     }
     function check() {
-      fetch('/site-version.json?t=' + Date.now(), { cache: 'no-store' })
+      fetch((window.CONFIG?.root || '/') + 'site-version.json?t=' + Date.now(), { cache: 'no-store' })
         .then((response) => (response.ok ? response.json() : null))
         .then((data) => { if (data && data.version && data.version !== build) show(data.version); })
         .catch(() => {});
