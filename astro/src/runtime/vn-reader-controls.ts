@@ -8,7 +8,7 @@ let root:HTMLElement|null=null,article:HTMLElement|null=null,auto=false,held=fal
 const find=(s:string)=>root?.querySelector<HTMLElement>(s);
 function readQuick():Quick|null{try{const v=JSON.parse(localStorage.getItem(KEY)||'null');const p=v?.position;if(!v||!isPath(v.path)||!p||![p.ratio,p.section].every(n=>typeof n==='number'&&Number.isFinite(n)&&n>=0&&n<=1)||!(p.heading===null||typeof p.heading==='string')||typeof v.title!=='string')return null;return v;}catch{return null;}}
 function feedback(s:string){const el=find('[data-vn-game-feedback]');if(el)el.textContent=s;}
-function sync(){root?.querySelectorAll<HTMLButtonElement>('[data-vn-game-action]').forEach(b=>{const a=b.dataset.vnGameAction;if(a==='qload')b.disabled=!readQuick();if(a==='auto'||a==='hold')b.setAttribute('aria-pressed',String(a==='auto'?auto:held));});}
+function sync(){root?.querySelectorAll<HTMLButtonElement>('[data-vn-game-action]').forEach(b=>{const a=b.dataset.vnGameAction;if(a==='qload')b.disabled=!readQuick();if(a==='vreplay'||a==='vsave')b.disabled=!document.documentElement.hasAttribute('data-vn-voice-ready');if(a==='auto'||a==='hold')b.setAttribute('aria-pressed',String(a==='auto'?auto:held));});}
 function showQuick(open:boolean){const menu=find('[data-vn-quick-menu]');if(menu)menu.hidden=!open;find('[data-vn-quick-toggle]')?.setAttribute('aria-expanded',String(open));}
 function stop(){auto=false;cancelAnimationFrame(frame);frame=0;last=0;sync();}
 function step(t:number){if(!auto||!article?.isConnected){stop();return;}const body=article.querySelector('.post-body');if(!body||body.getBoundingClientRect().bottom<=innerHeight-90){stop();return;}const dt=last?Math.min(50,t-last):0;last=t;window.scrollBy(0,dt*.045);frame=requestAnimationFrame(step);}
@@ -26,6 +26,7 @@ document.addEventListener('click',async event=>{
  if(action==='save'){article.querySelector<HTMLButtonElement>('[data-vn-save-position]')?.click();feedback('阅读位置已保存');}
  else if(action==='load'){void navigate('/library/');}
  else if(action==='option'){void navigate('/settings/');}
+ else if(action==='vreplay'||action==='vsave'){document.dispatchEvent(new CustomEvent('vn:voice-action',{detail:action==='vreplay'?'replay':'save'}));}
  else if(action==='log'){article.querySelector<HTMLAnchorElement>('[data-vn-log-open]')?.click();}
  else if(action==='qsave'){const path=article.dataset.vnArticle,position=capturePosition(article);if(!isPath(path)||!position)return;const q={path,position,title:article.querySelector('h1')?.textContent?.trim()||'阅读记录',at:Date.now()};try{localStorage.setItem(KEY,JSON.stringify(q));preview(q);feedback('快速存档已保存');sync();}catch{feedback('无法写入本机快速存档');}}
  else if(action==='qload'){const q=readQuick();if(!q||!await confirmVN('读取快速存档？'))return;stop();if(article?.dataset.vnArticle===q.path){restorePosition(article,q.position);status();}else{try{sessionStorage.setItem(PENDING,JSON.stringify({path:q.path,at:Date.now()}));}catch{}void navigate(q.path);}}
@@ -43,5 +44,6 @@ document.addEventListener('astro:before-preparation',()=>{stop();clearTimeout(pr
 document.addEventListener('astro:page-load',mount);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
 document.addEventListener('vn:progress-reset',sync);
+document.addEventListener('vn:voice-state',sync);
 window.addEventListener('storage',sync);
 mount();

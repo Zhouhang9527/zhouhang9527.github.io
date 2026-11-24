@@ -1,0 +1,18 @@
+---
+const enabled=import.meta.env.DEV&&!!process.env.GINKA_MASCOT_MANIFEST;
+const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
+---
+<div id="ginka-mascot" data-ginka-mascot data-mascot-source={enabled?'/__ginka_local_mascot__/manifest.json':undefined} transition:persist="ginka-mascot" hidden>
+ <button class="ginka-mascot-launcher" type="button" data-mascot-action="open" aria-label="打开银花" aria-expanded="false"><img src="/images/ginka/butterfly.png" width="32" height="32" alt=""/></button>
+ <div class="ginka-mascot-character" data-mascot-character hidden>
+  <button class="ginka-mascot-portrait" type="button" data-mascot-action="next" aria-label="银花 · 下一句"><img data-mascot-base alt="银花"/><img data-mascot-blink alt="" hidden/><img data-mascot-mouth alt="" hidden/></button>
+  <button class="ginka-mascot-close" type="button" data-mascot-action="close" aria-label="收起银花">×</button>
+ </div>
+ <section class="ginka-mascot-window" data-mascot-window hidden style={original?'--vn-mascot-frame:url(/__ginka_local_ui__/gameBase.png);--vn-mascot-name:url(/__ginka_local_ui__/gameWindow-name.png);--vn-mascot-decor:url(/__ginka_local_ui__/gameWindow-frame.png)':undefined} aria-label="银花原作对话">
+  <div class="ginka-mascot-name" data-mascot-speaker></div>
+  <p data-mascot-text></p>
+  <nav aria-label="对话操作"><button type="button" data-mascot-action="replay">VOICE</button><button type="button" data-mascot-action="save">V.SAVE</button><button type="button" data-mascot-action="next">NEXT 〉</button><button type="button" data-mascot-action="close">HIDE</button></nav>
+ </section>
+ <audio data-mascot-audio preload="none"></audio>
+ <span class="journal-visually-hidden" data-mascot-feedback role="status"></span>
+</div>

@@ -158,3 +158,10 @@ for(const [atlas,sprites] of Object.entries(vn.privateUI.logicalSprites)){
 }
 for(const route of posts){const html=fs.readFileSync(path.join('dist',route,'index.html'),'utf8');assert.match(html,/data-vn-game-reader/);assert.match(html,/data-vn-game-action="qsave"/);assert.match(html,/data-vn-confirm/);assert.doesNotMatch(html,/__ginka_local_ui__/);}
 console.log('PASS original game control and confirmation sprite contracts');
+
+assert.doesNotMatch(home,/id="atri-(launcher|live2d)|ginka-atri-loader\.js/);
+assert.match(home,/data-ginka-mascot/);
+assert.doesNotMatch(home,/__ginka_local_mascot__/);
+assert.ok(!fs.existsSync('dist/__ginka_local_mascot__'));
+assert.match(settingsHtml,/data-vn-voice-volume/);
+console.log('PASS mascot shell, voice settings and private pack isolation');

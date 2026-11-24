@@ -3,7 +3,7 @@ import {ClientRouter} from 'astro:transitions';
 import ConfirmDialog from '../components/game/ConfirmDialog.astro';
 import Header from '../components/Header.astro';
 import Sidebar from '../components/Sidebar.astro';
-import ATRI from '../components/ATRI.astro';
+import GinkaMascot from '../components/game/GinkaMascot.astro';
 import {scene,site,config} from '../lib/site';
 import type { SceneKind } from '../lib/types';
 interface Props { title: string; description?: string; kind?: SceneKind; article?: boolean; home?: boolean; noindex?: boolean }
@@ -17,7 +17,7 @@ const {title,description=config.description,kind='post',article=false,home=false
 const art=scene(kind);
 const canonical=new URL(Astro.url.pathname,site).href;
 const styles=['editorial','pages','reading','runtime','motion','theme','comments'] as const;
-const scripts=['runtime','reading','atri-loader','ui-shell','theme','comments','controls','motion','music'] as const;
+const scripts=['runtime','reading','ui-shell','theme','comments','controls','motion','music'] as const;
 ---
 <!doctype html>
 <html lang={config.language}>
@@ -40,7 +40,7 @@ const scripts=['runtime','reading','atri-loader','ui-shell','theme','comments','
  <a class="journal-skip-link" href="#main-content">跳到正文</a>
  <main class="main"><div class="column"><Header/><Sidebar art={art}/></div><div id="main-content" tabindex="-1" class:list={['main-inner',article?'post posts-expand':home?'index posts-expand ginka-home':'page']} data-sidebar-scene-day={art.day} data-sidebar-scene-night={art.night} data-scene-kind={kind}><slot/></div></main>
  <footer class="footer"><div class="book-width journal-colophon"><p>GINKA / mm9527 · <a href="https://github.com/Zhouhang9527">GitHub</a> · ©Frontwing / ©bushiroad（游戏画面）</p></div></footer>
- <ATRI/>
+ <GinkaMascot/>
  <div id="custom-context-menu" transition:persist="context-menu">
   <div class="context-menu-item" data-action="back"><i class="fa fa-arrow-left"></i><span>后退</span></div>
   <div class="context-menu-item" data-action="forward"><i class="fa fa-arrow-right"></i><span>前进</span></div>
@@ -57,6 +57,6 @@ const scripts=['runtime','reading','atri-loader','ui-shell','theme','comments','
  <script is:inline>window.CONFIG = {root:'/'};</script>
  {scripts.map(name=><script is:inline defer src={asset(`js/ginka-${name}.js`)}></script>)}
  <script is:inline defer src={asset('js/astro-shell.js')}></script>
- <script>import '../runtime/vn-progress'; import '../runtime/vn-ui'; import '../runtime/vn-mask'; import '../runtime/vn-music'; import '../runtime/vn-option'; import '../runtime/vn-backlog'; import '../runtime/vn-title-motion'; import '../runtime/vn-reader-controls';</script>
+ <script>import '../runtime/vn-progress'; import '../runtime/vn-ui'; import '../runtime/vn-mask'; import '../runtime/vn-music'; import '../runtime/vn-option'; import '../runtime/vn-backlog'; import '../runtime/vn-title-motion'; import '../runtime/vn-reader-controls'; import '../runtime/vn-mascot';</script>
 </body>
 </html>

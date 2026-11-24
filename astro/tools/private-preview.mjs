@@ -8,10 +8,12 @@ if(!input)throw Error('Usage: npm run dev:original -- <private asset repository 
 let root=path.resolve(input);
 if(fs.existsSync(path.join(root,'assets','data')))root=path.join(root,'assets');
 const data=path.join(root,'data'),bgimage=path.join(root,'bgimage');
+const mascot=process.env.GINKA_MASCOT_MANIFEST||path.join(path.dirname(data),'..','reference','mascot','manifest.json');
 for(const [dir,items] of [[data,[...Object.values(manifest.title.frames),manifest.title.logo,...Object.values(manifest.privateUI.assets)]],[bgimage,Object.values(manifest.map.frames)]]){
  for(const spec of items)if(!fs.existsSync(path.join(dir,spec.source)))throw Error('Missing private preview asset: '+path.join(dir,spec.source));
 }
 const env={...process.env,GINKA_TITLE_DATA:data,GINKA_VN_UI_DATA:data,GINKA_MAP_DATA:bgimage};
+if(fs.existsSync(mascot)){env.GINKA_MASCOT_MANIFEST=path.resolve(mascot);console.log('Private GINKA dialogue pack:',env.GINKA_MASCOT_MANIFEST);}else console.log('Mascot dialogue pack not found; mascot remains unavailable until extracted.');
 if(!env.GINKA_UI_FONT){
  const candidates=listFonts(data).filter(f=>!f.error);
  if(candidates.length===1){
