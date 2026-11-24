@@ -110,7 +110,7 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
-- 基线 20eb48e：VN CI 45462718982 和 Astro review 45462718980 均 typecheck、build、所有构建单测、Chromium 安装通过；VN browser 390px 返回标题被固定 dock 遮挡，1440px 通用返回选择器超时；无 JS 通过。旧 review 在游戏标题页测试隐藏阅读侧栏失败，真实 Giscus 尚未验收
-- BASE-02/04/10：将 ReaderControls 移至文章导航之后，固定 dock 遇页尾转为流内，ResizeObserver/滚动/焦点与路由清理，动态滚动安全区；两套浏览器测试按真实模式及路由执行，明确记录失败 URL/截图节点，不使用强制点击
-- 素材仍为 30b43e7，用户已确认参考库交付；只有标题和对白视频，九个菜单界面缺实测，角色包/SE 未确认，不重复提取
-- 下一步：等待最新 CI 实际结果，修复尚余失败；继续 DATA-01/02/03 全量 PBD 与动作映射审计。未发布，未修改 main
+- 基线 d9c53b5：20eb48e 两 CI 构建/typecheck/单测/Chromium 安装均通过，浏览器失败为 390px dock 遮挡、1440px 返回通用选择器超时及旧侧栏模式错误；d9c53b5 修复 dock 末端避让、路由清理、实际模式测试。VN CI 45466158145 typecheck/build/Chromium 安装通过，browser 当时正在执行
+- 素材 30b43e7：视频参考 title/dialogue，另外九个菜单界面缺视频。实测私有四份 PBD 与配置 249 项比较均一致；新增 audit:original 审计（含额外 action/NEW 检查）、SystemAction 精确白名单、1000ms START/NEXT 淡出及正常动效 smoke。后两项以 custom.ks 00000210 和 00000891 文本为证据；不猜音效及 wipe13，保留持续 BGM
+- 新提交尚未运行完整 CI，未完成原作像素/音频验收；没有发布或修改 main、私有素材仓库
+- 下一步：检查最新完整 CI，继续 LOAD/SAVE 的四种语言标签/15页 PBD、系统页控件状态、私有原作截图及角色包

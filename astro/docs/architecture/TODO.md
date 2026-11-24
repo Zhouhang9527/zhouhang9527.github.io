@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25：DATA-02/03、ENGINE-02/05、TITLE-02：私有 `30b43e7` 与博客配置的 249 项原始 PBD 坐标、裁切、旋转、偏移、画布尺寸比对一致；新增 `npm run audit:original -- <private-repo>` 可重复审计并扩展 action/NEW 检查，原作 SystemAction 采用精确白名单，START/NEXT 使用 custom.ks 确认的 1000ms 淡出且支持跳过，新增正常动效 smoke；未将原作素材复制入博客，完整原作渲染及新 CI 尚未验收。
+
 2026-11-25：`20eb48e` 的 [VN CI](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45462718982) 与 [Astro review](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45462718980) 均 typecheck、build、单测、Chromium 安装成功；VN smoke 的 390px 在返回标题被固定消息窗拦截，1440px 在通用返回选择器超时，无 JS 通过。旧 browser review 在游戏标题测试普通阅读侧栏失败。本轮 BASE-02/04/10：消息窗遇到正文末端导航改为流内位置，按真实高度设置滚动安全区、焦点可达；浏览器测试按实际游戏/阅读模式与 LOAD/EXTRA 语义执行、明确各路由返回及故障位置。完整浏览器验收未完成，未勾选。
 
 2026-11-25 LOG-03 / CHAR-09 / AUDIO-04：原作对白历史只记录成功启动的已验证本地音频 ID、时间及页面；最近 100 条，BACKLOG 评论与对白分栏保留同一 Giscus iframe，回放/收藏使用同一语音控制器，重置历史、防剧透和隐藏页暂停加入。素材包缺失时不显示对白页签，未完成真实音频/视觉验收。

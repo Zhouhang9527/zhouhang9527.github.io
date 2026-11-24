@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node tools/prepare.mjs && astro dev",
-    "build": "npm run check:fonts && npm run check:reading && npm run check:atlas && npm run check:pbd && npm run check:controls && npm run check:voice-history && npm run check:mascot && node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
+    "build": "npm run check:fonts && npm run check:reading && npm run check:atlas && npm run check:pbd && npm run check:controls && npm run check:actions && npm run check:voice-history && npm run check:mascot && node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
     "preview": "astro preview",
     "check": "node tools/verify.mjs",
     "typecheck": "node tools/prepare.mjs && astro check",
@@ -16,7 +16,9 @@
     "check:mascot": "node --test tools/local-mascot.test.mjs",
     "check:pbd": "node --test tools/pbd-ui.test.mjs",
     "check:controls": "node --experimental-strip-types --test tools/vn-control.test.mjs",
-    "check:voice-history": "node --experimental-strip-types --test tools/voice-history.test.mjs"
+    "check:voice-history": "node --experimental-strip-types --test tools/voice-history.test.mjs",
+    "audit:original": "node --experimental-strip-types tools/audit-original-ui.mjs",
+    "check:actions": "node --experimental-strip-types --test tools/vn-actions.test.mjs"
   },
   "dependencies": {
     "astro": "5.16.0",

@@ -170,6 +170,8 @@ try{
   }catch(error){result.url=page.url();result.error=String(error);await page.screenshot({path:'artifacts/vn/'+width+'-failure.png'}).catch(()=>{});}
   finally{results.push(result);await page.close();}
  }
+ const motionPage=await browser.newPage({viewport:{width:1280,height:720},reducedMotion:'no-preference'});
+ try{await motionPage.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());await motionPage.goto(base+'/');await motionPage.locator('[data-vn-start]').click();const overlay=motionPage.locator('[data-vn-title-departure]');await overlay.waitFor({state:'attached'});assert.equal(await overlay.evaluate(el=>el.getAnimations()[0]?.effect?.getTiming().duration),1000);await motionPage.keyboard.press('Escape');await motionPage.waitForURL(url=>url.pathname==='/archives/');await motionPage.locator('[data-vn-chapter]').waitFor();assert.equal(await overlay.count(),0);results.push({mode:'title-motion',ok:true});}catch(error){results.push({mode:'title-motion',ok:false,error:String(error),url:motionPage.url()});}finally{await motionPage.close();}
  const page=await browser.newPage({javaScriptEnabled:false,viewport:{width:390,height:900}});
  try{await page.goto(base+'/');await page.locator('[data-vn-start]').click();await page.locator('[data-vn-post]').first().click();await page.locator('.post-body').waitFor();results.push({mode:'no-js',ok:true});}
  catch(error){results.push({mode:'no-js',ok:false,error:String(error)});}finally{await page.close();}

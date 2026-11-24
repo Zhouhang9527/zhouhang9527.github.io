@@ -695,3 +695,5 @@ html:not([data-vn-mode=reader]) body:has([data-vn-game-reader]:not([hidden])) .j
 .vn-game-reader[data-vn-dock-inline=true] .vn-game-quick{position:absolute;right:0;bottom:0;z-index:3}
 .vn-game-reader[data-vn-dock-inline=true] .vn-reader-reopen{position:static;display:block;margin-left:auto}
 .vn-game-reader[data-vn-dock-inline=true] .vn-reader-reopen[hidden]{display:none!important}
+
+[data-vn-title-departure]{position:fixed;inset:0;z-index:2147482000;background:#000;opacity:0;pointer-events:none}

@@ -3,6 +3,7 @@ import {capturePosition,restorePosition} from './vn-reading-position';
 import {isPath,type Position} from '../domain/reading-state';
 import {confirmVN} from './vn-confirm';
 import {beginManualSave} from './vn-progress';
+import {isReaderAction} from '../domain/vn-actions';
 const KEY='ginka.vn.quick.v1',PENDING='ginka.vn.quick-restore.v1';
 type Quick={path:string;position:Position;title:string;at:number};
 let root:HTMLElement|null=null,article:HTMLElement|null=null,auto=false,held=false,frame=0,last=0,previewTimer=0,statusFrame=0;
@@ -37,7 +38,7 @@ document.addEventListener('click',async event=>{
  const target=(event.target as Element|null)?.closest<HTMLElement>('[data-vn-game-action],[data-vn-quick-toggle],[data-vn-reader-reopen]');if(!target||!root?.contains(target)||!article)return;
  if(target.hasAttribute('data-vn-quick-toggle')){showQuick(find('[data-vn-quick-menu]')?.hidden??true);return;}
  if(target.hasAttribute('data-vn-reader-reopen')){target.hidden=true;const w=find('[data-vn-game-window]');if(w)w.hidden=false;queueDock();return;}
- const action=target.dataset.vnGameAction;
+ const action=target.dataset.vnGameAction;if(!isReaderAction(action))return;
  if(action==='hold'){held=!held;sync();return;}
  if(action==='hide'){showQuick(false);const w=find('[data-vn-game-window]'),r=find('[data-vn-reader-reopen]');if(w)w.hidden=true;if(r){r.hidden=false;r.focus();}stop();queueDock();return;}
  if(action==='save'){stop();article.querySelector<HTMLButtonElement>('[data-vn-save-position]')?.click();beginManualSave(article);}
