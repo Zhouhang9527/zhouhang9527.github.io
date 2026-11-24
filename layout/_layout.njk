@@ -34,7 +34,23 @@
     <div id="main-content" class="main-inner {% block class %}{% endblock %}">
       {%- include '_partials/header/sub-menu.njk' -%}
       {% block content %}{% endblock %}
-      {%- include '_partials/comments.njk' -%}
+      {# 原作对话框框体：本地预览素材存在时启用，生产构建自动回退为普通容器 #}
+      {% set ginkaDialogue = ginka_dialogue_skin() %}
+      {% if page.comments %}
+        <section class="journal-dialogue" aria-labelledby="journal-dialogue-title">
+          <header class="journal-dialogue-heading">
+            <span class="journal-dialogue-eyebrow">AFTER STORY / 余谈</span>
+            <h2 id="journal-dialogue-title">岛间来信</h2>
+          </header>
+          <div class="journal-dialogue-frame{% if ginkaDialogue %} journal-dialogue-original{% endif %}"{% if ginkaDialogue %} data-dialogue-skin="original" style="--dialogue-frame:url('{{ ginkaDialogue.frame }}');--dialogue-butterfly:url('{{ ginkaDialogue.butterfly }}');--dialogue-line:url('{{ ginkaDialogue.line }}')"{% endif %}>
+            <span class="journal-dialogue-name">GINKA / mm9527</span>
+            <p class="journal-dialogue-intro">读到这里，有什么想说的吗？</p>
+            {%- include '_partials/comments.njk' -%}
+          </div>
+        </section>
+      {% else %}
+        {%- include '_partials/comments.njk' -%}
+      {% endif %}
     </div>
   </main>
 
