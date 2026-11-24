@@ -1,0 +1,13 @@
+---
+import Music from './Music.astro';
+const {art}=Astro.props;
+const links=[['/','首页'],['/archives/','文章归档'],['/tags/','标签与主题'],['/categories/','内容分类'],['/links/','友情链接'],['/about/','关于 mm9527']];
+---
+<button class="journal-sidebar-edge" type="button" data-journal-sidebar-open aria-label="打开侧栏" aria-controls="journal-sidebar" aria-expanded="false"></button>
+<button class="sidebar-toggle" type="button" data-journal-sidebar-open aria-label="打开侧栏" aria-controls="journal-sidebar" aria-expanded="false"><span class="toggle-line"></span><span class="toggle-line"></span><span class="toggle-line"></span></button>
+<div class="sidebar-dimmer" data-drawer-close aria-hidden="true"></div>
+<aside id="journal-sidebar" class="sidebar" aria-label="站点导航与文章目录" aria-hidden="true" inert transition:persist="drawer">
+ <div class="journal-sidebar-cover"><img data-sidebar-src-day={art.day} data-sidebar-src-night={art.night} alt="" width="2560" height="1440" decoding="async"/><span>GINKA / mm9527</span><button type="button" class="journal-sidebar-close" aria-label="关闭侧栏"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+ <Music/>
+ <div class="sidebar-inner"><nav class="journal-sidebar-links" aria-label="站点导航">{links.map(([href,label],i)=><a href={href}>{label}<span>{String(i+1).padStart(2,'0')}</span></a>)}</nav><div class="astro-sidebar-outline" data-sidebar-outline></div><a data-ginka-top href="#main-content">返回顶部 ↑</a></div>
+</aside>

@@ -1,0 +1,19 @@
+---
+import {render} from 'astro:content';
+import {href,tagSlug} from '../lib/site';
+import Comments from './Comments.astro';
+const {post}=Astro.props;
+const {Content,headings}=await render(post);
+const outline=headings.filter(h=>h.depth>=2&&h.depth<=4);
+---
+<div class="journal-reading-progress" role="progressbar" aria-label="文章阅读进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+<div class="journal-reading-shell">
+ <nav class="journal-reading-nav" aria-label="阅读导航"><a href="/">GINKA / mm9527</a><span>READING / 技术笔记</span><a href="/archives/">返回归档 ↗</a></nav>
+ <article class="post-block post-content" data-pagefind-body>
+  <header class="post-header"><h1 class="post-title" data-pagefind-meta="title">{post.data.title}</h1><div class="post-meta-container"><div class="post-meta"><time datetime={post.data.date}>{post.data.date}</time>{post.data.categories.map(c=><a href={href('categories/'+tagSlug(c)+'/')}>{c}</a>)}</div></div>{post.data.description&&<p class="post-description">{post.data.description}</p>}</header>
+  <div class="post-body"><Content/></div>
+  <div class="post-tags">{post.data.tags.map(t=><a href={href('tags/'+tagSlug(t)+'/')}>#{t}</a>)}</div>
+ </article>
+ {post.data.comments!==false&&<Comments/>}
+ {outline.length>0&&<aside class="journal-outline" aria-label="文章章节目录" data-journal-outline><p class="journal-outline-title">目录</p><ol class="journal-outline-list">{outline.map(h=><li style={`padding-inline-start:${(h.depth-2)*10}px`}><a href={'#'+encodeURIComponent(h.slug)}>{h.text}</a></li>)}</ol></aside>}
+</div>
