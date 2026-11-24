@@ -33,7 +33,19 @@ const baseUrl = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4000';
     }
   }
 
-  await page.goto(baseUrl, { waitUntil: 'networkidle' });
+  // Test application recovery independently of the external music provider.
+  let playlistFails = true;
+  await page.route('https://meting.mm9527.top/api?**', route => {
+    const url = new URL(route.request().url());
+    const headers = {'access-control-allow-origin':'*'};
+    if (url.searchParams.get('type') === 'playlist') {
+      if (playlistFails) return route.fulfill({status:503,headers,body:'Unavailable'});
+      const track = new URL(url); track.searchParams.set('type','url'); track.searchParams.set('id','test-track');
+      return route.fulfill({contentType:'application/json',headers,body:JSON.stringify([{id:'test-track',name:'Fixture track',author:'Fixture',url:track.href}])});
+    }
+    return route.fulfill({status:200,headers,contentType:'text/plain',body:''});
+  });
+  await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
 
   await check('removed large homepage logo and old opening background', async () => {
     return page.locator('.ginka-opening__logo, img[src*="ginka-static-background"], video[src*="background.mp4"]').count().then(count => count === 0);
@@ -47,7 +59,14 @@ const baseUrl = process.env.GINKA_TEST_BASE_URL || 'http://127.0.0.1:4000';
     return true;
   });
 
-  await check('online music loads with the homepage', async () => {
+  await check('online playlist failure is recoverable', async () => {
+    await page.waitForFunction(()=>document.getElementById('music-player')?.dataset.ginkaMusicState==='error');
+    const retry = page.locator('.music-unavailable button');
+    if (!await retry.count() || await retry.isDisabled()) return false;
+    playlistFails = false;
+    // The persistent drawer is closed: invoke the real button's click handler.
+    await retry.evaluate(el=>el.click());
+    await page.waitForFunction(()=>document.getElementById('music-player')?.dataset.ginkaMusicState==='ready');
     return page.evaluate(() => {
       const player = document.getElementById('music-player');
       const audio = document.getElementById('bg-music');
