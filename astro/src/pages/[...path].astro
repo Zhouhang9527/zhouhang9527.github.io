@@ -1,16 +1,19 @@
 ---
-import {render,getEntry} from 'astro:content';
-import {routes} from '../lib/site';
+import { render, getEntry } from 'astro:content';
+import { routes } from '../lib/site';
+import type { RouteProps } from '../lib/types';
 import Layout from '../layouts/Layout.astro';
 import Article from '../components/Article.astro';
 import Collection from '../components/Collection.astro';
-export async function getStaticPaths(){return routes();}
-const props=Astro.props;
-const {kind,post,title}=props;
-const page=(kind==='about'||kind==='links')?await getEntry('pages',kind):null;
-const rendered=page?await render(page):null;
-const Content=rendered?.Content;
+import StaticPage from '../components/StaticPage.astro';
+type Props = RouteProps;
+export async function getStaticPaths() { return routes(); }
+const props = Astro.props;
+const post = props.kind === 'post' ? props.post : undefined;
+const title = props.kind === 'post' ? props.post.data.title : props.title;
 ---
-<Layout title={post?.data.title||title} description={post?.data.description} kind={kind} article={!!post}>
- {post?<Article post={post}/>:Content?<section class="journal-reading-shell"><article class="post-block"><h1>{title}</h1><div class="post-body"><Content/></div></article></section>:<Collection {...props}/>}
+<Layout title={title} description={post?.data.description} kind={props.kind} article={!!post}>
+  {props.kind === 'post' ? <Article post={props.post}/> :
+    props.kind === 'about' || props.kind === 'links' ? <StaticPage kind={props.kind} title={props.title}/> :
+    <Collection {...props}/>}
 </Layout>

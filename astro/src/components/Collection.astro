@@ -1,10 +1,13 @@
 ---
 import {href,scene,tagSlug} from '../lib/site';
-const {kind,title,posts=[],names,page=1,totalPages=1,base=''}=Astro.props;
+import type { CollectionProps } from '../lib/types';
+type Props=CollectionProps;
+const {kind,title,posts,names,page=1,totalPages=1,base=''}=Astro.props;
+const key=kind==='categories'?'categories':'tags';
 const art=scene(kind,'masthead');
 const years=Array.from(new Set(posts.map(p=>p.data.date.slice(0,4))));
 ---
 <section class="journal-masthead"><div><a class="journal-breadcrumb" href="/">GINKA / mm9527</a><span class="journal-eyebrow">{kind.toUpperCase()} / THE JOURNAL</span><h1>{title}</h1><p>{posts.length} 篇文章</p></div><div class="journal-masthead-art" style={`--scene-day:url('${art.day}');--scene-night:url('${art.night}')`}></div></section>
 <nav class="journal-page-nav"><a href="/archives/">归档</a><a href="/tags/">标签</a><a href="/categories/">分类</a><a href="/">首页</a></nav>
-{names?<div class="journal-taxonomy-grid">{names.map(name=><a class="journal-taxonomy-item" href={href(kind+'/'+tagSlug(name)+'/')}><span class="journal-taxonomy-symbol">{kind==='tags'?'#':'/'}</span><h2>{name}</h2><span>{posts.filter(p=>p.data[kind].includes(name)).length} 篇文章</span><b>↗</b></a>)}</div>:<div class="journal-archive-list">{years.map(year=><section><h2 class="journal-archive-year">{year}<span>ARCHIVE</span></h2>{posts.filter(p=>p.data.date.startsWith(year)).map(post=><article class="journal-archive-row"><time datetime={post.data.date}>{post.data.date.slice(5).replace('-',' / ')}</time><div><h3><a href={href(post.data.route)}>{post.data.title}</a></h3><p>{post.data.description||''}</p></div><span aria-hidden="true">↗</span></article>)}</section>)}</div>}
+{names?<div class="journal-taxonomy-grid">{names.map(name=><a class="journal-taxonomy-item" href={href(kind+'/'+tagSlug(name)+'/')}><span class="journal-taxonomy-symbol">{kind==='tags'?'#':'/'}</span><h2>{name}</h2><span>{posts.filter(p=>p.data[key].includes(name)).length} 篇文章</span><b>↗</b></a>)}</div>:<div class="journal-archive-list">{years.map(year=><section><h2 class="journal-archive-year">{year}<span>ARCHIVE</span></h2>{posts.filter(p=>p.data.date.startsWith(year)).map(post=><article class="journal-archive-row"><time datetime={post.data.date}>{post.data.date.slice(5).replace('-',' / ')}</time><div><h3><a href={href(post.data.route)}>{post.data.title}</a></h3><p>{post.data.description||''}</p></div><span aria-hidden="true">↗</span></article>)}</section>)}</div>}
 {totalPages>1&&<nav class="pagination" aria-label="分页">{Array.from({length:totalPages},(_,i)=><a class:list={['page-number',i+1===page&&'current']} aria-current={i+1===page?'page':undefined} href={href(base+(i===0?'':'page/'+(i+1)+'/'))}>{i+1}</a>)}</nav>}

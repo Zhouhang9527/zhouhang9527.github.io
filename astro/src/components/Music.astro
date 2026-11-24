@@ -1,5 +1,6 @@
 ---
-const config={"default_cover":"https://meting.mm9527.top/music/unhappy.jpg","online":{"enabled":true,"api_base":"https://meting.mm9527.top/api","platform":"netease","type":"playlist","playlist_id":"5190514967","timeout_ms":8000,"cache_ttl_ms":1800000}};
+import {config as siteConfig} from '../lib/site';
+const config=siteConfig.music;
 ---
 <!-- 背景音乐播放器 -->
 <div id="music-player" class="is-expanded" data-ginka-music-state="deferred" aria-label="音乐播放器">

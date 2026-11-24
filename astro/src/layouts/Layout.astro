@@ -3,25 +3,27 @@ import {ClientRouter} from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Sidebar from '../components/Sidebar.astro';
 import ATRI from '../components/ATRI.astro';
-import {scene,site} from '../lib/site';
+import {scene,site,config} from '../lib/site';
+import type { SceneKind } from '../lib/types';
+interface Props { title: string; description?: string; kind?: SceneKind; article?: boolean; home?: boolean; noindex?: boolean }
 import build from '../../.generated/build.json';
 import '@fontsource-variable/noto-serif-sc';
 import '@fontsource-variable/jetbrains-mono';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const {title,description='专注于逆向工程和二进制安全研究',kind='post',article=false,home=false,noindex=false}=Astro.props;
+const {title,description=config.description,kind='post',article=false,home=false,noindex=false}=Astro.props;
 const art=scene(kind);
 const canonical=new URL(Astro.url.pathname,site).href;
 const styles=['editorial','pages','reading','runtime','motion','theme','comments'];
 const scripts=['runtime','reading','atri-loader','ui-shell','theme','comments','controls','motion','music'];
 ---
 <!doctype html>
-<html lang="zh-CN">
+<html lang={config.language}>
 <head>
  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
- <title>{title} | GINKA</title><meta name="description" content={description}/><meta name="author" content="mm9527"/><meta name="robots" content={noindex?'noindex, follow':'index, follow'}/>
+ <title>{title} | GINKA</title><meta name="description" content={description}/><meta name="author" content={config.author}/><meta name="robots" content={noindex?'noindex, follow':'index, follow'}/>
  <link rel="canonical" href={canonical}/><meta property="og:url" content={canonical}/><meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:type" content={article?'article':'website'}/><meta property="og:image" content={site+'/images/avatar.png'}/>
- <meta name="twitter:card" content="summary"/><meta name="theme-color" content="#f4f7fa"/><meta name="ginka-build" content={build.version}/><meta name="ginka-giscus-theme-base" content="https://cdn.jsdelivr.net/gh/Zhouhang9527/zhouhang9527.github.io@052d362536fc211fe3bcc600d825f7d6f46d377f/source/css/"/>
+ <meta name="twitter:card" content="summary"/><meta name="theme-color" content="#f4f7fa"/><meta name="ginka-build" content={build.version}/><meta name="ginka-giscus-theme-base" content={config.giscus.themeBase}/>
  <link rel="alternate" type="application/atom+xml" title="GINKA" href="/atom.xml"/>
  <link rel="icon" href="/images/favicon.png"/><link rel="manifest" href="/manifest.webmanifest"/>
  <script is:inline src="/js/ginka-theme-init.js"></script>

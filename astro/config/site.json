@@ -1,0 +1,33 @@
+{
+  "name": "GINKA",
+  "author": "mm9527",
+  "url": "https://www.mm9527.top",
+  "language": "zh-CN",
+  "description": "专注于逆向工程和二进制安全研究",
+  "pageSize": 10,
+  "giscus": {
+    "repo": "Zhouhang9527/blog-comments",
+    "repoId": "R_kgDORD1-mg",
+    "category": "Announcements",
+    "categoryId": "DIC_kwDORD1-ms4C1lSK",
+    "mapping": "pathname",
+    "strict": "0",
+    "reactions": "1",
+    "metadata": "0",
+    "lang": "zh-CN",
+    "inputPosition": "top",
+    "themeBase": "https://cdn.jsdelivr.net/gh/Zhouhang9527/zhouhang9527.github.io@052d362536fc211fe3bcc600d825f7d6f46d377f/source/css/"
+  },
+  "music": {
+    "default_cover": "https://meting.mm9527.top/music/unhappy.jpg",
+    "online": {
+      "enabled": true,
+      "api_base": "https://meting.mm9527.top/api",
+      "platform": "netease",
+      "type": "playlist",
+      "playlist_id": "5190514967",
+      "timeout_ms": 8000,
+      "cache_ttl_ms": 1800000
+    }
+  }
+}

@@ -2,6 +2,8 @@
 import {render} from 'astro:content';
 import {href,tagSlug} from '../lib/site';
 import Comments from './Comments.astro';
+import type {Post} from '../lib/types';
+interface Props {post:Post}
 const {post}=Astro.props;
 const {Content,headings}=await render(post);
 const outline=headings.filter(h=>h.depth>=2&&h.depth<=4);

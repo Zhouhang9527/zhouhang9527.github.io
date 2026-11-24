@@ -1,5 +1,7 @@
 ---
 import Music from './Music.astro';
+import type {Scene} from '../lib/types';
+interface Props {art:Scene}
 const {art}=Astro.props;
 const links=[['/','首页'],['/archives/','文章归档'],['/tags/','标签与主题'],['/categories/','内容分类'],['/links/','友情链接'],['/about/','关于 mm9527']];
 ---

@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const posts=JSON.parse(fs.readFileSync('.generated/routes.json','utf8'));
-const site='https://www.mm9527.top';
+import config from '../config/site.json' with {type:'json'};
+const site=config.url;
 const uri=route=>'/'+route.split('/').map(encodeURIComponent).join('/');
 const xml=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&apos;');
 const decl='<?xml version="1.0" encoding="UTF-8"?>';
