@@ -2,7 +2,7 @@ import {KEY,parse} from '../domain/reading-state';
 import {HISTORY_KEY,parseHistory,appendHistory} from '../domain/voice-history';
 type Part={image:string;x:number;y:number;blend:'over'|'replace'};
 type Layer=Part&{slot:string;alternate:Part|null};
-type Pose={layers:Layer[]|null;canvas:{width:number;height:number};baseOffset?:{x:number;y:number};character:'child'|'adult';phase:'main'|'afterstory';outfit:string;expression:string;gesture:string;base:string;blink:string|null;mouth:string|null;motion:{image:string;ms:number}[]};
+type Pose={layers:Layer[]|null;canvas:{width:number;height:number};baseOffset?:{x:number;y:number};character:'child'|'adult';phase:'main'|'afterstory';outfit:string;outfitLabel?:string;expression:string;gesture:string;base:string;blink:string|null;mouth:string|null;motion:{image:string;ms:number}[]};
 type Line={id:string;speaker:string;text:string;pose:string;phase:'main'|'afterstory';voice:string|null};
 type Pack={version:1|2;defaultPose:string;poses:Record<string,Pose>;lines:Line[]};
 const VOL='ginka.vn.voice.volume.v1',SAVED='ginka.vn.voice.saved.v1',MUTE='ginka.vn.voice.mute.v1',CHAR='ginka.vn.mascot.character.v1',OUTFIT='ginka.vn.mascot.outfit.v1';
@@ -100,9 +100,9 @@ function syncSettings(){
   if(!list.childElementCount)list.textContent='暂无语音收藏';
  }
  const available=Array.from(new Set(pack?.lines.filter(allowed).map(l=>pack!.poses[l.pose])||[]));
- const fill=(selector:string,values:[string,string][],selected:string)=>{for(const el of document.querySelectorAll<HTMLSelectElement>(selector)){const options=values.map(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;return o;});el.replaceChildren(...options);el.value=values.some(([v])=>v===selected)?selected:'all';el.disabled=!pack;}};
+ const fill=(selector:string,values:[string,string][],selected:string)=>{for(const el of document.querySelectorAll<HTMLSelectElement>(selector)){const options=values.map(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;return o;});if(el.options.length!==options.length||options.some((o,i)=>el.options[i]?.value!==o.value||el.options[i]?.text!==o.text))el.replaceChildren(...options);el.value=values.some(([v])=>v===selected)?selected:'all';el.disabled=!pack;}};
  const characters:[string,string][]=[['all','全部']];if(available.some(p=>p.character==='child'))characters.push(['child','小银花']);if(available.some(p=>p.character==='adult'))characters.push(['adult','大银花']);if(!characters.some(([v])=>v===character))character='all';
- const outfits:[string,string][]=[['all','全部服装'],...Array.from(new Set(available.filter(p=>character==='all'||p.character===character).map(p=>p.outfit))).map(x=>[x,x] as [string,string])];if(!outfits.some(([v])=>v===outfit))outfit='all';
+ const outfits:[string,string][]=[['all','全部服装'],...new Map(available.filter(p=>character==='all'||p.character===character).map(p=>[p.outfit,(character==='all'?(p.character==='child'?'小银花 · ':'大银花 · '):'')+(p.outfitLabel||p.outfit)])).entries()];if(!outfits.some(([v])=>v===outfit))outfit='all';
  fill('[data-vn-mascot-character]',characters,character);fill('[data-vn-mascot-outfit]',outfits,outfit);
  applyVolume();renderHistory();
 }

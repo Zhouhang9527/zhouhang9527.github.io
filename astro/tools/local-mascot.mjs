@@ -75,7 +75,7 @@ export function loadMascotPack(input){
     return {slot:layer.slot,...normal,alternate};
    });
   }
-  poses[id]={layers,character:pose.character,phase:pose.phase,outfit:pose.outfit,expression:pose.expression,gesture:pose.gesture,base,blink,mouth,motion:frames,source:pose.source,canvas,baseOffset};
+  poses[id]={layers,character:pose.character,phase:pose.phase,outfit:pose.outfit,outfitLabel:typeof pose.outfitLabel==='string'&&pose.outfitLabel.trim()&&pose.outfitLabel.length<=80?pose.outfitLabel:pose.outfit,expression:pose.expression,gesture:pose.gesture,base,blink,mouth,motion:frames,source:pose.source,canvas,baseOffset};
  }
  if(!Object.hasOwn(poses,raw.defaultPose)||poses[raw.defaultPose].phase!=='main')throw Error('Unknown default pose');
  for(const line of raw.lines){

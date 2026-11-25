@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 DATA-04/05、CHAR-01/02/05/06/07/09/10/12：私有 e6891e3 实证 543/543 图层名匹配；5992c46 初版 8 句真实语音/6 姿势，a3cce50 扩至 20 句/18 姿势/10 套服装（大小银花），实际私有 PNG 合成与 ffmpeg 完整解码步骤均成功，真实 Chromium 未完成；公开 VN CI 45538401647 typecheck/build/独立 mascot 390/1440/全站 browser 均成功。角色服装 ID 独立及显示标签接入，真实素材默认本地可用，尚未勾选完整覆盖或原作像素验收。
+
 2026-11-25 BASE-01：990b3b0 的 [真实 VN CI](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45538129205) 全部成功，Node 22 typecheck/build/62 旧 URL、独立 mascot fixture、390/1440 公共浏览器、正常标题转场、无 JS 全过，公共页面错误和私有误请求均为零，截图 artifact 14987971426。BASE-02 新增不含原作像素的独立 Chromium 原作 UI fixture，检查 SYSTEM 七页、DISPLAY/页签/footer、LOAD 十槽和 15 页真实 PBD 坐标与操作，CI 尚未执行；不等同真实素材视觉验收。
 
 2026-11-25 SYS-01/02/05、DATA-01/02：通过 Git Blob SHA 完整读取 1.5MB 00000757 英文 SOUND PBD（contents API 无内容），00000758 PNG IHDR 实测 433×153 RGBA8，新增 14 个原作标题/标签/短滑轨逻辑切片并通过边界检查。全部七页标题完成源定位，记录七个音量通道与十个角色通道精确矩形；仅把已存在真实 BGM 功能接入 SOUND 标题、标签和短 rail，其他音源/角色控制不伪造，保持另一 Agent 所有权。audit:original 扩展完整 SYSTEM 源校验。990b3b0 的 VN CI 已 typecheck/build（包括合成全量私有图集单测）成功，浏览器仍在执行；新提交未验收。

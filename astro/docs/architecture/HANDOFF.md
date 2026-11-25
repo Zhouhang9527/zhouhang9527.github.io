@@ -110,6 +110,8 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
+- 2026-11-25 DATA-04/05、CHAR-01/02/05/06/07/09/10/12：私有 e6891e3 实证 543/543 图层名匹配；5992c46 初版 8 句真实语音/6 姿势，a3cce50 扩至 20 句/18 姿势/10 套服装（大小银花），实际私有 PNG 合成与 ffmpeg 完整解码步骤均成功，真实 Chromium 未完成；公开 VN CI 45538401647 typecheck/build/独立 mascot 390/1440/全站 browser 均成功。角色服装 ID 独立及显示标签接入，真实素材默认本地可用，尚未勾选完整覆盖或原作像素验收。
+
 - 2026-11-25 DATA-05/CHAR-01/02/05/06：私有 e6891e3 已复现 HXV4 文件名哈希并匹配六套原作 PBD 的全部 543 个 PNG 层，真实 PSB scn001/002/003 的逐句角色状态亦已读取。V2 支持原始裁切 base 的 canvas/baseRect 坐标，校验原始层实际图头尺寸；新增 fixture 测试。待生成首个可用私有包及浏览器实测。
 
 - 2026-11-25 CHAR-07/08/09/12：66b64fd 的 CI 45536688313 已通过 typecheck/build，真实 Chromium fixture 已走过 390px 稀疏 Canvas 像素、静默对白及测试音历史记录；V.SAVE 被 Astro dev toolbar 拦截。私有素材预览关闭 dev toolbar（不强制点击、不跳过断言），修复收起按钮测试选择器；新 CI 尚未完成。
