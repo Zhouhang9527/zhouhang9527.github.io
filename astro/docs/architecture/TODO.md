@@ -244,3 +244,5 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 - 2026-11-25 CHAR-07/08/09/10/11/12、AUDIO-04、BASE-08：真实 manifest 20 原声/18 姿势/10 服装；完善图层缓存/重试、游戏 NEXT/HIDE、PROGRAM 预览、收藏/回放/停止及私有 HTTP。新增真实本地验收命令 `npm run check:mascot-original`，CI 与原作实测未运行，暂不勾选。
 
 - CHAR-08 / GAME-06：活跃原作对白使用 PREV/NEXT/AUTO/SKIP，非活跃状态保持正文跳转/滚动；自动对白以原录音结束为准、不无限循环；新增 390/1440 合成 fixture 断言，仍待执行。
+
+- 2026-11-25 DATA-04/05、CHAR-01/02/05/06：私有 b780feb 完整 12 服装/33 身体姿势/39 表情别名/543 层，663 组合和三尺度 1989 配方、45/46 PSB 的 620 快照全解析；新增独立私有原作检视器、原图验证/组合 contact sheets CI。scn007 二进制接口限制，d6 未见真实快照，d4 的 11 voice ID 未映射 OGG/阶段；不扩大可播放 manifest，真实原图解码与浏览器验收待实际结果，不勾选完整验收。
