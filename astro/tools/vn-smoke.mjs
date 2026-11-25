@@ -117,7 +117,7 @@ try{
    assert.equal(await page.locator('[data-vn-next-new]').isVisible(),false);
    await page.locator('.vn-menu a[href="/gallery/"]').click();
    await page.locator('.vn-extra-nav a[href="/map/"]').click();
-   await visible('[data-vn-map][data-vn-map-phase="first-encounter"]');
+   await visible('[data-vn-map][data-vn-map-phase="familiar"]');
    await shot('map');
    await back('[data-vn-screen="map"] .vn-panel-header .vn-return');
    await page.locator('.vn-menu a[href="/library/"]').click();
@@ -190,7 +190,8 @@ try{
    await visible('[data-vn-title]');
    await page.reload();
    await visible('[data-vn-continue]');
-   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-003');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-005');
+   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('ginka.vn.progress.v1')).mainCleared),true);
    assert.deepEqual(errors,[]);
    assert.deepEqual(privateFailures,[]);
    if(original)assert.ok(privateRequests.some(url=>url.includes('/__ginka_local_title__/')),'Original title art not requested');

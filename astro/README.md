@@ -10,13 +10,13 @@ Independent static-site migration on feature/ginka-astro. The original Hexo sour
 Node 22, npm:
 ```sh
 cd astro
-npm install
+npm ci
 npm run dev
 npm run typecheck
 npm run build
 npm run preview -- --host 127.0.0.1
 ```
-Build output: astro/dist. Generated directories are disposable. Track new posts/attachments in Git before rebuilding; restart the development server after changes to staged Markdown or shared source assets. Until a verified npm lockfile is committed, npm install is used rather than npm ci; direct dependency versions are pinned.
+Build output: astro/dist. Generated directories are disposable. Track new posts/attachments in Git before rebuilding; restart the development server after changes to staged Markdown or shared source assets. The verified npm lockfile is committed. Use Node 22 and `npm ci` for reproducible dependency installation; update the lockfile intentionally when changing dependencies.
 
 ## Ownership
 - config/site.json: public site, Giscus and music configuration

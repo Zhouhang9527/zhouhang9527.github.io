@@ -231,3 +231,7 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 ### 2026-11-25 公共 UI 回归
 - a813eaf: [VN 45539212732](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45539212732) 全绿，390px 私有合成模式通过，1440px 57/57 坐标检查通过；[Astro 45539212705](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45539212705) 全绿。真实原作像素未验收。
 - STORY-02: 固定当前 15 篇基线，不新增假剧情；真实原作 flags 的读取条件与博客适配分开，继续保留 0/1/3 临时画面映射。新增完成主线 smoke，EXTRA 源审计扩展。BASE-03: 本次暂时输出纯 npm lock 元数据以写回经过 CI 安装的锁文件，随后移除一次性步骤并切换 npm ci。
+
+### 2026-11-25 锁文件与主线回归
+- BASE-03: 真实 CI 45538827150 artifact 14988696008 与 45539674022 lock stream SHA-256 相同（c4a2857f668342797564ad633cebc10fb51a1d20b04a0e3164c8b6dd35eb3730），原始 235949 字节 lockfile v3、470 entries，Git blob 42cd0f2e94a10c5f4c3e35a160ae7a2bc8faab18，根 dependencies/devDependencies/engines 与 package.json 完全相符。已提交；VN、Astro Review 切换 npm ci，删除临时 export 步骤。等待 npm ci 实际 CI 后勾选。
+- STORY-02: 0cf0a44 typecheck/build、mascot、原作 geometry 57/57 通过；公共 smoke 失败于旧 map first-encounter 断言（实际已完成 15 篇）。修正 map 为 familiar、最终标题 data-005，新增 mainCleared 持久性断言。真实主线仍待完整 smoke。

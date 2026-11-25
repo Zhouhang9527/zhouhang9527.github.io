@@ -23,12 +23,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install pinned direct dependencies
-        run: npm install --no-audit --no-fund
-      # One-time lockfile bridge: only the public dependency metadata, no environment or secrets.
-      - name: Export verified lock candidate
-        run: |
-          node -e "const fs=require('node:fs'),c=require('node:crypto'),b=fs.readFileSync('package-lock.json'),s=b.toString('base64');console.log('LOCK_CANDIDATE_SHA256 '+c.createHash('sha256').update(b).digest('hex'));for(let i=0;i<s.length;i+=2048)console.log('LOCK_CANDIDATE_PART '+String(i/2048).padStart(4,'0')+' '+s.slice(i,i+2048));console.log('LOCK_CANDIDATE_LENGTH '+b.length+' '+s.length)"
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
       - name: Typecheck
         run: npm run typecheck
       - name: Build and validate output

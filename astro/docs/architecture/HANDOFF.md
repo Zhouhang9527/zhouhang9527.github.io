@@ -172,3 +172,7 @@ npm run check:vn-browser
 - a813eaf 的 VN 与 Astro Review 两套 CI 均实际通过；原作合成浏览器 57/57 geometry，仍非真实素材像素验收。
 - 当前 15 篇路径冻结为 vn-mainline.json v1；新文章依然可被继续阅读，不增加解锁要求。原作三张标题 CG 的 flag 读取条件与博客临时进度映射单独记录。EXTRA 源审计覆盖九槽和六页状态。首次 CI 尚待验证。
 - BASE-03: 从实际 CI artifact 获得 npm lockfile v3 470 包，临时导出 lock 元数据至 CI 日志，下一提交写入原始锁文件、移除临时步骤、统一 npm ci。勿把这一步误认成 lock 已提交。看板娘不改。
+
+### 可复现依赖（2026-11-25）
+- 已将真实 npm lockfile 原样提交，235949 bytes / 470 entries / v3，SHA256 c4a2857f668342797564ad633cebc10fb51a1d20b04a0e3164c8b6dd35eb3730，与 artifact 的原始 Git blob 完全一致；临时 CI 输出移除，两 Astro workflows 改 npm ci。下一 CI 验收后标记 BASE-03。
+- 0cf0a44 的 build/typecheck/mascot/57 geometry 已通过，公共 smoke 因真实主线完成后旧 map 断言超时，已修复 map familiar 和最终标题 data-005。继续检查新 CI；不要将此中间失败误认为布局回归。
