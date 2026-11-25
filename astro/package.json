@@ -21,7 +21,8 @@
     "check:actions": "node --experimental-strip-types --test tools/vn-actions.test.mjs",
     "check:mascot-browser": "node tools/mascot-browser.mjs",
     "check:options": "node --experimental-strip-types --test tools/vn-options.test.mjs",
-    "check:private": "node --test tools/private-http.test.mjs tools/local-private-ui.test.mjs"
+    "check:private": "node --test tools/private-http.test.mjs tools/local-private-ui.test.mjs",
+    "check:original-browser": "node tools/original-ui-browser.mjs"
   },
   "dependencies": {
     "astro": "5.16.0",

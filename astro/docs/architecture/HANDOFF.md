@@ -155,3 +155,8 @@ npm run check:vn-browser
 ### 公共 UI 接续（2026-11-25）
 - 基线 990b3b0。SYS-01/02/05、DATA-01/02：通过 Git Blob SHA 完整读取 1.5MB 00000757 英文 SOUND PBD（contents API 无内容），00000758 PNG IHDR 实测 433×153 RGBA8，新增 14 个原作标题/标签/短滑轨逻辑切片并通过边界检查。全部七页标题完成源定位，记录七个音量通道与十个角色通道精确矩形；仅把已存在真实 BGM 功能接入 SOUND 标题、标签和短 rail，其他音源/角色控制不伪造，保持另一 Agent 所有权。audit:original 扩展完整 SYSTEM 源校验。990b3b0 的 VN CI 已 typecheck/build（包括合成全量私有图集单测）成功，浏览器仍在执行；新提交未验收。
 - 下一步：合成 original UI 浏览器 fixture、实际 CI 与私有像素验收，不改角色模块，不部署。
+
+### 公共 UI 最新（2026-11-25）
+- 990b3b0 VN CI 45538129205 全绿，BASE-01 实际完成；截图 artifact 14987971426。公共 390/1440、正常动效、无 JS 均通过。
+- bf40991 SOUND 英文标题和 14 个逻辑切片已定位；本轮新增独立 synthetic original UI browser fixture，验证 PBD geometry 与可操作性，关闭私有预览 dev toolbar；新 CI 尚未执行。不是原作像素验收。
+- 下一步：查看 fixture 真实坐标误差和全站 Review 结果、按证据修复；不修改看板娘专线。

@@ -47,6 +47,9 @@ jobs:
           done
           curl -fsS http://127.0.0.1:4321/ >/dev/null
           npm run check:vn-browser
+      - name: Original UI geometry fixture
+        if: ${{ !cancelled() && steps.build.conclusion == 'success' && steps.chromium.conclusion == 'success' }}
+        run: npm run check:original-browser
       - name: Upload screenshots and report
         if: always()
         uses: actions/upload-artifact@v4

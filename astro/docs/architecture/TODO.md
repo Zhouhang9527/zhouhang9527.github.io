@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 BASE-01：990b3b0 的 [真实 VN CI](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45538129205) 全部成功，Node 22 typecheck/build/62 旧 URL、独立 mascot fixture、390/1440 公共浏览器、正常标题转场、无 JS 全过，公共页面错误和私有误请求均为零，截图 artifact 14987971426。BASE-02 新增不含原作像素的独立 Chromium 原作 UI fixture，检查 SYSTEM 七页、DISPLAY/页签/footer、LOAD 十槽和 15 页真实 PBD 坐标与操作，CI 尚未执行；不等同真实素材视觉验收。
+
 2026-11-25 SYS-01/02/05、DATA-01/02：通过 Git Blob SHA 完整读取 1.5MB 00000757 英文 SOUND PBD（contents API 无内容），00000758 PNG IHDR 实测 433×153 RGBA8，新增 14 个原作标题/标签/短滑轨逻辑切片并通过边界检查。全部七页标题完成源定位，记录七个音量通道与十个角色通道精确矩形；仅把已存在真实 BGM 功能接入 SOUND 标题、标签和短 rail，其他音源/角色控制不伪造，保持另一 Agent 所有权。audit:original 扩展完整 SYSTEM 源校验。990b3b0 的 VN CI 已 typecheck/build（包括合成全量私有图集单测）成功，浏览器仍在执行；新提交未验收。
 
 2026-11-25 BASE-08/DATA-02：为 title/UI/map/font 私有服务共用 loopback + Host + Origin/Sec-Fetch-Site 防重绑定校验、GET/HEAD、严格路径/真实 symlink containment、单段 HTTP Range 206/416、no-store/CORP/nosniff。新增纯合成 PNG 尺寸 fixture，对全部原作配置逻辑切片的中间件生成、尺寸及私有路由访问做构建单测，不需要分发真实素材。看板娘服务由另一 Agent 负责，未改动；完整私有浏览器/像素验收与新 CI 未确认。
@@ -74,11 +76,11 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 | MAP | 岛屿俯视图和临时进度映射 | 真实地图和地点/阶段脚本 |
 | EXTRA | CG 列表、全屏查看、标题解锁入口 | 原作入口/分类、鉴赏进度、解锁规则 |
 | 看板娘 | 已替换 ATRI 挂载，角色/服装/差分/动作协议、语音运行时 | 小银花/大银花真实立绘及台词语音映射，实际播放 |
-| 测试 | 已添加静态检查、domain/atlas/mascot 单测、Playwright smoke 脚本 | 没有可确认的完整构建、typecheck、浏览器验收结果 |
+| 测试 | 已添加静态检查、domain/atlas/mascot 单测、Playwright smoke 脚本 | 公共浏览器 CI 已通过；原作素材实际视觉、完整 Astro review 尚待验证 |
 
 ## 1. P0 — 基础架构与当前缺陷
 
-- [ ] BASE-01 在 Node 22 环境执行 `npm run typecheck`、`npm run build`、`npm run check:vn-browser`，保存真实输出与截图，修复全部阻塞错误
+- [x] BASE-01 在 Node 22 环境执行 `npm run typecheck`、`npm run build`、`npm run check:vn-browser`，保存真实输出与截图，修复全部阻塞错误
 - [ ] BASE-02 检查现有 smoke 脚本对 NEXT/EXTRA 锁定、隐藏旧按钮、BACKLOG 和确认框的断言是否与当前实现一致；补齐私有素材模式的独立测试
 - [ ] BASE-03 提交可复现 lockfile、统一依赖安装及分支 CI；保留构建报告和失败截图，不以空 commit status 作为通过
 - [ ] BASE-04 统一客户端生命周期和事件订阅，避免 Astro 路由切换后监听器重复、计时器泄漏、音频重建、跨页面状态遗失
