@@ -83,7 +83,22 @@ try{
   assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('ginka.vn.voice.saved.v1'))),[]);
   await page.locator('[data-vn-option-tab="program"]').click();
   const preview=page.locator('[data-mascot-action=preview]');await preview.click();await canvas.waitFor({state:'visible'});
+  const auto=page.locator('[data-mascot-action=auto]');
+  await auto.click();assert.equal(await auto.getAttribute('aria-pressed'),'true');
+  await page.waitForFunction(()=>document.querySelector('[data-mascot-text]')?.textContent==='Tone fixture');
   await page.keyboard.press('Escape');assert.equal(await page.locator('[data-mascot-character]').isVisible(),false);
+  assert.equal(await auto.getAttribute('aria-pressed'),'false');
+  assert.equal(await preview.evaluate(el=>document.activeElement===el),true);
+  await page.locator('[data-vn-option-panel=program] a[data-vn-mode-set=game]').click();
+  await page.locator('[data-vn-start]').click();await page.locator('[data-vn-post]').first().click();
+  const dock=page.locator('.vn-game-buttons');
+  await launcher.click();
+  await page.waitForFunction(()=>document.querySelector('[data-vn-dialogue-text]')?.textContent==='Silent fixture');
+  await dock.locator('[data-vn-game-action=next]').click();
+  await page.waitForFunction(()=>document.querySelector('[data-vn-dialogue-text]')?.textContent==='Tone fixture');
+  await dock.locator('[data-vn-game-action=hide]').click();
+  assert.equal(await page.locator('[data-mascot-character]').isVisible(),false);
+  assert.equal(await page.evaluate(()=>document.documentElement.hasAttribute('data-vn-mascot-dialogue')),false);
   assert.deepEqual(errors,[]);
   await page.close();console.log('PASS synthetic layered mascot browser at '+width+'px');
  }

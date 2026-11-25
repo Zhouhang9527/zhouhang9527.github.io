@@ -9,6 +9,7 @@ const VOL='ginka.vn.voice.volume.v1',SAVED='ginka.vn.voice.saved.v1',MUTE='ginka
 let character='all',outfit='all',motionTimer=0,motionIndex=0;
 let pack:Pack|null=null,loading:Promise<void>|null=null,root:HTMLElement|null=null,audio:HTMLAudioElement|null=null,current:Line|null=null,open=false,volume=80,muted=false,blinkTimer=0,blinkEnd=0,reveal=0,raf=0,ctx:AudioContext|null=null,analyser:AnalyserNode|null=null,lastPose='',generation=0;
 const $=(s:string)=>root?.querySelector<HTMLElement>(s);
+let openTrigger:HTMLElement|null=null,dialogueAuto=false,autoTimer=0;
 let unavailable=false,layerToken=0,layerImages=new Map<string,HTMLImageElement>(),layerPose:Pose|null=null,layerEye=false,layerMouth=false,layerPending=false;
 // Bounded decoded-image cache. Retain the active composition separately; warm only the next allowed pose.
 const imageCache=new Map<string,HTMLImageElement>(),imagePending=new Map<string,Promise<HTMLImageElement>>();
@@ -124,7 +125,7 @@ function voiceStatus(){
  document.querySelectorAll<HTMLButtonElement>('[data-vn-voice-stop]').forEach(e=>e.disabled=!playing);
  document.querySelectorAll<HTMLElement>('[data-vn-voice-playing]').forEach(e=>e.textContent=playing&&current?.voice?'正在播放 · '+current.speaker:'语音未播放');
 }
-function stopVoice(){generation++;audio?.pause();resetMouth();if(open){scheduleBlink();startMotion();}voiceStatus();}
+function stopVoice(){setAuto(false);generation++;audio?.pause();resetMouth();if(open){scheduleBlink();startMotion();}voiceStatus();}
 function applyVolume(){if(audio){audio.volume=volume/100;audio.muted=muted;}}
 function syncSettings(){
  const ready=!!current?.voice&&allowed(current);document.documentElement.toggleAttribute('data-vn-voice-ready',ready);document.dispatchEvent(new Event('vn:voice-state'));
@@ -136,7 +137,7 @@ function syncSettings(){
  document.querySelectorAll<HTMLButtonElement>('[data-mascot-action=preview]').forEach(e=>e.disabled=!choices().length);
  voiceStatus();
  document.querySelectorAll<HTMLElement>('[data-vn-voice-status]').forEach(e=>e.textContent=pack?.lines.some(l=>l.voice&&allowed(l))?'已连接本地原作语音':unavailable?'原作素材尚未完成核验':pack?'当前素材仅有已验证文本，语音未匹配':root?.dataset.mascotSource?'等待本地素材包加载':'原作语音需要本地素材包');
- for(const list of document.querySelectorAll<HTMLElement>('[data-vn-voice-saved]')){
+ for(const list of document.querySelectorAll<HTMLElement>('div[data-vn-voice-saved]')){
   const rows=saved().flatMap(id=>{const l=pack?.lines.find(x=>x.id===id&&!!x.voice&&allowed(x));return l?[l]:[];});
   const key=JSON.stringify(rows.map(l=>l.id));if(list.dataset.savedKey===key)continue;list.dataset.savedKey=key;
   const fragment=document.createDocumentFragment();
@@ -154,7 +155,7 @@ function setImage(selector:string,url:string|null){const img=$('[data-mascot-'+s
 function pose(id:string){const p=pack?.poses[id];if(!p||!poseAllowed(p))return;stopMotion();stopBlink();cancelAnimationFrame(raf);motionIndex=0;if(!p.layers&&lastPose!==id)preloadPose(p);lastPose=id;loadLayers(p);setImage('base',p.layers?null:p.base);setImage('blink',p.blink);setImage('mouth',p.mouth);showFrame('base');}
 function startMotion(){stopMotion();const id=lastPose,p=pack?.poses[id];if(!p?.motion.length||reduce()||!open||document.hidden)return;const tick=()=>{if(!open||!audio?.paused||lastPose!==id||reduce()||document.hidden)return;const frame=p.motion[motionIndex++%p.motion.length];if(readyFrames.has(frame.image)&&frameImage('blink')?.hidden!==false&&frameImage('mouth')?.hidden!==false)setImage('base',frame.image);motionTimer=window.setTimeout(tick,frame.ms);};tick();}
 function stopReveal(){cancelAnimationFrame(reveal);reveal=0;revealTarget=null;}
-function finishReveal(){if(!revealTarget||!current)return false;revealTarget.textContent=current.text;stopReveal();return true;}
+function finishReveal(){if(!revealTarget||!current)return false;revealTarget.textContent=current.text;stopReveal();scheduleAuto();return true;}
 function clearDialogue(){document.documentElement.removeAttribute('data-vn-mascot-dialogue');stopReveal();const name=document.querySelector<HTMLElement>('[data-vn-dialogue-speaker]'),text=document.querySelector<HTMLElement>('[data-vn-dialogue-text]');if(name)name.hidden=true;if(text)text.hidden=true;document.querySelectorAll<HTMLElement>('[data-vn-current-heading],[data-vn-game-description]:not([data-vn-dialogue-text])').forEach(e=>e.hidden=false);const w=$('[data-mascot-window]');if(w)w.hidden=true;}
 function renderLine(line:Line,animate:boolean){
  clearDialogue();pose(line.pose);
@@ -167,7 +168,7 @@ function renderLine(line:Line,animate:boolean){
  if(speaker)speaker.textContent=line.speaker;
  if(!text)return;const chars=Array.from(line.text);if(!animate||reduce()){text.textContent=line.text;return;}
  text.textContent='';revealTarget=text;const start=performance.now();
- function tick(now:number){if(!text?.isConnected||current!==line||!open)return;const count=Math.min(chars.length,Math.floor((now-start)/30)+1);text.textContent=chars.slice(0,count).join('');if(count<chars.length)reveal=requestAnimationFrame(tick);else stopReveal();}
+ function tick(now:number){if(!text?.isConnected||current!==line||!open)return;const count=Math.min(chars.length,Math.floor((now-start)/30)+1);text.textContent=chars.slice(0,count).join('');if(count<chars.length)reveal=requestAnimationFrame(tick);else{stopReveal();scheduleAuto();}}
  reveal=requestAnimationFrame(tick);
 }
 function resetMouth(){cancelAnimationFrame(raf);raf=0;if(layerPose){if(layerMouth){layerMouth=false;drawLayers();}}else showFrame('base');}
@@ -188,34 +189,57 @@ function scheduleBlink(){stopBlink();
   if(frameImage('mouth')?.hidden!==false&&frameUsable(frameImage('blink'))){showFrame('blink');blinkEnd=window.setTimeout(()=>{if(frameImage('blink')?.hidden===false)showFrame('base');scheduleBlink();},130);}else scheduleBlink();
  },3000+Math.random()*3500);
 }
+function cancelAutoTimer(){clearTimeout(autoTimer);autoTimer=0;}
+function setAuto(value:boolean){
+ dialogueAuto=value;cancelAutoTimer();document.documentElement.toggleAttribute('data-vn-mascot-auto',value);
+ document.querySelectorAll<HTMLButtonElement>('[data-mascot-action=auto]').forEach(e=>e.setAttribute('aria-pressed',String(value)));
+ document.dispatchEvent(new Event('vn:voice-state'));
+ if(value)scheduleAuto();
+}
+function scheduleAuto(){
+ if(!dialogueAuto||autoTimer||!open||!current||document.hidden||revealTarget||current.voice&&!audio?.ended)return;
+ const line=current,pool=choices(),index=pool.findIndex(l=>l.id===line.id);
+ if(index<0||index===pool.length-1){setAuto(false);return;}
+ // Blog-only pause after completed reveal and native voice end. Never auto-loop a curated pool.
+ autoTimer=window.setTimeout(()=>{autoTimer=0;if(dialogueAuto&&open&&current===line&&allowed(pool[index+1]))void play(pool[index+1]);},700);
+}
 async function play(line:Line,animate=true,presentation=true){
  if(!audio||!allowed(line))return;
  if(!presentation)close();
- const token=++generation;audio.pause();stopMotion();stopBlink();resetMouth();current=line;
+ cancelAutoTimer();const token=++generation;audio.pause();stopMotion();stopBlink();resetMouth();current=line;
  if(presentation){open=true;const character=$('[data-mascot-character]');if(character)character.hidden=false;$('[data-mascot-action=open]')?.setAttribute('aria-expanded','true');renderLine(line,animate);scheduleBlink();warmNext();document.dispatchEvent(new Event('vn:mascot-open'));}
  feedback('');syncSettings();
- if(!line.voice){audio.removeAttribute('src');audio.load();feedback('此句原作录音尚未匹配');startMotion();return;}
+ if(!line.voice){audio.removeAttribute('src');audio.load();feedback('此句原作录音尚未匹配');startMotion();scheduleAuto();return;}
  audio.src=line.voice;applyVolume();
  try{
   // Web Audio is optional: lack of analyser support must not block native playback.
   try{if(!ctx&&typeof AudioContext!=='undefined'){ctx=new AudioContext();analyser=ctx.createAnalyser();analyser.fftSize=256;const node=ctx.createMediaElementSource(audio);node.connect(analyser);analyser.connect(ctx.destination);}if(ctx?.state==='suspended')void ctx.resume().catch(()=>{});}catch{analyser=null;}
   await audio.play();if(token===generation&&!audio.paused){recordHistory(line);voiceStatus();if(open)animateMouth();}
  }
- catch{if(token===generation){feedback('语音未能播放，请点击 VOICE 重试');resetMouth();startMotion();}}
+ catch{if(token===generation){feedback('语音未能播放，请点击 VOICE 重试');setAuto(false);resetMouth();startMotion();}}
 }
-function next(){if(open&&current&&$('.ginka-mascot-portrait')?.dataset.mascotRender==='error'){pose(current.pose);return;}if(finishReveal())return;const lines=choices();if(!lines.length){feedback('当前角色和服装没有已验证对白');return;}const index=lines.findIndex(x=>x.id===current?.id);void play(lines[(index+1)%lines.length]);}
-function close(restoreFocus=false){const focused=root?.contains(document.activeElement);open=false;generation++;stopMotion();stopBlink();audio?.pause();resetMouth();clearDialogue();const c=$('[data-mascot-character]');if(c)c.hidden=true;const launcher=$('[data-mascot-action=open]');launcher?.setAttribute('aria-expanded','false');if(restoreFocus&&focused)launcher?.focus({preventScroll:true});voiceStatus();}
+function next(){setAuto(false);if(open&&current&&$('.ginka-mascot-portrait')?.dataset.mascotRender==='error'){pose(current.pose);return;}if(finishReveal())return;const lines=choices();if(!lines.length){feedback('当前角色和服装没有已验证对白');return;}const index=lines.findIndex(x=>x.id===current?.id);void play(lines[(index+1)%lines.length]);}
+function close(restoreFocus=false){const focused=root?.contains(document.activeElement);setAuto(false);open=false;generation++;stopMotion();stopBlink();audio?.pause();resetMouth();clearDialogue();const c=$('[data-mascot-character]');if(c)c.hidden=true;const launcher=$('[data-mascot-action=open]');launcher?.setAttribute('aria-expanded','false');if(restoreFocus&&focused){const target=openTrigger?.isConnected?openTrigger:launcher;target?.focus({preventScroll:true});}openTrigger=null;voiceStatus();}
 function saveVoice(line:Line|null=current,remove=false){if(!line?.voice||!allowed(line))return;try{const existing=saved(),remaining=existing.filter(x=>x!==line.id),deleting=remove||existing.includes(line.id);localStorage.setItem(SAVED,JSON.stringify(deleting?remaining:[line.id,...remaining].slice(0,100)));feedback(deleting?'已移除语音收藏':'语音已收藏');syncSettings();}catch{feedback('无法更新语音收藏');}}
-function action(a:string){if(a==='open'||a==='preview'){if(open){close(true);return;}if(current&&choices().includes(current))void play(current,false);else next();}else if(a==='next')next();else if(a==='close')close(true);else if(a==='replay'&&current?.voice&&allowed(current))void play(current,false);else if(a==='save')saveVoice();}
+function action(a:string){
+ if(a==='open'||a==='preview'){if(open){close(true);return;}if(current&&choices().includes(current))void play(current,false);else next();}
+ else if(a==='next')next();
+ else if(a==='previous'){setAuto(false);const pool=choices(),index=pool.findIndex(l=>l.id===current?.id);if(open&&index>0)void play(pool[index-1]);}
+ else if(a==='auto'){if(open&&current)setAuto(!dialogueAuto);}
+ else if(a==='skip'){if(open){finishReveal();stopVoice();}}
+ else if(a==='close')close(true);
+ else if(a==='replay'&&current?.voice&&allowed(current)){setAuto(false);void play(current,false);}
+ else if(a==='save')saveVoice();
+}
 function validURL(value:unknown):value is string{return typeof value==='string'&&/^\/__ginka_local_mascot__\/asset-\d+\.(png|webp|ogg|wav|mp3|m4a)$/.test(value);}
 function mount(){
  root=document.querySelector<HTMLElement>('[data-ginka-mascot]');if(!root)return;
- const nextAudio=root.querySelector<HTMLAudioElement>('[data-mascot-audio]');if(audio!==nextAudio){generation++;stopMotion();stopBlink();resetMouth();audio?.pause();if(ctx)void ctx.close().catch(()=>{});cancelAnimationFrame(raf);audio=nextAudio;ctx=null;analyser=null;if(audio){const element=audio;element.addEventListener('ended',()=>{if(audio!==element||!element.ended)return;resetMouth();startMotion();voiceStatus();});element.addEventListener('pause',()=>{if(audio===element&&element.paused){resetMouth();voiceStatus();}});element.addEventListener('playing',()=>{if(audio===element)voiceStatus();});element.addEventListener('error',()=>{if(audio!==element||!element.error)return;resetMouth();startMotion();voiceStatus();});}}
+ const nextAudio=root.querySelector<HTMLAudioElement>('[data-mascot-audio]');if(audio!==nextAudio){generation++;stopMotion();stopBlink();resetMouth();audio?.pause();if(ctx)void ctx.close().catch(()=>{});cancelAnimationFrame(raf);audio=nextAudio;ctx=null;analyser=null;if(audio){const element=audio;element.addEventListener('ended',()=>{if(audio!==element||!element.ended)return;resetMouth();startMotion();voiceStatus();scheduleAuto();});element.addEventListener('pause',()=>{if(audio===element&&element.paused){resetMouth();voiceStatus();}});element.addEventListener('playing',()=>{if(audio===element)voiceStatus();});element.addEventListener('error',()=>{if(audio!==element||!element.error)return;setAuto(false);resetMouth();startMotion();voiceStatus();});}}
  if(pack){root.hidden=false;if(open&&current&&allowed(current)){renderLine(current,false);scheduleBlink();if(audio?.paused)startMotion();else animateMouth();}syncSettings();return;}
  const source=root.dataset.mascotSource;if(!source||loading||unavailable){syncSettings();return;}
  loading=fetch(source,{cache:'no-store'}).then(async r=>{if(!r.ok)throw Error('Pack unavailable');const raw=await r.json();if(raw.available===false){unavailable=true;syncSettings();return;}const p=raw as Pack;if(![1,2].includes(p.version)||!Array.isArray(p.lines)||!p.poses||!p.poses[p.defaultPose]||!Object.values(p.poses).every(v=>validURL(v.base)&&(!v.blink||validURL(v.blink))&&(!v.mouth||validURL(v.mouth))&&(!v.layers||(Array.isArray(v.layers)&&v.layers.every(l=>validURL(l.image)&&(!l.alternate||validURL(l.alternate.image)))))&&Array.isArray(v.motion)&&v.motion.every(f=>validURL(f.image)&&Number.isInteger(f.ms)&&f.ms>=40&&f.ms<=10000))||!p.lines.every(l=>typeof l.text==='string'&&(validURL(l.voice)||(p.version===2&&l.voice===null))&&Object.hasOwn(p.poses,l.pose)))throw Error('Invalid pack');pack=p;if(root)root.hidden=false;syncSettings();}).catch(()=>{unavailable=true;feedback('本地看板娘素材包未就绪');syncSettings();}).finally(()=>{loading=null;});
 }
-document.addEventListener('click',event=>{const e=(event.target as Element|null)?.closest<HTMLElement>('[data-mascot-action],[data-vn-voice-mute],[data-vn-voice-replay],[data-vn-voice-saved],[data-vn-voice-remove],[data-vn-voice-stop],[data-vn-voice-history-replay],[data-vn-voice-history-save]');if(!e)return;if(e.dataset.vnVoiceHistoryReplay||e.dataset.vnVoiceHistorySave){const line=pack?.lines.find(l=>l.id===(e.dataset.vnVoiceHistoryReplay??e.dataset.vnVoiceHistorySave)&&!!l.voice&&allowed(l));if(line){if(e.dataset.vnVoiceHistorySave)saveVoice(line);else void play(line,false,false);}return;}if(e.dataset.mascotAction){action(e.dataset.mascotAction);return;}if(e.hasAttribute('data-vn-voice-mute')){muted=!muted;try{localStorage.setItem(MUTE,muted?'1':'0');}catch{}syncSettings();animateMouth();return;}if(e.hasAttribute('data-vn-voice-stop')){stopVoice();return;}if(e.hasAttribute('data-vn-voice-replay')&&current?.voice&&allowed(current)){void play(current,false,false);return;}if(e.dataset.vnVoiceSaved||e.dataset.vnVoiceRemove){const line=pack?.lines.find(l=>l.id===(e.dataset.vnVoiceSaved??e.dataset.vnVoiceRemove)&&!!l.voice&&allowed(l));if(line){if(e.dataset.vnVoiceRemove){saveVoice(line,true);document.querySelector<HTMLElement>('[data-vn-voice-replay]')?.focus({preventScroll:true});}else void play(line,false,false);}}});
+document.addEventListener('click',event=>{const e=(event.target as Element|null)?.closest<HTMLElement>('[data-mascot-action],[data-vn-voice-mute],[data-vn-voice-replay],[data-vn-voice-saved],[data-vn-voice-remove],[data-vn-voice-stop],[data-vn-voice-history-replay],[data-vn-voice-history-save]');if(!e)return;if(e.dataset.vnVoiceHistoryReplay||e.dataset.vnVoiceHistorySave){const line=pack?.lines.find(l=>l.id===(e.dataset.vnVoiceHistoryReplay??e.dataset.vnVoiceHistorySave)&&!!l.voice&&allowed(l));if(line){if(e.dataset.vnVoiceHistorySave)saveVoice(line);else void play(line,false,false);}return;}if(e.dataset.mascotAction){if(!open&&['open','preview'].includes(e.dataset.mascotAction))openTrigger=e;action(e.dataset.mascotAction);return;}if(e.hasAttribute('data-vn-voice-mute')){muted=!muted;try{localStorage.setItem(MUTE,muted?'1':'0');}catch{}syncSettings();animateMouth();return;}if(e.hasAttribute('data-vn-voice-stop')){stopVoice();return;}if(e.hasAttribute('data-vn-voice-replay')&&current?.voice&&allowed(current)){void play(current,false,false);return;}if(e.dataset.vnVoiceSaved||e.dataset.vnVoiceRemove){const line=pack?.lines.find(l=>l.id===(e.dataset.vnVoiceSaved??e.dataset.vnVoiceRemove)&&!!l.voice&&allowed(l));if(line){if(e.dataset.vnVoiceRemove){saveVoice(line,true);document.querySelector<HTMLElement>('[data-vn-voice-replay]')?.focus({preventScroll:true});}else void play(line,false,false);}}});
 document.addEventListener('change',event=>{const e=event.target;if(!(e instanceof HTMLSelectElement))return;if(e.matches('[data-vn-mascot-character]')){character=e.value;outfit='all';}else if(e.matches('[data-vn-mascot-outfit]'))outfit=e.value;else return;try{localStorage.setItem(CHAR,character);localStorage.setItem(OUTFIT,outfit);}catch{}if(current&&!choices().includes(current)){close();current=null;}syncSettings();});
 document.addEventListener('input',event=>{const e=event.target;if(!(e instanceof HTMLInputElement)||!e.matches('[data-vn-voice-volume]'))return;volume=Math.max(0,Math.min(100,Number(e.value)||0));try{localStorage.setItem(VOL,String(volume));}catch{}syncSettings();});
 document.addEventListener('vn:voice-action',event=>action(String((event as CustomEvent).detail)));
@@ -227,7 +251,7 @@ document.addEventListener('astro:page-load',mount);
 document.addEventListener('vn:view-change',()=>{if(open&&current&&allowed(current)){renderLine(current,false);scheduleBlink();if(audio?.paused)startMotion();else animateMouth();}});
 document.addEventListener('vn:progress-reset',()=>{try{localStorage.removeItem(HISTORY_KEY);}catch{}if(current&&!allowed(current)){close();current=null;}syncSettings();});
 window.addEventListener('storage',()=>{readSettings();if(current&&(!allowed(current)||!choices().includes(current))){close();current=null;}syncSettings();});
-document.addEventListener('visibilitychange',()=>{document.documentElement.toggleAttribute('data-mascot-page-hidden',document.hidden);if(document.hidden){generation++;finishReveal();audio?.pause();stopMotion();stopBlink();resetMouth();}else if(open){scheduleBlink();startMotion();}});
+document.addEventListener('visibilitychange',()=>{document.documentElement.toggleAttribute('data-mascot-page-hidden',document.hidden);if(document.hidden){setAuto(false);generation++;finishReveal();audio?.pause();stopMotion();stopBlink();resetMouth();}else if(open){scheduleBlink();startMotion();}});
 const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
 function resyncMotion(){if(!open)return;if(reduce()){stopBlink();stopMotion();resetMouth();finishReveal();}else{scheduleBlink();if(audio?.paused)startMotion();else animateMouth();}}
 motionPreference.addEventListener('change',resyncMotion);

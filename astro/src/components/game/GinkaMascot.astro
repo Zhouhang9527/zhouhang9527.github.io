@@ -11,7 +11,7 @@ const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
  <section class="ginka-mascot-window" data-mascot-window hidden style={original?'--vn-mascot-frame:url(/__ginka_local_ui__/gameBase.png);--vn-mascot-name:url(/__ginka_local_ui__/gameWindow-name.png);--vn-mascot-decor:url(/__ginka_local_ui__/gameWindow-frame.png)':undefined} aria-label="银花原作对话">
   <div class="ginka-mascot-name" data-mascot-speaker></div>
   <p data-mascot-text></p>
-  <nav aria-label="对话操作"><button type="button" data-mascot-action="replay">VOICE</button><button type="button" data-mascot-action="save">V.SAVE</button><button type="button" data-mascot-action="next">NEXT 〉</button><button type="button" data-mascot-action="close">HIDE</button></nav>
+  <nav aria-label="对话操作"><button type="button" data-mascot-action="replay">VOICE</button><button type="button" data-mascot-action="save">V.SAVE</button><button type="button" data-mascot-action="auto" aria-pressed="false">AUTO</button><button type="button" data-mascot-action="next">NEXT 〉</button><button type="button" data-mascot-action="close">HIDE</button></nav>
  </section>
  <audio data-mascot-audio preload="none"></audio>
  <span class="journal-visually-hidden" data-mascot-feedback role="status"></span>
