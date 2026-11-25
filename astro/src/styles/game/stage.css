@@ -803,3 +803,12 @@ html[data-vn-mode=reader] .vn-reader-return:not([hidden]){display:block;margin:1
  .vn-load[data-vn-ui-original=true] .vn-load-footer [data-vn-library-sprite]{min-width:64px;min-height:48px}
  .vn-library-index button{min-height:44px}
 }
+
+/* SOUND English caption and the shorter native BGM rail from 00000757. */
+.vn-option[data-vn-ui-original=true] [data-vn-sound-bgm] legend{background:var(--vn-sound-label),var(--vn-sound-caption);background-position:left center;background-size:100% 100%;background-repeat:no-repeat;color:transparent!important;width:min(100%,292px);height:31px}
+.vn-option[data-vn-ui-original=true] .vn-option-slider input[type=range]:disabled::-webkit-slider-runnable-track{background-image:var(--vn-option-range-railDisabled)}
+.vn-option[data-vn-ui-original=true] .vn-option-slider input[type=range]:disabled::-moz-range-track{background-image:var(--vn-option-range-railDisabled)}
+@media(min-width:960px){
+ .vn-option[data-vn-ui-original=true] .vn-option-header h1[data-vn-heading-key=sound]{position:absolute;left:0;top:0;width:33.828125cqw;height:5.859375cqw;background:var(--vn-heading-sound) left top/100% 100% no-repeat;color:transparent!important;overflow:hidden}
+ .vn-option[data-vn-ui-original=true] [data-vn-sound-bgm] legend{width:22.8125cqw;height:2.421875cqw}
+}

@@ -40,4 +40,32 @@ for(const [atlas,sprites] of [['loadLabels',ui.logicalSprites.loadLabels],['load
  eq(atlas+' '+name+' crop/rotation/offset',{rect:s.rect,rotate:s.rotate,offset:s.offset},p?sprite(p):null);
  eq(atlas+' '+name+' canvas',s.size,control?.bounds?.slice(2));
 }
+// All seven original settings wordmarks, common tab/footer states, DISPLAY overlays,
+// and the native rail/thumb shapes. Moving range thumbs deliberately discard the source center offset.
+const option=ui.optionGeometry,optionSources=Object.fromEntries(Object.entries(option.languageSources).map(([key,source])=>[key,load(source)]));
+const compare=(label,configured,control,state,range=false)=>{
+ const p=control?.states[state];eq(label+' crop',configured.rect,p?.crop);eq(label+' rotation',configured.rotate,p?.rotation);
+ eq(label+' offset',configured.offset,range?[0,0]:p?.offset);eq(label+' canvas',configured.size,range?p?.size:control?.bounds?.slice(2));
+};
+for(const [index,key] of ['display','program','text','sound','dialog','touch','shortcut'].entries()){
+ const control=optionSources.base.controls['page'+index];eq(key+' tab bounds',option.controls[key],control.bounds);
+ for(const [label,state] of Object.entries({normal:'off',selected:'on',hover:'over'}))compare(key+' tab '+label,ui.logicalSprites.optionTabs['nav-'+key+'-'+label],control,state);
+ const heading=optionSources[key].controls[key==='shortcut'?'caption':'header'];eq(key+' wordmark bounds',option.headings[key],heading.bounds);
+ compare(key+' wordmark',ui.logicalSprites[key+'Labels'].wordmark,heading,'(~null~)');
+}
+for(const [key,id] of Object.entries({back:'back',title:'title',defaults:'init',exit:'exit'})){
+ const control=optionSources.base.controls[id];eq(key+' footer bounds',option.controls[key],control.bounds);
+ for(const [label,state] of Object.entries({normal:'off',pressed:'on',hover:'over'}))compare(key+' footer '+label,ui.logicalSprites.optionTabs['footer-'+key+'-'+label],control,state);
+}
+for(const [key,id] of Object.entries({window:'window',fullscreen:'fullscreen',effectOn:'effect_on',effectOff:'effect_off'})){
+ const control=optionSources.display.controls[id];eq(key+' display bounds',option.display[key],control.bounds);
+ for(const [label,state] of Object.entries({normal:'t_off',selected:'t_on',hover:'t_over'}))compare(key+' display '+label,ui.logicalSprites.displayLabels['control-'+key+'-'+label],control,state);
+}
+for(const [label,state] of Object.entries({normal:'off',selected:'on',hover:'over'}))compare('common button '+label,ui.logicalSprites.optionAtlas['button-'+label],optionSources.display.controls.window,state);
+compare('common caption',ui.logicalSprites.optionAtlas.caption,optionSources.display.controls.label0,'base');
+for(const [name,state] of Object.entries({rail:'rail',railDisabled:'dsrail',thumb:'normal',thumbHover:'over',thumbPressed:'on'}))compare('common range '+name,ui.logicalSprites.optionAtlas['range-'+name],optionSources.text.controls.textspeed,state,true);
+for(const [key,bounds] of Object.entries({...option.sound.channels,...option.sound.characterChannels}))eq(key+' sound bounds',bounds,optionSources.sound.controls[key].bounds);
+for(const [key,bounds] of Object.entries(option.sound.labels)){const c=optionSources.sound.controls[key];eq(key+' sound label bounds',bounds,c.bounds);compare(key+' sound label',ui.logicalSprites.soundLabels[key],c,'text');}
+compare('sound caption',ui.logicalSprites.optionAtlas['sound-caption'],optionSources.sound.controls.label3,'base');
+for(const [name,state] of Object.entries({rail:'rail',railDisabled:'dsrail'}))compare('sound range '+name,ui.logicalSprites.optionAtlas['sound-range-'+name],optionSources.sound.controls.bgmvolume,state,true);
 const report={checks,failures};console.log(JSON.stringify(report,null,2));if(failures.length)process.exitCode=1;

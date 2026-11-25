@@ -263,6 +263,12 @@
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000786_54A41A8160FD4E5128BE7301877937BE7347199B516B96EE54099C5102313512.png",
         "width": 143,
         "height": 128
+      },
+      "soundLabels": {
+        "id": "soundLabels",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/00000758_9966696462B1C23B00D6CC4AE8F529CFB33756AD9B685C8F3135C0286F128E43.png",
+        "width": 433,
+        "height": 153
       }
     },
     "optionGeometry": {
@@ -305,7 +311,7 @@
           29
         ]
       },
-      "notice": "PBD 00000778 exact tab/footer geometry and states; 00000740 DISPLAY two mapped pairs and generic button art; 0000074f generic slider rail/thumb and TEXT wordmark. Six English page wordmarks verified. SOUND full PBD exceeds connector fetch limit. Blog-only settings remain adapted.",
+      "notice": "English common page/footer PBD and all seven page wordmarks derived from source. SOUND full PBD read through Git Blob; all native channel positions recorded. Blog-only group/function mapping remains adapted.",
       "source": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000778_30B18572939CDFA6F229339D8D66339E3A3E9DFB68E2AD5A0D15A5DEBA051CAC.pbd.json",
       "languageSources": {
         "base": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000778_30B18572939CDFA6F229339D8D66339E3A3E9DFB68E2AD5A0D15A5DEBA051CAC.pbd.json",
@@ -314,7 +320,8 @@
         "text": "assets/data/_hxv4_hash/AF5FB0494CCF915F/0000074f_375972C4CE4E89D4D7B36FB009735D27DDEABA1A50FF374B068AF09B154FB6C9.pbd.json",
         "dialog": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000762_BD4CE4A6DE0D8455F232D925005E1BFD8F7881CF56A00FCFFAE06AEACC64ACEA.pbd.json",
         "touch": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000769_CD2C398EEE770845E5EE9C7F0B363A888109078478286D3A41DCCD93E04F32DB.pbd.json",
-        "shortcut": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000771_0B6851F1AB188C24932B2A0EB0264C12B26326CC0343977AC1B057F6FEDD9233.pbd.json"
+        "shortcut": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000771_0B6851F1AB188C24932B2A0EB0264C12B26326CC0343977AC1B057F6FEDD9233.pbd.json",
+        "sound": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000757_4575365B84359383B6AA9E405DBE3DAE8FFC60D81A7552CCC219A0F42F513C3B.pbd.json"
       },
       "helpText": [
         756,
@@ -427,6 +434,12 @@
           0,
           415,
           63
+        ],
+        "sound": [
+          0,
+          0,
+          433,
+          75
         ]
       },
       "display": {
@@ -466,6 +479,186 @@
           437,
           31
         ]
+      },
+      "sound": {
+        "source": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000757_4575365B84359383B6AA9E405DBE3DAE8FFC60D81A7552CCC219A0F42F513C3B.pbd.json",
+        "sourceBlob": "a589637683a820299b8e21916484d774989529f6",
+        "language": "en",
+        "channels": {
+          "wavevolume": [
+            62,
+            202,
+            192,
+            18
+          ],
+          "bgmvolume": [
+            62,
+            295,
+            192,
+            18
+          ],
+          "movievolume": [
+            366,
+            202,
+            192,
+            18
+          ],
+          "downvolume": [
+            366,
+            295,
+            192,
+            18
+          ],
+          "sevolume": [
+            62,
+            388,
+            192,
+            18
+          ],
+          "voicevolume": [
+            62,
+            481,
+            192,
+            18
+          ],
+          "sysvovolume": [
+            366,
+            592,
+            192,
+            18
+          ]
+        },
+        "characterChannels": {
+          "ch0volume": [
+            789,
+            235,
+            134,
+            18
+          ],
+          "ch1volume": [
+            1086,
+            235,
+            134,
+            18
+          ],
+          "ch2volume": [
+            789,
+            324,
+            134,
+            18
+          ],
+          "ch3volume": [
+            1086,
+            324,
+            134,
+            18
+          ],
+          "ch4volume": [
+            789,
+            413,
+            134,
+            18
+          ],
+          "ch5volume": [
+            1086,
+            413,
+            134,
+            18
+          ],
+          "ch6volume": [
+            789,
+            502,
+            134,
+            18
+          ],
+          "ch7volume": [
+            1086,
+            502,
+            134,
+            18
+          ],
+          "ch8volume": [
+            789,
+            591,
+            134,
+            18
+          ],
+          "ch9volume": [
+            1086,
+            591,
+            134,
+            18
+          ]
+        },
+        "labels": {
+          "label0": [
+            36,
+            165,
+            292,
+            31
+          ],
+          "label1": [
+            341,
+            165,
+            292,
+            31
+          ],
+          "label2": [
+            667,
+            165,
+            593,
+            31
+          ],
+          "label3": [
+            36,
+            258,
+            292,
+            31
+          ],
+          "label4": [
+            341,
+            258,
+            292,
+            31
+          ],
+          "label5": [
+            36,
+            351,
+            292,
+            31
+          ],
+          "label6": [
+            341,
+            351,
+            292,
+            31
+          ],
+          "label7": [
+            36,
+            444,
+            292,
+            31
+          ],
+          "label8": [
+            341,
+            444,
+            292,
+            31
+          ],
+          "label9": [
+            36,
+            534,
+            593,
+            31
+          ]
+        },
+        "bgmMute": [
+          37,
+          316,
+          80,
+          28
+        ],
+        "note": "Exact source coordinates; only BGM is bound here to existing persistent blog player. Voice is the other agent's module; other source channels have no verified playback binding."
       }
     },
     "titleMenu": {
@@ -1042,7 +1235,8 @@
       "textLabels",
       "gameParts",
       "gameWindow",
-      "confirmButtons"
+      "confirmButtons",
+      "soundLabels"
     ],
     "slices": {
       "loadRows": {
@@ -1259,15 +1453,15 @@
           40
         ],
         "back": [
-          269,
+          268,
           200,
-          105,
+          106,
           76
         ],
         "backHover": [
-          374,
-          200,
-          105,
+          162,
+          276,
+          106,
           76
         ],
         "defaults": [
@@ -1278,18 +1472,18 @@
         ],
         "defaultsHover": [
           162,
-          428,
+          200,
           106,
           76
         ],
         "title": [
           268,
           428,
-          106,
+          105,
           76
         ],
         "titleHover": [
-          374,
+          373,
           428,
           105,
           76
@@ -5652,6 +5846,246 @@
           "size": [
             16,
             16
+          ]
+        },
+        "sound-caption": {
+          "rect": [
+            0,
+            68,
+            292,
+            31
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            292,
+            31
+          ]
+        },
+        "sound-range-rail": {
+          "rect": [
+            0,
+            133,
+            176,
+            3
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            176,
+            3
+          ]
+        },
+        "sound-range-railDisabled": {
+          "rect": [
+            0,
+            130,
+            176,
+            3
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            176,
+            3
+          ]
+        }
+      },
+      "soundLabels": {
+        "wordmark": {
+          "rect": [
+            0,
+            0,
+            433,
+            75
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            433,
+            75
+          ]
+        },
+        "label0": {
+          "rect": [
+            0,
+            124,
+            130,
+            15
+          ],
+          "rotate": 0,
+          "offset": [
+            27,
+            6
+          ],
+          "size": [
+            292,
+            31
+          ]
+        },
+        "label1": {
+          "rect": [
+            232,
+            92,
+            117,
+            15
+          ],
+          "rotate": 0,
+          "offset": [
+            26,
+            7
+          ],
+          "size": [
+            292,
+            31
+          ]
+        },
+        "label2": {
+          "rect": [
+            0,
+            92,
+            200,
+            17
+          ],
+          "rotate": 0,
+          "offset": [
+            25,
+            7
+          ],
+          "size": [
+            593,
+            31
+          ]
+        },
+        "label3": {
+          "rect": [
+            171,
+            109,
+            15,
+            42
+          ],
+          "rotate": 90,
+          "offset": [
+            25,
+            6
+          ],
+          "size": [
+            292,
+            31
+          ]
+        },
+        "label4": {
+          "rect": [
+            0,
+            75,
+            232,
+            17
+          ],
+          "rotate": 0,
+          "offset": [
+            24,
+            7
+          ],
+          "size": [
+            292,
+            31
+          ]
+        },
+        "label5": {
+          "rect": [
+            414,
+            114,
+            15,
+            36
+          ],
+          "rotate": 90,
+          "offset": [
+            24,
+            6
+          ],
+          "size": [
+            292,
+            31
+          ]
+        },
+        "label6": {
+          "rect": [
+            0,
+            109,
+            171,
+            15
+          ],
+          "rotate": 0,
+          "offset": [
+            24,
+            6
+          ],
+          "size": [
+            292,
+            31
+          ]
+        },
+        "label7": {
+          "rect": [
+            363,
+            75,
+            15,
+            59
+          ],
+          "rotate": 90,
+          "offset": [
+            26,
+            6
+          ],
+          "size": [
+            292,
+            31
+          ]
+        },
+        "label8": {
+          "rect": [
+            232,
+            107,
+            117,
+            15
+          ],
+          "rotate": 0,
+          "offset": [
+            25,
+            6
+          ],
+          "size": [
+            292,
+            31
+          ]
+        },
+        "label9": {
+          "rect": [
+            232,
+            75,
+            120,
+            17
+          ],
+          "rotate": 0,
+          "offset": [
+            22,
+            6
+          ],
+          "size": [
+            593,
+            31
           ]
         }
       }

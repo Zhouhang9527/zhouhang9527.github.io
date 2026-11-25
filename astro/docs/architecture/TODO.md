@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 SYS-01/02/05、DATA-01/02：通过 Git Blob SHA 完整读取 1.5MB 00000757 英文 SOUND PBD（contents API 无内容），00000758 PNG IHDR 实测 433×153 RGBA8，新增 14 个原作标题/标签/短滑轨逻辑切片并通过边界检查。全部七页标题完成源定位，记录七个音量通道与十个角色通道精确矩形；仅把已存在真实 BGM 功能接入 SOUND 标题、标签和短 rail，其他音源/角色控制不伪造，保持另一 Agent 所有权。audit:original 扩展完整 SYSTEM 源校验。990b3b0 的 VN CI 已 typecheck/build（包括合成全量私有图集单测）成功，浏览器仍在执行；新提交未验收。
+
 2026-11-25 BASE-08/DATA-02：为 title/UI/map/font 私有服务共用 loopback + Host + Origin/Sec-Fetch-Site 防重绑定校验、GET/HEAD、严格路径/真实 symlink containment、单段 HTTP Range 206/416、no-store/CORP/nosniff。新增纯合成 PNG 尺寸 fixture，对全部原作配置逻辑切片的中间件生成、尺寸及私有路由访问做构建单测，不需要分发真实素材。看板娘服务由另一 Agent 负责，未改动；完整私有浏览器/像素验收与新 CI 未确认。
 
 2026-11-25 SAVE-02/03/05/06：从文章进入 LOAD 或 SAVE 均保留真实位置快照，LOAD/SAVE/Q.LOAD 使用同一存档窗口的独立模式，可切换而不丢调用上下文；标题 LOAD 禁用 SAVE，返回真实调用文章，离开窗口清理 draft，跨标签页变更时拒绝读取旧记录。PBD 原始 SAVE/LOAD/Q.LOAD 三个标签与 TITLE/BACK/EXIT footer 使用现有逻辑 sprite 及桌面坐标，博客最近/收藏/已读单独排列，VOICE 预留另一 Agent。新增真实浏览器模式切换、文章返回、标题 SAVE 禁用断言；最新 CI 未确认。
