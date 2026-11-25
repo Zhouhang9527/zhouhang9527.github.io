@@ -12,7 +12,7 @@
     "check:reading": "node --experimental-strip-types --test tools/reading-state.test.mjs",
     "check:vn-browser": "node tools/vn-smoke.mjs",
     "dev:original": "node tools/private-preview.mjs",
-    "check:atlas": "node --test tools/png-atlas.test.mjs",
+    "check:atlas": "node --test tools/png-atlas.test.mjs tools/native-storage.test.mjs",
     "check:mascot": "node --test tools/local-mascot.test.mjs",
     "check:pbd": "node --test tools/pbd-ui.test.mjs",
     "check:controls": "node --experimental-strip-types --test tools/vn-control.test.mjs",

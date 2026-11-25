@@ -46,17 +46,20 @@
       "data-003": {
         "width": 1280,
         "height": 720,
-        "source": "_hxv4_hash/35CAB850E76B65EF/000001ef_5CEF34C283E9BF5C9F075DA9083AA1EFC326C6106109F56A0A92206BE10D0CAD.png"
+        "source": "_hxv4_hash/35CAB850E76B65EF/000001ef_5CEF34C283E9BF5C9F075DA9083AA1EFC326C6106109F56A0A92206BE10D0CAD.png",
+        "nativeStorage": "title_base.png"
       },
       "data-004": {
         "width": 1280,
         "height": 720,
-        "source": "_hxv4_hash/35CAB850E76B65EF/000001f0_5FD9A7BD088F9D5526AE32DC3FAC821082A892A23E7E80448DF4DA9A85E3CD7B.png"
+        "source": "_hxv4_hash/35CAB850E76B65EF/000001f0_5FD9A7BD088F9D5526AE32DC3FAC821082A892A23E7E80448DF4DA9A85E3CD7B.png",
+        "nativeStorage": "title_base2.png"
       },
       "data-005": {
         "width": 1280,
         "height": 720,
-        "source": "_hxv4_hash/35CAB850E76B65EF/000001f1_21C8C4A6F235A7C30E2EAF1DB3542C9A10391ADFCDBA6ABD27EBD373D1DA0BE4.png"
+        "source": "_hxv4_hash/35CAB850E76B65EF/000001f1_21C8C4A6F235A7C30E2EAF1DB3542C9A10391ADFCDBA6ABD27EBD373D1DA0BE4.png",
+        "nativeStorage": "title_base3.png"
       }
     },
     "logo": {
@@ -85,10 +88,11 @@
     "notice": "Visually identified from private visual-index/data-03.jpg. EXTRA base is a candidate; exact menu assignment and transition timings are unverified.",
     "assets": {
       "extra": {
-        "id": "data-101",
-        "source": "_hxv4_hash/AF5FB0494CCF915F/000007c4_44CBE58B79EC96B0DEF8DEA7365C190E45E53E7F165339B7C2D1FE912C47BA72.png",
+        "id": "extra-bg0",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/0000078e_42963A1B7B90F02C8E20AF6EA1D263728A619B2BFF07E39D3A7BFA9A201F507C.png",
         "width": 1280,
-        "height": 720
+        "height": 720,
+        "nativeStorage": "extra__bg0.tlg"
       },
       "wipe": {
         "id": "data-021",
@@ -100,25 +104,29 @@
         "id": "data-099",
         "source": "_hxv4_hash/AF5FB0494CCF915F/0000077c_C4053C1D516A1D4E07394AB94FE866B2A94DD5BCF233E68704FD68AB2940972B.png",
         "width": 1280,
-        "height": 720
+        "height": 720,
+        "nativeStorage": "config__bg0.tlg"
       },
       "optionAtlas": {
         "id": "option-atlas",
         "source": "_hxv4_hash/AF5FB0494CCF915F/0000077d_EC1B1D66186B2D359BBB063B1719B80F64B5CC5767396684487B8147B1CC0E37.png",
         "width": 593,
-        "height": 158
+        "height": 158,
+        "nativeStorage": "config__pack.tlg"
       },
       "titleMenu": {
         "id": "titleMenu",
         "source": "_hxv4_hash/AF5FB0494CCF915F/000007ce_6F59B13FB9F6CEDE487C582B44BBB88DC974F0C5C4940C0602F04BBA0C332868.png",
         "width": 223,
-        "height": 245
+        "height": 245,
+        "nativeStorage": "title__pack.tlg"
       },
       "choice": {
         "id": "choice",
         "source": "_hxv4_hash/AF5FB0494CCF915F/000007ca_2363C81F522930591EA437D04CEF12920B8125DA911DB61FE8CC036D59801F15.png",
         "width": 768,
-        "height": 261
+        "height": 261,
+        "nativeStorage": "select__pack.tlg"
       },
       "saveFrame": {
         "id": "saveFrame",
@@ -130,145 +138,170 @@
         "id": "backlogAtlas",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000738_A2FE5096AC95A853B18E4A2BDD8FBAAF6D2B65ECD7D0719D6069BEB3DCAFEC05.png",
         "width": 256,
-        "height": 580
+        "height": 580,
+        "nativeStorage": "backlog__pack.tlg"
       },
       "backlogBase": {
         "id": "backlogBase",
         "source": "_hxv4_hash/AF5FB0494CCF915F/000007b2_F9A5B8701F3C06129A2976318141998B763431894EC05D12A0AAA20AE67A162F.png",
         "width": 1280,
-        "height": 720
+        "height": 720,
+        "nativeStorage": "game_novel__bg0.tlg",
+        "notice": "Legacy unused alias: exact native hash identifies game_novel__bg0.tlg, not the BACKLOG background; use backlogDark for BACKLOG."
       },
       "loadBase": {
         "id": "loadBase",
         "source": "_hxv4_hash/AF5FB0494CCF915F/000007ac_6B4ED2C7AD8F454627FD3F14470F5C22AF339B7AC93DC063909650EAB9AD22CF.png",
         "width": 1280,
-        "height": 720
+        "height": 720,
+        "nativeStorage": "file__bg0.tlg"
       },
       "loadRows": {
         "id": "loadRows",
         "source": "_hxv4_hash/AF5FB0494CCF915F/000007ad_F0487075EAAA40A54EDF9EAE8053B888C8D820845593EB32E61D70D4DD68BDA3.png",
         "width": 730,
-        "height": 713
+        "height": 713,
+        "nativeStorage": "file__pack.tlg"
       },
       "loadLabels": {
         "id": "loadLabels",
         "source": "_hxv4_hash/AF5FB0494CCF915F/0000079d_C307AB59990992CBD77CE3723A2FF4F3D2E65FE761EE7C6272E973A12B9F2907.png",
         "width": 506,
-        "height": 539
+        "height": 539,
+        "nativeStorage": "file_en__pack.tlg"
       },
       "galleryLabels": {
         "id": "galleryLabels",
         "source": "_hxv4_hash/AF5FB0494CCF915F/0000078b_21896D0EA35199CD33430FA70B51444D494A5E44F5CE82698F9D476FBF7B3FD1.png",
         "width": 800,
-        "height": 1024
+        "height": 1024,
+        "nativeStorage": "extra_en__pack.tlg"
       },
       "galleryControls": {
         "id": "galleryControls",
         "source": "_hxv4_hash/AF5FB0494CCF915F/0000078f_7A7CC43367975FD81263BE003D04AEEE46A7EE00B890B0F0BBFE2DAFFE052990.png",
         "width": 347,
-        "height": 435
+        "height": 435,
+        "nativeStorage": "extra__pack.tlg"
       },
       "optionTabs": {
         "id": "optionTabs",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000779_AC77670650A9472944172EFB2C319A4D565488D36066229B7C2CD4B098572321.png",
         "width": 491,
-        "height": 504
+        "height": 504,
+        "nativeStorage": "config_en__pack.tlg"
       },
       "displayLabels": {
         "id": "displayLabels",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000741_21F495A0FEC290972586FC382A3552A3AAAB075F93251C121283195D419DC010.png",
         "width": 535,
-        "height": 233
+        "height": 233,
+        "nativeStorage": "config_1display_en__pack.tlg"
       },
       "programLabels": {
         "id": "programLabels",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000749_840AD6D8A5A6FCF18B285ACC1FB7D6C2CD1C6E03B765FA0267A12163CAC6BDBA.png",
         "width": 531,
-        "height": 197
+        "height": 197,
+        "nativeStorage": "config_2system_en__pack.tlg"
       },
       "dialogLabels": {
         "id": "dialogLabels",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000763_FCB4C2F6B876F79CA9884583809F66B0F28714C8EE0B6A2FC2967997DB229E5B.png",
         "width": 441,
-        "height": 245
+        "height": 245,
+        "nativeStorage": "config_5dialog_en__pack.tlg"
       },
       "touchLabels": {
         "id": "touchLabels",
         "source": "_hxv4_hash/AF5FB0494CCF915F/0000076a_90222176AA8F8900CA5D0ED935C00652F21A99B475362A4569F5A5A8BFF69FA2.png",
         "width": 430,
-        "height": 281
+        "height": 281,
+        "nativeStorage": "config_6touch_en__pack.tlg"
       },
       "shortcutLabels": {
         "id": "shortcutLabels",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000772_71B2C893A1B6C13CA083F6DAFE2A5993A05A1A8EB67A957A599D1B1089169B6E.png",
         "width": 415,
-        "height": 274
+        "height": 274,
+        "nativeStorage": "config_7shortcut_en__pack.tlg"
       },
       "readerControls": {
         "id": "readerControls",
         "source": "_hxv4_hash/AF5FB0494CCF915F/000007b9_9B5B6E65688EB54BCC0F8FD138ABB68DB21EB9C136F6632B31D791E903B03C47.png",
         "width": 684,
-        "height": 634
+        "height": 634,
+        "nativeStorage": "game_qmenu__pack.tlg"
       },
       "backlogButtons": {
         "id": "backlogButtons",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000734_545E7C6A32137925FC6E12EB2BD18A3D7FBC9A5C7A0B9CF4F4806AE350AD7F42.png",
         "width": 287,
-        "height": 304
+        "height": 304,
+        "nativeStorage": "backlog_en__pack.tlg"
       },
       "backlogDark": {
         "id": "backlogDark",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000737_CB209C39B0245875A7D31D1AF7E269C50127E357C3DDA21873F95721CE9EA0F6.png",
         "width": 1280,
-        "height": 720
+        "height": 720,
+        "nativeStorage": "backlog__bg0.tlg"
       },
       "textLabels": {
         "id": "textLabels",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000750_737214E5488A1E8CE7C737E73AE750581DF63272B741CCDCE01761347F03988D.png",
         "width": 301,
-        "height": 344
+        "height": 344,
+        "nativeStorage": "config_3text_en__pack.tlg"
       },
       "gameParts": {
         "id": "gameParts",
         "source": "_hxv4_hash/AF5FB0494CCF915F/000007b4_946A8B29A8509668E2CE95D0AFA460FF3496572C3DC9DE4DB2401D4E1584F8F6.png",
         "width": 624,
-        "height": 300
+        "height": 300,
+        "nativeStorage": "game_parts__pack.tlg"
       },
       "quickBase": {
         "id": "quickBase",
         "source": "_hxv4_hash/AF5FB0494CCF915F/000007b8_74E4AD437BB44B61A818AE9EA3AB50F9E1EC3D664615E682F9129567B5CE3C39.png",
         "width": 315,
-        "height": 720
+        "height": 720,
+        "nativeStorage": "game_qmenu__bg0.tlg"
       },
       "gameWindow": {
         "id": "gameWindow",
         "source": "_hxv4_hash/AF5FB0494CCF915F/000007bc_E6CD197470008AE1CF56C5F5FFA410DA4A469FF805EB333DB80BBD0F39EA4532.png",
         "width": 617,
-        "height": 71
+        "height": 71,
+        "nativeStorage": "game_window__pack.tlg"
       },
       "gameBase": {
         "id": "gameBase",
         "source": "_hxv4_hash/AF5FB0494CCF915F/000007bb_8A3989B4E2E98FA14F801B429AC25E7C33C5B484FEA11ACFFF83739B501F8184.png",
         "width": 1280,
-        "height": 201
+        "height": 201,
+        "nativeStorage": "game_window__bg0.tlg"
       },
       "confirmBase": {
         "id": "confirmBase",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000785_60AE30954CDA9D5E3527CD113DF62A6A8C05A7BF6243AA5CAEDF7D4F67C1E5E9.png",
         "width": 620,
-        "height": 388
+        "height": 388,
+        "nativeStorage": "dialog__bg0.tlg"
       },
       "confirmButtons": {
         "id": "confirmButtons",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000786_54A41A8160FD4E5128BE7301877937BE7347199B516B96EE54099C5102313512.png",
         "width": 143,
-        "height": 128
+        "height": 128,
+        "nativeStorage": "dialog__pack.tlg"
       },
       "soundLabels": {
         "id": "soundLabels",
         "source": "_hxv4_hash/AF5FB0494CCF915F/00000758_9966696462B1C23B00D6CC4AE8F529CFB33756AD9B685C8F3135C0286F128E43.png",
         "width": 433,
-        "height": 153
+        "height": 153,
+        "nativeStorage": "config_4sound_en__pack.tlg"
       }
     },
     "optionGeometry": {
@@ -1302,16 +1335,16 @@
           546,
           0,
           254,
-          49
+          48
         ],
         "back": [
           231,
           0,
           105,
-          105
+          76
         ],
         "backHover": [
-          336,
+          441,
           0,
           105,
           76
@@ -1321,8 +1354,8 @@
         "focus": [
           0,
           0,
-          230,
-          128
+          231,
+          129
         ]
       },
       "optionTabs": {
@@ -6088,6 +6121,435 @@
             31
           ]
         }
+      },
+      "galleryLabels": {
+        "heading": {
+          "rect": [
+            546,
+            0,
+            254,
+            48
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            254,
+            48
+          ]
+        },
+        "back-normal": {
+          "rect": [
+            231,
+            0,
+            105,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        },
+        "back-pressed": {
+          "rect": [
+            336,
+            0,
+            105,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        },
+        "back-hover": {
+          "rect": [
+            441,
+            0,
+            105,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        },
+        "item-disabled": {
+          "rect": [
+            0,
+            0,
+            231,
+            129
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            231,
+            129
+          ]
+        }
+      },
+      "galleryControls": {
+        "item-hover": {
+          "rect": [
+            0,
+            0,
+            231,
+            129
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            231,
+            129
+          ]
+        },
+        "item-thumb": {
+          "rect": [
+            0,
+            129,
+            230,
+            129
+          ],
+          "rotate": 0,
+          "offset": [
+            1,
+            0
+          ],
+          "size": [
+            231,
+            129
+          ]
+        },
+        "page0-normal": {
+          "rect": [
+            288,
+            0,
+            57,
+            57
+          ],
+          "rotate": 0,
+          "offset": [
+            2,
+            1
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page0-selected": {
+          "rect": [
+            181,
+            347,
+            60,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page0-hover": {
+          "rect": [
+            121,
+            347,
+            60,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page1-normal": {
+          "rect": [
+            288,
+            57,
+            57,
+            57
+          ],
+          "rotate": 0,
+          "offset": [
+            2,
+            1
+          ],
+          "size": [
+            61,
+            60
+          ]
+        },
+        "page1-selected": {
+          "rect": [
+            0,
+            347,
+            61,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            61,
+            60
+          ]
+        },
+        "page1-hover": {
+          "rect": [
+            0,
+            287,
+            61,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            61,
+            60
+          ]
+        },
+        "page2-normal": {
+          "rect": [
+            231,
+            0,
+            57,
+            57
+          ],
+          "rotate": 0,
+          "offset": [
+            1,
+            1
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page2-selected": {
+          "rect": [
+            121,
+            287,
+            60,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page2-hover": {
+          "rect": [
+            61,
+            347,
+            60,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page3-normal": {
+          "rect": [
+            231,
+            57,
+            57,
+            57
+          ],
+          "rotate": 0,
+          "offset": [
+            1,
+            1
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page3-selected": {
+          "rect": [
+            61,
+            287,
+            60,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page3-hover": {
+          "rect": [
+            230,
+            189,
+            60,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page4-normal": {
+          "rect": [
+            290,
+            129,
+            57,
+            58
+          ],
+          "rotate": 90,
+          "offset": [
+            1,
+            1
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page4-selected": {
+          "rect": [
+            230,
+            129,
+            60,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page4-hover": {
+          "rect": [
+            241,
+            347,
+            60,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page5-normal": {
+          "rect": [
+            290,
+            189,
+            57,
+            58
+          ],
+          "rotate": 90,
+          "offset": [
+            1,
+            1
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page5-selected": {
+          "rect": [
+            241,
+            287,
+            60,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            60,
+            60
+          ]
+        },
+        "page5-hover": {
+          "rect": [
+            181,
+            287,
+            60,
+            60
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            60,
+            60
+          ]
+        }
       }
     },
     "gameControls": {
@@ -6300,6 +6762,126 @@
           86
         ]
       }
+    },
+    "galleryGeometry": {
+      "source": "assets/data/_hxv4_hash/AF5FB0494CCF915F/0000078a_BD771EB3BAE212994B04EF092BFD5166280AED4A78A72A11B52ADD137069ED58.pbd.json",
+      "canvas": [
+        1280,
+        720
+      ],
+      "heading": [
+        34,
+        142,
+        254,
+        48
+      ],
+      "back": [
+        1162,
+        644,
+        105,
+        76
+      ],
+      "items": [
+        [
+          32,
+          195,
+          231,
+          129
+        ],
+        [
+          290,
+          195,
+          231,
+          129
+        ],
+        [
+          548,
+          195,
+          231,
+          129
+        ],
+        [
+          32,
+          347,
+          231,
+          129
+        ],
+        [
+          290,
+          347,
+          231,
+          129
+        ],
+        [
+          548,
+          347,
+          231,
+          129
+        ],
+        [
+          31,
+          498,
+          231,
+          129
+        ],
+        [
+          289,
+          498,
+          231,
+          129
+        ],
+        [
+          548,
+          498,
+          231,
+          129
+        ]
+      ],
+      "pages": [
+        [
+          432,
+          136,
+          60,
+          60
+        ],
+        [
+          488,
+          136,
+          61,
+          60
+        ],
+        [
+          545,
+          136,
+          60,
+          60
+        ],
+        [
+          601,
+          136,
+          60,
+          60
+        ],
+        [
+          657,
+          136,
+          60,
+          60
+        ],
+        [
+          713,
+          136,
+          60,
+          60
+        ]
+      ],
+      "originalMusicArea": [
+        832,
+        148,
+        432,
+        473
+      ],
+      "note": "Only blog's three existing public scene previews are shown; no invented original CG records. Original right music region is adapted to blog navigation, sound stays in SYSTEM."
     }
   },
   "map": {

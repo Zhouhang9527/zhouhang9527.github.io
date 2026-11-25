@@ -3,7 +3,7 @@ import {vnScenes,sceneVars} from '../../lib/vn-scenes';
 interface Props {heading:string; label:string; kind:string}
 const {heading,label,kind}=Astro.props;
 const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA&&['gallery','load'].includes(kind);
-const style=sceneVars(vnScenes.chapter.slug,vnScenes.chapter.focal)+(original?';--vn-extra-art:url(/__ginka_local_ui__/extra.png)':'')+(original&&kind==='gallery'?';--vn-gallery-heading:url(/__ginka_local_ui__/galleryLabels-heading.png);--vn-gallery-back:url(/__ginka_local_ui__/galleryLabels-back.png);--vn-gallery-back-hover:url(/__ginka_local_ui__/galleryLabels-backHover.png);--vn-gallery-focus:url(/__ginka_local_ui__/galleryControls-focus.png)':'');
+const style=sceneVars(vnScenes.chapter.slug,vnScenes.chapter.focal)+(original?';--vn-extra-art:url(/__ginka_local_ui__/extra.png)':'')+(original&&kind==='gallery'?';--vn-gallery-heading:url(/__ginka_local_ui__/galleryLabels-heading.png);--vn-gallery-back:url(/__ginka_local_ui__/galleryLabels-back-normal.png);--vn-gallery-back-hover:url(/__ginka_local_ui__/galleryLabels-back-hover.png);--vn-gallery-back-pressed:url(/__ginka_local_ui__/galleryLabels-back-pressed.png);--vn-gallery-focus:url(/__ginka_local_ui__/galleryControls-item-hover.png)':'');
 ---
 <section class="vn-stage vn-panel" data-vn-screen={kind} aria-labelledby="vn-panel-heading" data-vn-ui-original={String(original)} style={style}>
  <div class="vn-panel-inner">

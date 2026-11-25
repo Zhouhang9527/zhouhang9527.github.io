@@ -162,3 +162,8 @@ npm run check:vn-browser
 - 990b3b0 VN CI 45538129205 全绿，BASE-01 实际完成；截图 artifact 14987971426。公共 390/1440、正常动效、无 JS 均通过。
 - bf40991 SOUND 英文标题和 14 个逻辑切片已定位；本轮新增独立 synthetic original UI browser fixture，验证 PBD geometry 与可操作性，关闭私有预览 dev toolbar；新 CI 尚未执行。不是原作像素验收。
 - 下一步：查看 fixture 真实坐标误差和全站 Review 结果、按证据修复；不修改看板娘专线。
+
+### 公共 UI 验收 / EXTRA 来源（2026-11-25）
+- SYSTEM 8 份原作 PBD / 345 项数据精确匹配；synthetic Chromium 390 通过，1440 48/52，四 DISPLAY 按钮仅 y+31（legend 高度）。已改 CSS，待最新 CI；旧报告 artifact 14987509100。
+- HXV4 BLAKE2s-256(UTF-16LE(lowercase filename + xp3hnp)) 定位 32 个原始文件，EXTRA 纠正为 0000078e，旧 000007c4 实际 INFORMATION。新增原名 hash 单测；backlogBase 是未用 game_novel__bg0 别名，BACKLOG 仍使用已确认 backlogDark。EXTRA 0000078a 原始位置与图集，现有三张博客图填前三槽，右侧适配导航，未公开原作图/未发明 CG。
+- 下一步看新 CI 几何结果、实际素材像素验收，保持看板娘专线不变。

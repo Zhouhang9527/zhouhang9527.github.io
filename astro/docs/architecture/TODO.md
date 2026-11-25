@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 SYSTEM 源复核：私有 a3cce50，实际读取 8 份 PBD，345 项 source/rect/rotation/offset/canvas 比较 0 失败。原作 synthetic Chromium 首测 [45538827205](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45538827205)：390 通过、1440 的 52 项 geometry 中 48 通过，DISPLAY 四按钮偏下 31px（fieldset legend 高度）；已修正实际位置，未放宽 2px 容差。EXTRA 的背景按 HXV4 原名由误用 INFORMATION 000007c4 修正为 extra__bg0.tlg / 0000078e，真实 1280×720 RGBA8；0000078a 英文 PBD 提供原生九槽、六页码、标题、BACK 三态，现有三张博客场景使用准确槽位，右侧音乐区保留博客导航（音乐继续 SOUND），无虚构 CG。增加 32 个原名哈希校验和 EXTRA 五项 browser geometry；新 CI 未验收。
+
 2026-11-25 DATA-04/05、CHAR-01/02/05/06/07/09/10/12：私有 e6891e3 实证 543/543 图层名匹配；5992c46 初版 8 句真实语音/6 姿势，a3cce50 扩至 20 句/18 姿势/10 套服装（大小银花），实际私有 PNG 合成与 ffmpeg 完整解码步骤均成功，真实 Chromium 未完成；公开 VN CI 45538401647 typecheck/build/独立 mascot 390/1440/全站 browser 均成功。角色服装 ID 独立及显示标签接入，真实素材默认本地可用，尚未勾选完整覆盖或原作像素验收。
 
 2026-11-25 BASE-01：990b3b0 的 [真实 VN CI](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45538129205) 全部成功，Node 22 typecheck/build/62 旧 URL、独立 mascot fixture、390/1440 公共浏览器、正常标题转场、无 JS 全过，公共页面错误和私有误请求均为零，截图 artifact 14987971426。BASE-02 新增不含原作像素的独立 Chromium 原作 UI fixture，检查 SYSTEM 七页、DISPLAY/页签/footer、LOAD 十槽和 15 页真实 PBD 坐标与操作，CI 尚未执行；不等同真实素材视觉验收。
