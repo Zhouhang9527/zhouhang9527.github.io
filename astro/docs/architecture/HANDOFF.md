@@ -137,3 +137,7 @@ npm run check:vn-browser
 ### 公共 UI 接续（2026-11-25）
 - 基线 5917525，保留另一 Agent 的看板娘修复。SYS-07/BASE-02/04：0000023a.tjs reset() 实证 Shift 全部、普通当前页；公共 DISPLAY/TEXT/BGM reset 范围及确认、BACK 返回调用来源，保留角色语音所有权。修复 smoke 显式 reload 后使用失效音频 JSHandle，新增阅读模式明确回到标题入口。公共浏览器测试不因独立 mascot fixture 失败跳过，但整体 job 仍保留失败。66b64fd typecheck/build/Chromium 已过，mascot fixture 失败导致公共 smoke 跳过；新 CI 未验证。
 - 继续 SYSTEM 原作页签、标题、footer、滑块状态和实际 CI；私有素材 b71280b。不改角色模块，不发布。
+
+### 公共 UI 接续（2026-11-25）
+- 基线 52b24e3。SYS-01/02/03/04、ENGINE-01：从私有 b71280b 的 7 份实际 PBD 提取 60 个逻辑切片，全部通过源 atlas 尺寸边界检查。00000778 七页签和四 footer 精确 geometry/state，00000740 DISPLAY 窗口/全屏及效果 ON/OFF 两对原作叠层和矩形，0000074f 共用滑块 rail/thumb 与旋转 TEXT wordmark，其他六页标题精确偏移。桌面原作模式应用页签、footer、标题、DISPLAY 两组坐标，移动端保留触屏流式布局；SOUND 大 PBD 无法完整读取，标题暂保留文字，博客适配功能不伪造原作状态。原作像素、私有浏览器和最新 CI 未验收。
+- 下一步：实际 CI，原作 LOAD 的坐标与返回语义、SOUND 大文件提取，私有预览隔离；不改看板娘，不发布。

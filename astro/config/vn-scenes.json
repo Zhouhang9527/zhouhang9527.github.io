@@ -282,30 +282,191 @@
       "atlas": {
         "caption": [
           0,
-          0,
-          590,
+          31,
+          437,
+          31
+        ],
+        "buttonNormal": [
+          305,
+          91,
+          117,
+          29
+        ],
+        "buttonSelected": [
+          305,
+          120,
+          116,
           28
         ],
         "buttonHover": [
-          304,
+          305,
           62,
           117,
-          28
-        ],
-        "buttonNormal": [
-          304,
-          91,
-          117,
-          28
-        ],
-        "buttonSelected": [
-          304,
-          120,
-          117,
-          28
+          29
         ]
       },
-      "notice": "Background and atlas visually identified from original PNGs. Control rectangles measured from image; web settings group geometry is adapted."
+      "notice": "PBD 00000778 exact tab/footer geometry and states; 00000740 DISPLAY two mapped pairs and generic button art; 0000074f generic slider rail/thumb and TEXT wordmark. Six English page wordmarks verified. SOUND full PBD exceeds connector fetch limit. Blog-only settings remain adapted.",
+      "source": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000778_30B18572939CDFA6F229339D8D66339E3A3E9DFB68E2AD5A0D15A5DEBA051CAC.pbd.json",
+      "languageSources": {
+        "base": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000778_30B18572939CDFA6F229339D8D66339E3A3E9DFB68E2AD5A0D15A5DEBA051CAC.pbd.json",
+        "display": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000740_85FD75F04699C2F9E7DD7939E7A3FE14165515BD93566DA01FAF9B5B62669131.pbd.json",
+        "program": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000748_68EAF2037A3E01DE4171C3AE53975B9ABFE747794DF96C25687D8BB190F72426.pbd.json",
+        "text": "assets/data/_hxv4_hash/AF5FB0494CCF915F/0000074f_375972C4CE4E89D4D7B36FB009735D27DDEABA1A50FF374B068AF09B154FB6C9.pbd.json",
+        "dialog": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000762_BD4CE4A6DE0D8455F232D925005E1BFD8F7881CF56A00FCFFAE06AEACC64ACEA.pbd.json",
+        "touch": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000769_CD2C398EEE770845E5EE9C7F0B363A888109078478286D3A41DCCD93E04F32DB.pbd.json",
+        "shortcut": "assets/data/_hxv4_hash/AF5FB0494CCF915F/00000771_0B6851F1AB188C24932B2A0EB0264C12B26326CC0343977AC1B057F6FEDD9233.pbd.json"
+      },
+      "helpText": [
+        756,
+        32,
+        510,
+        79
+      ],
+      "footerTop": 644,
+      "controls": {
+        "display": [
+          71,
+          111,
+          162,
+          40
+        ],
+        "program": [
+          233,
+          111,
+          162,
+          40
+        ],
+        "text": [
+          395,
+          111,
+          162,
+          40
+        ],
+        "sound": [
+          557,
+          111,
+          162,
+          40
+        ],
+        "dialog": [
+          719,
+          111,
+          162,
+          40
+        ],
+        "touch": [
+          881,
+          111,
+          162,
+          40
+        ],
+        "shortcut": [
+          1043,
+          111,
+          167,
+          40
+        ],
+        "back": [
+          928,
+          644,
+          106,
+          76
+        ],
+        "title": [
+          812,
+          644,
+          105,
+          76
+        ],
+        "defaults": [
+          1045,
+          644,
+          106,
+          76
+        ],
+        "exit": [
+          1162,
+          644,
+          105,
+          76
+        ]
+      },
+      "headings": {
+        "display": [
+          1,
+          0,
+          535,
+          74
+        ],
+        "program": [
+          2,
+          0,
+          531,
+          74
+        ],
+        "text": [
+          0,
+          1,
+          344,
+          75
+        ],
+        "dialog": [
+          2,
+          0,
+          441,
+          75
+        ],
+        "touch": [
+          0,
+          0,
+          430,
+          77
+        ],
+        "shortcut": [
+          -2,
+          0,
+          415,
+          63
+        ]
+      },
+      "display": {
+        "window": [
+          144,
+          216,
+          117,
+          29
+        ],
+        "fullscreen": [
+          393,
+          216,
+          117,
+          29
+        ],
+        "effectOn": [
+          144,
+          462,
+          117,
+          29
+        ],
+        "effectOff": [
+          393,
+          462,
+          117,
+          29
+        ],
+        "windowLabel": [
+          108,
+          168,
+          437,
+          31
+        ],
+        "effectLabel": [
+          108,
+          415,
+          437,
+          31
+        ]
+      }
     },
     "titleMenu": {
       "notice": "Coordinates and three state slices from original title PBD. Web routing and unlock rules are adapted.",
@@ -4455,6 +4616,1042 @@
           "size": [
             60,
             54
+          ]
+        }
+      },
+      "optionTabs": {
+        "nav-display-normal": {
+          "rect": [
+            0,
+            200,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-display-selected": {
+          "rect": [
+            0,
+            240,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-display-hover": {
+          "rect": [
+            329,
+            40,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-program-normal": {
+          "rect": [
+            0,
+            80,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-program-selected": {
+          "rect": [
+            162,
+            120,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-program-hover": {
+          "rect": [
+            324,
+            120,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-text-normal": {
+          "rect": [
+            0,
+            160,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-text-selected": {
+          "rect": [
+            167,
+            40,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-text-hover": {
+          "rect": [
+            0,
+            120,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-sound-normal": {
+          "rect": [
+            324,
+            80,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-sound-selected": {
+          "rect": [
+            162,
+            80,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-sound-hover": {
+          "rect": [
+            0,
+            280,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-dialog-normal": {
+          "rect": [
+            0,
+            320,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-dialog-selected": {
+          "rect": [
+            0,
+            360,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-dialog-hover": {
+          "rect": [
+            0,
+            400,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-touch-normal": {
+          "rect": [
+            0,
+            440,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-touch-selected": {
+          "rect": [
+            162,
+            160,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-touch-hover": {
+          "rect": [
+            324,
+            160,
+            162,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            162,
+            40
+          ]
+        },
+        "nav-shortcut-normal": {
+          "rect": [
+            0,
+            0,
+            167,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            167,
+            40
+          ]
+        },
+        "nav-shortcut-selected": {
+          "rect": [
+            167,
+            0,
+            167,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            167,
+            40
+          ]
+        },
+        "nav-shortcut-hover": {
+          "rect": [
+            0,
+            40,
+            167,
+            40
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            167,
+            40
+          ]
+        },
+        "footer-back-normal": {
+          "rect": [
+            268,
+            200,
+            106,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            106,
+            76
+          ]
+        },
+        "footer-back-pressed": {
+          "rect": [
+            374,
+            200,
+            106,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            106,
+            76
+          ]
+        },
+        "footer-back-hover": {
+          "rect": [
+            162,
+            276,
+            106,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            106,
+            76
+          ]
+        },
+        "footer-title-normal": {
+          "rect": [
+            268,
+            428,
+            105,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        },
+        "footer-title-pressed": {
+          "rect": [
+            373,
+            352,
+            105,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        },
+        "footer-title-hover": {
+          "rect": [
+            373,
+            428,
+            105,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        },
+        "footer-defaults-normal": {
+          "rect": [
+            162,
+            352,
+            106,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            106,
+            76
+          ]
+        },
+        "footer-defaults-pressed": {
+          "rect": [
+            162,
+            428,
+            106,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            106,
+            76
+          ]
+        },
+        "footer-defaults-hover": {
+          "rect": [
+            162,
+            200,
+            106,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            106,
+            76
+          ]
+        },
+        "footer-exit-normal": {
+          "rect": [
+            373,
+            276,
+            105,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        },
+        "footer-exit-pressed": {
+          "rect": [
+            268,
+            276,
+            105,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        },
+        "footer-exit-hover": {
+          "rect": [
+            268,
+            352,
+            105,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        }
+      },
+      "displayLabels": {
+        "wordmark": {
+          "rect": [
+            0,
+            0,
+            535,
+            74
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            535,
+            74
+          ]
+        },
+        "control-window-normal": {
+          "rect": [
+            166,
+            128,
+            27,
+            93
+          ],
+          "rotate": 90,
+          "offset": [
+            13,
+            1
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "control-window-selected": {
+          "rect": [
+            249,
+            146,
+            14,
+            79
+          ],
+          "rotate": 90,
+          "offset": [
+            20,
+            7
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "control-window-hover": {
+          "rect": [
+            474,
+            134,
+            15,
+            80
+          ],
+          "rotate": 90,
+          "offset": [
+            20,
+            7
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "control-fullscreen-normal": {
+          "rect": [
+            193,
+            146,
+            27,
+            87
+          ],
+          "rotate": 90,
+          "offset": [
+            15,
+            1
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "control-fullscreen-selected": {
+          "rect": [
+            0,
+            216,
+            73,
+            13
+          ],
+          "rotate": 0,
+          "offset": [
+            22,
+            8
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "control-fullscreen-hover": {
+          "rect": [
+            0,
+            186,
+            74,
+            14
+          ],
+          "rotate": 0,
+          "offset": [
+            22,
+            8
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "control-effectOn-normal": {
+          "rect": [
+            74,
+            186,
+            26,
+            36
+          ],
+          "rotate": 90,
+          "offset": [
+            38,
+            2
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "control-effectOn-selected": {
+          "rect": [
+            263,
+            211,
+            12,
+            22
+          ],
+          "rotate": 90,
+          "offset": [
+            45,
+            9
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "control-effectOn-hover": {
+          "rect": [
+            330,
+            157,
+            13,
+            23
+          ],
+          "rotate": 90,
+          "offset": [
+            45,
+            9
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "control-effectOff-normal": {
+          "rect": [
+            489,
+            177,
+            26,
+            43
+          ],
+          "rotate": 90,
+          "offset": [
+            37,
+            2
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "control-effectOff-selected": {
+          "rect": [
+            396,
+            203,
+            12,
+            30
+          ],
+          "rotate": 90,
+          "offset": [
+            44,
+            9
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "control-effectOff-hover": {
+          "rect": [
+            327,
+            201,
+            13,
+            31
+          ],
+          "rotate": 90,
+          "offset": [
+            44,
+            9
+          ],
+          "size": [
+            117,
+            29
+          ]
+        }
+      },
+      "programLabels": {
+        "wordmark": {
+          "rect": [
+            0,
+            0,
+            531,
+            74
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            531,
+            74
+          ]
+        }
+      },
+      "textLabels": {
+        "wordmark": {
+          "rect": [
+            0,
+            0,
+            75,
+            344
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            344,
+            75
+          ]
+        }
+      },
+      "dialogLabels": {
+        "wordmark": {
+          "rect": [
+            0,
+            0,
+            441,
+            75
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            441,
+            75
+          ]
+        }
+      },
+      "touchLabels": {
+        "wordmark": {
+          "rect": [
+            0,
+            0,
+            430,
+            77
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            430,
+            77
+          ]
+        }
+      },
+      "shortcutLabels": {
+        "wordmark": {
+          "rect": [
+            0,
+            0,
+            415,
+            63
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            415,
+            63
+          ]
+        }
+      },
+      "optionAtlas": {
+        "button-normal": {
+          "rect": [
+            305,
+            91,
+            117,
+            29
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "button-selected": {
+          "rect": [
+            305,
+            120,
+            116,
+            28
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "button-hover": {
+          "rect": [
+            305,
+            62,
+            117,
+            29
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "caption": {
+          "rect": [
+            0,
+            31,
+            437,
+            31
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            437,
+            31
+          ]
+        },
+        "range-rail": {
+          "rect": [
+            0,
+            62,
+            305,
+            3
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            305,
+            3
+          ]
+        },
+        "range-railDisabled": {
+          "rect": [
+            0,
+            65,
+            305,
+            3
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            305,
+            3
+          ]
+        },
+        "range-thumb": {
+          "rect": [
+            558,
+            105,
+            16,
+            16
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            16,
+            16
+          ]
+        },
+        "range-thumbHover": {
+          "rect": [
+            574,
+            105,
+            16,
+            16
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            16,
+            16
+          ]
+        },
+        "range-thumbPressed": {
+          "rect": [
+            542,
+            105,
+            16,
+            16
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            16,
+            16
           ]
         }
       }

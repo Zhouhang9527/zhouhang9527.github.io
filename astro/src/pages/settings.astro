@@ -1,15 +1,23 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import {vnScenes} from '../lib/vn-scenes';
+import {rectStyle} from '../lib/vn-control';
 const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
 const privateAsset=(name:string)=>`url(/__ginka_local_ui__/${name}.png)`;
-const tabSkin=(key:string)=>original?['normal','selected','hover'].map(state=>`--vn-tab-${state}:${privateAsset('optionTabs-'+key+'-'+state)}`).join(';'):undefined;
-const footerSkin=(key:string)=>original?`--vn-footer-normal:${privateAsset('optionTabs-'+key)};--vn-footer-hover:${privateAsset('optionTabs-'+key+'Hover')}`:undefined;
-const headings=['display','program','dialog','touch','shortcut'];
-const headingSkin=original?headings.map(key=>`--vn-heading-${key}:${privateAsset(key+'Labels-heading')}`).join(';'):undefined;
+const geometry=vnScenes.privateUI.optionGeometry;
+const tabSkin=(key:string)=>original?['normal','selected','hover'].map(state=>`--vn-tab-${state}:${privateAsset('optionTabs-nav-'+key+'-'+state)}`).join(';'):undefined;
+const footerSkin=(key:'title'|'back'|'defaults')=>original?rectStyle(geometry.controls[key],[0,0,...geometry.canvas])+';'+['normal','hover','pressed'].map(state=>`--vn-footer-${state}:${privateAsset('optionTabs-footer-'+key+'-'+state)}`).join(';'):undefined;
+const headingSkin=original?Object.keys(geometry.headings).map(key=>`--vn-heading-${key}:${privateAsset(key+'Labels-wordmark')}`).join(';'):undefined;
+const displaySkin=(key:'window'|'fullscreen'|'effectOn'|'effectOff')=>original?['normal','selected','hover'].map(state=>`--vn-display-${state}:${privateAsset('displayLabels-control-'+key+'-'+state)}`).join(';'):undefined;
+const commonSkin=original?[
+ '--vn-option-art:'+privateAsset('option'),'--vn-option-atlas:'+privateAsset('optionAtlas'),'--vn-option-caption:'+privateAsset('optionAtlas-caption'),
+ ...['normal','selected','hover'].map(state=>'--vn-option-button-'+state+':'+privateAsset('optionAtlas-button-'+state)),
+ ...['rail','railDisabled','thumb','thumbHover','thumbPressed'].map(state=>'--vn-option-range-'+state+':'+privateAsset('optionAtlas-range-'+state))
+].join(';'):undefined;
 const tabs=[['display','DISPLAY'],['program','PROGRAM'],['text','TEXT'],['sound','SOUND'],['dialog','DIALOG'],['touch','TOUCH'],['shortcut','SHORTCUT']];
 ---
 <Layout title="系统设置" kind="home" noindex>
- <section class="vn-stage vn-option" data-vn-screen="config" data-vn-ui-original={String(original)} style={original?'--vn-option-art:url(/__ginka_local_ui__/option.png);--vn-option-atlas:url(/__ginka_local_ui__/optionAtlas.png)':undefined} aria-labelledby="vn-option-title">
+ <section class="vn-stage vn-option" data-vn-screen="config" data-vn-ui-original={String(original)} style={commonSkin} aria-labelledby="vn-option-title">
   <div class="vn-option-frame">
    <header class="vn-option-header vn-panel-header"><h1 id="vn-option-title" data-vn-heading-key="display" style={headingSkin}><span data-vn-option-heading>DISPLAY</span> <small>Setting</small></h1><aside class="vn-option-help" aria-label="设置说明"><span>HELP WINDOW</span><p data-vn-option-help>调整画面尺寸与表现方式</p></aside></header>
    <div data-vn-config hidden>
@@ -17,9 +25,9 @@ const tabs=[['display','DISPLAY'],['program','PROGRAM'],['text','TEXT'],['sound'
     <div class="vn-option-body">
      <section id="vn-option-display" role="tabpanel" aria-labelledby="vn-tab-display" data-vn-option-panel="display">
       <div class="vn-option-grid">
-       <fieldset><legend>画面尺寸</legend><div class="vn-option-buttons"><button type="button" data-vn-window="window" aria-pressed="true">窗口</button><button type="button" data-vn-window="full" aria-pressed="false">全屏</button></div></fieldset>
-       <fieldset><legend>画面效果</legend><div class="vn-option-buttons"><label><input type="radio" name="vn-motion" value="system"/> ON</label><label><input type="radio" name="vn-motion" value="reduced"/> OFF</label></div></fieldset>
-       <fieldset><legend>画面表现</legend><div class="vn-option-buttons"><label><input type="radio" name="vn-mode" value="game"/> 游戏</label><label><input type="radio" name="vn-mode" value="reader"/> 阅读</label></div></fieldset>
+       <fieldset data-vn-display-group="window"><legend>画面尺寸</legend><div class="vn-option-buttons"><button type="button" data-vn-display-control data-vn-window="window" aria-pressed="true" style={displaySkin('window')}>窗口</button><button type="button" data-vn-display-control data-vn-window="full" aria-pressed="false" style={displaySkin('fullscreen')}>全屏</button></div></fieldset>
+       <fieldset data-vn-display-group="effect"><legend>画面效果</legend><div class="vn-option-buttons"><label data-vn-display-control style={displaySkin('effectOn')}><input type="radio" name="vn-motion" value="system"/> ON</label><label data-vn-display-control style={displaySkin('effectOff')}><input type="radio" name="vn-motion" value="reduced"/> OFF</label></div></fieldset>
+       <fieldset data-vn-display-group="mode"><legend>画面表现</legend><div class="vn-option-buttons"><label><input type="radio" name="vn-mode" value="game"/> 游戏</label><label><input type="radio" name="vn-mode" value="reader"/> 阅读</label></div></fieldset>
       </div>
      </section>
      <section id="vn-option-program" role="tabpanel" aria-labelledby="vn-tab-program" data-vn-option-panel="program" hidden>

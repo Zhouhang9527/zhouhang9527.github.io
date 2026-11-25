@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 SYS-01/02/03/04、ENGINE-01：从私有 b71280b 的 7 份实际 PBD 提取 60 个逻辑切片，全部通过源 atlas 尺寸边界检查。00000778 七页签和四 footer 精确 geometry/state，00000740 DISPLAY 窗口/全屏及效果 ON/OFF 两对原作叠层和矩形，0000074f 共用滑块 rail/thumb 与旋转 TEXT wordmark，其他六页标题精确偏移。桌面原作模式应用页签、footer、标题、DISPLAY 两组坐标，移动端保留触屏流式布局；SOUND 大 PBD 无法完整读取，标题暂保留文字，博客适配功能不伪造原作状态。原作像素、私有浏览器和最新 CI 未验收。
+
 2026-11-25 SYS-07/BASE-02/04：0000023a.tjs reset() 实证 Shift 全部、普通当前页；公共 DISPLAY/TEXT/BGM reset 范围及确认、BACK 返回调用来源，保留角色语音所有权。修复 smoke 显式 reload 后使用失效音频 JSHandle，新增阅读模式明确回到标题入口。公共浏览器测试不因独立 mascot fixture 失败跳过，但整体 job 仍保留失败。66b64fd typecheck/build/Chromium 已过，mascot fixture 失败导致公共 smoke 跳过；新 CI 未验证。
 
 2026-11-25 CHAR-07/08/09/12：66b64fd 的 CI 45536688313 已通过 typecheck/build，真实 Chromium fixture 已走过 390px 稀疏 Canvas 像素、静默对白及测试音历史记录；V.SAVE 被 Astro dev toolbar 拦截。私有素材预览关闭 dev toolbar（不强制点击、不跳过断言），修复收起按钮测试选择器；新 CI 尚未完成。

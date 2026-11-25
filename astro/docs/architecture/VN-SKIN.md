@@ -104,3 +104,6 @@ VOICE art recorded but feature reserved for mascot agent; public fallback retain
 
 ### Original mascot raster layering (390eae6)
 Private character-rendering-analysis.md and validation.md establish .sinfo base/diff and facegroup/fgalias raster composition, AffineSourceStand/StandInfo and USE_EMOTE=0. v2 loader and canvas compositor accept explicit ordered local sparse layers and alternate eye/mouth parts; no guessed model or timing. Evidence-only manifest now degrades without crashing Vite. Verified text-only v2 lines can omit unmapped voice, but cannot be replayed/saved or added to voice history. No usable original pose pack yet; no actual original rendering verified. See MASCOT-PACK.md.
+
+### Original SYSTEM logical states
+SYS-01/02/03/04、ENGINE-01：从私有 b71280b 的 7 份实际 PBD 提取 60 个逻辑切片，全部通过源 atlas 尺寸边界检查。00000778 七页签和四 footer 精确 geometry/state，00000740 DISPLAY 窗口/全屏及效果 ON/OFF 两对原作叠层和矩形，0000074f 共用滑块 rail/thumb 与旋转 TEXT wordmark，其他六页标题精确偏移。桌面原作模式应用页签、footer、标题、DISPLAY 两组坐标，移动端保留触屏流式布局；SOUND 大 PBD 无法完整读取，标题暂保留文字，博客适配功能不伪造原作状态。原作像素、私有浏览器和最新 CI 未验收。
