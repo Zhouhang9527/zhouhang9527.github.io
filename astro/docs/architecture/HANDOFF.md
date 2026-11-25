@@ -1,7 +1,7 @@
 # GINKA VN — 跨会话开发接续
 
 更新：2026-11-25  
-本记录编写基线：`20eb48e44a666c5f186302bd9941918cbf81a35b`（不是最新 HEAD 的固定值，接手时必须重新获取）
+最近通过双 CI 的代码基线：`39740a9e636a1ba5a27d6327b198b67db1f7a7d8`（接手必须重新获取 HEAD；本轮最后一次为文档更新）
 
 ## 1. 新会话启动协议
 
@@ -9,7 +9,7 @@
 
 - 博客：`Zhouhang9527/zhouhang9527.github.io`
 - 唯一活动开发分支：`feature/ginka-vn`
-- 私有原作素材：`Zhouhang9527/ginka-xp3-assets`，分支 `main`，本次核实 HEAD `390eae6bf3a78ec21db695b2636c00ea2cb77971`
+- 私有原作素材：`Zhouhang9527/ginka-xp3-assets`，分支 `main`，本次核实 HEAD `b74501b87fed0a079213caf6b4507901a563f578`
 - 已上线 main 不动；根目录 Hexo/NexT 保留为回滚和共享文章来源
 - 接手前获取两个仓库当前 HEAD，读取根 AGENTS.md、astro/AGENTS.md、本文件、TODO.md、VN-SKIN.md；按任务补读 GINKA-VN.md、MASCOT-PACK.md、design-system/ginka/MASTER.md 和相关实现
 - 本文件给出接续状态，TODO.md 是唯一任务清单，实际代码和最新测试结果优先于旧文档叙述；出现冲突先核对，不擅自扩展需求
@@ -23,7 +23,7 @@
 - 游戏模式固定原作色彩，不做暗色适配；游戏剧情昼夜变化独立于博客主题
 - 标题始终使用鸟居完整 CG，不拆角色与背景；表情和角色在完整图中随阶段变化
 - 地图随剧情进度变化，不能把昼夜变体直接当剧情阶段；现有映射暂定
-- START 是主线，NEXT 是通关后日谈，不是下一篇文章；NEW 在首次进入后日谈后隐藏；EXTRA 解锁不应阻断公开文章索引
+- START 是主线，固定 vn-mainline.json v1 的 15 篇历史文章；新增文章不提高通关门槛，仍支持独立继续阅读。NEXT 是通关后日谈，不是下一篇文章；NEW 在首次进入后日谈后隐藏；EXTRA 解锁不应阻断公开文章索引
 - 音乐入口统一 SYSTEM → SOUND，不添加独立标题菜单音乐入口
 - BACKLOG 显示真实历史评论，同时未来加入真实播放过的对白历史；评论不伪造，不绕过 Giscus iframe 跨域限制
 - 替换 ATRI 为 GINKA 看板娘：小银花、大银花分别管理服装、姿势、表情、眼嘴差分、动作；优先原作演出数据，轻动态不冒充 Live2D
@@ -48,7 +48,7 @@
 | 私有素材服务 | astro/tools/private-preview.mjs、local-vn-ui.mjs、local-title-art.mjs、local-font.mjs、png-atlas.mjs |
 | 验收 | astro/tools/verify.mjs、vn-smoke.mjs、各 *.test.mjs、分支 CI |
 
-重要：上述功能有代码，不等于通过测试或达到原作 1:1。20eb48e 已通过完整构建和 typecheck；真实浏览器完整验收仍失败，原作语音仍缺素材。
+重要：上述功能有代码，不等于原作 1:1。39740a9 已实际通过 VN 与 Astro Review 全套 CI；公共模式、合成原作几何、独立角色 fixture 已通过，真实原作素材像素验收仍须本地执行。角色和语音由用户指定的另一 Agent 负责，其实际素材状态以最新私有仓库及角色交接为准。
 
 ## 4. 已知原作证据与素材定位
 
@@ -81,7 +81,7 @@ PBD 使用带类型标记的 dictionary/array，解码后从 result、packlist�
 
 ## 6. 下一步（按 TODO 编号）
 
-默认先 BASE-01/02：真实构建、typecheck、smoke，并修复已发现问题，然后 DATA-01 与 ENGINE-01，逐步替换重复手写 PBD 坐标。若用户明确指定另一个模块，直接按指定任务推进，同时检查相关基础问题。
+BASE-01/03 已实际通过；BASE-02 的公开及合成原作 fixture 已通过，真实素材模式仍待验收。公共 UI 优先 INFORMATION、title_first、真实原作图像与动效差异，继续 DATA-01/ENGINE-01。角色专线保持独立。若用户明确指定另一个模块，直接按指定任务推进，同时检查相关基础问题。
 
 已知待排查（不是已确认 bug 清单）：旧 smoke 对隐藏入口/EXTRA/语音和存档的断言，固定操作栏遮挡和焦点恢复，BACKLOG modal 是否被祖先 transform 限制，读模式主题残留，音频与动作计时器生命周期，旧 ATRI 共享资产和 build manifest 残留，私有素材包路径与真实浏览器播放，title_first 差分，真实 LOAD 页语义。
 
@@ -89,7 +89,7 @@ PBD 使用带类型标记的 dictionary/array，解码后从 result、packlist�
 
 ```sh
 cd astro
-npm install
+npm ci
 npm run typecheck
 npm run build
 npx playwright install chromium
@@ -176,3 +176,8 @@ npm run check:vn-browser
 ### 可复现依赖（2026-11-25）
 - 已将真实 npm lockfile 原样提交，235949 bytes / 470 entries / v3，SHA256 c4a2857f668342797564ad633cebc10fb51a1d20b04a0e3164c8b6dd35eb3730，与 artifact 的原始 Git blob 完全一致；临时 CI 输出移除，两 Astro workflows 改 npm ci。下一 CI 验收后标记 BASE-03。
 - 0cf0a44 的 build/typecheck/mascot/57 geometry 已通过，公共 smoke 因真实主线完成后旧 map 断言超时，已修复 map familiar 和最终标题 data-005。继续检查新 CI；不要将此中间失败误认为布局回归。
+
+### 公共 UI 最终验收（2026-11-25）
+- 用户指定角色/语音由另一 Agent 负责；本轮只修改公共 UI、状态、工具、依赖与文档，不发布。最近代码 39740a9 双 CI 实际成功：VN 45540075464、Astro Review 45540075452；VN artifact 14989295395；390/1440 公共 smoke 与 57/57 synthetic 原作 geometry、原有多尺寸 review 通过。BASE-03 / STORY-02 / SAVE-02 已勾选。
+- 本轮主要代码 52b24e3 SYSTEM reset、22763cf 七页签、fe7a296 存档三模式、990b3b0 私有服务保护、bf40991 SOUND、07e3951 geometry fixture、a813eaf DISPLAY/EXTRA、0cf0a44 主线固定、39740a9 npm lock 与全主线回归。14 份实际 PBD / 959 项对照 / 0 mismatch（私有 b74501b）；32 个原名哈希映射校验纳入单测。
+- 未完成：真实素材本地逐像素视觉、title_first 独立布局、精确原作阶段 flag writer、INFORMATION 原作独立页、其余原作屏幕/动效/音效。INFORMATION PBD 已定位 000007bd / 000007c0，背景 000007c4；英文标题/back 与五组布局、七链接来源已确定，未实现页面，详见 TODO。原作链接未验证可达。不要把现有截图/合成测试写成 1:1 完成。

@@ -86,7 +86,7 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 
 - [x] BASE-01 在 Node 22 环境执行 `npm run typecheck`、`npm run build`、`npm run check:vn-browser`，保存真实输出与截图，修复全部阻塞错误
 - [ ] BASE-02 检查现有 smoke 脚本对 NEXT/EXTRA 锁定、隐藏旧按钮、BACKLOG 和确认框的断言是否与当前实现一致；补齐私有素材模式的独立测试
-- [ ] BASE-03 提交可复现 lockfile、统一依赖安装及分支 CI；保留构建报告和失败截图，不以空 commit status 作为通过
+- [x] BASE-03 提交可复现 lockfile、统一依赖安装及分支 CI；保留构建报告和失败截图，不以空 commit status 作为通过
 - [ ] BASE-04 统一客户端生命周期和事件订阅，避免 Astro 路由切换后监听器重复、计时器泄漏、音频重建、跨页面状态遗失
 - [ ] BASE-05 建立 GameSession / Preferences / ReadingProgress / UnlockState / AudioState 的类型契约、迁移与持久化；URL 仍是内容路由权威
 - [ ] BASE-06 将 game/reader 视觉模式与普通博客主题彻底解耦；检查旧 CSS、夜间场景替换、Giscus 主题、设置页和移动端
@@ -131,7 +131,7 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 - [ ] MAP-01 定位真实地图 UI、地点按钮、标记位置、悬停/选中/禁用、进入/退出及事件选择
 - [ ] MAP-02 分离剧情阶段、场景昼夜、阅读进度；确认原作地图随进度变化的具体条件和素材
 - [ ] STORY-01 追踪 sf.hfclear、sf.clear、sf.title_next、sf.title_next_start 的赋值、读写和持久化；NEXT → scn101.ks 与 START → scn000.ks 保持区别
-- [ ] STORY-02 定义独立、稳定的博客主线路径集合与完成条件；已冻结现有 15 篇 v1 路线，等待本提交真实 CI 确认
+- [x] STORY-02 定义独立、稳定的博客主线路径集合与完成条件；15 篇 v1 路线固定，通关、NEW、持久性及最终阶段已通过真实浏览器
 - [ ] STORY-03 后日谈独立内容、解锁提示、NEW 清除、EXTRA 解锁、标题状态和角色状态联动；未提供内容前明确显示待发布
 - [ ] STORY-04 检查直接访问 /afterstory/、重置记录、多个标签页、存档恢复时的解锁表现；本地解锁仅是界面状态，不是访问控制
 - [ ] STORY-05 设计从场景/地图进入真实文章的映射，保留原博客归档和搜索入口
@@ -167,7 +167,7 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 ## 7. P1 — SAVE / LOAD
 
 - [ ] SAVE-01 解析原作 00000790 与语言差分 PBD，核对十槽、行列、位置、普通页及 quick mode，确认 16 页参数是否为 15 普通页加 quick
-- [ ] SAVE-02 建立独立手动存档槽，不以最近记录/收藏冒充全部原作存档行为；保留最近阅读索引
+- [x] SAVE-02 建立独立手动存档槽，不以最近记录/收藏冒充全部原作存档行为；保留最近阅读索引
 - [ ] SAVE-03 记录文章 canonical 路径、标题、真实位置、时间、当前章节及必要会话状态；空槽使用原作 No Data
 - [ ] SAVE-04 显示真实可用的存档缩略图，自动/快速/普通存档区分；无图时明确回退
 - [ ] SAVE-05 还原页码菱形、分页按钮、hover/选中/按压、帮助信息、覆盖、删除和确认，核对恢复与返回
@@ -235,3 +235,8 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 ### 2026-11-25 锁文件与主线回归
 - BASE-03: 真实 CI 45538827150 artifact 14988696008 与 45539674022 lock stream SHA-256 相同（c4a2857f668342797564ad633cebc10fb51a1d20b04a0e3164c8b6dd35eb3730），原始 235949 字节 lockfile v3、470 entries，Git blob 42cd0f2e94a10c5f4c3e35a160ae7a2bc8faab18，根 dependencies/devDependencies/engines 与 package.json 完全相符。已提交；VN、Astro Review 切换 npm ci，删除临时 export 步骤。等待 npm ci 实际 CI 后勾选。
 - STORY-02: 0cf0a44 typecheck/build、mascot、原作 geometry 57/57 通过；公共 smoke 失败于旧 map first-encounter 断言（实际已完成 15 篇）。修正 map 为 familiar、最终标题 data-005，新增 mainCleared 持久性断言。真实主线仍待完整 smoke。
+
+### 2026-11-25 本轮最终验收
+- 39740a9: [VN 45540075464](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45540075464) 和 [Astro Review 45540075452](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45540075452) 全绿。真实 npm ci、typecheck/build/62 旧路由、公开 390/1440、完整主线解锁/NEW/刷新后持久性、存档模式切换与返回、独立 mascot fixture、原作 synthetic geometry 57/57 均通过；artifact 14989295395。BASE-03、STORY-02、SAVE-02 勾选。
+- 直接读取私有 b74501b 的 14 份实际 PBD，按 audit:original 同一比较规则逐项核对 959 项（SYSTEM 345、EXTRA 117），0 mismatch。源数据匹配和合成图像浏览器坐标通过，不等于真实原作像素还原完成。
+- INFORMATION 真实源：000007bd_29BE48A6A6D1AC6C0B2BFFC7DF2D8D8CB3F38A385FBEE351588300BEF1CC8E7D.pbd.json 与英文 000007c0_DC4A510B9F3E59FE3819FB5C25AFCFDFAC6F3F694FECE8109E373DD2DDE93A52.pbd.json；information__bg0 为先前误用的 000007c4；标题 (2,0,524,63)、BACK (1162,644,105,76)，5 组原生栏标题和 7 个外链按钮。未实现独立信息页；下一阶段在保留 /about/ 的前提下接入真实画布、明确博客信息适配及外链。原作 URL 仅静态取证，未验证可达。title_first 的独立 PBD 仍未定位。

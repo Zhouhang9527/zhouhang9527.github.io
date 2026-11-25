@@ -49,7 +49,7 @@ Reference: 2023 PC version review https://weekly.ascii.jp/elem/000/004/165/41652
 
 ## Title, choices, load, backlog assets (e4b85e4)
 - titleMenu 000007ce: packed 223×245 English title label atlas. Use original menu order and estimated PC screenshot coordinates x72/y250, row 44, at 1280×720. Hover sprites are direct crops; normal text is a browser approximation. Screenshot reference: https://www.9game.cn/news/9224089.html (2023 title capture).
-- NEXT appears after completing a blog article when another unread article is available; EXIT switches to reader mode, never closes the browser. INFORMATION opens about; music remains in SOUND.
+- NEXT appears only after completing the fixed v1 mainline (`config/vn-mainline.json`, 15 articles); future posts do not extend the unlock gate; EXIT switches to reader mode, never closes the browser. INFORMATION opens about; music remains in SOUND.
 - choice 000007ca: three 768×87 original choice states; normal/selected/hover, with actual article links.
 - saveFrame 000007b6: original 189×123 SAVE DATA frame, with a scene preview, real article title/time/progress, not a screenshot of the article. Gallery backdrop reused as a candidate for load, exact load layout unverified.
 - backlogAtlas 00000738: original BACKLOG/SCENE SELECT control sheet; original arrow sprites and candidate dark background 000007b2 are used on the host-side comment surface. Giscus remote iframe content is not modified by private asset URLs. Comment identity, moderation and editor remain native.
@@ -113,3 +113,9 @@ SAVE-02/03/05/06：从文章进入 LOAD 或 SAVE 均保留真实位置快照，L
 
 ### SOUND original English pack and complete SYSTEM source audit
 SYS-01/02/05、DATA-01/02：通过 Git Blob SHA 完整读取 1.5MB 00000757 英文 SOUND PBD（contents API 无内容），00000758 PNG IHDR 实测 433×153 RGBA8，新增 14 个原作标题/标签/短滑轨逻辑切片并通过边界检查。全部七页标题完成源定位，记录七个音量通道与十个角色通道精确矩形；仅把已存在真实 BGM 功能接入 SOUND 标题、标签和短 rail，其他音源/角色控制不伪造，保持另一 Agent 所有权。audit:original 扩展完整 SYSTEM 源校验。990b3b0 的 VN CI 已 typecheck/build（包括合成全量私有图集单测）成功，浏览器仍在执行；新提交未验收。
+
+## Public UI acceptance 2026-11-25
+
+Actual 39740a9 VN CI 45540075464 and Astro Review 45540075452 succeeded. The independent original-geometry fixture renders synthetic image bytes at original dimensions, not copyrighted pixels. Desktop geometry: 57/57 at 2px tolerance; mobile interaction/no overflow passed. Source comparison: 14 private PBDs at b74501b, 959 checks, zero mismatches (345 SYSTEM, 117 EXTRA). Native storage filename hashes verified for 32 entries. EXTRA uses `extra__bg0.tlg` (0000078e), not `information__bg0.tlg` (000007c4). No public distribution of game bytes. True original screenshot comparison remains pending.
+
+INFORMATION static evidence: original 000007bd, English 000007c0, base 1280×720, maintitle (2,0,524,63), BACK (1162,644,105,76). Five source rows and seven original hyperlink controls (official site, Frontwing JP/EN, Facebook, Twitter JP/EN, Moe Game Award) exist; these are source references, not checked live destinations or implemented page. Preserve public `/about/` when implementing a game information view.
