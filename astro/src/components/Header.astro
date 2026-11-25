@@ -2,7 +2,7 @@
 const nav=[['/','首页'],['/archives/','归档'],['/gallery/','画廊'],['/about/','关于']];
 ---
 <header class="header" transition:persist="header">
- <div class="site-brand-container"><div class="site-meta"><a href="/" class="brand journal-brand" rel="start"><img src="/images/ginka/header-logo.png" alt="GINKA" width="196" height="48"/><span>mm9527</span></a></div></div>
+ <div class="site-brand-container"><div class="site-meta"><a href="/" class="brand journal-brand" rel="start"><strong>GINKA</strong><span>mm9527</span></a></div></div>
  <nav class="site-nav" aria-label="主导航"><ul class="main-menu menu">
  <li class="menu-item menu-item-drawer"><button type="button" data-journal-sidebar-open aria-label="打开侧栏" aria-controls="journal-sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></li>
  {nav.map(([href,name],i)=><li class:list={['menu-item',i===0&&'menu-item-home']}><a href={href}>{name}</a></li>)}

@@ -122,7 +122,7 @@
     const c = event.target.closest?.('.journal-dialogue')?.querySelector('.giscus-container');
     if (c && !states.has(c)) load(c);
   });
-  document.addEventListener('pjax:send',detach);
-  ['page:loaded','pjax:success','pjax:complete','pjax:error','DOMContentLoaded'].forEach(name=>document.addEventListener(name,mount));
+  document.addEventListener('astro:before-preparation',detach);
+  ['astro:after-swap','astro:page-load','DOMContentLoaded'].forEach(name=>document.addEventListener(name,mount));
   if (document.readyState !== 'loading') mount();
 })();

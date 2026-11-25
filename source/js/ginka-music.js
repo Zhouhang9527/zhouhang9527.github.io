@@ -19,7 +19,6 @@
       shuffle: { label: '随机播放', icon: 'fa-random' }
     };
     const PRE_PLAY_LYRIC_TEXT = '加载中...';
-    const MUSIC_VOICE_COOLDOWN_MS = 5000;
     const PLAYLIST_CACHE_VERSION = 2;
     const STORAGE = {
       index: 'music_current_index',
@@ -341,97 +340,6 @@
     let autoGainFactor = 1;
     let currentPlayMode = 'list';
     let hasStartedPlayback = false;
-    const MUSIC_VOICE_PROFILE = {
-      default: {
-        play: ['talk', 'welcome'],
-        pause: ['talk', 'click'],
-        switch: ['click', 'talk']
-      },
-      '光放て！': {
-        play: ['happy', 'morning', 'click'],
-        pause: ['click', 'talk'],
-        switch: ['happy', 'click', 'morning']
-      },
-      '夢浮桥': {
-        play: ['welcome', 'morning', 'talk'],
-        pause: ['talk', 'welcome'],
-        switch: ['welcome', 'morning', 'click']
-      },
-      AIR: {
-        play: ['night', 'welcome', 'talk'],
-        pause: ['night', 'talk'],
-        switch: ['night', 'welcome', 'click']
-      },
-      unhappy: {
-        play: ['night', 'angry', 'talk'],
-        pause: ['night', 'talk'],
-        switch: ['angry', 'night', 'click']
-      }
-    };
-  
-    function consumeAtriVoiceCooldown(minGapMs) {
-      const gap = Math.max(MUSIC_VOICE_COOLDOWN_MS, Number(minGapMs) || 0);
-      const key = '__ginkaAtriUiVoiceCooldownAt';
-      const now = Date.now();
-      const last = Number(window[key] || 0);
-      if (now - last < gap) return false;
-      window[key] = now;
-      return true;
-    }
-  
-    function getTrackTitleByIndex(index) {
-      const track = musicList[normalizeIndex(index)];
-      return track && track.title ? String(track.title) : '';
-    }
-  
-    function getMusicVoicePlan(action, trackTitle) {
-      const safeAction = action === 'pause' || action === 'switch' ? action : 'play';
-      const title = String(trackTitle || '').trim();
-      const profile = MUSIC_VOICE_PROFILE[title] || MUSIC_VOICE_PROFILE.default;
-      const categories = Array.isArray(profile[safeAction]) && profile[safeAction].length
-        ? profile[safeAction]
-        : MUSIC_VOICE_PROFILE.default[safeAction];
-      return categories.map((category) => ({
-        category,
-        options: {
-          duration: safeAction === 'switch' ? 2600 : 2200,
-          disableMotion: true
-        }
-      }));
-    }
-  
-    function playAtriVoicePlan(plan) {
-      const atri = window.ATRI;
-      if (!atri || !Array.isArray(plan) || !plan.length) return false;
-  
-      if (typeof atri.playVoiceByPriority === 'function') {
-        try {
-          return !!atri.playVoiceByPriority(plan);
-        } catch (_) {}
-      }
-  
-      if (typeof atri.playVoice !== 'function') return false;
-      for (const item of plan) {
-        if (!item || !item.category) continue;
-        try {
-          const ok = atri.playVoice(item.category, item.options || {});
-          if (ok) return true;
-        } catch (_) {}
-      }
-      return false;
-    }
-  
-    function announceMusicVoice(action, options) {
-      const opt = options || {};
-      if (opt.silent) return false;
-      if (!consumeAtriVoiceCooldown(opt.minGapMs)) return false;
-  
-      const trackTitle = opt.trackTitle || getTrackTitleByIndex(currentMusicIndex);
-      const plan = getMusicVoicePlan(action, trackTitle);
-      const spoken = playAtriVoicePlan(plan);
-      return spoken;
-    }
-  
     function getStoredNumber(key, fallback) {
       const value = Number(storageGet(key));
       return Number.isFinite(value) ? value : fallback;
@@ -676,10 +584,6 @@
         const sameTrack = index === currentMusicIndex;
         if (!sameTrack) {
           loadMusic(index, { keepTime: false });
-          announceMusicVoice('switch', {
-            trackTitle: getTrackTitleByIndex(index),
-            minGapMs: 480
-          });
         }
   
           setPlaylistExpanded(false);
@@ -703,9 +607,6 @@
         ensureLyricLinesRendered();
         updatePlayIcon(true);
         storageSet(STORAGE.playing, 'true');
-        if (reason === 'toggle' || reason === 'playlist-resume' || reason === 'gesture-resume' || reason === 'restore') {
-          announceMusicVoice('play', { minGapMs: 520 });
-        }
         log('播放成功:', reason);
         return true;
       } catch (error) {
@@ -728,7 +629,6 @@
       audio.pause();
       updatePlayIcon(false);
       storageSet(STORAGE.playing, 'false');
-      announceMusicVoice('pause', { minGapMs: 420 });
       log('暂停:', reason);
     }
   
@@ -775,12 +675,6 @@
       const shouldAutoPlay = opt.autoplay !== false;
       const targetIndex = resolveNextTrackIndex(opt);
       loadMusic(targetIndex, { keepTime: false });
-      if (opt.userAction) {
-        announceMusicVoice('switch', {
-          trackTitle: getTrackTitleByIndex(targetIndex),
-          minGapMs: 480
-        });
-      }
       if (shouldAutoPlay) {
         setLoadingIcon();
         attemptPlay(opt.reason || 'next');
@@ -1211,16 +1105,40 @@
       seekByClientX(e.clientX);
     });
   
+    let activeProgressDrag = null;
+    const disposeProgressDrag = () => {
+      const dispose = activeProgressDrag;
+      activeProgressDrag = null;
+      if (dispose) dispose();
+    };
+    window.addEventListener('blur', disposeProgressDrag);
+    document.addEventListener('astro:before-preparation', disposeProgressDrag);
+
     progressContainer.addEventListener('pointerdown', (e) => {
       if (e.button !== 0 && e.pointerType !== 'touch') return;
+      disposeProgressDrag();
       e.preventDefault();
       seekByClientX(e.clientX);
-      const onMove = (ev) => seekByClientX(ev.clientX);
-      const onUp = () => {
+      const pointerId = e.pointerId;
+      const onMove = (ev) => {
+        if (activeProgressDrag !== dispose || ev.pointerId !== pointerId) return;
+        // A release outside the window may never deliver pointerup. Only use
+        // mouse button state when present; touch/older inputs remain usable.
+        if (e.pointerType === 'mouse' && typeof ev.buttons === 'number' && !(ev.buttons & 1)) {
+          disposeProgressDrag();
+          return;
+        }
+        seekByClientX(ev.clientX);
+      };
+      const onUp = (ev) => {
+        if (activeProgressDrag === dispose && ev.pointerId === pointerId) disposeProgressDrag();
+      };
+      const dispose = () => {
         document.removeEventListener('pointermove', onMove, true);
         document.removeEventListener('pointerup', onUp, true);
         document.removeEventListener('pointercancel', onUp, true);
       };
+      activeProgressDrag = dispose;
       document.addEventListener('pointermove', onMove, true);
       document.addEventListener('pointerup', onUp, true);
       document.addEventListener('pointercancel', onUp, true);
@@ -1307,6 +1225,7 @@
     });
   
     window.addEventListener('pagehide', () => {
+      disposeProgressDrag();
       persistPlaybackState(true);
       storageSet(STORAGE.volume, masterVolume);
       storageSet(STORAGE.playing, playbackWanted ? 'true' : 'false');

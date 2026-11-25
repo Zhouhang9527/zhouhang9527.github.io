@@ -13,7 +13,7 @@ try{
   const errors=[],privateRequests=[],privateFailures=[];
   const isPrivate=url=>new URL(url).origin===origin&&/^\/__ginka_local_(title|ui|font|mascot)__\//.test(new URL(url).pathname);
   page.on('request',request=>{if(isPrivate(request.url()))privateRequests.push(request.url());});
-  page.on('response',response=>{if(isPrivate(response.url())&&response.status()>=400)privateFailures.push(response.status()+' '+response.url());});
+  page.on('response',response=>{if(new URL(response.url()).origin===origin&&response.status()>=400)privateFailures.push(response.status()+' '+response.url());});
   page.on('requestfailed',request=>{if(isPrivate(request.url())&&request.failure()?.errorText!=='net::ERR_ABORTED')privateFailures.push(request.failure()?.errorText+' '+request.url());});
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
@@ -147,14 +147,19 @@ try{
    await back('[data-vn-return]');
    await page.locator('.vn-menu a[href="/gallery/"]').click();
    await visible('[data-vn-screen="gallery"]');
-   const galleryCard=page.locator('.vn-gallery-grid .journal-scene-card').first();
-   await galleryCard.click();
-   await visible('.astro-gallery[open]');
-   assert.equal(new URL(page.url()).pathname,'/gallery/','CG preview must not navigate to an image document');
-   await page.keyboard.press('Escape');
-   await page.locator('.astro-gallery').waitFor({state:'hidden'});
-   await page.waitForFunction(()=>document.activeElement?.matches('.vn-gallery-grid .journal-scene-card'));
-   assert.equal(new URL(page.url()).pathname,'/gallery/');
+   if(original){
+    const galleryCard=page.locator('.vn-gallery-grid .journal-scene-card').first();
+    await galleryCard.click();
+    await visible('.astro-gallery[open]');
+    assert.equal(new URL(page.url()).pathname,'/gallery/','CG preview must not navigate to an image document');
+    await page.keyboard.press('Escape');
+    await page.locator('.astro-gallery').waitFor({state:'hidden'});
+    await page.waitForFunction(()=>document.activeElement?.matches('.vn-gallery-grid .journal-scene-card'));
+    assert.equal(new URL(page.url()).pathname,'/gallery/');
+   }else{
+    await visible('[data-gallery-unavailable]');
+    assert.equal(await page.locator('.vn-gallery-grid .journal-scene-card').count(),0,'public build must not fake original CGs');
+   }
    assert.ok(await page.evaluate(old=>old===document.querySelector('#bg-music'),audio),'CG preview replaced persistent BGM');
    await shot('gallery');
    await back('[data-vn-screen="gallery"] .vn-panel-header .vn-return');

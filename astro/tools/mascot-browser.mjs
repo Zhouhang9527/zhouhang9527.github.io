@@ -4,6 +4,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {createRequire} from 'node:module';
+const astroCli=path.join(path.dirname(createRequire(import.meta.url).resolve('astro/package.json')),'astro.js');
 import {spawn} from 'node:child_process';
 import {deflateSync} from 'node:zlib';
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ginka-mascot-browser-'));
@@ -36,7 +38,7 @@ try{
  const line=(id,text,voice,p='main',poseId='a')=>({id,text,voice,phase:p,pose:poseId,speaker:'Synthetic fixture',source:'fixture',phaseSource:'fixture',voiceSource:voice?'generated test tone':null,verified:true});
  const file=path.join(dir,'manifest.json');
  fs.writeFileSync(file,JSON.stringify({version:2,defaultPose:'a',poses:{a:pose,b:{...pose,character:'adult',phase:'afterstory',outfit:'locked'}},lines:[line('silent','Silent fixture',null),line('tone','Tone fixture','tone.wav'),line('locked','Locked fixture',null,'afterstory','b')]}));
- server=spawn(process.execPath,['node_modules/astro/astro.js','dev','--host','127.0.0.1','--port','4379'],{env:{...process.env,GINKA_MASCOT_MANIFEST:file},stdio:['ignore','pipe','pipe']});
+ server=spawn(process.execPath,[astroCli,'dev','--host','127.0.0.1','--port','4379'],{env:{...process.env,GINKA_MASCOT_MANIFEST:file},stdio:['ignore','pipe','pipe']});
  for(const stream of [server.stdout,server.stderr])stream.on('data',c=>{log=(log+c).slice(-12000);});
  for(let i=0;i<90;i++){if(server.exitCode!==null)throw Error('Fixture dev server exited');try{if((await fetch(url+'/__ginka_local_mascot__/manifest.json')).ok)break;}catch{}await new Promise(r=>setTimeout(r,500));}
  const response=await fetch(url+'/__ginka_local_mascot__/manifest.json');assert.equal(response.status,200);assert.equal((await response.json()).version,2);

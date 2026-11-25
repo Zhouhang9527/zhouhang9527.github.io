@@ -150,21 +150,8 @@ const run = async () => {
     packageJson.scripts['cache:purge'],
     'node tools/deploy/purge-cloudflare-cache.js'
   );
-  assert.match(
-    packageJson.scripts.deploy,
-    /hexo deploy && npm run cache:purge$/
-  );
-  assert.match(packageJson.scripts.check, /npm run check:cloudflare-purge/);
-
-  const deployBatch = fs.readFileSync(
-    path.resolve(__dirname, '../../deploy.bat'),
-    'utf8'
-  );
-  assert.strictEqual(
-    (deployBatch.match(/call npm run cache:purge/g) || []).length,
-    2,
-    'both production batch deployment paths must purge Cloudflare'
-  );
+  assert.ok(!packageJson.scripts.deploy, 'cleanup must not implicitly deploy');
+  assert.ok(!packageJson.scripts.build.includes('purge'), 'build must not purge production caches');
 
   console.log('PASS Cloudflare cache purge regression checks');
 };

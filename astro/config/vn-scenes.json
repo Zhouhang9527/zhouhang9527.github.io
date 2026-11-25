@@ -1,23 +1,9 @@
 {
   "schemaVersion": 3,
-  "notice": "Three complete original CG variants identified in private visual-index/data-01.jpg; progression order is a blog adaptation, not confirmed game order. Full originals dev-only. No separate character layer.",
-  "chapter": {
-    "slug": "beach",
-    "focal": "50% 50%"
-  },
-  "widths": [
-    640,
-    1280
-  ],
-  "ui": {
-    "logo": "/images/ginka/header-logo.png",
-    "wing": "/images/ginka/butterfly.png"
-  },
+  "notice": "Original image sources are consumed only by secured local development middleware. Production has an explicit unavailable state, not a substitute illustration. Reading-stage mapping is a blog adaptation.",
   "title": {
     "background": {
-      "id": "torii",
-      "slug": "torii-close",
-      "focal": "50% 50%"
+      "id": "torii"
     },
     "states": [
       {
@@ -92,21 +78,30 @@
       "newFlag": "sf.title_next_start",
       "start": "scn000.ks",
       "next": "scn101.ks",
-      "writerStatus": "Writers for sf.hfclear, sf.clear and sf.title_next not found in recovered static corpus. Blog article-stage thresholds are adaptation, not original flag semantics."
+      "writerStatus": "Static flag writers are recorded in the private evidence repository; original runtime persistence remains unverified. Blog reading completion is not original-game flag semantics."
     }
   },
   "gallery": [
     {
       "slug": "torii-close",
-      "title": "海上鸟居"
+      "title": "海上鸟居",
+      "source": "bgimage2/_hxv4_hash/94D4A97C61498621/00000036_29AAD6EC84EB3CA718C0D5B528504D520813C803A73299D0BC1A8D9AF13ADBA2.png",
+      "width": 2560,
+      "height": 1495
     },
     {
       "slug": "beach",
-      "title": "姬之岛海岸"
+      "title": "姬之岛海岸",
+      "source": "bgimage2/_hxv4_hash/94D4A97C61498621/0000002b_DD14E88A5B602C1CC49F8CD2947C4E477E384F54D173168B01E77BC849F90F57.png",
+      "width": 2560,
+      "height": 1440
     },
     {
       "slug": "shop-street",
-      "title": "岛间街道"
+      "title": "岛间街道",
+      "source": "bgimage2/_hxv4_hash/94D4A97C61498621/00000006_075A1474792FB567C763D5F7F23EC6E965389B8F08F47C6981097BC50E0337AD.png",
+      "width": 2560,
+      "height": 1440
     }
   ],
   "privateUI": {

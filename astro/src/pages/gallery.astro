@@ -2,15 +2,13 @@
 import Layout from '../layouts/Layout.astro';
 import GamePanel from '../components/game/GamePanel.astro';
 import {vnScenes} from '../lib/vn-scenes';
-const scenes=vnScenes.gallery;
-const art='/images/ginka/scenes/';
+const available=import.meta.env.DEV&&!!process.env.GINKA_ASSETS_ROOT;
 const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
 const itemStyle=(i:number)=>original?(['x','y','w','h'].map((key,j)=>'--gallery-'+key+':'+(vnScenes.privateUI.galleryGeometry.items[i][j]/12.8)+'cqw').join(';')):undefined;
 ---
 <Layout title="CG 鉴赏" kind="home">
  <GamePanel heading="岛影鉴赏" label="EXTRA" kind="gallery">
   <nav class="vn-tabs vn-extra-nav" aria-label="EXTRA"><a href="/gallery/" aria-current="page">CG 鉴赏</a><a href="/map/">岛屿地图</a><a href="/#latest" data-vn-mode-set="reader">阅读索引</a><a href="/search/">检索</a><a href="/about/">关于</a></nav>
-  <p class="vn-panel-note">现有场景预览 · ©Frontwing / ©bushiroad</p>
-  <ul class="vn-gallery-grid" data-journal-gallery>{scenes.map(({slug,title},i)=><li class="journal-scene-item" style={itemStyle(i)}><a class="journal-scene-card" data-astro-reload href={art+slug+'-day-1440.webp'} data-full-day={art+slug+'-day-1440.webp'} data-full-night={art+slug+'-day-1440.webp'} data-caption={title+' · ©Frontwing / ©bushiroad'}><img class="scene-day" src={art+slug+'-day-960.webp'} alt={title} width="2560" height="1440" loading="lazy"/><span class="journal-scene-label">{String(i+1).padStart(2,'0')} / {title}</span></a></li>)}</ul>
+  {available?<><p class="vn-panel-note">原始场景 · 仅本地预览 · ©Frontwing / ©bushiroad</p><ul class="vn-gallery-grid" data-journal-gallery>{vnScenes.gallery.map(({slug,title,width,height},i)=>{const image='/__ginka_local_ui__/gallery-'+slug+'.png';return <li class="journal-scene-item" style={itemStyle(i)}><a class="journal-scene-card" data-astro-reload href={image} data-full-day={image} data-full-night={image} data-caption={title+' · ©Frontwing / ©bushiroad'}><img src={image} alt={title} width={width} height={height} loading="lazy"/><span class="journal-scene-label">{String(i+1).padStart(2,'0')} / {title}</span></a></li>})}</ul></>:<p class="vn-empty" data-gallery-unavailable>公开构建不包含原作画面。场景鉴赏仅在配置私有素材的本地预览中可用；文章、归档和搜索仍可正常使用。</p>}
  </GamePanel>
 </Layout>

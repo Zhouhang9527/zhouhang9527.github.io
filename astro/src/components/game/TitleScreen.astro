@@ -1,5 +1,5 @@
 ---
-import {vnScenes,sceneVars,resolveTitleState,localTitleFrame} from '../../lib/vn-scenes';
+import {vnScenes,resolveTitleState,localTitleFrame} from '../../lib/vn-scenes';
 import {href,mainlinePaths} from '../../lib/site';
 import {rectStyle,stateStyle} from '../../lib/vn-control';
 import type {Post} from '../../lib/types';
@@ -14,16 +14,16 @@ const menu=vnScenes.privateUI.titleMenu;
 const menuStyle=(key:keyof typeof menu.states)=>stateStyle(menuOriginal,s=>s==='normal'||s==='hover'||s==='pressed'?'title-'+s+'-'+key.toLowerCase():null,'-art')||undefined;
 const menuBounds=rectStyle(menu.states.CONTINUE.bounds,[0,0,...menu.canvas]);
 const menuLayout=localOriginal?menuBounds+';--vn-menu-gap:'+((menu.rowHeight-menu.buttonSize[1])/menu.canvas[0]*100)+'cqw;--vn-menu-height:'+(menu.buttonSize[1]/menu.canvas[0]*100)+'cqw':undefined;
-const coverStyle=sceneVars(background.slug,background.focal)+(localOriginal?`;--vn-original-frame:url('${localTitleFrame(initial.frame)}')`:'');
+const coverStyle=localOriginal?`--vn-original-frame:url('${localTitleFrame(initial.frame)}')`:undefined;
 ---
-<section class="vn-stage vn-title" data-vn-title data-vn-title-menu-original={String(menuOriginal)} data-vn-title-unlocked="false" data-vn-cover={background.id} data-vn-stage={initial.id} data-vn-character-present={String(initial.present)} data-vn-expression={initial.expression??"none"} data-vn-frame={initial.frame} data-vn-original={String(localOriginal)} data-vn-frame-render={localOriginal?"original":"fallback"} data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} data-vn-mainline={JSON.stringify(required)} aria-labelledby="vn-title-heading">
+<section class="vn-stage vn-title" data-vn-title data-vn-title-menu-original={String(menuOriginal)} data-vn-title-unlocked="false" data-vn-cover={background.id} data-vn-stage={initial.id} data-vn-character-present={String(initial.present)} data-vn-expression={initial.expression??"none"} data-vn-frame={initial.frame} data-vn-original={String(localOriginal)} data-vn-frame-render={localOriginal?"original":"unavailable"} data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} data-vn-mainline={JSON.stringify(required)} aria-labelledby="vn-title-heading">
  <div class="vn-cover" aria-hidden="true">
   <div class="vn-cover-art" data-vn-art={background.id} style={coverStyle}></div>
   {localOriginal&&<div class="vn-original-logo" style="--vn-logo-art:url(/__ginka_local_title__/logo.png)"></div>}
  </div>
  <div class="vn-title-content">
   <div class="vn-title-menu" style={menuLayout}>
-   <h1 id="vn-title-heading"><img src={vnScenes.ui.logo} alt="GINKA" width="196" height="48"/><span class="journal-visually-hidden">逆向工程与二进制安全</span></h1>
+   <h1 id="vn-title-heading"><span>GINKA</span><span class="journal-visually-hidden">逆向工程与二进制安全</span></h1>
    <p class="vn-kicker">MM9527 / PERSONAL ARCHIVE</p>
    <nav class="vn-menu" aria-label="标题菜单">
     <a data-vn-continue data-vn-resume href="/archives/" hidden><span style={menuStyle('CONTINUE')}>CONTINUE</span><small>继续阅读</small></a>
@@ -43,7 +43,7 @@ const coverStyle=sceneVars(background.slug,background.focal)+(localOriginal?`;--
   <div class="vn-title-tools">
    <button type="button" data-vn-fullscreen hidden>全屏</button>
    <a href="https://ginka.frontwing.jp/story/" target="_blank" rel="noopener noreferrer">©Frontwing / ©bushiroad</a>
-   <span>非官方同人主题 · 预览</span>
+   <span>{localOriginal?"非官方原作本地预览":"非官方主题 · 原作画面仅本地可用"}</span>
   </div>
  </div>
 </section>

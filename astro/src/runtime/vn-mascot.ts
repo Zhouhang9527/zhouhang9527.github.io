@@ -72,7 +72,7 @@ function warmNext(){
  const p=next&&pack?.poses[next.pose];if(!p?.layers||p===layerPose)return;
  for(const url of poseUrls(p))void decodeImage(url).catch(()=>{});
 }
-let revealTarget:HTMLElement|null=null,readyFrames=new Set<string>(),frameGeneration=0;
+let revealTarget:HTMLElement|null=null,dialogueView:string|undefined,readyFrames=new Set<string>(),frameGeneration=0;
 const frameImage=(selector:string)=>$('[data-mascot-'+selector+']') as HTMLImageElement|undefined;
 const frameUsable=(img:HTMLImageElement|undefined)=>!!img?.getAttribute('src')&&img.complete&&img.naturalWidth>0;
 function stopMotion(){clearTimeout(motionTimer);motionTimer=0;}
@@ -160,7 +160,7 @@ function stopReveal(){cancelAnimationFrame(reveal);reveal=0;revealTarget=null;}
 function finishReveal(){if(!revealTarget||!current)return false;revealTarget.textContent=current.text;stopReveal();scheduleAuto();return true;}
 function clearDialogue(){document.documentElement.removeAttribute('data-vn-mascot-dialogue');stopReveal();const name=document.querySelector<HTMLElement>('[data-vn-dialogue-speaker]'),text=document.querySelector<HTMLElement>('[data-vn-dialogue-text]');if(name)name.hidden=true;if(text)text.hidden=true;document.querySelectorAll<HTMLElement>('[data-vn-current-heading],[data-vn-game-description]:not([data-vn-dialogue-text])').forEach(e=>e.hidden=false);const w=$('[data-mascot-window]');if(w)w.hidden=true;}
 function renderLine(line:Line,animate:boolean){
- clearDialogue();pose(line.pose);
+ dialogueView=document.documentElement.dataset.vnMode;clearDialogue();pose(line.pose);
  const article=document.querySelector<HTMLElement>('[data-vn-game-window]'),dock=document.querySelector<HTMLElement>('[data-vn-game-reader]');
  const inGame=document.documentElement.dataset.vnMode!=='reader'&&!!article&&!article.hidden&&!!dock&&!dock.hidden;
  const speaker=inGame?article?.querySelector<HTMLElement>('[data-vn-dialogue-speaker]'):$('[data-mascot-speaker]');
@@ -263,13 +263,12 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&open&&!even
 window.addEventListener('pagehide',()=>close());
 document.addEventListener('astro:before-preparation',()=>{close();});
 document.addEventListener('astro:page-load',mount);
-document.addEventListener('vn:view-change',()=>{if(open&&current&&allowed(current)){renderLine(current,false);scheduleBlink();if(audio?.paused)startMotion();else animateMouth();}});
+document.addEventListener('vn:view-change',()=>{if(open&&current&&allowed(current)&&dialogueView!==document.documentElement.dataset.vnMode){renderLine(current,false);scheduleAuto();}resyncMotion();});
 document.addEventListener('vn:progress-reset',()=>{try{localStorage.removeItem(HISTORY_KEY);}catch{}if(current&&!allowed(current)){close();current=null;}syncSettings();});
 window.addEventListener('storage',()=>{readSettings();if(current&&(!allowed(current)||!choices().includes(current))){close();current=null;}syncSettings();});
 document.addEventListener('visibilitychange',()=>{document.documentElement.toggleAttribute('data-mascot-page-hidden',document.hidden);if(document.hidden){setAuto(false);generation++;finishReveal();audio?.pause();stopMotion();stopBlink();resetMouth();}else if(open){scheduleBlink();startMotion();}});
 const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
 function resyncMotion(){if(!open)return;if(reduce()){stopBlink();stopMotion();resetMouth();finishReveal();}else{scheduleBlink();if(audio?.paused)startMotion();else animateMouth();}}
 motionPreference.addEventListener('change',resyncMotion);
-document.addEventListener('change',event=>{if(event.target instanceof HTMLInputElement&&event.target.name==='vn-motion')resyncMotion();});
 document.documentElement.toggleAttribute('data-mascot-page-hidden',document.hidden);
 readSettings();mount();

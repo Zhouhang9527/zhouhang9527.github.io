@@ -12,7 +12,7 @@ const props = Astro.props;
 const post = props.kind === 'post' ? props.post : undefined;
 const title = props.kind === 'post' ? props.post.data.title : props.title;
 ---
-<Layout title={title} description={post?.data.description} kind={props.kind} article={!!post}>
+<Layout title={title} description={post?.data.description} kind={props.kind} article={!!post} published={post?.data.date} updated={post?.data.updated}>
   {props.kind === 'post' ? <Article post={props.post}/> :
     props.kind === 'about' || props.kind === 'links' ? <StaticPage kind={props.kind} title={props.title}/> :
     ['archive','tags','categories'].includes(props.kind) ? <><div data-vn-view="game"><ChapterSelect {...props}/></div><div data-vn-view="reader"><Collection {...props}/></div></> : <Collection {...props}/>}

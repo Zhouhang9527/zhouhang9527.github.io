@@ -10,8 +10,10 @@ function mount(){
  if(config){config.hidden=false;config.querySelectorAll<HTMLInputElement>('input[name="vn-motion"]').forEach(el=>el.checked=el.value===mode);config.querySelectorAll<HTMLInputElement>('input[name="vn-mode"]').forEach(el=>el.checked=el.value===view);}
  document.querySelectorAll<HTMLButtonElement>('[data-vn-mode-toggle]').forEach(el=>{el.hidden=false;el.textContent=view==='game'?'阅读模式':'游戏模式';el.setAttribute('aria-label',view==='game'?'切换到阅读模式':'切换到游戏模式');});
 }
+// Notify consumers only after both DOM preferences and controls are current.
+function publish(){mount();document.dispatchEvent(new Event('vn:view-change'));}
 function setView(value:'game'|'reader'){
- view=value;try{localStorage.setItem(VIEW_KEY,view);}catch{}mount();document.dispatchEvent(new Event('vn:view-change'));
+ view=value;try{localStorage.setItem(VIEW_KEY,view);}catch{}publish();
 }
 load();mount();
 document.addEventListener('click',event=>{
@@ -30,11 +32,11 @@ document.addEventListener('change',event=>{
  if(input.name!=='vn-motion')return;
  mode=input.value==='reduced'?'reduced':'system';
  try{localStorage.setItem(KEY,mode);}catch{}
- mount();
+ publish();
 });
 document.addEventListener('astro:before-swap',event=>apply((event as Event & {newDocument:Document}).newDocument));
 document.addEventListener('astro:page-load',mount);
-window.addEventListener('storage',event=>{if(event.key===KEY||event.key===VIEW_KEY||event.key===null){load();mount();}});
+window.addEventListener('storage',event=>{if(event.key===KEY||event.key===VIEW_KEY||event.key===null){load();publish();}});
 document.addEventListener('keydown',event=>{
  if(event.defaultPrevented||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
  if(!['ArrowUp','ArrowDown','Home','End'].includes(event.key))return;

@@ -4,28 +4,25 @@ import {execFileSync} from 'node:child_process';
 import matter from 'gray-matter';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
-import {stageRuntimeCompatibility} from './runtime-compat.mjs';
-import {assertPublicStagingApproved} from './public-asset-policy.mjs';
+import {assertPublicStagingApproved,isPublicAsset} from './public-asset-policy.mjs';
 import legacy from '../config/legacy-routes.json' with {type:'json'};
+import {readPostDates,withPostDates,legacyPostRoutes,postRoute} from './post-frontmatter.mjs';
 const project=fileURLToPath(new URL('../',import.meta.url));
 const root=path.resolve(project,'..'), out=path.join(project,'public'), stage=path.join(project,'.generated');
 const source=path.join(root,'source');
-const excluded=new Set(['images/background.mp4','images/ginka-static-background.webp','fonts/LxgwWenKai.ttf','fonts/OppoSans.ttf','fonts/OppoSans-Bold.ttf','live2d/ATRI/ATRI.cmo3','live2d/ATRI/ATRI.psd','live2d/ATRI/ATRI.4096/texture_00.png']);
-const tracked=execFileSync('git',['ls-files','-z','source','astro/vendor-assets'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean);
+const tracked=execFileSync('git',['ls-files','-z','source'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean);
 // Fail before deleting or writing staging output. Git tracking is not permission.
-assertPublicStagingApproved(tracked);
+assertPublicStagingApproved(tracked,root);
 for(const dir of [out,stage]) {fs.rmSync(dir,{recursive:true,force:true});fs.mkdirSync(dir,{recursive:true});}
 function copy(src,dest){fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(src,dest);}
 for(const file of tracked){
- const vendor=file.startsWith('astro/vendor-assets/');
- const rel=file.replace(vendor?'astro/vendor-assets/':'source/','');
- if(rel.startsWith('_')||rel.endsWith('.md')||rel.includes('/local-preview/')||excluded.has(rel)||rel.endsWith('.gitkeep')) continue;
- if(!vendor&&!/^(images|fonts|js|css|live2d|music|voice)\b|^(CNAME|manifest\.webmanifest|sw\.js|voice-config.*\.json)$/.test(rel))continue;
+ if(!isPublicAsset(file)||file.startsWith('source/_posts/'))continue;
+ const rel=file.slice('source/'.length);
  copy(path.join(root,file),path.join(out,rel));
 }
 const postDir=path.join(source,'_posts');
 const enc=s=>s.split('/').map(encodeURIComponent).join('/');
-const routeByStem=new Map(legacy.filter(r=>/^20\d\d\//.test(r)).map(r=>[r.replace(/\/$/,'').split('/').at(-1),r]));
+const routeByStem=legacyPostRoutes(legacy);
 const rows=[];
 fs.mkdirSync(path.join(stage,'posts'),{recursive:true});
 fs.mkdirSync(path.join(stage,'pages'),{recursive:true});
@@ -33,10 +30,9 @@ for(const file of fs.readdirSync(postDir).filter(n=>n.endsWith('.md')).sort()){
  // Only tracked articles enter the production staging tree. Drafts and extracted
  // material cannot be accidentally published by a local build.
  if(!tracked.includes('source/_posts/'+file))continue;
- const stem=file.slice(0,-3), parsed=matter(fs.readFileSync(path.join(postDir,file),'utf8'));
- const date=String(parsed.matter.match(/^date:\s*['"]?(\d{4}-\d\d-\d\d)/m)?.[1]||'');
- if(!date)throw Error('Missing original date: '+file);
- const route=routeByStem.get(stem)||date.replaceAll('-','/')+'/'+stem+'/';
+ const stem=file.slice(0,-3), parsed=matter(fs.readFileSync(path.join(postDir,file),'utf8'),{});
+ const dates=readPostDates(parsed,file);
+ const route=postRoute(stem,dates.dateOnly,routeByStem);
  const attachment=path.join(postDir,stem);
  for(const item of tracked.filter(p=>p.startsWith('source/_posts/'+stem+'/'))){
   const suffix=item.slice(('source/_posts/'+stem+'/').length);
@@ -51,9 +47,9 @@ for(const file of fs.readdirSync(postDir).filter(n=>n.endsWith('.md')).sort()){
   return all;
  });
  const list=v=>Array.isArray(v)?v.flat(Infinity).map(String):v==null?[]:[String(v)];
- const data={...parsed.data,date,route,title:String(parsed.data.title||stem),tags:list(parsed.data.tags),categories:list(parsed.data.categories)};
+ const data={...withPostDates(parsed.data,dates),route,title:String(parsed.data.title||stem),tags:list(parsed.data.tags),categories:list(parsed.data.categories)};
  fs.writeFileSync(path.join(stage,'posts',file),matter.stringify(content,data));
- rows.push({route,title:data.title,stem,date,description:String(data.description||''),tags:data.tags,categories:data.categories});
+ rows.push({route,title:data.title,stem,...dates,description:String(data.description||''),tags:data.tags,categories:data.categories});
 }
 for(const slug of ['about','links']){
  const parsed=matter(fs.readFileSync(path.join(source,slug,'index.md'),'utf8'));
@@ -68,14 +64,13 @@ fs.writeFileSync(path.join(stage,'build.json'),JSON.stringify({version:build}));
 // Preserve the current pinned remote theme. Local new assets never enter this staging directory.
 console.log('Prepared',rows.length,'original posts and tracked public assets');
 
-stageRuntimeCompatibility(out);
 copy(path.join(project,'public-shell.js'),path.join(out,'js/astro-shell.js'));
 copy(path.join(project,'src/styles/base.css'),path.join(out,'css/astro-base.css'));
 copy(path.join(project,'src/styles/game/stage.css'),path.join(out,'css/vn-stage.css'));
 fs.writeFileSync(path.join(out,'.nojekyll'),'');
 
 const assetVersions = {};
-for(const relative of ['css/astro-base.css','css/vn-stage.css',...['editorial','pages','reading','runtime','motion','theme','comments'].map(n=>'css/ginka-'+n+'.css'),...['theme-init','runtime','reading','ui-shell','theme','comments','controls','motion','music'].map(n=>'js/ginka-'+n+'.js'),'js/astro-shell.js']){
+for(const relative of ['css/astro-base.css','css/vn-stage.css',...['editorial','pages','reading','runtime','motion','theme','comments'].map(n=>'css/ginka-'+n+'.css'),...['theme-init','reading','ui-shell','theme','comments','controls','motion','music'].map(n=>'js/ginka-'+n+'.js'),'js/astro-shell.js']){
  const bytes=fs.readFileSync(path.join(out,relative));
  assetVersions[relative]=createHash('sha256').update(bytes).digest('hex').slice(0,10);
 }

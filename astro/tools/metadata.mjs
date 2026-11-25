@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {renderAtomFeed} from './atom-feed.mjs';
 const posts=JSON.parse(fs.readFileSync('.generated/routes.json','utf8'));
 import config from '../config/site.json' with {type:'json'};
 const site=config.url;
@@ -11,8 +12,6 @@ const files=fs.readdirSync('dist',{recursive:true}).filter(n=>n.endsWith('index.
 const sitemap=routes=>decl+'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+routes.map(route=>'<url><loc>'+xml(site+uri(route))+'</loc></url>').join('')+'</urlset>';
 write('sitemap.xml',sitemap(files.filter(route=>!['library/','settings/','search/','music-room/','information/'].includes(route))));write('baidusitemap.xml',sitemap(posts.map(p=>p.route)));
 write('robots.txt','User-agent: *\nAllow: /\nDisallow: /live2d/\nDisallow: /404.html\nSitemap: '+site+'/sitemap.xml\nSitemap: '+site+'/baidusitemap.xml\n');
-const ordered=[...posts].sort((a,b)=>b.date.localeCompare(a.date));
-const iso=d=>d+'T00:00:00+08:00';
-write('atom.xml',decl+'<feed xmlns="http://www.w3.org/2005/Atom"><title>GINKA</title><id>'+site+'/</id><link href="'+site+'/atom.xml" rel="self"/><updated>'+iso(ordered[0].date)+'</updated><author><name>mm9527</name></author><generator uri="https://astro.build/">Astro</generator>'+ordered.map(p=>'<entry><title>'+xml(p.title)+'</title><id>'+xml(site+uri(p.route))+'</id><link href="'+xml(site+uri(p.route))+'"/><updated>'+iso(p.date)+'</updated><summary>'+xml(p.description)+'</summary></entry>').join('')+'</feed>');
+write('atom.xml',renderAtomFeed(posts,site));
 write('article-index.json',JSON.stringify(posts.map(p=>({title:p.title,url:uri(p.route),description:p.description,date:p.date,tags:p.tags}))));
 console.log('Generated SEO and feed metadata');

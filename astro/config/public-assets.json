@@ -1,0 +1,386 @@
+{
+  "version": 1,
+  "notice": "Reviewed existing article media, site identity and licensed typography only. New media require source review and an explicit hash update; original game resources are never staged.",
+  "files": {
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105125646.png": {
+      "sha256": "fa3f93b6a4086e8852dff691191e1ae8716a1ab1456d92947046ca2588e1ebb6",
+      "bytes": 6190,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105125812.png": {
+      "sha256": "04fa4c2fd04b6aced220c9ecb6fda25e908643681db34c6d14eac8ba3269bf6e",
+      "bytes": 87822,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105130503.png": {
+      "sha256": "25293e1c5b031bc0177002645dc7f69f32adc09889667a52baed176b8e2cc0ff",
+      "bytes": 6351,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105130714.png": {
+      "sha256": "8ca100a3c2dfd3dbe92161f29be6f803f504520f586248f4b8e9cf487b905d9e",
+      "bytes": 7189,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105130959.png": {
+      "sha256": "b72a6b53824ea8fc712f47c3b609a5e947002e8276d1ee4d7fb7ed03e94dc5d9",
+      "bytes": 49798,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105131649.png": {
+      "sha256": "93d668a2ba094408facb68c585c146b9551def379a5e24144e1378060573f081",
+      "bytes": 3377,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105132137.png": {
+      "sha256": "c020ff29e951ae3900c3479347ca41616ada9812fec4f9ea9a3a3f5b2e528e39",
+      "bytes": 120047,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105132156.png": {
+      "sha256": "b2f09da891c157bdde2ada529da3d9f619f7e881ee20886b36fb46a2afcdbb74",
+      "bytes": 7845,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105132204.png": {
+      "sha256": "ba39f4e87f3954e7a8f7eec80e85b38df93893d01c944388e0e5296fc00fc23d",
+      "bytes": 6471,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105132214.png": {
+      "sha256": "fee4552e17283d36612bc954efd1215733d012c68a2f37796d8bbfc666ca79cd",
+      "bytes": 4452,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105134410.png": {
+      "sha256": "b7e1d11de7a922df55849cd24bcb0c6a73b9a8542e1ab75900183a5abb28ac8b",
+      "bytes": 19264,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105140316.png": {
+      "sha256": "d6fbdba3e95a804c2a3f2918fc99eaabef34927b1360df0ab1ef37fa7407f73f",
+      "bytes": 16749,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105141018.png": {
+      "sha256": "a0cac7a853543c0ce1873e2cb7fce9540e8ad75f9501fe333ec23bca3a539b89",
+      "bytes": 49024,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105141113.png": {
+      "sha256": "4cedcd7efb473b04b6a0676d6908e0571e2cd56259d01a216e79551914e01210",
+      "bytes": 31230,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105142303.png": {
+      "sha256": "233ed0946b2d8ca5006b83f3966c46cff6111156576fd0634b2647701af55f9a",
+      "bytes": 2036,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105143407.png": {
+      "sha256": "b59a56aee093f78cd72ed1fca567e0378a980c558b8bab5202a0edc95e246491",
+      "bytes": 19777,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]CodeRunner/pasted-image-20251105152619.png": {
+      "sha256": "248b9e48c48d8fc86e7b216b1593dd6c78b4a877567d6b23efa1ff63eec72bbc",
+      "bytes": 178835,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]Ultimate Packer for eXecutables/pasted-image-20251104182310.png": {
+      "sha256": "7f57613e78674ebc2a4a4c5bf1a3dd468e91b5d3e6edccee52d2ad047425a416",
+      "bytes": 100500,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]Ultimate Packer for eXecutables/pasted-image-20251104182334.png": {
+      "sha256": "658fef4fa1e5b8a3bcae426361c023638969189a4494880b40cef99058190afe",
+      "bytes": 12011,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]Ultimate Packer for eXecutables/pasted-image-20251104182708.png": {
+      "sha256": "a2184037abc05dc75e3628041ddb1af6cd15525cf151a1ae8f6e414cad8080cd",
+      "bytes": 13999,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]Ultimate Packer for eXecutables/pasted-image-20251104184616.png": {
+      "sha256": "a3dbcfd2d13d5adf9905332b1301c45a5e8226f361064a0c98f6bc3c5b97db52",
+      "bytes": 10144,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]debuggggg/pasted-image-20251104221613.png": {
+      "sha256": "b7ceaeff77a23df3eb6b759d991ea8a1ee22238492c95691510865fd519a7440",
+      "bytes": 94068,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]debuggggg/pasted-image-20251104221751.png": {
+      "sha256": "65a0a0610b4c1f95b49c218655f253ae7c699e4fb327d322a77ba38eaf6d19b0",
+      "bytes": 90867,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]debuggggg/pasted-image-20251104222157.png": {
+      "sha256": "669ea3e3a9c13849823ff5617ce6106b471b7f074c311a92c03777db80334daf",
+      "bytes": 11150,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]debuggggg/pasted-image-20251104223356.png": {
+      "sha256": "6fead95e7706d03b45657ba408403456253fc850b791a5912417cf2e58e98bfc",
+      "bytes": 124569,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]debuggggg/pasted-image-20251104223512.png": {
+      "sha256": "cb0eddeaf50f30c28a256780f2bb74476cc2a6051beb7dd277a30c6123ab7f6d",
+      "bytes": 16051,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]debuggggg/pasted-image-20251104224152.png": {
+      "sha256": "7dbe91cf8b0e0698b0a653fa6b85fca5e94db4ce6b7000733da606ec037b92f3",
+      "bytes": 28359,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]debuggggg/pasted-image-20251104224419.png": {
+      "sha256": "c293e21a467a8665d327fc8907353aefd105531cb279b45343520c618ef68358",
+      "bytes": 447845,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]fl-ow-er/pasted-image-20251103233312.png": {
+      "sha256": "45ef9b493d3a5dac41544eb02b5b3ce2641c1fc026e045690bfa9e0d3031822c",
+      "bytes": 50067,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]fl-ow-er/pasted-image-20251103233447.png": {
+      "sha256": "cd097e0079fcd40cb238f454ac010f19cb187af3c5ff98d82f4fe0b0e46da66c",
+      "bytes": 67916,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]fl-ow-er/pasted-image-20251103233645.png": {
+      "sha256": "94e70d4b68cc6ceaed109e5eccfc0815564a1692f97232be511aa9050a6a4643",
+      "bytes": 2267,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]fl-ow-er/pasted-image-20251103233707.png": {
+      "sha256": "79b2f8b116cb4ad1122303acc1b06edcbda0a8ab5608765de239267377e51681",
+      "bytes": 50053,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]一种很新的签到/pasted-image-20251103232546.png": {
+      "sha256": "272a4884c937d8b1f118db5bf9541b6247e5aa81305e8e17bb6f5e3411bbe594",
+      "bytes": 86663,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]哈基米/pasted-image-20251104110246.png": {
+      "sha256": "1ec8035a3dce9036c55820052231c1e1b1cc4ee363726b19c1022a2baa0a38b2",
+      "bytes": 108175,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]哈基米/pasted-image-20251104110649.png": {
+      "sha256": "c9fbaacc44de07e2c11ed1ee1eba1c5c2fa088b6bad532cd443f8d97b4c66c08",
+      "bytes": 8627,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]哈基米/pasted-image-20251104110755.png": {
+      "sha256": "4cb5ae73880b3010f8eb03b762b168aafed9c695a6a300bf7a8b9059406010c6",
+      "bytes": 4542,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]哈基米/pasted-image-20251104113113.png": {
+      "sha256": "b167fcd0800e80cfc259a2a74c2b7ad9a3919d7b99fa4fcaeae1d83126d6cc8d",
+      "bytes": 110104,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[NSSCTF 2025 秋招赛]哈基米/pasted-image-20251104133841.png": {
+      "sha256": "80117a9a8c76f1d07cb60bcef04deb4a91639027bdb2bca2ed02b60b56c85ce0",
+      "bytes": 10924,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] Crackme/image-20251207140040939.png": {
+      "sha256": "7d5ccd1b811c0bc1d7bd4b61af8037a638f656fc4f5512ac427cecbc12f675e2",
+      "bytes": 56170,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] Crackme/image-20251207140424189.png": {
+      "sha256": "b36bc59e80dc21b76f87e0b144ddf883b4e3645b5afad6207af8603d773b1282",
+      "bytes": 52977,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] Crackme/image-20251207140452802.png": {
+      "sha256": "3b8a20ef973c9a33774404f60dbd3267b77f2ca81f42e31501132bacd7087944",
+      "bytes": 84317,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] Crackme/image-20251207140829533.png": {
+      "sha256": "3e4c29e444129083dbca7e2cf4264724a8b833f9056cb8a7d68581a8a9e6d4f6",
+      "bytes": 2932,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] Crackme/image-20251207141629305.png": {
+      "sha256": "f467681398c98aaac24a9126328d52e24d7b532087118a25bce75ea779bad4fe",
+      "bytes": 97391,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] Crackme/image-20251207141833075.png": {
+      "sha256": "a8e10e627dd8175c2b8eb8e7527cdb561aa22a9c57ae103cf1d6e87062996870",
+      "bytes": 7733,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] Crackme/image-20251207142101279.png": {
+      "sha256": "b24f94d1fcb78007d209829ee9d2bb241214d883a759f5c33d474254c482bcda",
+      "bytes": 116618,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] Crackme/image-20251207142253797.png": {
+      "sha256": "6bb3fb7c7559dc85adb12e21346bf37023de9b7e7046cd896c7611318c2ed4e4",
+      "bytes": 36253,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] Crackme/image-20251207142906375.png": {
+      "sha256": "b78431841e00d71cb5181e7a0abc0e7a3fff1a66ec8169a8a121b7da00813ce4",
+      "bytes": 6326,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] VSnake/cd8dbd0c502fb5f2fc7119ff6b1b5cf7.png": {
+      "sha256": "02cd2f51ce9dafb4fc2cf11075fc0ef0b831d2064b3668133c890858da9202be",
+      "bytes": 13017,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] VSnake/de84e81ff473a7441f94221aa7972e53.png": {
+      "sha256": "4c63c98e5809772f6dc5c7fb5e19942c0940ea60d56de44e46c0abf65b3b45cc",
+      "bytes": 416620,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] VSnake/image-20251207143905135.png": {
+      "sha256": "5865e26984e56acc9619f6616b6a737f377b89c8c9725e058a2be1a3cb560916",
+      "bytes": 111813,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] VSnake/image-20251207143922727.png": {
+      "sha256": "e9312b05bb1587f4c5721ca52687ec15181555ca4ecd1cb37518e364b166632c",
+      "bytes": 41849,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] VSnake/image-20251207143932782.png": {
+      "sha256": "77578caec0574368ea42b6cdaeff92d1f4f699872c2732b49f121c988f9e5a80",
+      "bytes": 49357,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] VSnake/image-20251207144203276.png": {
+      "sha256": "7e99b3799cffc1833d744786cd7c4b1b963797a195d7ddffb9f47acf91ccfb8b",
+      "bytes": 2682,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] VSnake/image-20251207144328707.png": {
+      "sha256": "12617f7301a02573b24e78b242430ff95e7b6db3a1427de0fdda30921ffeec3e",
+      "bytes": 38692,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] VSnake/image-20251207144830048.png": {
+      "sha256": "43aea8f4827282bdc1f41001f19c367f0097390deed3d16704518476a3352829",
+      "bytes": 114166,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] VSnake/image-20251207145223894.png": {
+      "sha256": "60a94792a26c210eb7c46201422bc788b24853b66ec30cb33c862a9a4bf55fb7",
+      "bytes": 138598,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] ezAndroid/image-20251207134252867.png": {
+      "sha256": "a6f18100e4d2ba17910e96545295447f65c3fc09938cdecb4f9154e3f8561230",
+      "bytes": 11106,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] ezAndroid/image-20251207134445601.png": {
+      "sha256": "a62a7a87b15fd8036918a89fc3ec18d8487a7ac2e1a275ce543c80c13e603349",
+      "bytes": 56195,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] ezAndroid/image-20251207134541436.png": {
+      "sha256": "e1a23b2ea99229af05d4529d322138324208cebedda7a99d31488a515f3f0dc3",
+      "bytes": 2632,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] ezAndroid/image-20251207134700960.png": {
+      "sha256": "9cd9bce044db57a527d3619f62931c227f9d792176eb4a058d6a2dfaed779778",
+      "bytes": 77891,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] ezAndroid/image-20251207134710357.png": {
+      "sha256": "468400d945a40ab910795eb31015265ef8afd6304e0cebce0272b6012f6f0151",
+      "bytes": 4696,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] ezAndroid/image-20251207134901393.png": {
+      "sha256": "d5ac28916068ead6932e7b176ee271b577c0b44227ffcf5af283ff69fd64c553",
+      "bytes": 39113,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] ezAndroid/image-20251207135007174.png": {
+      "sha256": "81de8d24cad9a522595f7db391d9254eb6981b1ec49622c6f4b610003ddc8cfd",
+      "bytes": 47999,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/[miniVN] ezAndroid/image-20251207135036412.png": {
+      "sha256": "9f663f17fdcc2c7baeec1c0278d7d79823107739b4365cd32c1ed5a634164a40",
+      "bytes": 15084,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/va-to-pa-walk/pasted-image-20260320174848.png": {
+      "sha256": "d88cc478998bcb069c44c6690a96bf67c4c96359a0369bcc18e0689066b2f43f",
+      "bytes": 305346,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/va-to-pa-walk/pasted-image-20260320175014.png": {
+      "sha256": "66dcd24a7d0acc190cba16b10b9116970c505796bbc0b392ecb6762b92d7fa6f",
+      "bytes": 3286,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/va-to-pa-walk/pasted-image-20260320180151.png": {
+      "sha256": "8c7092b9d3a0a07bc23174e1121cccb6f7f845450ee8f542243ba3d7a5bf3c3c",
+      "bytes": 19136,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/va-to-pa-walk/pasted-image-20260320181520.png": {
+      "sha256": "9fa0ed549e3a938970468a25d1ba38bcb332834b207e5eeb67af12ef6a47b372",
+      "bytes": 19189,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/va-to-pa-walk/pasted-image-20260320181912.png": {
+      "sha256": "e72bfae0cd11dcc77d6997811b43e04158eaea95ff2712228dc778297f37c085",
+      "bytes": 21183,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/va-to-pa-walk/pasted-image-20260320182045.png": {
+      "sha256": "67106f28e6018d83b7e343deec73a6a173a63a1bd93b89de4a747ead618cc9dc",
+      "bytes": 23554,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/va-to-pa-walk/pasted-image-20260320182516.png": {
+      "sha256": "64c80cfdf72c68c3827f5002ef97a3fbe13e4c63986964638b01a82523050344",
+      "bytes": 26430,
+      "basis": "existing article attachment"
+    },
+    "source/_posts/学x通-梆梆企业版分析/Pasted image 20260919001349.png": {
+      "sha256": "f67fdda25f32777e37301aa0641e913467c1c6f7b10a793d94bf3ce3ad5cb64b",
+      "bytes": 429457,
+      "basis": "existing article attachment"
+    },
+    "source/fonts/ginka/cormorant-garamond-latin-400-italic.woff2": {
+      "sha256": "26b41dd185ff48a71f16f50255b6f77011b1c79e8b18811458323313858f2cfa",
+      "bytes": 23668,
+      "basis": "existing site identity or licensed font (license retained)"
+    },
+    "source/fonts/ginka/cormorant-garamond.LICENSE.txt": {
+      "sha256": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
+      "bytes": 4314,
+      "basis": "existing site identity or licensed font (license retained)"
+    },
+    "source/images/avatar.png": {
+      "sha256": "86bcf50d9bb0c6cb01659109e71a8d1a458c176c14f3f6a3d6a579e3261358da",
+      "bytes": 26577,
+      "basis": "existing site identity or licensed font (license retained)"
+    },
+    "source/images/nssctf.ico": {
+      "sha256": "1052b12c5f95ab76119f0f04f478c0d4d05dfa2f9bf3d68fbf295545119922f4",
+      "bytes": 67646,
+      "basis": "existing site identity or licensed font (license retained)"
+    }
+  }
+}

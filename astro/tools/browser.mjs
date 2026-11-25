@@ -31,7 +31,7 @@ try {
    assert.equal(await page.locator('[data-vn-continue]').isVisible(),false,'continue visible without a save');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-004');
    const fixedCover=await page.locator('[data-vn-art]').evaluate(el=>getComputedStyle(el).backgroundImage);
-   assert.ok(fixedCover.includes('torii-close-'),'title must use fixed torii scene');
+   assert.equal(fixedCover,'none','public title must not substitute unapproved artwork');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-present'),'false');
    const feed=await page.locator('.journal-feed').evaluate(el=>({width:el.getBoundingClientRect().width,layout:el.parentElement.getBoundingClientRect().width}));
    assert.ok(width>960||feed.width>=feed.layout-2,'mobile feed squeezed: '+JSON.stringify(feed));
@@ -95,7 +95,7 @@ try {
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-present'),'true');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-expression'),'eyes-open');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-003');
-   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame-render'),'fallback');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame-render'),'unavailable');
    assert.equal(await page.locator('[data-vn-character-art]').count(),0,'no character overlay');
    await page.screenshot({path:`artifacts/${width}-${mode}-unlocked.png`});
    await page.locator('[data-vn-continue]').click();
@@ -119,12 +119,8 @@ try {
     // EXTRA is locked on title, but the public gallery remains reachable.
     await page.goto(base+'/gallery/',{waitUntil:'domcontentloaded'});
     await page.locator('[data-vn-screen="gallery"]').waitFor();
-    await page.locator('.vn-gallery-grid .journal-scene-card').first().click();
-    await page.locator('.astro-gallery[open]').waitFor();
-    assert.equal(new URL(page.url()).pathname,'/gallery/');
-    await page.keyboard.press('Escape');
-    await page.locator('.astro-gallery').waitFor({state:'hidden'});
-    assert.equal(new URL(page.url()).pathname,'/gallery/');
+    await page.locator('[data-gallery-unavailable]').waitFor({state:'visible'});
+    assert.equal(await page.locator('.vn-gallery-grid .journal-scene-card').count(),0);
     assert.ok(!await overflow(page),'gallery overflow');
     await page.screenshot({path:`artifacts/${width}-${mode}-gallery.png`});
     await page.locator('[data-vn-screen="gallery"] .vn-panel-header .vn-return').click();

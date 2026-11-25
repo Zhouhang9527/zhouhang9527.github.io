@@ -15,5 +15,6 @@ export function createSyntheticUI(root){
  }
  for(const spec of [...Object.values(manifest.privateUI.assets),...Object.values(manifest.title.frames),manifest.title.logo])write(data,spec);
  for(const spec of Object.values(manifest.map.frames))write(bg,spec);
- return {GINKA_TITLE_DATA:data,GINKA_VN_UI_DATA:data,GINKA_MAP_DATA:bg};
+ for(const spec of manifest.gallery)write(root,spec);
+ return {GINKA_ASSETS_ROOT:root,GINKA_TITLE_DATA:data,GINKA_VN_UI_DATA:data,GINKA_MAP_DATA:bg};
 }

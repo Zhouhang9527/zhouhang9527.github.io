@@ -122,7 +122,7 @@
       audio.currentTime = Math.max(0, Math.min(next, audio.duration));
     }
 
-    // Preserve NexT's search shortcut without binding or replacing its popup behavior.
+    // Open the single Pagefind search dialog with the journal shortcut.
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
       var search = document.querySelector('.popup-trigger[aria-label="搜索文章"], .popup-trigger[aria-label="搜索"]');
       if (search) {
@@ -134,7 +134,7 @@
 
   function bindSidebarReveal() {
     // Intentional activation only: pointer movement must not steal clicks.
-    document.addEventListener('pjax:send', function () {
+    document.addEventListener('astro:before-preparation', function () {
       window.dispatchEvent(new Event('sidebar:hide'));
     });
     document.addEventListener('visibilitychange', function () {
@@ -142,13 +142,18 @@
     });
   }
 
+  function bindDrawerObserver() {
+    var observer = window.__ginkaControlsDrawerObserver;
+    if (!observer) observer = window.__ginkaControlsDrawerObserver = new MutationObserver(syncDrawer);
+    observer.disconnect();
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    syncDrawer();
+  }
+
   function start() {
     setup();
     bindSidebarReveal();
-    if (!window.__ginkaControlsDrawerObserver) {
-      window.__ginkaControlsDrawerObserver = new MutationObserver(syncDrawer);
-      window.__ginkaControlsDrawerObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    }
+    bindDrawerObserver();
     var audio = document.getElementById('bg-music');
     if (audio && !audio.__ginkaProgressBound) {
       audio.__ginkaProgressBound = true;
@@ -159,9 +164,8 @@
     }
   }
 
-  document.addEventListener('pjax:success', setup);
-  document.addEventListener('pjax:complete', setup);
-  document.addEventListener('page:loaded', setup);
+  document.addEventListener('astro:after-swap', bindDrawerObserver);
+  document.addEventListener('astro:page-load', setup);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 })();

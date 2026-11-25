@@ -1,37 +1,36 @@
+# Dependencies and generated output (one root npm workspace)
+node_modules/
+astro/.astro/
+astro/.generated/
+astro/public/
+astro/dist/
+artifacts/
+__pycache__/
+*.pyc
+
+# Isolated workspaces, editor state and secrets
+.agents/
+.worktrees/
+.vscode/
+.obsidian/
+.playwright-mcp/
+.env
+.env.*
+!.env.example
+*.log
+.tmp*/
+.tmp-*
+*.tmp
 .DS_Store
 Thumbs.db
 
-# Dependencies and generated Hexo output
-node_modules/
+# Old local build output remains ignored; never clean another session's tree
 public/
 .deploy*/
 db.json
-_multiconfig.yml
-data/post-stats.json
-
-# Local editor/runtime state
-.vscode/
-.playwright-mcp/
-.tmp_run/
-_archive/
-*.log
-.tmp_*
-.tmp-*
-*-deploy.tar.gz
-.worktrees/
-
-# Local verification screenshots
+retired-assets/
+voice_upload/
 *_verify_*.png
-atri-debug-current.png
-atri-performance-verify.png
-online-atri-debug.png
-lyrics-preview.png
-transition-check*.png
+*-deploy.tar.gz
 editorial-*-final.jpeg
-
-
-# 工具生成的报告
 image-optimization-report.json
-
-# Private game artwork: opt-in local preview only
-/source/images/ginka/scenes/local-preview/

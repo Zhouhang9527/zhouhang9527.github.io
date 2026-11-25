@@ -1,21 +1,16 @@
 ---
 import {getEntry, render} from 'astro:content';
-import {scene} from '../lib/site';
 import Comments from './Comments.astro';
 interface Props {kind:'about'|'links';title:string}
 const {kind,title}=Astro.props;
 const page=await getEntry('pages',kind);
 if(!page)throw new Error('Missing static page: '+kind);
 const {Content}=await render(page);
-const art=scene(kind,'masthead');
-const style=`--scene-day:url('${art.day}');--scene-night:url('${art.night}')`;
 ---
 {kind==='about' ? <header class="journal-about-banner">
-  <div class="journal-about-art" aria-hidden="true" style={style}></div>
   <div class="journal-about-banner-copy"><span>ABOUT / 关于博客</span><h1>关于 mm9527</h1></div>
 </header> : <header class="journal-masthead">
   <div><a class="journal-breadcrumb" href="/">GINKA / mm9527</a><span class="journal-eyebrow">FRIENDS / 友情链接</span><h1>{title}</h1><p>一起学习，互相分享</p></div>
-  <div class="journal-masthead-art" aria-hidden="true" style={style}></div>
 </header>}
 <article class="post-block journal-static-content"><div class="post-body"><Content/></div></article>
 {kind==='about'&&<Comments/>}

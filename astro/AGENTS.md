@@ -1,10 +1,11 @@
-# Astro development contract
-- Node 22, Astro 5 static output. TypeScript in src/lib, Astro templates in src/components/layouts/pages, no React hydration for static content. Use explicit Props; route properties are discriminated unions.
-- Site constants and public integration IDs: config/site.json. Old published URL contract: config/legacy-routes.json. Do not regenerate old URLs from titles or alter Giscus pathname mapping.
-- Markdown stays in ../source/_posts until the content cutover is separately approved. Assets and posts must be tracked to build. Do not edit generated folders.
-- New browser features own lifecycle explicitly: mount once for persistent components, route setup on astro:page-load, abort/cleanup on astro:before-preparation; reset references on astro:after-swap. Never rely on old NexT globals. tools/runtime-compat.mjs is temporary and only for existing runtime; migrate one feature at a time with tests.
-- Keep semantic design tokens and page overrides; native buttons/links and dialog; no extra visual effects or framework migration. Verify 320/390/768/1440/1920, both themes, keyboard, reduced motion, content overflow, code blocks, real comments, search, history and audio identity.
-- Before merge: npm run build, npm run typecheck, browser review in CI. Dist artifact is preview only. Check actual errors rather than widening assertions or replacing live integration with mocks.
+# Astro 模块约束
 
-## VN-specific contract
-Read [HANDOFF.md](docs/architecture/HANDOFF.md) and [TODO.md](docs/architecture/TODO.md) on every new task. The VN branch uses the original fixed game palette; the earlier both-themes requirement applies to reader mode only. Respect the title full-CG rule, NEXT afterstory semantics, SOUND-only music, actual Giscus comments, and verified child/adult GINKA dialogue/voice/wardrobe mappings. Prefer original PBD/TJS/KAG evidence over speculative CSS. Keep private assets local. Update TODO and the latest HANDOFF record with real test evidence, blockers and the next task before finishing a batch.
+项目当前状态及任务只维护在根 `docs/`，先读根 `AGENTS.md`。这里不维护第二套路线图。
+
+- Astro 5 SSG + TypeScript，Node >=22.12 <25；不引入无必要的 hydration 框架。根 npm workspace/lockfile 统一依赖。
+- `src/pages` 是路由入口；`src/layouts/Layout.astro` 是唯一壳；domain 管纯状态，runtime 管浏览器副作用，tools 管生成/审计/测试。明确 Props 和路由联合类型。
+- 既有项目脚本原生订阅 Astro 生命周期：persistent 实例只挂一次，`astro:before-preparation` 清理，`astro:after-swap` 重绑 body 引用，`astro:page-load` 初始化当前路由。禁止构建时替换源字符串或依赖 NexT 全局。
+- 阅读内容由根 `source/_posts` 提供；冻结 legacy 路由/fragment、完整日期/时区、Giscus pathname 和 persistent BGM。音乐统一 SYSTEM → SOUND，不增加第二播放器。
+- 只执行已知 SystemAction 白名单，原作脚本是证据而非可 eval 的程序。私有 research runtime 不自动成为浏览器正式实现。
+- 私有资源仅在本地 dev 中间件读取，不写入 public/.generated/dist。无包时明确不可用，不造立绘/声音/剧情。
+- 变更后实际运行根 npm test/typecheck/build 及对应浏览器验收；保持无 JS 阅读、键盘、触屏、两种阅读主题、reduced motion、评论与连续音乐。见 `../docs/TESTING.md`。

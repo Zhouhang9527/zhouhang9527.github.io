@@ -2,6 +2,8 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {createRequire} from 'node:module';
+const astroCli=path.join(path.dirname(createRequire(import.meta.url).resolve('astro/package.json')),'astro.js');
 import {spawn} from 'node:child_process';
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
@@ -17,7 +19,7 @@ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 try{
  const env={...process.env,...createSyntheticUI(root)};
  for(const key of ['GINKA_MASCOT_MANIFEST','GINKA_UI_FONT','GINKA_RULE_PREVIEW'])delete env[key];
- server=spawn(process.execPath,['node_modules/astro/astro.js','dev','--host','127.0.0.1','--port','4380'],{env,stdio:['ignore','pipe','pipe']});
+ server=spawn(process.execPath,[astroCli,'dev','--host','127.0.0.1','--port','4380'],{env,stdio:['ignore','pipe','pipe']});
  for(const stream of [server.stdout,server.stderr])stream.on('data',chunk=>{log=(log+chunk).slice(-40000);});
  const probe=base+'/__ginka_local_ui__/soundLabels-wordmark.png';
  for(let i=0;i<100;i++){if(server.exitCode!==null)throw Error('Dev server exited');try{if((await fetch(probe,{signal:AbortSignal.timeout(1500)})).ok)break;}catch{}await wait(300);}

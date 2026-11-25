@@ -34,6 +34,7 @@ export function localVNUI(){
   }
   register(process.env.GINKA_VN_UI_DATA,manifest.privateUI.assets);
   register(process.env.GINKA_MAP_DATA,manifest.map.frames,'map-');
+  register(process.env.GINKA_ASSETS_ROOT,Object.fromEntries(manifest.gallery.map(spec=>[spec.slug,spec])),'gallery-');
   if(!assets.size)return;
   server.middlewares.use((req,res,next)=>{
    const url=(req.url||'').split('?')[0];

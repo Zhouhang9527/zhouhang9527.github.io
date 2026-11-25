@@ -1,3 +1,3 @@
 # archive
 
-Variance 3, motion 2, density 5. Each route has a distinct scene; do not repeat scene in its own sidebar. Dates and titles dominate, metadata readable, no wash across text. Tags/categories use wrapping semantic controls. 404 uses same theme and clear return links.
+日期、标题与真实元数据优先，tags/categories 使用可换行的语义控件。公共页面不依赖未批准的原作场景图；私有模式可通过已有接口显示完整原图，不能加颜色洗层冒充原作。保留旧路径、fragment、完整出版时刻及可见 dateOnly。404 使用同一主题并提供清晰返回链接。
