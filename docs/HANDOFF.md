@@ -45,6 +45,8 @@ tools/{deploy,checks,update-netease-cookie.ps1}（独立运维）
 
 ## 验收与剩余事项
 
-当前完整候选与独立回归仍在执行。实际结果、最终统计、提交 SHA、PR 与历史分支处置在完成后更新本文件；不把已运行的中间单测/首轮构建冒充最终通过。
+当前候选在 Node 22.20.0 / npm 11.6.1 的独立目录 `D:/linshi/verify-blog-20261126` 完成复验；代码基线为 `2db1e789d153d7d1ed22158418f9d106b073baef`，并包含随后同批复验的 Node >=22.19 metadata 修正、测试空白清理及 fallback 断言修正。`npm ci` 通过；`npm test` 128/128 + purge mock、`npm run typecheck` 0 errors / 0 warnings / 0 hints、完整 build 76 pages / Pagefind 15 articles / `npm run check` 62 legacy routes 通过。两套合成 Chromium browser（390/1440）通过；`check:vn-browser` 390/1440、motion 与 no-JS 通过；live `check:browser` 的 10 个宽度/主题组合和 no-JS 均通过，文章页 Giscus iframe/theme 加载成功。`git diff --check a1bb9d8c` 通过；受保护 source/_posts、source/about、source/links、wp（不含被明确排除的 Obsidian 状态文件）与基线无差异。`npm audit` 与 `npm audit --omit=dev` 均显示 5 项（1 low、3 high、1 critical），留作 Astro/build-chain 升级债；没有使用 force/overrides。构建有 Pagefind 对 `/music-room/` 缺 `<html>` 与 zh-cn stemming 的非阻塞提示。
+
+待完成：本轮 tracked diff 统计为 950 files changed、8,588 insertions、89,084 deletions（以最终提交前清单复算为准）；本地提交、双仓库推送/替代 PR、替代关系落档后的旧 PR 处置及 CI 复核仍待完成。另：此前发现完整 `dist/_astro/*.js` 含 `_hxv4_hash`/`nativeStorage` 等私有来源元数据。已将客户端状态拆为不含来源字段的运行时投影，并加入递归 dist 文本资源扫描；已由当前候选的全量 build/verify 递归扫描 HTML/JS/CSS/JSON/source-map 通过；该门禁覆盖列出的来源路径、storage/hash 标记，不证明所有潜在非字节元数据均不存在。旧 PR #9 是 `feature/ginka-vn -> feature/ginka-astro` 的 open draft；#8 是其迁移基线 `feature/ginka-astro -> ginka-comments-refine`，不能一并关闭。原作逐像素/全服装/真实原声时序、Giscus about identity/登录发帖编辑、真实音乐播放/听感、性能和生产切换仍未完成。
 
 明确未自动完成：原作逐像素/全服装/真实原声时序、真实 Giscus 登录/发帖/编辑、性能量测、Astro 安全大版本迁移、生产切换。所有未合并/dirty/可能活跃 worktree 保留；历史分支只在已合并且归档后清理。后续按 [TASKS](TASKS.md) 和 [TESTING](TESTING.md) 推进。

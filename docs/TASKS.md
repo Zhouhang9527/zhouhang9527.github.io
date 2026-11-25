@@ -8,13 +8,13 @@
 - [x] CLEAN-02 继承 VN 全部有效提交，退出 Hexo/NexT/ATRI 及失效调试/包装/依赖，不删 authored 文章与笔记。
 - [x] CLEAN-03 旧原作派生图/语音/文档私有按字节保全，根 docs 七入口与 AGENTS 约束落仓。
 - [x] CLEAN-04 一份根 lockfile、一套 Astro 原生生命周期、公共资源路径/hash/symlink 门禁。
-- [ ] CLEAN-05 独立候选回归与误删检查、清理前后统计、提交/推送/PR 及条件安全的历史分支清理。
+- [ ] CLEAN-05 独立回归、受保护内容检查和清理统计已完成；本地提交/推送/替代 PR/替代关系记录后的旧 PR 与安全分支处置仍待做。
 
 ## 内容与安全
 
-- [ ] CONTENT-01–04 在完整构建及浏览器中复验软换行、旧 fragment、日期/时区/同日排序/Atom、about Giscus；不得仅凭纯函数测试勾选。
-- [ ] PUB-01/02 持续审查公共媒体的来源/hash 及完整产物；本次移除旧图不自动赋予其他资源许可。保持无原作图/声/字体/脚本进入 dist。
-- [ ] SEC-01 处理实际 npm audit 剩余 advisory；Astro 大版本迁移另行评估并验收，不使用 force/overrides 隐藏问题。
+- [ ] CONTENT-01–04：本轮测试覆盖真实文章的软换行、52 个旧 fragment、日期/时区/排序/Atom；live browser 已验证文章页 Giscus iframe/theme，但 about 路径身份及登录/发帖/编辑未验收，整项暂不勾选。
+- [ ] PUB-01/02 持续审查公共媒体许可/hash；本轮修复客户端私有 scene manifest 导入，并让递归 dist 文本资源门禁在独立完整 build/verify 中通过（HTML/JS/CSS/JSON/source-map 的私有路径/storage 标记）。仍需持续审核其他公开数据流与媒体来源；此门禁不等同所有潜在非字节元数据均不存在，移除旧图也不赋予其他资源新许可。
+- [ ] SEC-01 本轮 `npm audit` 发现 5 项（1 low、3 high、1 critical；`--omit=dev` 仍为 5 项，均沿 Astro/build chain）；评估兼容的 Astro 安全升级并验证，不使用 force/overrides 隐藏问题。
 
 ## 运行时基础
 
@@ -30,7 +30,7 @@
 - [x] STORY-02 主线集合固定为 15 篇 v1，不因新文章增长。
 - [ ] CHAR-01–12、AUDIO-01–06 完整角色/服装/差分/动作/逐句原声与实际播放、语音/BGM 生命周期、声音通道/时序。私有包实际覆盖和可解析 catalog 分开。
 - [ ] GAME-01–08、SAVE-01/03–06、SYS-01–08、LOG-01–04、EXTRA-01–04、DLG-01/02/03 原作各状态、几何、焦点、覆盖/恢复、确认框、评论和画廊真实素材验收。
-- [x] SAVE-02 150 独立手动档已实现，不把最近阅读冒充手动档；当前回归仍需运行。
+- [x] SAVE-02 实现 150 个独立手动存档槽，不把最近阅读冒充手动档；本轮逻辑测试覆盖槽位结构。UI 保存/分页/恢复的独立 Chromium 回归仍待执行，不等同该功能整体验收完成。
 - [ ] FINAL-01–07 INFORMATION 外链实际可达性、全状态像素/逐帧差异、全尺寸、性能、隐私/素材及发布验收。合成 fixture 不等同原作像素一致。
 
 ## 未干扰的并行成果

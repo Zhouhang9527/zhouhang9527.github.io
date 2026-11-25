@@ -310,4 +310,3 @@ test('pagehide retains existing playback/volume persistence and idle cleanup is 
   assertDragListeners(h, 0);
   assert.deepEqual(h.persists, [true, true, true]);
 });
-

@@ -27,6 +27,13 @@ console.log('PASS content-hashed asset manifest');
 
 const vn=JSON.parse(fs.readFileSync('config/vn-scenes.json','utf8'));
 assert.ok(!fs.existsSync('dist/images/ginka'),'Private game artwork must not enter the public build');
+const distTextFiles=[];
+function collectDistText(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,entry.name);if(entry.isDirectory())collectDistText(file);else if(['.html','.js','.mjs','.css','.json','.map'].includes(path.extname(entry.name).toLowerCase()))distTextFiles.push(file);}}
+collectDistText('dist');
+const privateMetadata=['_hxv4_hash/','nativeStorage','sourceBlob','title_base.png','title_base2.png','title_base3.png','manpu_aserim'];
+for(const file of distTextFiles){const text=fs.readFileSync(file,'utf8');for(const marker of privateMetadata)assert.ok(!text.includes(marker),'Private original metadata '+marker+' leaked into '+file);}
+assert.doesNotMatch(home,/data-vn-private-frame-map|data-vn-private-title-timing/,'Private dev metadata leaked into the public HTML');
+console.log('PASS recursive public dist original-metadata isolation');
 assert.match(home,/data-vn-frame-render="unavailable"/);
 assert.match(fs.readFileSync('dist/gallery/index.html','utf8'),/data-gallery-unavailable/);
 assert.match(home,/data-vn-start/);

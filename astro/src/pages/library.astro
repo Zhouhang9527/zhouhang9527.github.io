@@ -31,7 +31,7 @@ const skin=original?'--vn-load-base:url(/__ginka_local_ui__/loadBase.png);--vn-l
     <noscript><p>启用 JavaScript 后可以查看本机阅读记录</p><a href="/archives/">进入文章归档</a></noscript>
    </div>
    <footer class="vn-load-footer">
-    <nav data-vn-library-pages aria-label="存档分页" hidden><button type="button" data-vn-page-step="-1" aria-label="上一页">〈</button><span data-vn-page-numbers></span><button type="button" data-vn-page-step="1" aria-label="下一页">〉</button></nav>
+    <nav data-vn-library-pages data-vn-private-page-geometry={original?JSON.stringify({canvas:geometry.canvas,controls:geometry.controls}):undefined} aria-label="存档分页" hidden><button type="button" data-vn-page-step="-1" aria-label="上一页">〈</button><span data-vn-page-numbers></span><button type="button" data-vn-page-step="1" aria-label="下一页">〉</button></nav>
     <div class="vn-load-footer-links">
      <a href="/" data-vn-mode-set="game" data-vn-library-title data-vn-library-sprite style={control('title')}>TITLE</a>
      <a class="vn-return vn-load-return" href="/" data-vn-mode-set="game" data-vn-library-sprite aria-label="Back to Title" style={control('back')}>BACK</a>

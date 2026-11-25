@@ -29,7 +29,7 @@ try {
    await page.locator('[data-vn-title][data-vn-cover="torii"][data-vn-stage="arrival"]').waitFor();
    assert.equal(await page.locator('.header').isVisible(),false,'traditional header on title screen');
    assert.equal(await page.locator('[data-vn-continue]').isVisible(),false,'continue visible without a save');
-   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-004');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'arrival');
    const fixedCover=await page.locator('[data-vn-art]').evaluate(el=>getComputedStyle(el).backgroundImage);
    assert.equal(fixedCover,'none','public title must not substitute unapproved artwork');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-present'),'false');
@@ -94,7 +94,7 @@ try {
    assert.equal(await page.locator('[data-vn-art]').evaluate(el=>getComputedStyle(el).backgroundImage),fixedCover,'progress changed title background');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-present'),'true');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-expression'),'eyes-open');
-   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-003');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'first-encounter');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame-render'),'unavailable');
    assert.equal(await page.locator('[data-vn-character-art]').count(),0,'no character overlay');
    await page.screenshot({path:`artifacts/${width}-${mode}-unlocked.png`});

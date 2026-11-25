@@ -1,5 +1,5 @@
 import {navigate} from 'astro:transitions/client';
-import {resolveTitleState,localTitleFrame,resolveMapState,localMapFrame,vnScenes} from '../lib/vn-scenes';
+import {resolveTitleState,resolveMapState} from '../lib/vn-scenes-runtime';
 import {rectStyle,stateStyle} from '../lib/vn-control';
 
 import {KEY,empty,isPath,parse,visit,savePosition,unlockMain,startAfterstory,SAVE_KEY,SAVE_PAGES,SAVE_PAGE_SIZE,parseSaveRecord,parseSaveSlots,validSlot,type SaveRecord,type SaveSlots,type Progress} from '../domain/reading-state';
@@ -13,6 +13,10 @@ function read():Progress{
 function write(value:Progress){
  memory=value;
  try{localStorage.setItem(KEY,JSON.stringify(value));volatile=false;}catch{volatile=true;}
+}
+function privateFrameUrl(node:HTMLElement,stateId:string){
+ const frames=JSON.parse(node.dataset.vnPrivateFrameMap||'{}') as Record<string,string>;
+ return frames[stateId]||'';
 }
 function renderTitle(root:Document=document) {
  const title=root.querySelector<HTMLElement>('[data-vn-title]');
@@ -29,12 +33,13 @@ function renderTitle(root:Document=document) {
  title.dataset.vnExpression=state.expression??'none';
  // All three original images contain the complete composition. Select one
  // frame, never composite a character over the torii or invent a night variant.
- title.dataset.vnFrame=state.frame;
- const original=title.dataset.vnOriginal==='true';
+ title.dataset.vnFrame=state.id;
+ const frameUrl=import.meta.env.DEV&&title.dataset.vnOriginal==='true'?privateFrameUrl(title,state.id):'';
+  const original=!!frameUrl;
  const art=title.querySelector<HTMLElement>('[data-vn-art]');
- title.dataset.vnFrameRender=original?'original':'fallback';
+ title.dataset.vnFrameRender=original?'original':'unavailable';
  if(art){
-  if(original)art.style.setProperty('--vn-original-frame',`url('${localTitleFrame(state.frame)}')`);
+  if(original)art.style.setProperty('--vn-original-frame',`url('${frameUrl}')`);
   else art.style.removeProperty('--vn-original-frame');
  }
  const label=title.querySelector<HTMLElement>('[data-vn-progress]');
@@ -122,16 +127,17 @@ function renderPages(pages:number){
  const nav=document.querySelector<HTMLElement>('[data-vn-library-pages]');if(!nav)return;
  nav.hidden=libraryFilter==='quick';nav.querySelectorAll<HTMLButtonElement>('[data-vn-page-step]').forEach(b=>b.disabled=Number(b.dataset.vnPageStep)<0?libraryPage===0:libraryPage===pages-1);
  const numbers=nav.querySelector<HTMLElement>('[data-vn-page-numbers]');if(!numbers)return;
- const original=!!nav.closest('[data-vn-ui-original=true]'),full=original&&libraryFilter==='manual'&&matchMedia('(min-width:960px)').matches;
- nav.dataset.vnFullPages=String(full);
+ const original=import.meta.env.DEV&&!!nav.closest('[data-vn-ui-original=true]'),full=original&&libraryFilter==='manual'&&matchMedia('(min-width:960px)').matches;
+ let privatePageGeometry:{canvas:number[];controls:Record<string,number[]>}={canvas:[0,0,0,0],controls:{}};if(original){try{privatePageGeometry=JSON.parse(nav.dataset.vnPrivatePageGeometry||'{"canvas":[0,0,0,0],"controls":{}}');}catch{}}
+  nav.dataset.vnFullPages=String(full);
  const first=full?0:Math.max(0,Math.min(libraryPage-2,pages-5)),last=full?pages:Math.min(pages,first+5),existing=Array.from(numbers.querySelectorAll<HTMLButtonElement>('[data-vn-page]'));
  if(existing.length!==last-first||existing[0]?.dataset.vnPage!==String(first)){const fragment=document.createDocumentFragment();for(let p=first;p<last;p++){const b=document.createElement('button');b.type='button';b.dataset.vnPage=String(p);b.setAttribute('aria-label','第 '+(p+1)+' 页');b.textContent=String(p+1);fragment.append(b);}numbers.replaceChildren(fragment);}
  numbers.querySelectorAll<HTMLButtonElement>('[data-vn-page]').forEach(b=>{
  const page=Number(b.dataset.vnPage),key='page'+(page+1);
  if(page===libraryPage)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
  if(original&&page>=0&&page<SAVE_PAGES){
-  const rect=vnScenes.privateUI.loadGeometry.controls[key as keyof typeof vnScenes.privateUI.loadGeometry.controls];
-  b.style.cssText=rectStyle(rect,[0,0,...vnScenes.privateUI.loadGeometry.canvas])+';'+stateStyle(true,s=>s==='normal'||s==='hover'||s==='selected'?'loadRows-'+key+'-'+s:null);
+  const rect=privatePageGeometry.controls[key];
+  if(rect)b.style.cssText=rectStyle(rect,[0,0,...privatePageGeometry.canvas])+';'+stateStyle(true,s=>s==='normal'||s==='hover'||s==='selected'?'loadRows-'+key+'-'+s:null);else b.removeAttribute('style');
  }else b.removeAttribute('style');
  });
 }
@@ -196,12 +202,13 @@ function renderMap(){
  const map=document.querySelector<HTMLElement>('[data-vn-map]');if(!map)return;
  let paths:string[]=[];try{paths=JSON.parse(map.dataset.vnPaths||'[]');}catch{}
  const allowed=new Set(paths),count=read().completed.filter(p=>allowed.has(p)).length,state=resolveMapState(count);
- map.dataset.vnMapPhase=state.id;map.dataset.vnMapFrame=state.frame;
+ map.dataset.vnMapPhase=state.id;map.dataset.vnMapFrame=state.id;
  const label=map.querySelector<HTMLElement>('[data-vn-map-count]');if(label)label.textContent='阅读记录 '+count+' / '+paths.length;
  const art=map.querySelector<HTMLElement>('[data-vn-map-art]');
- if(art&&map.dataset.vnMapOriginal==='true'){
-  const url=localMapFrame(state.frame);art.style.setProperty('--vn-map-frame',`url('${url}')`);
- }
+ const mapFrameUrl=import.meta.env.DEV&&map.dataset.vnMapOriginal==='true'?privateFrameUrl(map,state.id):'';
+ if(art&&mapFrameUrl){
+  art.style.setProperty('--vn-map-frame',`url('${mapFrameUrl}')`);
+ }else art?.style.removeProperty('--vn-map-frame');
 }
 function renderAfterstory(){
  const root=document.querySelector<HTMLElement>('[data-vn-afterstory]');if(!root)return;

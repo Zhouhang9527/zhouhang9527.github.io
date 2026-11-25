@@ -1,5 +1,5 @@
 ---
-import {vnScenes,resolveTitleState,localTitleFrame} from '../../lib/vn-scenes';
+import {vnScenes,resolveTitleState,localTitleFrame,type TitleFrameId} from '../../lib/vn-scenes';
 import {href,mainlinePaths} from '../../lib/site';
 import {rectStyle,stateStyle} from '../../lib/vn-control';
 import type {Post} from '../../lib/types';
@@ -11,12 +11,14 @@ const initial=resolveTitleState(0);
 const localOriginal=import.meta.env.DEV&&!!process.env.GINKA_TITLE_DATA;
 const menuOriginal=localOriginal&&!!process.env.GINKA_VN_UI_DATA;
 const menu=vnScenes.privateUI.titleMenu;
+const privateTitleFrames=Object.fromEntries(vnScenes.title.states.map(state=>[state.id,localTitleFrame(state.frame as TitleFrameId)]));
+const initialPrivateFrame=privateTitleFrames[initial.id as keyof typeof privateTitleFrames];
 const menuStyle=(key:keyof typeof menu.states)=>stateStyle(menuOriginal,s=>s==='normal'||s==='hover'||s==='pressed'?'title-'+s+'-'+key.toLowerCase():null,'-art')||undefined;
 const menuBounds=rectStyle(menu.states.CONTINUE.bounds,[0,0,...menu.canvas]);
 const menuLayout=localOriginal?menuBounds+';--vn-menu-gap:'+((menu.rowHeight-menu.buttonSize[1])/menu.canvas[0]*100)+'cqw;--vn-menu-height:'+(menu.buttonSize[1]/menu.canvas[0]*100)+'cqw':undefined;
-const coverStyle=localOriginal?`--vn-original-frame:url('${localTitleFrame(initial.frame)}')`:undefined;
+const coverStyle=localOriginal?`--vn-original-frame:url('${initialPrivateFrame}')`:undefined;
 ---
-<section class="vn-stage vn-title" data-vn-title data-vn-title-menu-original={String(menuOriginal)} data-vn-title-unlocked="false" data-vn-cover={background.id} data-vn-stage={initial.id} data-vn-character-present={String(initial.present)} data-vn-expression={initial.expression??"none"} data-vn-frame={initial.frame} data-vn-original={String(localOriginal)} data-vn-frame-render={localOriginal?"original":"unavailable"} data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} data-vn-mainline={JSON.stringify(required)} aria-labelledby="vn-title-heading">
+<section class="vn-stage vn-title" data-vn-title data-vn-title-menu-original={String(menuOriginal)} data-vn-title-unlocked="false" data-vn-cover={background.id} data-vn-stage={initial.id} data-vn-character-present={String(initial.present)} data-vn-expression={initial.expression??"none"} data-vn-frame={initial.id} data-vn-original={String(localOriginal)} data-vn-frame-render={localOriginal?"original":"unavailable"} data-vn-private-frame-map={localOriginal?JSON.stringify(privateTitleFrames):undefined} data-vn-private-title-timing={localOriginal?JSON.stringify(vnScenes.motion.title):undefined} data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} data-vn-mainline={JSON.stringify(required)} aria-labelledby="vn-title-heading">
  <div class="vn-cover" aria-hidden="true">
   <div class="vn-cover-art" data-vn-art={background.id} style={coverStyle}></div>
   {localOriginal&&<div class="vn-original-logo" style="--vn-logo-art:url(/__ginka_local_title__/logo.png)"></div>}

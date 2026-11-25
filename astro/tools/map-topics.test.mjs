@@ -122,14 +122,15 @@ const content = data => moduleURL(`export async function getCollection(name){if(
 const siteSource = read('../src/lib/site.ts');
 function siteModule(data) {
   return compileTS(siteSource, 'site.ts', {
-    'astro:content': content(data), 
+    'astro:content': content(data),
     '../../config/legacy-routes.json': jsonModule(legacy), '../../config/vn-mainline.json': jsonModule(mainline),
     '../../config/site.json': jsonModule(config), '../../tools/post-dates.mjs': new URL('./post-dates.mjs',import.meta.url).href,
   });
 }
 const realSiteURL = siteModule(posts);
 const realSite = await import(realSiteURL);
-const sceneURL = compileTS(read('../src/lib/vn-scenes.ts'), 'vn-scenes.ts', {'../../config/vn-scenes.json': jsonModule(scenes)});
+const runtimeSceneURL = compileTS(read('../src/lib/vn-scenes-runtime.ts'), 'vn-scenes-runtime.ts');
+const sceneURL = compileTS(read('../src/lib/vn-scenes.ts'), 'vn-scenes.ts', {'../../config/vn-scenes.json': jsonModule(scenes), './vn-scenes-runtime': runtimeSceneURL});
 const helperURL = new URL('../src/lib/map-topics.ts', import.meta.url).href;
 async function compile(source, filename, imports = {}, original = false) {
   const compiled = await transform(source, {filename, internalURL: runtime, renderScript: true, resolvePath: specifier => imports[specifier] || specifier});
@@ -200,12 +201,19 @@ test('map phase, progress paths and private-frame selection remain the existing 
     const paths = mapTag.match(/data-vn-paths="([^"]+)"/)?.[1];
     assert.deepEqual(JSON.parse(decodeAttribute(paths)), sitePosts.map(item => realSite.href(item.data.route)));
     assert.ok(mapTag.includes(`data-vn-map-phase="${state.id}"`));
-    assert.ok(mapTag.includes(`data-vn-map-frame="${state.frame}"`));
+    assert.ok(mapTag.includes(`data-vn-map-frame="${state.id}"`));
     assert.ok(mapTag.includes(`data-vn-map-original="${original}"`));
     assert.match(html, /阅读记录 0 \/ 15/);
     assert.equal(count(html, /<details\b/g), 8);
-    if (original) assert.ok(html.includes('/__ginka_local_ui__/map-' + state.frame + '.png'));
-    else assert.doesNotMatch(html, /__ginka_local_/);
+    if (original) {
+      const privateState=scenes.map.states.find(item=>item.id===state.id);
+      assert.ok(privateState);
+      assert.ok(mapTag.includes('data-vn-private-frame-map='));
+      assert.ok(html.includes('/__ginka_local_ui__/map-' + privateState.frame + '.png'));
+    } else {
+      assert.doesNotMatch(mapTag,/data-vn-private-frame-map/);
+      assert.doesNotMatch(html, /__ginka_local_/);
+    }
   }
   assert.doesNotMatch(mapSource, /localStorage|sessionStorage|resolveTitleState|<script\b|canonical|data-vn-mainline/);
 });

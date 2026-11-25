@@ -109,7 +109,7 @@ try{
     localStorage.setItem(key,JSON.stringify(state));
    },pathname);
    await back('[data-vn-return]');
-   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-003');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'first-encounter');
    // Exercise actual mainline completion, rather than directly injecting mainCleared.
    await page.evaluate(()=>{const key='ginka.vn.progress.v1',state=JSON.parse(localStorage.getItem(key));const title=document.querySelector('[data-vn-title]');const required=JSON.parse(title.dataset.vnMainline);if(required.length!==15)throw Error('v1 mainline changed');state.completed=required;state.mainCleared=false;localStorage.setItem(key,JSON.stringify(state));});
    await page.reload();await visible('[data-vn-next]');
@@ -200,7 +200,7 @@ try{
    await visible('[data-vn-title]');
    await page.reload();
    await visible('[data-vn-continue]');
-   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-005');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'familiar');
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('ginka.vn.progress.v1')).mainCleared),true);
    assert.deepEqual(errors,[]);
    assert.deepEqual(privateFailures,[]);
@@ -211,7 +211,7 @@ try{
   finally{results.push(result);await page.close();}
  }
  const motionPage=await browser.newPage({viewport:{width:1280,height:720},reducedMotion:'no-preference'});
- try{await motionPage.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());await motionPage.goto(base+'/');await motionPage.locator('[data-vn-start]').click();const overlay=motionPage.locator('[data-vn-title-departure]');await overlay.waitFor({state:'attached'});assert.equal(await overlay.evaluate(el=>el.getAnimations()[0]?.effect?.getTiming().duration),1000);await motionPage.keyboard.press('Escape');await motionPage.waitForURL(url=>url.pathname==='/archives/');await motionPage.locator('[data-vn-chapter]').waitFor();assert.equal(await overlay.count(),0);results.push({mode:'title-motion',ok:true});}catch(error){results.push({mode:'title-motion',ok:false,error:String(error),url:motionPage.url()});}finally{await motionPage.close();}
+ try{await motionPage.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());await motionPage.goto(base+'/');await motionPage.locator('[data-vn-start]').click();const overlay=motionPage.locator('[data-vn-title-departure]');await overlay.waitFor({state:'attached'});assert.equal(await overlay.evaluate(el=>el.getAnimations()[0]?.effect?.getTiming().duration),900);await motionPage.keyboard.press('Escape');await motionPage.waitForURL(url=>url.pathname==='/archives/');await motionPage.locator('[data-vn-chapter]').waitFor();assert.equal(await overlay.count(),0);results.push({mode:'title-motion',ok:true});}catch(error){results.push({mode:'title-motion',ok:false,error:String(error),url:motionPage.url()});}finally{await motionPage.close();}
  const page=await browser.newPage({javaScriptEnabled:false,viewport:{width:390,height:900}});
  try{await page.goto(base+'/');await page.locator('[data-vn-start]').click();await page.locator('[data-vn-post]').first().click();await page.locator('.post-body').waitFor();results.push({mode:'no-js',ok:true});}
  catch(error){results.push({mode:'no-js',ok:false,error:String(error)});}finally{await page.close();}

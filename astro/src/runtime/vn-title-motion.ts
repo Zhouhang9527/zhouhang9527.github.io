@@ -1,6 +1,11 @@
 import {navigate} from 'astro:transitions/client';
-import {vnScenes} from '../lib/vn-scenes';
-const timing=vnScenes.motion.title;
+import {runtimeScenes} from '../lib/vn-scenes-runtime';
+let timing=runtimeScenes.motion.title;
+function timingFor(root:Document){
+ const title=root.querySelector<HTMLElement>('[data-vn-title][data-vn-original=true]');
+ return import.meta.env.DEV&&title?.dataset.vnPrivateTitleTiming?JSON.parse(title.dataset.vnPrivateTitleTiming):runtimeScenes.motion.title;
+}
+timing=timingFor(document);
 let seen=false,active:HTMLElement|null=null,timer=0;
 type Departure={overlay:HTMLElement;animation:Animation;url:string;navigating:boolean};
 let departure:Departure|null=null;
@@ -21,6 +26,7 @@ document.addEventListener('click',event=>{
 },true);
 function finish(){clearTimeout(timer);if(active){delete active.dataset.vnTitleIntro;active=null;}}
 function prepare(root:Document=document){
+ timing=timingFor(root);
  const title=root.querySelector<HTMLElement>('[data-vn-title][data-vn-original=true]');if(!title||title===active)return;
  finish();
  const restored=seen;seen=true;

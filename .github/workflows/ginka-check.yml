@@ -3,7 +3,7 @@ on:
   push:
     branches: [feature/ginka-vn, 'cleanup/**']
   pull_request:
-    branches: [feature/ginka-artbook, feature/ginka-vn, main]
+    branches: [feature/ginka-artbook, feature/ginka-vn, feature/ginka-astro, main]
   workflow_dispatch:
 permissions:
   contents: read
