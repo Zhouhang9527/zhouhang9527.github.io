@@ -78,10 +78,16 @@ try{
    }
    await dock.locator('[data-vn-game-action="save"]').click();
    await visible('[data-vn-screen="load"][data-vn-save-mode=true]');
+   assert.equal(await page.locator('[data-vn-save-tab]').isEnabled(),true);
+   await page.locator('[data-vn-filter="manual"]').click();await visible('[data-vn-screen="load"][data-vn-save-mode=false]');
+   await page.locator('[data-vn-save-tab]').click();await visible('[data-vn-screen="load"][data-vn-save-mode=true]');
    await page.locator('[data-vn-manual-action="0"]').click();
    await page.waitForFunction(()=>JSON.parse(localStorage.getItem('ginka.vn.saves.v1')||'null')?.slots?.['0']);
    await page.locator('[data-vn-save-back]').click();await visible('.post-body');
    const article=page.url();
+   await page.locator('.vn-game-buttons [data-vn-game-action="load"]').click();await visible('[data-vn-screen="load"][data-vn-save-mode=false]');
+   assert.equal(await page.locator('[data-vn-save-tab]').isEnabled(),true);
+   await page.locator('[data-vn-save-back]').click();await visible('.post-body');assert.equal(page.url(),article);
    const pathname=new URL(article).pathname;
    assert.ok(await page.evaluate(old=>old===document.querySelector('#bg-music'),audio),'Audio replaced by navigation');
    await page.locator('[data-vn-bookmark]').click();
@@ -115,6 +121,7 @@ try{
    await back('[data-vn-screen="map"] .vn-panel-header .vn-return');
    await page.locator('.vn-menu a[href="/library/"]').click();
    await visible('[data-vn-manual-grid]');
+   assert.equal(await page.locator('[data-vn-save-tab]').isDisabled(),true,'Title LOAD must not invent a caller save');
    assert.equal(await page.locator('[data-vn-manual-slot]:visible').count(),10);
    assert.equal(await page.locator('[data-vn-manual-empty]:visible').count(),9);
    for(let i=0;i<14;i++){const next=page.locator('[data-vn-page-step="1"]');if(await next.isVisible())await next.click();else await page.locator('[data-vn-page="'+(i+1)+'"]').click();}

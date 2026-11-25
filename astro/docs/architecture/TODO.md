@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 SAVE-02/03/05/06：从文章进入 LOAD 或 SAVE 均保留真实位置快照，LOAD/SAVE/Q.LOAD 使用同一存档窗口的独立模式，可切换而不丢调用上下文；标题 LOAD 禁用 SAVE，返回真实调用文章，离开窗口清理 draft，跨标签页变更时拒绝读取旧记录。PBD 原始 SAVE/LOAD/Q.LOAD 三个标签与 TITLE/BACK/EXIT footer 使用现有逻辑 sprite 及桌面坐标，博客最近/收藏/已读单独排列，VOICE 预留另一 Agent。新增真实浏览器模式切换、文章返回、标题 SAVE 禁用断言；最新 CI 未确认。
+
 2026-11-25 DATA-05/CHAR-01/02/05/06：私有 e6891e3 已复现 HXV4 文件名哈希并匹配六套原作 PBD 的全部 543 个 PNG 层，真实 PSB scn001/002/003 的逐句角色状态亦已读取。V2 支持原始裁切 base 的 canvas/baseRect 坐标，校验原始层实际图头尺寸；新增 fixture 测试。待生成首个可用私有包及浏览器实测。
 
 2026-11-25 SYS-01/02/03/04、ENGINE-01：从私有 b71280b 的 7 份实际 PBD 提取 60 个逻辑切片，全部通过源 atlas 尺寸边界检查。00000778 七页签和四 footer 精确 geometry/state，00000740 DISPLAY 窗口/全屏及效果 ON/OFF 两对原作叠层和矩形，0000074f 共用滑块 rail/thumb 与旋转 TEXT wordmark，其他六页标题精确偏移。桌面原作模式应用页签、footer、标题、DISPLAY 两组坐标，移动端保留触屏流式布局；SOUND 大 PBD 无法完整读取，标题暂保留文字，博客适配功能不伪造原作状态。原作像素、私有浏览器和最新 CI 未验收。
