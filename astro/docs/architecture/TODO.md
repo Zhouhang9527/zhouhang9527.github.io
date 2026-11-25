@@ -251,7 +251,7 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 
 - [ ] CONTENT-01 保持 Hexo `marked.breaks=true` 的软换行语义。Astro 已接入 `remark-breaks@4.0.0`，`astro/tools/markdown-breaks.test.mjs` 2/2 通过；尚未在 Astro 完整渲染产物中核验真实 `ez_tea.md` 行内断行，需在安全的无未授权素材构建路径建立后补验。
 - [ ] CONTENT-02 冻结并保留 15 篇已发布文章的所有旧 heading fragment ID；只读审计发现旧 HTML 52 个正文 heading 与当前 Astro slug 估计有 31 个不一致，兼容别名和基于旧发布 HTML 的自动回归仍待实现/渲染核验；单个波浪符标题待实渲染复核。
-- [ ] CONTENT-03 在不改变 legacy canonical URL 的情况下保留文章完整发布日期/时区，并对同日排序、Atom published/updated、article metadata 与旧发布输出建立断言。
+- [ ] CONTENT-03 在不改变 legacy canonical URL 的情况下保留文章完整发布日期/时区，并对同日排序、Atom published/updated、article metadata 与旧发布输出建立断言。独立 `feature/ginka-date-fidelity` 工作树已有候选：Agent 报 UTC/洛杉矶/上海各 15/15 只读纯单测通过，Lead 已读 diff；尚未整合，完整 Astro 类型/渲染验收未做，当前集成树本项仍未修复。
 - [ ] CONTENT-04 恢复旧 `/about/` 页的 Giscus 入口。`StaticPage.astro` 已复用共享 Comments，仅 about 渲染；实际内存 Astro 编译/Container 渲染 4/4 通过，未创建 iframe、未改 Giscus pathname。尚未执行完整构建/真实浏览器与登录、发布、编辑验收。
 - [ ] PUB-01 对 48 张 `source/images/ginka/scenes/*.webp` 建立逐项来源/公开许可/批准状态；在许可证据确认或改用明确获许可/自制替代前，构建/CI artifact 不得再包含它们。当前 48 文件已可从六个 public 开发分支的 GitHub Raw 匿名读取，当前 remote main 未含该目录，已知生产 48 URL 为 404；不得将“生产 404”表述成“素材仍是私有”。
 - [ ] PUB-02 增加 public staging allowlist、symlink/junction 拒绝及完整 dist/CI artifact 递归防漏测试。已先实现 `public-asset-policy.mjs` 路径门禁，在 `prepare.mjs` 删除/写入前拒绝已知 scenes 目录；纯路径与实际 prepare 前置次序测试 4/4 通过，实际执行拒绝 48 项且 public/.generated/dist 仍不存在。它不覆盖其他路径、改名或重编码，不能标记完整隔离完成。
