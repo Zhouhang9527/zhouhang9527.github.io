@@ -38,7 +38,7 @@ let revealTarget:HTMLElement|null=null,readyFrames=new Set<string>(),frameGenera
 const frameImage=(selector:string)=>$('[data-mascot-'+selector+']') as HTMLImageElement|undefined;
 const frameUsable=(img:HTMLImageElement|undefined)=>!!img?.getAttribute('src')&&img.complete&&img.naturalWidth>0;
 function stopMotion(){clearTimeout(motionTimer);motionTimer=0;}
-function stopBlink(){clearTimeout(blinkTimer);clearTimeout(blinkEnd);blinkTimer=blinkEnd=0;const blink=frameImage('blink');if(blink)blink.hidden=true;}
+function stopBlink(){clearTimeout(blinkTimer);clearTimeout(blinkEnd);blinkTimer=blinkEnd=0;const blink=frameImage('blink');if(blink)blink.hidden=true;if(layerEye){layerEye=false;drawLayers();}}
 function showFrame(kind:'base'|'blink'|'mouth'){
  const b=frameImage('base'),e=frameImage('blink'),m=frameImage('mouth');
  const showM=kind==='mouth'&&frameUsable(m),showE=kind==='blink'&&frameUsable(e);
@@ -123,11 +123,20 @@ function renderLine(line:Line,animate:boolean){
  function tick(now:number){if(!text?.isConnected||current!==line||!open)return;const count=Math.min(chars.length,Math.floor((now-start)/30)+1);text.textContent=chars.slice(0,count).join('');if(count<chars.length)reveal=requestAnimationFrame(tick);else stopReveal();}
  reveal=requestAnimationFrame(tick);
 }
-function resetMouth(){cancelAnimationFrame(raf);raf=0;showFrame('base');}
+function resetMouth(){cancelAnimationFrame(raf);raf=0;if(layerPose){if(layerMouth){layerMouth=false;drawLayers();}}else showFrame('base');}
 function animateMouth(){cancelAnimationFrame(raf);if(!analyser||!audio||audio.paused||reduce()||muted||!open){resetMouth();return;}const data=new Uint8Array(analyser.fftSize);let prev=false;
  const tick=()=>{if(!audio||audio.paused||!open||!analyser||muted||reduce()||document.hidden){resetMouth();return;}analyser.getByteTimeDomainData(data);let sum=0;for(const n of data)sum+=((n-128)/128)**2;const amp=Math.sqrt(sum/data.length);const active=amp>(prev ? .024 : .045);prev=active;const mouth=$('[data-mascot-mouth]') as HTMLImageElement|undefined;if(layerPose){if(layerMouth!==active){layerMouth=active;drawLayers();}}else if(frameUsable(mouth)){if(active)showFrame('mouth');else if(frameImage('blink')?.hidden!==false)showFrame('base');}raf=requestAnimationFrame(tick);};raf=requestAnimationFrame(tick);
 }
-function scheduleBlink(){stopBlink();showFrame('base');if(layerPose||!open||reduce()||document.hidden||!frameImage('blink')?.getAttribute('src'))return;
+function scheduleBlink(){stopBlink();
+ if(layerPose){
+  if(!open||reduce()||document.hidden||!layerPose.layers?.some(l=>l.slot==='eye'&&l.alternate))return;
+  const id=lastPose;
+  // Optional blog-only idle timing; never invent closed-eye artwork.
+  blinkTimer=window.setTimeout(()=>{if(!open||reduce()||document.hidden||lastPose!==id)return;
+   layerEye=true;drawLayers();blinkEnd=window.setTimeout(()=>{if(lastPose!==id)return;layerEye=false;drawLayers();scheduleBlink();},145);
+  },4000+Math.random()*3500);return;
+ }
+ showFrame('base');if(!open||reduce()||document.hidden||!frameImage('blink')?.getAttribute('src'))return;
  blinkTimer=window.setTimeout(()=>{if(!open||reduce()||document.hidden)return;
   if(frameImage('mouth')?.hidden!==false&&frameUsable(frameImage('blink'))){showFrame('blink');blinkEnd=window.setTimeout(()=>{if(frameImage('blink')?.hidden===false)showFrame('base');scheduleBlink();},130);}else scheduleBlink();
  },3000+Math.random()*3500);
@@ -165,5 +174,5 @@ document.addEventListener('astro:page-load',mount);
 document.addEventListener('vn:view-change',()=>{if(open&&current&&allowed(current)){renderLine(current,false);scheduleBlink();if(audio?.paused)startMotion();else animateMouth();}});
 document.addEventListener('vn:progress-reset',()=>{try{localStorage.removeItem(HISTORY_KEY);}catch{}if(current&&!allowed(current)){close();current=null;}syncSettings();});
 window.addEventListener('storage',()=>{readSettings();if(current&&(!allowed(current)||!choices().includes(current))){close();current=null;}syncSettings();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden){generation++;finishReveal();audio?.pause();stopMotion();stopBlink();resetMouth();}else if(open){scheduleBlink();startMotion();}});
+document.addEventListener('visibilitychange',()=>{document.documentElement.toggleAttribute('data-mascot-page-hidden',document.hidden);if(document.hidden){generation++;finishReveal();audio?.pause();stopMotion();stopBlink();resetMouth();}else if(open){scheduleBlink();startMotion();}});
 readSettings();mount();

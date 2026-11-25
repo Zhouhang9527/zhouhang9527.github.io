@@ -721,6 +721,11 @@ html:not([data-vn-mode=reader]) body:has([data-vn-game-reader]:not([hidden])) .j
 @media(max-width:959px){.vn-load[data-vn-ui-original=true] .vn-load-header h1{width:clamp(140px,35%,274px);height:clamp(42px,10vw,76px)}}
 
 /* Layered original raster stand: do not add synthetic breathing to this path. */
-.ginka-mascot-portrait[data-layered]{animation:none}
+/* Blog-only rigid-body idle; do not deform or independently move the original layers. */
+@keyframes ginka-layer-idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
+.ginka-mascot-portrait[data-layered]{animation:ginka-layer-idle 6s ease-in-out infinite}
+html[data-mascot-page-hidden] .ginka-mascot-portrait[data-layered]{animation-play-state:paused}
+html[data-vn-motion=reduced] .ginka-mascot-portrait[data-layered]{animation:none}
+@media(prefers-reduced-motion:reduce){.ginka-mascot-portrait[data-layered]{animation:none}}
 .ginka-mascot-portrait canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom center;max-width:none}
 .ginka-mascot-window nav button:disabled{opacity:.45;cursor:default}

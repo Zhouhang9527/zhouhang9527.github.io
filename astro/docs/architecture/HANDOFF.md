@@ -110,6 +110,8 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
+- 2026-11-25 CHAR-03/04/07：用户明确原版叠层上增加轻动态；V2 增加整体 1.5px/6s 待机位移、仅已核验闭眼差分的独立眨眼（4–7.5s/145ms，博客临时参数），与 RMS 嘴型独立，不变形，不冒充原作时序；隐藏页暂停、reduced-motion 禁用。私有 86eeadc 新增完整 .sinfo 定义（大 28 dress 行/86 fgname/21 alias，小 13/57/18），两套 d1 base 已从真实首行补回，别名引用全部存在；PNG/OGG 实际映射未解决，未运行真实角色验收。
+
 - 看板娘专线最新：2026-11-25 DATA-04/05、CHAR-01/04/05/06/07/09：私有 390eae6 实证为 KAG .sinfo 分层差分（非 Live2D/E-mote），14793 对白记录、5511 voice ID，具体 OGG/立绘语义/解锁未核验。新增 v2 有序 sparse layer/显式矩形和 over/replace/独立眼嘴候选，保留 v1；仅验证文本、姿势及阶段时可显式 voice=null，禁用回放收藏、不记语音历史。证据库 available=false 正常降级，不再阻断原作预览。未复制私有资源，未执行完整 CI 或真实素材浏览器验收。
 - 下一步：素材 Agent 核验 .sinfo storage→PNG、facegroup 坐标/绘制顺序及 voice storage→OGG；提供 verified v2 小包后验收。原作 affine 和眨眼时序仍待证据。
 
