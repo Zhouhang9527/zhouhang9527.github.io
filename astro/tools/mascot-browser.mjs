@@ -63,7 +63,7 @@ try{
   await page.locator('[data-mascot-action=save]').click();
   assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('ginka.vn.voice.saved.v1'))),['tone']);
   await next.click();assert.equal(await page.locator('[data-mascot-text]').textContent(),'Silent fixture');
-  await page.locator('[data-mascot-close]').click();assert.equal(await launcher.getAttribute('aria-expanded'),'false');
+  await page.locator('[data-mascot-character] [data-mascot-action=close]').click();assert.equal(await launcher.getAttribute('aria-expanded'),'false');
   assert.equal(await page.locator('[data-mascot-character]').isVisible(),false);
   assert.equal(await page.locator('[data-mascot-audio]').evaluate(a=>a.paused),true);
   assert.equal(await page.evaluate(()=>document.activeElement?.matches('[data-mascot-action=open]')),true);

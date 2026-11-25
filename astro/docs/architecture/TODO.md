@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 CHAR-07/08/09/12：66b64fd 的 CI 45536688313 已通过 typecheck/build，真实 Chromium fixture 已走过 390px 稀疏 Canvas 像素、静默对白及测试音历史记录；V.SAVE 被 Astro dev toolbar 拦截。私有素材预览关闭 dev toolbar（不强制点击、不跳过断言），修复收起按钮测试选择器；新 CI 尚未完成。
+
 2026-11-25 CHAR-06/07/08/09/10/11/12：2c3374a 实际 CI 两套 typecheck/build/check:mascot 已通过（VN 45535233798、Review 45535233919），全站 browser 分别 DOM.describeNode context lost、mode-toggle timeout，未视为通过。新增独立 synthetic mascot browser fixture 与 CI 阶段，真实 Canvas 像素、静默对白、测试音、收藏历史、解锁、焦点/收起；延迟加载及复用分层图像、可用对白过滤服装、旧 media 事件防护和 motion 设置即时响应。新 CI 尚未验证，仍无实际可用私有包。
 
 2026-11-25 CHAR-03/04/07：用户明确原版叠层上增加轻动态；V2 增加整体 1.5px/6s 待机位移、仅已核验闭眼差分的独立眨眼（4–7.5s/145ms，博客临时参数），与 RMS 嘴型独立，不变形，不冒充原作时序；隐藏页暂停、reduced-motion 禁用。私有 86eeadc 新增完整 .sinfo 定义（大 28 dress 行/86 fgname/21 alias，小 13/57/18），两套 d1 base 已从真实首行补回，别名引用全部存在；PNG/OGG 实际映射未解决，未运行真实角色验收。
