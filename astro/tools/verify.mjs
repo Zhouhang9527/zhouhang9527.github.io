@@ -55,7 +55,7 @@ assert.match(vnCss,/--vn-font-ui:/);
 assert.doesNotMatch(vnCss,/__ginka_local_font__|@font-face/);
 console.log('PASS VN typography roles and private font isolation');
 
-for(const [route,screen] of [['library','load'],['gallery','gallery'],['settings','config']]){
+for(const [route,screen] of [['library','load'],['gallery','gallery'],['settings','config'],['information','information']]){
  const html=fs.readFileSync('dist/'+route+'/index.html','utf8');
  assert.ok(html.includes('data-vn-screen="'+screen+'"'),'Missing VN '+screen);
  assert.ok(home.includes('href="/'+route+'/"'),'Unreachable VN '+route);
@@ -63,7 +63,7 @@ for(const [route,screen] of [['library','load'],['gallery','gallery'],['settings
 console.log('PASS VN load, gallery and config routes');
 
 assert.ok(!fs.existsSync('dist/__ginka_local_ui__'),'Private UI files leaked');
-for(const route of ['index.html','gallery/index.html','library/index.html','settings/index.html']){
+for(const route of ['index.html','gallery/index.html','library/index.html','settings/index.html','information/index.html']){
  assert.doesNotMatch(fs.readFileSync('dist/'+route,'utf8'),/__ginka_local_ui__|data-vn-ui-original="true"/,'Private UI reference leaked');
 }
 console.log('PASS private UI build isolation');
@@ -89,7 +89,7 @@ for(const state of vn.map.states)assert.ok(Object.hasOwn(vn.map.frames,state.fra
 console.log('PASS map state manifest and private isolation');
 
 const sitemap=fs.readFileSync('dist/sitemap.xml','utf8');
-for(const route of ['library','settings','search','music-room'])assert.ok(!sitemap.includes('/'+route+'/</loc>'),'Private UI route in sitemap '+route);
+for(const route of ['library','settings','search','music-room','information'])assert.ok(!sitemap.includes('/'+route+'/</loc>'),'Private UI route in sitemap '+route);
 console.log('PASS noindex page sitemap exclusion');
 
 assert.doesNotMatch(home,/__ginka_local_title__|vn-original-logo/,'Original title overlay leaked');
@@ -167,3 +167,9 @@ assert.match(settingsHtml,/data-vn-voice-volume/);
 console.log('PASS mascot shell, voice settings and private pack isolation');
 
 assert.match(settingsHtml,/data-vn-mascot-character/);assert.match(settingsHtml,/data-vn-mascot-outfit/);
+
+const informationHtml=fs.readFileSync('dist/information/index.html','utf8');
+assert.equal((informationHtml.match(/data-vn-info=/g)||[]).length,14);
+assert.match(informationHtml,/href="\/about\/"/);
+assert.match(informationHtml,/非官方同人主题/);
+console.log('PASS independent INFORMATION route, legacy about and private isolation');

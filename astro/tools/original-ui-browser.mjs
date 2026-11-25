@@ -90,6 +90,13 @@ try{
    for(let i=0;i<manifest.gallery.length;i++)await geometry('[data-vn-screen="gallery"]','.vn-gallery-grid .journal-scene-item:nth-child('+(i+1)+')',gallery.items[i]);
    await shot('extra');
    await page.locator('.vn-panel-header .vn-return').click();await visible('[data-vn-title]');
+   await page.locator('.vn-menu a[href="/information/"]').click();await visible('[data-vn-screen="information"]');
+   const information='[data-vn-screen="information"]';
+   for(const [id,bounds] of Object.entries(manifest.privateUI.informationGeometry.controls))await geometry(information,'[data-vn-info="'+id+'"]',bounds);
+   assert.equal(await page.locator('.vn-info-links a').count(),7);
+   if(width>=960)await check('information original wordmark',async()=>assert.match(await page.locator('#vn-info-title').evaluate(el=>getComputedStyle(el).backgroundImage),/informationLabels-maintitle-normal\.png/));
+   await shot('information');
+   await page.locator('[data-vn-info="back"]').click();await visible('[data-vn-title]');
    await check('private resources loaded',async()=>{assert.ok(result.requests.some(p=>p.startsWith('/__ginka_local_title__/')));assert.ok(result.requests.some(p=>p.startsWith('/__ginka_local_ui__/')));});
    await check('private requests and page errors',async()=>{assert.deepEqual(result.privateFailures,[]);assert.deepEqual(result.errors,[]);});
    result.ok=result.checks.every(c=>c.ok)&&result.geometry.every(g=>g.ok);

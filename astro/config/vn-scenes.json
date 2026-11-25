@@ -327,6 +327,27 @@
         "width": 433,
         "height": 153,
         "nativeStorage": "config_4sound_en__pack.tlg"
+      },
+      "information": {
+        "id": "information-bg0",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007c4_44CBE58B79EC96B0DEF8DEA7365C190E45E53E7F165339B7C2D1FE912C47BA72.png",
+        "width": 1280,
+        "height": 720,
+        "nativeStorage": "information__bg0.tlg"
+      },
+      "informationLabels": {
+        "id": "information-labels",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007c5_E2F467B1493C754FFD46554A9A4BE8753D1037986EAF275D7BECC5041D54199F.png",
+        "width": 524,
+        "height": 450,
+        "nativeStorage": "information__pack.tlg"
+      },
+      "informationEnglish": {
+        "id": "information-en",
+        "source": "_hxv4_hash/AF5FB0494CCF915F/000007c1_6C0BB9133C7F1FEAF5774A3A0E4AA4768FCFDA7A90569534376D7520F87B90A3.png",
+        "width": 181,
+        "height": 152,
+        "nativeStorage": "information_en__pack.tlg"
       }
     },
     "optionGeometry": {
@@ -1294,7 +1315,9 @@
       "gameParts",
       "gameWindow",
       "confirmButtons",
-      "soundLabels"
+      "soundLabels",
+      "informationLabels",
+      "informationEnglish"
     ],
     "slices": {
       "loadRows": {
@@ -6575,6 +6598,520 @@
             60
           ]
         }
+      },
+      "informationLabels": {
+        "facebook-normal": {
+          "rect": [
+            319,
+            218,
+            30,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            30
+          ]
+        },
+        "facebook-pressed": {
+          "rect": [
+            409,
+            218,
+            28,
+            116
+          ],
+          "rotate": 90,
+          "offset": [
+            1,
+            0
+          ],
+          "size": [
+            117,
+            30
+          ]
+        },
+        "facebook-hover": {
+          "rect": [
+            0,
+            218,
+            29,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            30
+          ]
+        },
+        "facebooktitle-normal": {
+          "rect": [
+            0,
+            63,
+            437,
+            31
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            437,
+            31
+          ]
+        },
+        "frontwing-normal": {
+          "rect": [
+            349,
+            218,
+            30,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            30
+          ]
+        },
+        "frontwing-pressed": {
+          "rect": [
+            437,
+            218,
+            28,
+            116
+          ],
+          "rotate": 90,
+          "offset": [
+            1,
+            0
+          ],
+          "size": [
+            117,
+            30
+          ]
+        },
+        "frontwing-hover": {
+          "rect": [
+            29,
+            218,
+            29,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            30
+          ]
+        },
+        "frontwingjp-normal": {
+          "rect": [
+            58,
+            218,
+            29,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "frontwingjp-pressed": {
+          "rect": [
+            465,
+            218,
+            28,
+            116
+          ],
+          "rotate": 90,
+          "offset": [
+            1,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "frontwingjp-hover": {
+          "rect": [
+            87,
+            218,
+            29,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "frontwingtitle-normal": {
+          "rect": [
+            0,
+            94,
+            437,
+            31
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            437,
+            31
+          ]
+        },
+        "maintitle-normal": {
+          "rect": [
+            0,
+            0,
+            524,
+            63
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            524,
+            63
+          ]
+        },
+        "moegamejp-normal": {
+          "rect": [
+            116,
+            218,
+            29,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "moegamejp-pressed": {
+          "rect": [
+            493,
+            218,
+            28,
+            116
+          ],
+          "rotate": 90,
+          "offset": [
+            1,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "moegamejp-hover": {
+          "rect": [
+            145,
+            218,
+            29,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "moegametitle-normal": {
+          "rect": [
+            0,
+            125,
+            437,
+            31
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            437,
+            31
+          ]
+        },
+        "official-normal": {
+          "rect": [
+            174,
+            218,
+            29,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "official-pressed": {
+          "rect": [
+            409,
+            334,
+            28,
+            116
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "official-hover": {
+          "rect": [
+            203,
+            218,
+            29,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "offtitle-normal": {
+          "rect": [
+            0,
+            156,
+            437,
+            31
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            437,
+            31
+          ]
+        },
+        "twitter-normal": {
+          "rect": [
+            379,
+            218,
+            30,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            30
+          ]
+        },
+        "twitter-pressed": {
+          "rect": [
+            437,
+            334,
+            28,
+            116
+          ],
+          "rotate": 90,
+          "offset": [
+            1,
+            0
+          ],
+          "size": [
+            117,
+            30
+          ]
+        },
+        "twitter-hover": {
+          "rect": [
+            232,
+            218,
+            29,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            30
+          ]
+        },
+        "twitterjp-normal": {
+          "rect": [
+            261,
+            218,
+            29,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "twitterjp-pressed": {
+          "rect": [
+            465,
+            334,
+            28,
+            116
+          ],
+          "rotate": 90,
+          "offset": [
+            1,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "twitterjp-hover": {
+          "rect": [
+            290,
+            218,
+            29,
+            117
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            117,
+            29
+          ]
+        },
+        "twttertitle-normal": {
+          "rect": [
+            0,
+            187,
+            437,
+            31
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            437,
+            31
+          ]
+        }
+      },
+      "informationEnglish": {
+        "back-normal": {
+          "rect": [
+            0,
+            0,
+            76,
+            105
+          ],
+          "rotate": 90,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        },
+        "back-pressed": {
+          "rect": [
+            76,
+            0,
+            105,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        },
+        "back-hover": {
+          "rect": [
+            76,
+            76,
+            105,
+            76
+          ],
+          "rotate": 0,
+          "offset": [
+            0,
+            0
+          ],
+          "size": [
+            105,
+            76
+          ]
+        }
       }
     },
     "gameControls": {
@@ -6907,6 +7444,108 @@
         473
       ],
       "note": "Only blog's three existing public scene previews are shown; no invented original CG records. Original right music region is adapted to blog navigation, sound stays in SYSTEM."
+    },
+    "informationGeometry": {
+      "source": "assets/data/_hxv4_hash/AF5FB0494CCF915F/000007c0_DC4A510B9F3E59FE3819FB5C25AFCFDFAC6F3F694FECE8109E373DD2DDE93A52.pbd.json",
+      "canvas": [
+        1280,
+        720
+      ],
+      "controls": {
+        "back": [
+          1162,
+          644,
+          105,
+          76
+        ],
+        "facebook": [
+          581,
+          390,
+          117,
+          30
+        ],
+        "facebooktitle": [
+          421,
+          349,
+          437,
+          31
+        ],
+        "frontwing": [
+          647,
+          298,
+          117,
+          30
+        ],
+        "frontwingjp": [
+          518,
+          298,
+          117,
+          29
+        ],
+        "frontwingtitle": [
+          421,
+          257,
+          437,
+          31
+        ],
+        "maintitle": [
+          2,
+          0,
+          524,
+          63
+        ],
+        "moegamejp": [
+          582,
+          576,
+          117,
+          29
+        ],
+        "moegametitle": [
+          421,
+          534,
+          437,
+          31
+        ],
+        "official": [
+          582,
+          206,
+          117,
+          29
+        ],
+        "offtitle": [
+          421,
+          168,
+          437,
+          31
+        ],
+        "twitter": [
+          647,
+          483,
+          117,
+          30
+        ],
+        "twitterjp": [
+          518,
+          483,
+          117,
+          29
+        ],
+        "twttertitle": [
+          421,
+          441,
+          437,
+          31
+        ]
+      },
+      "links": {
+        "facebook": "https://www.facebook.com/FrontwingINT/",
+        "frontwing": "http://en.frontwing.jp/",
+        "frontwingjp": "http://frontwing.jp/",
+        "moegamejp": "http://moe-gameaward.com/",
+        "official": "http://ginka.frontwing.jp/",
+        "twitter": "https://twitter.com/FrontwingInt",
+        "twitterjp": "https://twitter.com/ginka_fw"
+      }
     }
   },
   "map": {

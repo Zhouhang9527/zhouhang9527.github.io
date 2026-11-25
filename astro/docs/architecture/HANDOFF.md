@@ -181,3 +181,8 @@ npm run check:vn-browser
 - 用户指定角色/语音由另一 Agent 负责；本轮只修改公共 UI、状态、工具、依赖与文档，不发布。最近代码 39740a9 双 CI 实际成功：VN 45540075464、Astro Review 45540075452；VN artifact 14989295395；390/1440 公共 smoke 与 57/57 synthetic 原作 geometry、原有多尺寸 review 通过。BASE-03 / STORY-02 / SAVE-02 已勾选。
 - 本轮主要代码 52b24e3 SYSTEM reset、22763cf 七页签、fe7a296 存档三模式、990b3b0 私有服务保护、bf40991 SOUND、07e3951 geometry fixture、a813eaf DISPLAY/EXTRA、0cf0a44 主线固定、39740a9 npm lock 与全主线回归。14 份实际 PBD / 959 项对照 / 0 mismatch（私有 b74501b）；32 个原名哈希映射校验纳入单测。
 - 未完成：真实素材本地逐像素视觉、title_first 独立布局、精确原作阶段 flag writer、INFORMATION 原作独立页、其余原作屏幕/动效/音效。INFORMATION PBD 已定位 000007bd / 000007c0，背景 000007c4；英文标题/back 与五组布局、七链接来源已确定，未实现页面，详见 TODO。原作链接未验证可达。不要把现有截图/合成测试写成 1:1 完成。
+
+
+### 公共 UI INFORMATION 接续（2026-11-25）
+- 基线 25a8593，私有 b74501b。FINAL-01/TITLE-01/DATA-01/ENGINE-01：实际读取英文 000007c0，14 个控件、30 个逻辑 sprite、七个 openWebPage 目标。新增独立 /information/、原作 1280×720 布局及原图本地服务，移动端触屏重排；保留 /about/ 与真实作者链接、非官方声明。链接是原作记录，未验证实际可达。不改看板娘、不发布。
+- 已静态检查全部 30 个切片的 atlas 边界；新增源审计、公共构建隔离、公共 browser 和合成 geometry 断言。当前连接仅可提交，尚未运行 Node/Chromium 或真实素材像素验收，不勾选 FINAL-01。下一步查 CI、title_first 及真实原作对照。

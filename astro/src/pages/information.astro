@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import {vnScenes} from '../lib/vn-scenes';
+import {rectStyle,stateStyle} from '../lib/vn-control';
+const info=vnScenes.privateUI.informationGeometry;
+type Control=keyof typeof info.controls;
+type LinkId=keyof typeof info.links;
+const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
+const rows:{title:Control;label:string;links:{id:LinkId;label:string}[]}[]=[
+ {title:'offtitle',label:'GINKA OFFICIAL WEBSITE',links:[{id:'official',label:'官方网站'}]},
+ {title:'frontwingtitle',label:'FRONTWING',links:[{id:'frontwingjp',label:'日本語'},{id:'frontwing',label:'English'}]},
+ {title:'facebooktitle',label:'FACEBOOK',links:[{id:'facebook',label:'Frontwing INT'}]},
+ {title:'twttertitle',label:'TWITTER / X',links:[{id:'twitterjp',label:'GINKA JP'},{id:'twitter',label:'Frontwing INT'}]},
+ {title:'moegametitle',label:'MOE GAME AWARD',links:[{id:'moegamejp',label:'官方网站'}]}
+];
+const style=(id:Control,interactive=false)=>rectStyle(info.controls[id],[0,0,...info.canvas])+';'+stateStyle(original,s=>(s==='normal'||(interactive&&(s==='hover'||s==='pressed')))?(id==='back'?'informationEnglish':'informationLabels')+'-'+id+'-'+s:null,'-art');
+---
+<Layout title="INFORMATION" kind="home" noindex>
+ <section class="vn-stage vn-information" data-vn-screen="information" data-vn-ui-original={String(original)} aria-labelledby="vn-info-title" data-pagefind-ignore style={original?'--vn-info-bg:url(/__ginka_local_ui__/information.png)':undefined}>
+  <h1 id="vn-info-title" class="vn-info-control" data-vn-info="maintitle" style={style('maintitle')}>INFORMATION</h1>
+  <div class="vn-info-rows">
+   {rows.map(row=><section class="vn-info-row" aria-labelledby={'vn-info-'+row.title}>
+    <h2 id={'vn-info-'+row.title} class="vn-info-control" data-vn-info={row.title} style={style(row.title)}>{row.label}</h2>
+    <div class="vn-info-links">{row.links.map(link=><a class="vn-info-control" data-vn-info={link.id} style={style(link.id,true)} href={info.links[link.id]} target="_blank" rel="noopener noreferrer">{link.label}</a>)}</div>
+   </section>)}
+  </div>
+  <aside class="vn-info-credit"><a href="/about/">关于本站 · mm9527</a><span>非官方同人主题 · ©Frontwing / ©bushiroad</span></aside>
+  <a class="vn-info-control vn-info-back" data-vn-info="back" style={style('back',true)} href="/" data-vn-mode-set="game">BACK</a>
+ </section>
+</Layout>

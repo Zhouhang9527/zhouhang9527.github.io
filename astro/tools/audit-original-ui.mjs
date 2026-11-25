@@ -80,4 +80,15 @@ for(const [i,bounds] of gallery.pages.entries()){
  const control=g['page'+i];eq('EXTRA page '+i,bounds,control.bounds);
  for(const [label,state] of Object.entries({normal:'normal',selected:'on',hover:'over'}))compare('EXTRA page '+i+' '+label,ui.logicalSprites.galleryControls['page'+i+'-'+label],control,state);
 }
+const information=ui.informationGeometry,informationSource=load(information.source);
+for(const [id,bounds] of Object.entries(information.controls)){
+ const control=informationSource.controls[id];eq('information '+id+' bounds',bounds,control?.bounds);
+ for(const [state,sourceState] of Object.entries(control.states)){
+  if(state==='placeholder')continue;
+  const atlas=sourceState.storage==='information_en__pack'?'informationEnglish':'informationLabels';
+  const name=id+'-'+({'(~null~)':'normal',off:'normal',on:'pressed',over:'hover'})[state];
+  compare('information '+name,ui.logicalSprites[atlas][name],control,state);
+ }
+ if(Object.hasOwn(information.links,id))eq('information '+id+' action',control.actions.exp,'openWebPage("'+information.links[id]+'")');
+}
 const report={checks,failures};console.log(JSON.stringify(report,null,2));if(failures.length)process.exitCode=1;

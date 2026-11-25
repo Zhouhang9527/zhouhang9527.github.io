@@ -44,6 +44,11 @@ try{
    await page.keyboard.press('ArrowDown');
    assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('href')),'/library/');
    await shot('title');
+   await page.locator('.vn-menu a[href="/information/"]').click();await visible('[data-vn-screen="information"]');
+   assert.equal(await page.locator('.vn-info-links a').count(),7);
+   assert.equal(await page.locator('.vn-info-credit a').getAttribute('href'),'/about/');
+   await shot('information');
+   await back('[data-vn-info="back"]');
    let audio=await page.evaluateHandle(()=>document.querySelector('#bg-music'));
    await page.locator('[data-vn-start]').click();
    await visible('[data-vn-chapter]');

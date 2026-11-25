@@ -9,7 +9,7 @@ const decl='<?xml version="1.0" encoding="UTF-8"?>';
 const write=(name,value)=>fs.writeFileSync(path.join('dist',name),value);
 const files=fs.readdirSync('dist',{recursive:true}).filter(n=>n.endsWith('index.html')&&!n.startsWith('pagefind/')).map(n=>n.replaceAll('\\','/').replace(/index\.html$/,''));
 const sitemap=routes=>decl+'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+routes.map(route=>'<url><loc>'+xml(site+uri(route))+'</loc></url>').join('')+'</urlset>';
-write('sitemap.xml',sitemap(files.filter(route=>!['library/','settings/','search/','music-room/'].includes(route))));write('baidusitemap.xml',sitemap(posts.map(p=>p.route)));
+write('sitemap.xml',sitemap(files.filter(route=>!['library/','settings/','search/','music-room/','information/'].includes(route))));write('baidusitemap.xml',sitemap(posts.map(p=>p.route)));
 write('robots.txt','User-agent: *\nAllow: /\nDisallow: /live2d/\nDisallow: /404.html\nSitemap: '+site+'/sitemap.xml\nSitemap: '+site+'/baidusitemap.xml\n');
 const ordered=[...posts].sort((a,b)=>b.date.localeCompare(a.date));
 const iso=d=>d+'T00:00:00+08:00';
