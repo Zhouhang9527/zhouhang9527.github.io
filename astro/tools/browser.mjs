@@ -53,7 +53,7 @@ try {
    await page.waitForFunction(()=>document.body.classList.contains('sidebar-active'));
    await page.locator('.journal-sidebar-close').click();
    await page.waitForFunction(()=>!document.body.classList.contains('sidebar-active'));
-   await page.locator('[data-vn-mode-toggle]:visible').first().click();
+   await page.locator('.vn-reader-return[data-vn-mode-toggle]').click();
    await page.waitForFunction(()=>document.documentElement.dataset.vnMode==='game');
    const old=await page.evaluateHandle(()=>document.querySelector('#bg-music'));
    await page.locator('[data-vn-start]').click();

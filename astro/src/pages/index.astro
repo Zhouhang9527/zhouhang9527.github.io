@@ -11,6 +11,7 @@ const filters=(p:Post)=>p.data.tags.map((s:string)=>/^(aes|rc4|xtea|tea|md5|sha|
 ---
 <Layout title="逆向工程与二进制安全" kind="home" home>
  <TitleScreen posts={posts}/>
+ <button type="button" class="vn-reader-return" data-vn-mode-toggle hidden>游戏模式</button>
  <nav class="journal-chapters" aria-label="画集章节"><div class="book-width journal-chapter-grid">{[['01','#latest','阅读笔记','NOTES','↓'],['02','/archives/','题解归档','ARCHIVE','↗'],['03','#ginka-scenes','岛影画廊','THE ISLAND','↓']].map(([n,href,name,en,arrow])=><a href={href}><span>{n}</span><strong>{name}</strong><small>{en}</small><img class="journal-chapter-wing" src="/images/ginka/butterfly.png" alt="" width="17" height="17"/><b aria-hidden="true">{arrow}</b></a>)}</div></nav>
  <div class="book-width journal-layout"><section class="journal-feed" id="latest" aria-labelledby="latest-title"><div class="journal-section-heading"><div><span class="journal-eyebrow">01 / THE JOURNAL</span><h2 id="latest-title"><img class="journal-wing" src="/images/ginka/butterfly.png" alt="" width="23" height="23"/>最新文章<span class="journal-count">{posts.length}</span></h2></div><a href="/archives/">全部归档 ↗</a></div>
  <div class="journal-filters" role="group" aria-label="按领域筛选" hidden><button type="button" aria-pressed="true" data-journal-filter="all">全部</button>{topics.filter(([key])=>posts.some(p=>filters(p).split(' ').includes(key))).map(([key,name])=><button type="button" aria-pressed="false" data-journal-filter={key}>{name}</button>)}</div><p class="journal-visually-hidden" data-filter-status aria-live="polite"></p>

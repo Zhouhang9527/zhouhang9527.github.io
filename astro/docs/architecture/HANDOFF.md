@@ -133,3 +133,7 @@ npm run check:vn-browser
 ### 公共 UI 并行接续（2026-11-25）
 - 基线 5a5d548，保留另一 Agent 的记录和实现。看板娘/语音素材由其负责。本轮修复 TS2367，0000079c 英文 PBD：28 个标签/底部状态、45 个编号页状态，15 页与 00000790 一致，图集边界检查通过；原作模式 SAVE/LOAD/Q.LOAD 独立标题与标签、十五个页码，移动端保留窗口分页，手动槽整行可点。完整视觉及浏览器仍未确认。
 - audit:original 增加 LOAD 检查，smoke 增加第15页和 Q.LOAD，CI 未确认。继续 SYSTEM 和实际 CI，不发布。
+
+### 公共 UI 接续（2026-11-25）
+- 基线 5917525，保留另一 Agent 的看板娘修复。SYS-07/BASE-02/04：0000023a.tjs reset() 实证 Shift 全部、普通当前页；公共 DISPLAY/TEXT/BGM reset 范围及确认、BACK 返回调用来源，保留角色语音所有权。修复 smoke 显式 reload 后使用失效音频 JSHandle，新增阅读模式明确回到标题入口。公共浏览器测试不因独立 mascot fixture 失败跳过，但整体 job 仍保留失败。66b64fd typecheck/build/Chromium 已过，mascot fixture 失败导致公共 smoke 跳过；新 CI 未验证。
+- 继续 SYSTEM 原作页签、标题、footer、滑块状态和实际 CI；私有素材 b71280b。不改角色模块，不发布。

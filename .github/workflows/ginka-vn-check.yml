@@ -28,12 +28,15 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
       - name: Build and validate output
+        id: build
         run: npm run build
       - name: Install browser
+        id: chromium
         run: npx playwright install --with-deps chromium
       - name: Mascot browser fixture acceptance
         run: npm run check:mascot-browser
       - name: Browser acceptance
+        if: ${{ !cancelled() && steps.build.conclusion == 'success' && steps.chromium.conclusion == 'success' }}
         run: |
           npm run preview -- --host 127.0.0.1 > /tmp/ginka-preview.log 2>&1 &
           pid=$!

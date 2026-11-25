@@ -51,7 +51,8 @@ const tabs=[['display','DISPLAY'],['program','PROGRAM'],['text','TEXT'],['sound'
       <div class="vn-option-grid"><fieldset><legend>菜单操作</legend><p>↑ / ↓ 选择，Enter 确认</p></fieldset><fieldset><legend>文章检索</legend><p>Ctrl / Command + K</p></fieldset><fieldset><legend>关闭弹窗</legend><p>Esc</p></fieldset></div>
      </section>
     </div>
-    <footer class="vn-option-footer"><button type="button" data-vn-option-default style={footerSkin('defaults')}>DEFAULT<small>默认设置</small></button><a href="/" data-vn-mode-set="game" data-vn-option-back style={footerSkin('back')}>BACK<small>返回</small></a><a href="/" data-vn-mode-set="game" style={footerSkin('title')}>TITLE<small>标题</small></a></footer>
+    <footer class="vn-option-footer"><button type="button" data-vn-option-default title="恢复当前页，按住 Shift 恢复全部公共设置" aria-label="恢复当前页默认设置，Shift 恢复全部公共设置" style={footerSkin('defaults')}>DEFAULT<small>默认设置</small></button><a href="/" data-vn-option-back style={footerSkin('back')}>BACK<small>返回</small></a><a href="/" data-vn-mode-set="game" style={footerSkin('title')}>TITLE<small>标题</small></a></footer>
+    <button class="vn-option-reset-all" type="button" data-vn-option-default="all">恢复全部公共设置</button><p class="journal-visually-hidden" data-vn-option-feedback role="status"></p>
    </div>
    <noscript><p>系统设置需要 JavaScript，<a href="/">返回标题</a></p></noscript>
   </div>

@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 SYS-07/BASE-02/04：0000023a.tjs reset() 实证 Shift 全部、普通当前页；公共 DISPLAY/TEXT/BGM reset 范围及确认、BACK 返回调用来源，保留角色语音所有权。修复 smoke 显式 reload 后使用失效音频 JSHandle，新增阅读模式明确回到标题入口。公共浏览器测试不因独立 mascot fixture 失败跳过，但整体 job 仍保留失败。66b64fd typecheck/build/Chromium 已过，mascot fixture 失败导致公共 smoke 跳过；新 CI 未验证。
+
 2026-11-25 CHAR-07/08/09/12：66b64fd 的 CI 45536688313 已通过 typecheck/build，真实 Chromium fixture 已走过 390px 稀疏 Canvas 像素、静默对白及测试音历史记录；V.SAVE 被 Astro dev toolbar 拦截。私有素材预览关闭 dev toolbar（不强制点击、不跳过断言），修复收起按钮测试选择器；新 CI 尚未完成。
 
 2026-11-25 CHAR-06/07/08/09/10/11/12：2c3374a 实际 CI 两套 typecheck/build/check:mascot 已通过（VN 45535233798、Review 45535233919），全站 browser 分别 DOM.describeNode context lost、mode-toggle timeout，未视为通过。新增独立 synthetic mascot browser fixture 与 CI 阶段，真实 Canvas 像素、静默对白、测试音、收藏历史、解锁、焦点/收起；延迟加载及复用分层图像、可用对白过滤服装、旧 media 事件防护和 motion 设置即时响应。新 CI 尚未验证，仍无实际可用私有包。

@@ -44,7 +44,7 @@ try{
    await page.keyboard.press('ArrowDown');
    assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('href')),'/library/');
    await shot('title');
-   const audio=await page.evaluateHandle(()=>document.querySelector('#bg-music'));
+   let audio=await page.evaluateHandle(()=>document.querySelector('#bg-music'));
    await page.locator('[data-vn-start]').click();
    await visible('[data-vn-chapter]');
    await shot('chapter');
@@ -100,7 +100,9 @@ try{
    await back('[data-vn-return]');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-003');
    await page.evaluate(()=>{const key='ginka.vn.progress.v1',state=JSON.parse(localStorage.getItem(key));state.mainCleared=true;localStorage.setItem(key,JSON.stringify(state));});
-   await page.reload();await visible('[data-vn-next]');await visible('[data-vn-extra]');await visible('[data-vn-next-new]');
+   await page.reload();await visible('[data-vn-next]');
+   // Deliberate document reload invalidates JSHandles. Reacquire the persistent player for this document.
+   audio=await page.evaluateHandle(()=>document.querySelector('#bg-music'));await visible('[data-vn-extra]');await visible('[data-vn-next-new]');
    assert.equal(await page.locator('[data-vn-next]').getAttribute('href'),'/afterstory/');
    await page.locator('[data-vn-next]').click();await visible('[data-vn-afterstory-content]');
    assert.equal(await page.locator('[data-vn-afterstory-locked]').isVisible(),false);
@@ -156,6 +158,15 @@ try{
    await visible('[data-vn-music]');
    assert.equal(await page.locator('audio#bg-music').count(),1);
    await shot('sound');
+   const volume=page.locator('[data-vn-volume]');await volume.focus();await volume.press('Home');
+   await page.locator('[data-vn-option-tab="text"]').click();const size=page.locator('[data-vn-text-size]');await size.focus();await size.press('End');
+   await page.waitForFunction(()=>localStorage.getItem('ginka.vn.text-size.v1')==='22');
+   await page.locator('.vn-option-footer [data-vn-option-default]').click();await visible('[data-vn-confirm][open]');await page.locator('[data-vn-confirm-yes]').click();
+   await page.waitForFunction(()=>localStorage.getItem('ginka.vn.text-size.v1')==='16');
+   await page.locator('[data-vn-option-tab="sound"]').click();assert.equal(await volume.inputValue(),'0','TEXT reset must not reset BGM');
+   await page.locator('.vn-option-footer [data-vn-option-default]').click({modifiers:['Shift']});await visible('[data-vn-confirm][open]');await page.locator('[data-vn-confirm-yes]').click();
+   await page.waitForFunction(()=>document.querySelector('[data-vn-volume]')?.value==='88');
+   assert.ok(await page.evaluate(()=>JSON.parse(localStorage.getItem('ginka.vn.saves.v1')||'null')?.slots?.['0']),'Settings reset must not delete saved progress');
    await page.locator('[data-vn-option-tab="display"]').click();
    await page.locator('input[name="vn-motion"][value="reduced"]').check();
    await page.locator('input[name="vn-mode"][value="reader"]').check();
