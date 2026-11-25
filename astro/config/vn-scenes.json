@@ -68,6 +68,31 @@
       "width": 1280,
       "height": 720,
       "notice": "Original full-canvas GINKA logo overlay at lower left, not a character layer."
+    },
+    "nativeStateEvidence": {
+      "source": "custom.ks, title initialization lines 72–77; verified in private reference/mascot/evidence/unlock-findings.md",
+      "frameCases": [
+        {
+          "hfclear": 0,
+          "clear": 0,
+          "frame": "data-003"
+        },
+        {
+          "hfclear": 1,
+          "clear": 0,
+          "frame": "data-004"
+        },
+        {
+          "clear": 1,
+          "frame": "data-005"
+        }
+      ],
+      "nextFlag": "sf.title_next || tf.allseen",
+      "extraFlag": "!IsTrial && (tf.allseen || sf.clear)",
+      "newFlag": "sf.title_next_start",
+      "start": "scn000.ks",
+      "next": "scn101.ks",
+      "writerStatus": "Writers for sf.hfclear, sf.clear and sf.title_next not found in recovered static corpus. Blog article-stage thresholds are adaptation, not original flag semantics."
     }
   },
   "gallery": [

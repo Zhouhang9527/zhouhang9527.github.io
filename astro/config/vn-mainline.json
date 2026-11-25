@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "baseline": "2026-11-25",
+  "policy": "Fixed v1 reading mainline; future published articles remain accessible but do not extend unlock requirements.",
+  "routes": [
+    "2025/10/10/[HUBUCTF 2022 新生赛]simple_RE/",
+    "2025/10/19/NSSCTF2025入门题目-花指令/",
+    "2025/11/05/[NSSCTF 2025 秋招赛]CodeRunner/",
+    "2025/11/05/[NSSCTF 2025 秋招赛]Ultimate Packer for eXecutables/",
+    "2025/11/05/[NSSCTF 2025 秋招赛]debuggggg/",
+    "2025/11/05/[NSSCTF 2025 秋招赛]ez_tea/",
+    "2025/11/05/[NSSCTF 2025 秋招赛]fl-ow-er/",
+    "2025/11/05/[NSSCTF 2025 秋招赛]一种很新的签到/",
+    "2025/11/05/[NSSCTF 2025 秋招赛]哈基米/",
+    "2025/11/05/[NSSCTF 2025 秋招赛]来了嗷，常见加密大杂烩！/",
+    "2025/12/23/[miniVN] Crackme/",
+    "2025/12/23/[miniVN] VSnake/",
+    "2025/12/23/[miniVN] ezAndroid/",
+    "2026/03/20/va-to-pa-walk/",
+    "2026/09/18/学x通-梆梆企业版分析/"
+  ]
+}

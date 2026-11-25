@@ -105,7 +105,8 @@ try{
    },pathname);
    await back('[data-vn-return]');
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'data-003');
-   await page.evaluate(()=>{const key='ginka.vn.progress.v1',state=JSON.parse(localStorage.getItem(key));state.mainCleared=true;localStorage.setItem(key,JSON.stringify(state));});
+   // Exercise actual mainline completion, rather than directly injecting mainCleared.
+   await page.evaluate(()=>{const key='ginka.vn.progress.v1',state=JSON.parse(localStorage.getItem(key));const title=document.querySelector('[data-vn-title]');const required=JSON.parse(title.dataset.vnMainline);if(required.length!==15)throw Error('v1 mainline changed');state.completed=required;state.mainCleared=false;localStorage.setItem(key,JSON.stringify(state));});
    await page.reload();await visible('[data-vn-next]');
    // Deliberate document reload invalidates JSHandles. Reacquire the persistent player for this document.
    audio=await page.evaluateHandle(()=>document.querySelector('#bg-music'));await visible('[data-vn-extra]');await visible('[data-vn-next-new]');

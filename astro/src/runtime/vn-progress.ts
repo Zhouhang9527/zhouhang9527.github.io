@@ -19,9 +19,10 @@ function renderTitle(root:Document=document) {
  if(!title)return;
  let paths:string[]=[];
  try{paths=JSON.parse(title.dataset.vnPaths||'[]');}catch{}
- const previous=read(),progress=unlockMain(previous,paths),allowed=new Set(paths);
+ let required:string[]=[];try{required=JSON.parse(title.dataset.vnMainline||'[]');}catch{}
+ const previous=read(),progress=unlockMain(previous,required),allowed=new Set(paths),mainline=new Set(required);
  if(progress!==previous)write(progress);
- const count=progress.completed.filter(path=>allowed.has(path)).length;
+ const count=progress.completed.filter(path=>mainline.has(path)).length;
  const state=resolveTitleState(count);
  title.dataset.vnStage=state.id;
  title.dataset.vnCharacterPresent=String(state.present);
@@ -37,7 +38,7 @@ function renderTitle(root:Document=document) {
   else art.style.removeProperty('--vn-original-frame');
  }
  const label=title.querySelector<HTMLElement>('[data-vn-progress]');
- if(label)label.textContent=`阅读记录 ${count} / ${paths.length}`;
+ if(label)label.textContent=`主线阅读 ${count} / ${required.length}`;
  const resume=title.querySelector<HTMLAnchorElement>('[data-vn-continue]');
  const placeholder=title.querySelector<HTMLElement>('[data-vn-no-save]');
  const target=progress.last&&allowed.has(progress.last)?progress.last:null;

@@ -68,4 +68,16 @@ for(const [key,bounds] of Object.entries({...option.sound.channels,...option.sou
 for(const [key,bounds] of Object.entries(option.sound.labels)){const c=optionSources.sound.controls[key];eq(key+' sound label bounds',bounds,c.bounds);compare(key+' sound label',ui.logicalSprites.soundLabels[key],c,'text');}
 compare('sound caption',ui.logicalSprites.optionAtlas['sound-caption'],optionSources.sound.controls.label3,'base');
 for(const [name,state] of Object.entries({rail:'rail',railDisabled:'dsrail'}))compare('sound range '+name,ui.logicalSprites.optionAtlas['sound-range-'+name],optionSources.sound.controls.bgmvolume,state,true);
+// EXTRA: one original item template, nine slot placements, six native pages.
+const gallery=ui.galleryGeometry,g=load(gallery.source).controls;
+eq('EXTRA heading bounds',gallery.heading,g.caption_gallery.bounds);
+compare('EXTRA heading',ui.logicalSprites.galleryLabels.heading,g.caption_gallery,'(~null~)');
+eq('EXTRA back bounds',gallery.back,g.back.bounds);
+for(const [label,state] of Object.entries({normal:'off',pressed:'on',hover:'over'}))compare('EXTRA back '+label,ui.logicalSprites.galleryLabels['back-'+label],g.back,state);
+for(const [i,bounds] of gallery.items.entries())eq('EXTRA item '+i,bounds,g['item'+i].bounds);
+for(const [label,state] of Object.entries({disabled:'disable',hover:'ovl',thumb:'thumb'}))compare('EXTRA item '+label,(label==='disabled'?ui.logicalSprites.galleryLabels:ui.logicalSprites.galleryControls)['item-'+label],g.item,state);
+for(const [i,bounds] of gallery.pages.entries()){
+ const control=g['page'+i];eq('EXTRA page '+i,bounds,control.bounds);
+ for(const [label,state] of Object.entries({normal:'normal',selected:'on',hover:'over'}))compare('EXTRA page '+i+' '+label,ui.logicalSprites.galleryControls['page'+i+'-'+label],control,state);
+}
 const report={checks,failures};console.log(JSON.stringify(report,null,2));if(failures.length)process.exitCode=1;

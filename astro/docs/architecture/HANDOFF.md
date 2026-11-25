@@ -167,3 +167,8 @@ npm run check:vn-browser
 - SYSTEM 8 份原作 PBD / 345 项数据精确匹配；synthetic Chromium 390 通过，1440 48/52，四 DISPLAY 按钮仅 y+31（legend 高度）。已改 CSS，待最新 CI；旧报告 artifact 14987509100。
 - HXV4 BLAKE2s-256(UTF-16LE(lowercase filename + xp3hnp)) 定位 32 个原始文件，EXTRA 纠正为 0000078e，旧 000007c4 实际 INFORMATION。新增原名 hash 单测；backlogBase 是未用 game_novel__bg0 别名，BACKLOG 仍使用已确认 backlogDark。EXTRA 0000078a 原始位置与图集，现有三张博客图填前三槽，右侧适配导航，未公开原作图/未发明 CG。
 - 下一步看新 CI 几何结果、实际素材像素验收，保持看板娘专线不变。
+
+### 公共 UI 稳定主线（2026-11-25）
+- a813eaf 的 VN 与 Astro Review 两套 CI 均实际通过；原作合成浏览器 57/57 geometry，仍非真实素材像素验收。
+- 当前 15 篇路径冻结为 vn-mainline.json v1；新文章依然可被继续阅读，不增加解锁要求。原作三张标题 CG 的 flag 读取条件与博客临时进度映射单独记录。EXTRA 源审计覆盖九槽和六页状态。首次 CI 尚待验证。
+- BASE-03: 从实际 CI artifact 获得 npm lockfile v3 470 包，临时导出 lock 元数据至 CI 日志，下一提交写入原始锁文件、移除临时步骤、统一 npm ci。勿把这一步误认成 lock 已提交。看板娘不改。

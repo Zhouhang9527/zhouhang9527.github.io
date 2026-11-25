@@ -131,7 +131,7 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 - [ ] MAP-01 定位真实地图 UI、地点按钮、标记位置、悬停/选中/禁用、进入/退出及事件选择
 - [ ] MAP-02 分离剧情阶段、场景昼夜、阅读进度；确认原作地图随进度变化的具体条件和素材
 - [ ] STORY-01 追踪 sf.hfclear、sf.clear、sf.title_next、sf.title_next_start 的赋值、读写和持久化；NEXT → scn101.ks 与 START → scn000.ks 保持区别
-- [ ] STORY-02 定义独立、稳定的博客主线路径集合与完成条件（当前全部已发布文章已读仅是临时方案），新增文章不得撤销既有解锁
+- [ ] STORY-02 定义独立、稳定的博客主线路径集合与完成条件；已冻结现有 15 篇 v1 路线，等待本提交真实 CI 确认
 - [ ] STORY-03 后日谈独立内容、解锁提示、NEW 清除、EXTRA 解锁、标题状态和角色状态联动；未提供内容前明确显示待发布
 - [ ] STORY-04 检查直接访问 /afterstory/、重置记录、多个标签页、存档恢复时的解锁表现；本地解锁仅是界面状态，不是访问控制
 - [ ] STORY-05 设计从场景/地图进入真实文章的映射，保留原博客归档和搜索入口
@@ -227,3 +227,7 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 6. FINAL：实际截图、逐帧校准、跨设备验收
 
 完成一个任务后更新本清单，附对应 commit、证据路径和真实测试结果；发现新任务按编号追加，不另起重复 TODO 文档
+
+### 2026-11-25 公共 UI 回归
+- a813eaf: [VN 45539212732](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45539212732) 全绿，390px 私有合成模式通过，1440px 57/57 坐标检查通过；[Astro 45539212705](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45539212705) 全绿。真实原作像素未验收。
+- STORY-02: 固定当前 15 篇基线，不新增假剧情；真实原作 flags 的读取条件与博客适配分开，继续保留 0/1/3 临时画面映射。新增完成主线 smoke，EXTRA 源审计扩展。BASE-03: 本次暂时输出纯 npm lock 元数据以写回经过 CI 安装的锁文件，随后移除一次性步骤并切换 npm ci。
