@@ -194,3 +194,5 @@ npm run check:vn-browser
 - 当前仅 GitHub 读写，容器 DNS 不可访问 GitHub；未执行新提交的 Node/Chromium 测试，不标记 CHAR 已完成。下一步验证 CI，在私有本地执行 npm run check:mascot-original，并继续增加有证据的原作眼嘴差分、姿势/对白覆盖。无部署。
 
 - 补充：修复收藏容器与收藏按钮选择器冲突，收起恢复真正发起预览的按钮焦点；活跃对白中的 PREV/NEXT/AUTO/SKIP 独立于文章滚动，AUTO 等待真实语音结束及完整文字显示后 700ms（博客适配值）推进，池末停止；手动操作、隐藏、退出、失败均停止自动对白。扩展合成浏览器测试覆盖 PROGRAM 预览/音频收藏及真实文章操作栏。
+
+- 补充：原生音频先尝试正常播放，Web Audio 仅在 AudioContext 恢复后接入，避免可选口型分析抢占原声；合成 fixture 增加非 reduced-motion 实际眼嘴像素变化断言。未执行。

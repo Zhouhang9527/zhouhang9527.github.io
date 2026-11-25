@@ -9,7 +9,7 @@ const VOL='ginka.vn.voice.volume.v1',SAVED='ginka.vn.voice.saved.v1',MUTE='ginka
 let character='all',outfit='all',motionTimer=0,motionIndex=0;
 let pack:Pack|null=null,loading:Promise<void>|null=null,root:HTMLElement|null=null,audio:HTMLAudioElement|null=null,current:Line|null=null,open=false,volume=80,muted=false,blinkTimer=0,blinkEnd=0,reveal=0,raf=0,ctx:AudioContext|null=null,analyser:AnalyserNode|null=null,lastPose='',generation=0;
 const $=(s:string)=>root?.querySelector<HTMLElement>(s);
-let openTrigger:HTMLElement|null=null,dialogueAuto=false,autoTimer=0;
+let openTrigger:HTMLElement|null=null,dialogueAuto=false,autoTimer=0,audioGraph:Promise<void>|null=null;
 let unavailable=false,layerToken=0,layerImages=new Map<string,HTMLImageElement>(),layerPose:Pose|null=null,layerEye=false,layerMouth=false,layerPending=false;
 // Bounded decoded-image cache. Retain the active composition separately; warm only the next allowed pose.
 const imageCache=new Map<string,HTMLImageElement>(),imagePending=new Map<string,Promise<HTMLImageElement>>();
@@ -44,6 +44,8 @@ function drawLayers(){
   if(selected.blend==='replace')context.clearRect(selected.x,selected.y,image.naturalWidth,image.naturalHeight);
   context.drawImage(image,selected.x,selected.y);
  }
+ canvas.dataset.mascotEye=String(layerEye&&p.layers.some(l=>l.slot==='eye'&&!!l.alternate&&layerImages.has(l.alternate.image)));
+ canvas.dataset.mascotMouth=String(layerMouth&&p.layers.some(l=>l.slot==='mouth'&&!!l.alternate&&layerImages.has(l.alternate.image)));
  canvas.hidden=false;renderState('ready');
 }
 function loadLayers(p:Pose){
@@ -173,7 +175,7 @@ function renderLine(line:Line,animate:boolean){
 }
 function resetMouth(){cancelAnimationFrame(raf);raf=0;if(layerPose){if(layerMouth){layerMouth=false;drawLayers();}}else showFrame('base');}
 function animateMouth(){cancelAnimationFrame(raf);if(!analyser||!audio||audio.paused||reduce()||muted||!open){resetMouth();return;}const data=new Uint8Array(analyser.fftSize);let prev=false;
- const tick=()=>{if(!audio||audio.paused||!open||!analyser||muted||reduce()||document.hidden){resetMouth();return;}analyser.getByteTimeDomainData(data);let sum=0;for(const n of data)sum+=((n-128)/128)**2;const amp=Math.sqrt(sum/data.length);const active=amp>(prev ? .024 : .045);prev=active;const mouth=$('[data-mascot-mouth]') as HTMLImageElement|undefined;if(layerPose){if(layerMouth!==active){layerMouth=active;drawLayers();}}else if(frameUsable(mouth)){if(active)showFrame('mouth');else if(frameImage('blink')?.hidden!==false)showFrame('base');}raf=requestAnimationFrame(tick);};raf=requestAnimationFrame(tick);
+ const tick=()=>{if(!audio||audio.paused||!open||!analyser||muted||reduce()||document.hidden){resetMouth();return;}analyser.getByteTimeDomainData(data);let sum=0;for(const n of data)sum+=((n-128)/128)**2;const amp=Math.sqrt(sum/data.length);const active=amp>(prev ? .024 : .045);prev=active;const mouth=$('[data-mascot-mouth]') as HTMLImageElement|undefined;if(layerPose){const available=active&&!!layerPose.layers?.some(l=>l.slot==='mouth'&&l.alternate&&layerImages.has(l.alternate.image));if(layerMouth!==available){layerMouth=available;drawLayers();}}else if(frameUsable(mouth)){if(active)showFrame('mouth');else if(frameImage('blink')?.hidden!==false)showFrame('base');}raf=requestAnimationFrame(tick);};raf=requestAnimationFrame(tick);
 }
 function scheduleBlink(){stopBlink();
  if(layerPose){
@@ -203,6 +205,20 @@ function scheduleAuto(){
  // Blog-only pause after completed reveal and native voice end. Never auto-loop a curated pool.
  autoTimer=window.setTimeout(()=>{autoTimer=0;if(dialogueAuto&&open&&current===line&&allowed(pool[index+1]))void play(pool[index+1]);},700);
 }
+function ensureAnalyser():Promise<void>{
+ if(!audio||typeof AudioContext==='undefined')return Promise.resolve();
+ if(audioGraph)return audioGraph;
+ if(ctx&&analyser)return ctx.state==='suspended'?ctx.resume().catch(()=>{}):Promise.resolve();
+ const element=audio;let context:AudioContext;
+ try{context=new AudioContext();}catch{return Promise.resolve();}
+ ctx=context;
+ // Resume before routing native media into Web Audio: denied autoplay must not strand a source in a suspended graph.
+ const task=(context.state==='running'?Promise.resolve():context.resume()).then(()=>{
+  if(ctx!==context||audio!==element||context.state!=='running')return;
+  const next=context.createAnalyser();next.fftSize=256;const node=context.createMediaElementSource(element);node.connect(next);next.connect(context.destination);analyser=next;
+ }).catch(()=>{if(ctx===context){ctx=null;analyser=null;void context.close().catch(()=>{});}}).finally(()=>{if(audioGraph===task)audioGraph=null;});
+ audioGraph=task;return task;
+}
 async function play(line:Line,animate=true,presentation=true){
  if(!audio||!allowed(line))return;
  if(!presentation)close();
@@ -212,9 +228,8 @@ async function play(line:Line,animate=true,presentation=true){
  if(!line.voice){audio.removeAttribute('src');audio.load();feedback('此句原作录音尚未匹配');startMotion();scheduleAuto();return;}
  audio.src=line.voice;applyVolume();
  try{
-  // Web Audio is optional: lack of analyser support must not block native playback.
-  try{if(!ctx&&typeof AudioContext!=='undefined'){ctx=new AudioContext();analyser=ctx.createAnalyser();analyser.fftSize=256;const node=ctx.createMediaElementSource(audio);node.connect(analyser);analyser.connect(ctx.destination);}if(ctx?.state==='suspended')void ctx.resume().catch(()=>{});}catch{analyser=null;}
-  await audio.play();if(token===generation&&!audio.paused){recordHistory(line);voiceStatus();if(open)animateMouth();}
+  const graph=ensureAnalyser();
+  await audio.play();if(token===generation&&!audio.paused){recordHistory(line);voiceStatus();if(open){animateMouth();void graph.then(()=>{if(token===generation&&open)animateMouth();});}}
  }
  catch{if(token===generation){feedback('语音未能播放，请点击 VOICE 重试');setAuto(false);resetMouth();startMotion();}}
 }
@@ -234,7 +249,7 @@ function action(a:string){
 function validURL(value:unknown):value is string{return typeof value==='string'&&/^\/__ginka_local_mascot__\/asset-\d+\.(png|webp|ogg|wav|mp3|m4a)$/.test(value);}
 function mount(){
  root=document.querySelector<HTMLElement>('[data-ginka-mascot]');if(!root)return;
- const nextAudio=root.querySelector<HTMLAudioElement>('[data-mascot-audio]');if(audio!==nextAudio){generation++;stopMotion();stopBlink();resetMouth();audio?.pause();if(ctx)void ctx.close().catch(()=>{});cancelAnimationFrame(raf);audio=nextAudio;ctx=null;analyser=null;if(audio){const element=audio;element.addEventListener('ended',()=>{if(audio!==element||!element.ended)return;resetMouth();startMotion();voiceStatus();scheduleAuto();});element.addEventListener('pause',()=>{if(audio===element&&element.paused){resetMouth();voiceStatus();}});element.addEventListener('playing',()=>{if(audio===element)voiceStatus();});element.addEventListener('error',()=>{if(audio!==element||!element.error)return;setAuto(false);resetMouth();startMotion();voiceStatus();});}}
+ const nextAudio=root.querySelector<HTMLAudioElement>('[data-mascot-audio]');if(audio!==nextAudio){generation++;stopMotion();stopBlink();resetMouth();audio?.pause();if(ctx)void ctx.close().catch(()=>{});cancelAnimationFrame(raf);audio=nextAudio;ctx=null;analyser=null;audioGraph=null;if(audio){const element=audio;element.addEventListener('ended',()=>{if(audio!==element||!element.ended)return;resetMouth();startMotion();voiceStatus();scheduleAuto();});element.addEventListener('pause',()=>{if(audio===element&&element.paused){resetMouth();voiceStatus();}});element.addEventListener('playing',()=>{if(audio===element)voiceStatus();});element.addEventListener('error',()=>{if(audio!==element||!element.error)return;setAuto(false);resetMouth();startMotion();voiceStatus();});}}
  if(pack){root.hidden=false;if(open&&current&&allowed(current)){renderLine(current,false);scheduleBlink();if(audio?.paused)startMotion();else animateMouth();}syncSettings();return;}
  const source=root.dataset.mascotSource;if(!source||loading||unavailable){syncSettings();return;}
  loading=fetch(source,{cache:'no-store'}).then(async r=>{if(!r.ok)throw Error('Pack unavailable');const raw=await r.json();if(raw.available===false){unavailable=true;syncSettings();return;}const p=raw as Pack;if(![1,2].includes(p.version)||!Array.isArray(p.lines)||!p.poses||!p.poses[p.defaultPose]||!Object.values(p.poses).every(v=>validURL(v.base)&&(!v.blink||validURL(v.blink))&&(!v.mouth||validURL(v.mouth))&&(!v.layers||(Array.isArray(v.layers)&&v.layers.every(l=>validURL(l.image)&&(!l.alternate||validURL(l.alternate.image)))))&&Array.isArray(v.motion)&&v.motion.every(f=>validURL(f.image)&&Number.isInteger(f.ms)&&f.ms>=40&&f.ms<=10000))||!p.lines.every(l=>typeof l.text==='string'&&(validURL(l.voice)||(p.version===2&&l.voice===null))&&Object.hasOwn(p.poses,l.pose)))throw Error('Invalid pack');pack=p;if(root)root.hidden=false;syncSettings();}).catch(()=>{unavailable=true;feedback('本地看板娘素材包未就绪');syncSettings();}).finally(()=>{loading=null;});

@@ -83,6 +83,8 @@ try{
   assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('ginka.vn.voice.saved.v1'))),[]);
   await page.locator('[data-vn-option-tab="program"]').click();
   const preview=page.locator('[data-mascot-action=preview]');await preview.click();await canvas.waitFor({state:'visible'});
+  if(await page.locator('[data-mascot-text]').textContent()==='Tone fixture')await next.click();
+  assert.equal(await page.locator('[data-mascot-text]').textContent(),'Silent fixture');
   const auto=page.locator('[data-mascot-action=auto]');
   await auto.click();assert.equal(await auto.getAttribute('aria-pressed'),'true');
   await page.waitForFunction(()=>document.querySelector('[data-mascot-text]')?.textContent==='Tone fixture');
@@ -93,6 +95,8 @@ try{
   await page.locator('[data-vn-start]').click();await page.locator('[data-vn-post]').first().click();
   const dock=page.locator('.vn-game-buttons');
   await launcher.click();
+  await page.waitForFunction(()=>['Silent fixture','Tone fixture'].includes(document.querySelector('[data-vn-dialogue-text]')?.textContent));
+  if(await page.locator('[data-vn-dialogue-text]').textContent()==='Tone fixture')await dock.locator('[data-vn-game-action=xprev]').click();
   await page.waitForFunction(()=>document.querySelector('[data-vn-dialogue-text]')?.textContent==='Silent fixture');
   await dock.locator('[data-vn-game-action=next]').click();
   await page.waitForFunction(()=>document.querySelector('[data-vn-dialogue-text]')?.textContent==='Tone fixture');
@@ -102,5 +106,17 @@ try{
   assert.deepEqual(errors,[]);
   await page.close();console.log('PASS synthetic layered mascot browser at '+width+'px');
  }
+ // Real animation path with a generated test tone and independent eye/mouth pixels.
+ const animated=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:'no-preference'});
+ await animated.route('**/*',route=>new URL(route.request().url()).origin===url?route.continue():route.abort());
+ await animated.addInitScript(()=>localStorage.setItem('ginka.vn.mode.v1','reader'));
+ await animated.goto(url+'/',{waitUntil:'domcontentloaded'});
+ await animated.locator('[data-mascot-action=open]').click();
+ await animated.waitForFunction(()=>document.querySelector('[data-mascot-text]')?.textContent==='Silent fixture');
+ await animated.locator('[data-mascot-window] [data-mascot-action=next]').click();
+ await animated.waitForFunction(()=>{const c=document.querySelector('[data-mascot-canvas]');return c?.dataset.mascotMouth==='true'&&Array.from(c.getContext('2d').getImageData(2,1,1,1).data).join(',')==='255,0,255,255';},{},{timeout:10000});
+ await animated.waitForFunction(()=>{const c=document.querySelector('[data-mascot-canvas]');return c?.dataset.mascotEye==='true'&&Array.from(c.getContext('2d').getImageData(1,1,1,1).data).join(',')==='0,0,255,255';},{},{timeout:12000});
+ await animated.locator('[data-mascot-character] [data-mascot-action=close]').click();
+ await animated.close();console.log('PASS independent synthetic mouth/eye animation pixels');
 } catch(error){console.error(log);throw error;}
 finally{await browser?.close();if(server){server.kill();if(server.exitCode===null)await new Promise(resolve=>{server.once('exit',resolve);setTimeout(resolve,2000).unref();});}fs.rmSync(dir,{recursive:true,force:true});}
