@@ -9,7 +9,7 @@
 
 - 博客：`Zhouhang9527/zhouhang9527.github.io`
 - 唯一活动开发分支：`feature/ginka-vn`
-- 私有原作素材：`Zhouhang9527/ginka-xp3-assets`，分支 `main`，本次核实 HEAD `30b43e739aeef0b9a7bf7a38d58975123b677cec`
+- 私有原作素材：`Zhouhang9527/ginka-xp3-assets`，分支 `main`，本次核实 HEAD `390eae6bf3a78ec21db695b2636c00ea2cb77971`
 - 已上线 main 不动；根目录 Hexo/NexT 保留为回滚和共享文章来源
 - 接手前获取两个仓库当前 HEAD，读取根 AGENTS.md、astro/AGENTS.md、本文件、TODO.md、VN-SKIN.md；按任务补读 GINKA-VN.md、MASCOT-PACK.md、design-system/ginka/MASTER.md 和相关实现
 - 本文件给出接续状态，TODO.md 是唯一任务清单，实际代码和最新测试结果优先于旧文档叙述；出现冲突先核对，不擅自扩展需求
@@ -109,6 +109,9 @@ npm run check:vn-browser
 - 结尾回复简明：做了什么、commit、实际验证、仍缺什么；不要声称后台会持续工作
 
 ## 8. 最新接续记录
+
+- 看板娘专线最新：2026-11-25 DATA-04/05、CHAR-01/04/05/06/07/09：私有 390eae6 实证为 KAG .sinfo 分层差分（非 Live2D/E-mote），14793 对白记录、5511 voice ID，具体 OGG/立绘语义/解锁未核验。新增 v2 有序 sparse layer/显式矩形和 over/replace/独立眼嘴候选，保留 v1；仅验证文本、姿势及阶段时可显式 voice=null，禁用回放收藏、不记语音历史。证据库 available=false 正常降级，不再阻断原作预览。未复制私有资源，未执行完整 CI 或真实素材浏览器验收。
+- 下一步：素材 Agent 核验 .sinfo storage→PNG、facegroup 坐标/绘制顺序及 voice storage→OGG；提供 verified v2 小包后验收。原作 affine 和眨眼时序仍待证据。
 
 - 看板娘素材接入：2026-11-25 CHAR-02/06/07 增量：私有素材加载器读取 PNG/WebP 画布尺寸，拒绝无效图头及与 base 不同尺寸的 blink/mouth/motion，并输出每姿势 canvas 元数据；扩展现有合成 PNG fixture 覆盖合法/错位/损坏图头，不替代真实透明立绘与对齐验收。测试尚未执行，保持未勾选。
 

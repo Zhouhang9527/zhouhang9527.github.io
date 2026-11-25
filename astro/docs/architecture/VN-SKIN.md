@@ -101,3 +101,6 @@ Against private revision 30b43e7, 249 comparisons of title, bottom message contr
 ### SAVE/LOAD original English controls
 0000079c 英文 PBD：28 个标签/底部状态、45 个编号页状态，15 页与 00000790 一致，图集边界检查通过；原作模式 SAVE/LOAD/Q.LOAD 独立标题与标签、十五个页码，移动端保留窗口分页，手动槽整行可点。完整视觉及浏览器仍未确认。
 VOICE art recorded but feature reserved for mascot agent; public fallback retains blog indexes.
+
+### Original mascot raster layering (390eae6)
+Private character-rendering-analysis.md and validation.md establish .sinfo base/diff and facegroup/fgalias raster composition, AffineSourceStand/StandInfo and USE_EMOTE=0. v2 loader and canvas compositor accept explicit ordered local sparse layers and alternate eye/mouth parts; no guessed model or timing. Evidence-only manifest now degrades without crashing Vite. Verified text-only v2 lines can omit unmapped voice, but cannot be replayed/saved or added to voice history. No usable original pose pack yet; no actual original rendering verified. See MASCOT-PACK.md.

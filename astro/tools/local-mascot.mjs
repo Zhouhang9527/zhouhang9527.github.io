@@ -21,7 +21,10 @@ export function imageCanvas(file){
 }
 export function loadMascotPack(input){
  const manifest=fs.realpathSync(input),root=path.dirname(manifest),raw=JSON.parse(fs.readFileSync(manifest,'utf8'));
- if(raw.version!==1||!raw.poses||!Array.isArray(raw.lines)||!raw.lines.length||raw.lines.length>500||typeof raw.defaultPose!=='string'||!idPattern.test(raw.defaultPose))throw Error('Invalid mascot pack');
+ // A declared evidence-only pack is not an error and never exposes its evidence files.
+ if(raw.version===1&&raw.available===false&&raw.status==='evidence_only'&&raw.defaultPose===null&&Object.keys(raw.poses??{}).length===0&&Array.isArray(raw.lines)&&raw.lines.length===0)return {files:new Map(),manifest:{version:1,available:false,status:'evidence_only'}};
+ if(![1,2].includes(raw.version)||!raw.poses||!Array.isArray(raw.lines)||!raw.lines.length||raw.lines.length>500||typeof raw.defaultPose!=='string'||!idPattern.test(raw.defaultPose))throw Error('Invalid mascot pack');
+ const layered=raw.version===2;
  const files=new Map(),poses=Object.create(null),lines=[],ids=new Set(),registered=new Map();
  function register(relative,kind){
   if(typeof relative!=='string'||path.isAbsolute(relative)||relative.includes('\\')||relative.split('/').some(s=>!s||s==='..'||s==='.'))throw Error('Invalid mascot asset path');
@@ -35,6 +38,7 @@ export function loadMascotPack(input){
  for(const [id,pose] of Object.entries(raw.poses)){
   if(!idPattern.test(id)||!pose||typeof pose.source!=='string'||!pose.source.trim())throw Error('Invalid pose evidence');
   if(!['child','adult'].includes(pose.character)||!['main','afterstory'].includes(pose.phase)||!['outfit','expression','gesture'].every(k=>typeof pose[k]==='string'&&pose[k].trim()&&pose[k].length<=80))throw Error('Missing character/wardrobe/expression/gesture metadata: '+id);
+  if(layered&&(pose.verified!==true||typeof pose.phaseSource!=='string'||!pose.phaseSource.trim()))throw Error('Unverified layered pose or phase: '+id);
   const base=register(pose.base,'image');
   const motion=pose.motion??[];
   if(!Array.isArray(motion)||motion.length>120)throw Error('Invalid pose motion');
@@ -45,15 +49,34 @@ export function loadMascotPack(input){
    if(!url)continue;const other=files.get(url.slice(prefix.length)).canvas;
    if(other.width!==canvas.width||other.height!==canvas.height)throw Error('Unaligned mascot canvas: '+id);
   }
-  poses[id]={character:pose.character,phase:pose.phase,outfit:pose.outfit,expression:pose.expression,gesture:pose.gesture,base,blink,mouth,motion:frames,source:pose.source,canvas};
+  let layers=null;
+  if(layered){
+   if(pose.blink||pose.mouth||frames.length)throw Error('Layered pose cannot mix full-frame variants');
+   if(!Array.isArray(pose.layers)||!pose.layers.length||pose.layers.length>24)throw Error('Missing layered composition');
+   const slots=new Set();
+   function part(rawPart){
+    if(!rawPart||typeof rawPart.source!=='string'||!rawPart.source.trim()||!Number.isInteger(rawPart.x)||!Number.isInteger(rawPart.y)||!['over','replace'].includes(rawPart.blend))throw Error('Invalid layer evidence or geometry');
+    const image=register(rawPart.image,'image'),size=files.get(image.slice(prefix.length)).canvas;
+    if(rawPart.x<0||rawPart.y<0||rawPart.x+size.width>canvas.width||rawPart.y+size.height>canvas.height)throw Error('Layer outside pose canvas');
+    return {image,x:rawPart.x,y:rawPart.y,blend:rawPart.blend};
+   }
+   layers=pose.layers.map(layer=>{
+    if(!layer||!['pose','face','brow','eye','mouth','cheek','foreground'].includes(layer.slot)||slots.has(layer.slot))throw Error('Invalid or repeated layer slot');
+    slots.add(layer.slot);
+    const normal=part(layer),alternate=layer.alternate==null?null:part(layer.alternate);
+    if(alternate&&!['eye','mouth'].includes(layer.slot))throw Error('Alternate only supported for eye/mouth');
+    return {slot:layer.slot,...normal,alternate};
+   });
+  }
+  poses[id]={layers,character:pose.character,phase:pose.phase,outfit:pose.outfit,expression:pose.expression,gesture:pose.gesture,base,blink,mouth,motion:frames,source:pose.source,canvas};
  }
  if(!Object.hasOwn(poses,raw.defaultPose)||poses[raw.defaultPose].phase!=='main')throw Error('Unknown default pose');
  for(const line of raw.lines){
-  if(!line||typeof line.id!=='string'||!idPattern.test(line.id)||ids.has(line.id)||typeof line.text!=='string'||!line.text.trim()||line.text.length>600||typeof line.speaker!=='string'||!line.speaker.trim()||!Object.hasOwn(poses,line.pose)||typeof line.source!=='string'||!line.source.trim()||typeof line.voiceSource!=='string'||!line.voiceSource.trim()||line.verified!==true)throw Error('Unverified or invalid dialogue entry');
+  if(!line||typeof line.id!=='string'||!idPattern.test(line.id)||ids.has(line.id)||typeof line.text!=='string'||!line.text.trim()||line.text.length>600||typeof line.speaker!=='string'||!line.speaker.trim()||!Object.hasOwn(poses,line.pose)||typeof line.source!=='string'||!line.source.trim()||((!layered||line.voice!==null)&&(typeof line.voiceSource!=='string'||!line.voiceSource.trim()))||line.verified!==true||(layered&&(typeof line.phaseSource!=='string'||!line.phaseSource.trim())))throw Error('Unverified or invalid dialogue entry');
   if(!['main','afterstory'].includes(line.phase)||(line.phase==='main'&&poses[line.pose].phase==='afterstory'))throw Error('Invalid unlock phase');
-  ids.add(line.id);lines.push({id:line.id,speaker:line.speaker,text:line.text,pose:line.pose,phase:line.phase,voice:register(line.voice,'audio'),source:line.source,voiceSource:line.voiceSource});
+  ids.add(line.id);lines.push({id:line.id,speaker:line.speaker,text:line.text,pose:line.pose,phase:line.phase,voice:layered&&line.voice===null?null:register(line.voice,'audio'),source:line.source,voiceSource:line.voiceSource??null});
  }
- return {files,manifest:{version:1,defaultPose:raw.defaultPose,poses,lines}};
+ return {files,manifest:{version:raw.version,available:true,defaultPose:raw.defaultPose,poses,lines}};
 }
 export function localMascot(){
  return {name:'ginka-private-mascot',apply:'serve',configureServer(server){
