@@ -35,7 +35,7 @@ test('inspect and serve only the configured private font',()=>{
   plugin.configureServer({middlewares:{use:fn=>{middleware=fn;}}});
   function request(url,method='GET',remoteAddress='127.0.0.1'){
    const res={statusCode:200,headers:{},setHeader(k,v){this.headers[k]=v;},end(body){this.body=body;}};
-   middleware({url,method,socket:{remoteAddress}},res,()=>{res.next=true;});
+   middleware({url,method,headers:{host:'127.0.0.1:4321'},socket:{remoteAddress}},res,()=>{res.next=true;});
    return res;
   }
   const css=request('/__ginka_local_font__/ui.css');

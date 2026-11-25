@@ -19,6 +19,8 @@
 
 ## 0. 当前基线（不是完成验收）
 
+2026-11-25 BASE-08/DATA-02：为 title/UI/map/font 私有服务共用 loopback + Host + Origin/Sec-Fetch-Site 防重绑定校验、GET/HEAD、严格路径/真实 symlink containment、单段 HTTP Range 206/416、no-store/CORP/nosniff。新增纯合成 PNG 尺寸 fixture，对全部原作配置逻辑切片的中间件生成、尺寸及私有路由访问做构建单测，不需要分发真实素材。看板娘服务由另一 Agent 负责，未改动；完整私有浏览器/像素验收与新 CI 未确认。
+
 2026-11-25 SAVE-02/03/05/06：从文章进入 LOAD 或 SAVE 均保留真实位置快照，LOAD/SAVE/Q.LOAD 使用同一存档窗口的独立模式，可切换而不丢调用上下文；标题 LOAD 禁用 SAVE，返回真实调用文章，离开窗口清理 draft，跨标签页变更时拒绝读取旧记录。PBD 原始 SAVE/LOAD/Q.LOAD 三个标签与 TITLE/BACK/EXIT footer 使用现有逻辑 sprite 及桌面坐标，博客最近/收藏/已读单独排列，VOICE 预留另一 Agent。新增真实浏览器模式切换、文章返回、标题 SAVE 禁用断言；最新 CI 未确认。
 
 2026-11-25 DATA-05/CHAR-01/02/05/06：私有 e6891e3 已复现 HXV4 文件名哈希并匹配六套原作 PBD 的全部 543 个 PNG 层，真实 PSB scn001/002/003 的逐句角色状态亦已读取。V2 支持原始裁切 base 的 canvas/baseRect 坐标，校验原始层实际图头尺寸；新增 fixture 测试。待生成首个可用私有包及浏览器实测。

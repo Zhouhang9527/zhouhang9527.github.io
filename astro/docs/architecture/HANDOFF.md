@@ -147,3 +147,7 @@ npm run check:vn-browser
 ### 公共 UI 接续（2026-11-25）
 - 基线 dcb6f5c，另一 Agent 的 sparse PBD 看板娘提交保留。SAVE-02/03/05/06：从文章进入 LOAD 或 SAVE 均保留真实位置快照，LOAD/SAVE/Q.LOAD 使用同一存档窗口的独立模式，可切换而不丢调用上下文；标题 LOAD 禁用 SAVE，返回真实调用文章，离开窗口清理 draft，跨标签页变更时拒绝读取旧记录。PBD 原始 SAVE/LOAD/Q.LOAD 三个标签与 TITLE/BACK/EXIT footer 使用现有逻辑 sprite 及桌面坐标，博客最近/收藏/已读单独排列，VOICE 预留另一 Agent。新增真实浏览器模式切换、文章返回、标题 SAVE 禁用断言；最新 CI 未确认。
 - SYSTEM 22763cf CI 被并行提交取消，继续查询最新 CI；不改角色模块，不发布。
+
+### 公共 UI 接续（2026-11-25）
+- 基线 fe7a296。BASE-08/DATA-02：为 title/UI/map/font 私有服务共用 loopback + Host + Origin/Sec-Fetch-Site 防重绑定校验、GET/HEAD、严格路径/真实 symlink containment、单段 HTTP Range 206/416、no-store/CORP/nosniff。新增纯合成 PNG 尺寸 fixture，对全部原作配置逻辑切片的中间件生成、尺寸及私有路由访问做构建单测，不需要分发真实素材。看板娘服务由另一 Agent 负责，未改动；完整私有浏览器/像素验收与新 CI 未确认。
+- 下一步：真实 CI 与合成原作 browser fixture，检查私有服务拒绝非本地，SOUND PBD 大文件限制。不部署，不改看板娘。

@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
+import {isPrivateRequest,servePrivateBytes} from './private-http.mjs';
 
 const PREFIX='/__ginka_local_font__/';
 const FAMILY='Ginka Local UI';
@@ -66,16 +67,11 @@ export function localFont(){
    server.middlewares.use((req,res,next)=>{
     const url=(req.url||'').split('?')[0];
     if(!url.startsWith(PREFIX))return next();
-    const local=['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket.remoteAddress);
-    if(!local||!['GET','HEAD'].includes(req.method)){res.statusCode=403;res.end();return;}
+    if(!isPrivateRequest(req)){res.statusCode=403;res.end();return;}
     const isCss=url===PREFIX+'ui.css';
     if(!isCss&&url!==PREFIX+'ui.'+ext){res.statusCode=404;res.end();return;}
     const body=isCss?Buffer.from(css):bytes;
-    res.setHeader('Content-Type',isCss?'text/css; charset=utf-8':ext==='otf'?'font/otf':'font/ttf');
-    res.setHeader('Cache-Control','no-store');
-    res.setHeader('Cross-Origin-Resource-Policy','same-origin');
-    res.setHeader('Content-Length',body.length);
-    res.end(req.method==='HEAD'?undefined:body);
+    servePrivateBytes(req,res,body,isCss?'text/css; charset=utf-8':ext==='otf'?'font/otf':'font/ttf');
    });
    console.log('GINKA: private UI font enabled on localhost only',names);
   }

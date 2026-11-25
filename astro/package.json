@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node tools/prepare.mjs && astro dev",
-    "build": "npm run check:fonts && npm run check:reading && npm run check:atlas && npm run check:pbd && npm run check:controls && npm run check:actions && npm run check:options && npm run check:voice-history && npm run check:mascot && node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
+    "build": "npm run check:fonts && npm run check:reading && npm run check:atlas && npm run check:private && npm run check:pbd && npm run check:controls && npm run check:actions && npm run check:options && npm run check:voice-history && npm run check:mascot && node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
     "preview": "astro preview",
     "check": "node tools/verify.mjs",
     "typecheck": "node tools/prepare.mjs && astro check",
@@ -20,7 +20,8 @@
     "audit:original": "node --experimental-strip-types tools/audit-original-ui.mjs",
     "check:actions": "node --experimental-strip-types --test tools/vn-actions.test.mjs",
     "check:mascot-browser": "node tools/mascot-browser.mjs",
-    "check:options": "node --experimental-strip-types --test tools/vn-options.test.mjs"
+    "check:options": "node --experimental-strip-types --test tools/vn-options.test.mjs",
+    "check:private": "node --test tools/private-http.test.mjs tools/local-private-ui.test.mjs"
   },
   "dependencies": {
     "astro": "5.16.0",
