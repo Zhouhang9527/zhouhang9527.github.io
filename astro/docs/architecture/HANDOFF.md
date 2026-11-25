@@ -110,6 +110,8 @@ npm run check:vn-browser
 
 ## 8. 最新接续记录
 
+- 2026-11-25 DATA-05/CHAR-01/02/05/06：私有 e6891e3 已复现 HXV4 文件名哈希并匹配六套原作 PBD 的全部 543 个 PNG 层，真实 PSB scn001/002/003 的逐句角色状态亦已读取。V2 支持原始裁切 base 的 canvas/baseRect 坐标，校验原始层实际图头尺寸；新增 fixture 测试。待生成首个可用私有包及浏览器实测。
+
 - 2026-11-25 CHAR-07/08/09/12：66b64fd 的 CI 45536688313 已通过 typecheck/build，真实 Chromium fixture 已走过 390px 稀疏 Canvas 像素、静默对白及测试音历史记录；V.SAVE 被 Astro dev toolbar 拦截。私有素材预览关闭 dev toolbar（不强制点击、不跳过断言），修复收起按钮测试选择器；新 CI 尚未完成。
 
 - 2026-11-25 CHAR-06/07/08/09/10/11/12：2c3374a 实际 CI 两套 typecheck/build/check:mascot 已通过（VN 45535233798、Review 45535233919），全站 browser 分别 DOM.describeNode context lost、mode-toggle timeout，未视为通过。新增独立 synthetic mascot browser fixture 与 CI 阶段，真实 Canvas 像素、静默对白、测试音、收藏历史、解锁、焦点/收起；延迟加载及复用分层图像、可用对白过滤服装、旧 media 事件防护和 motion 设置即时响应。新 CI 尚未验证，仍无实际可用私有包。

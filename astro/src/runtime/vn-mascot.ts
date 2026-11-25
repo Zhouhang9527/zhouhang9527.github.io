@@ -2,7 +2,7 @@ import {KEY,parse} from '../domain/reading-state';
 import {HISTORY_KEY,parseHistory,appendHistory} from '../domain/voice-history';
 type Part={image:string;x:number;y:number;blend:'over'|'replace'};
 type Layer=Part&{slot:string;alternate:Part|null};
-type Pose={layers:Layer[]|null;canvas:{width:number;height:number};character:'child'|'adult';phase:'main'|'afterstory';outfit:string;expression:string;gesture:string;base:string;blink:string|null;mouth:string|null;motion:{image:string;ms:number}[]};
+type Pose={layers:Layer[]|null;canvas:{width:number;height:number};baseOffset?:{x:number;y:number};character:'child'|'adult';phase:'main'|'afterstory';outfit:string;expression:string;gesture:string;base:string;blink:string|null;mouth:string|null;motion:{image:string;ms:number}[]};
 type Line={id:string;speaker:string;text:string;pose:string;phase:'main'|'afterstory';voice:string|null};
 type Pack={version:1|2;defaultPose:string;poses:Record<string,Pose>;lines:Line[]};
 const VOL='ginka.vn.voice.volume.v1',SAVED='ginka.vn.voice.saved.v1',MUTE='ginka.vn.voice.mute.v1',CHAR='ginka.vn.mascot.character.v1',OUTFIT='ginka.vn.mascot.outfit.v1';
@@ -16,7 +16,7 @@ function drawLayers(){
  const base=layerImages.get(p.base);if(!base)return;
  const context=canvas.getContext('2d');if(!context)return;
  if(canvas.width!==p.canvas.width)canvas.width=p.canvas.width;if(canvas.height!==p.canvas.height)canvas.height=p.canvas.height;
- context.clearRect(0,0,canvas.width,canvas.height);context.drawImage(base,0,0);
+ context.clearRect(0,0,canvas.width,canvas.height);context.drawImage(base,p.baseOffset?.x??0,p.baseOffset?.y??0);
  for(const layer of p.layers){
   const selected=(layer.slot==='eye'&&layerEye||layer.slot==='mouth'&&layerMouth)&&layer.alternate?layer.alternate:layer;
   const image=layerImages.get(selected.image);if(!image)continue;

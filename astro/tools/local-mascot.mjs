@@ -44,7 +44,13 @@ export function loadMascotPack(input){
   if(!Array.isArray(motion)||motion.length>120)throw Error('Invalid pose motion');
   const frames=motion.map(frame=>{if(!frame||!Number.isInteger(frame.ms)||frame.ms<40||frame.ms>10000)throw Error('Invalid frame timing');return {image:register(frame.image,'image'),ms:frame.ms};});
   const blink=pose.blink?register(pose.blink,'image'):null,mouth=pose.mouth?register(pose.mouth,'image'):null;
-  const canvas=files.get(base.slice(prefix.length)).canvas;
+  const baseSize=files.get(base.slice(prefix.length)).canvas;
+  let canvas=baseSize,baseOffset={x:0,y:0};
+  if(layered&&pose.baseRect!==undefined){
+   const rect=pose.baseRect,c=pose.canvas;
+   if(!rect||!c||![rect.x,rect.y,rect.width,rect.height,c.width,c.height].every(Number.isInteger)||rect.x<0||rect.y<0||c.width<1||c.height<1||c.width*c.height>32_000_000||rect.width!==baseSize.width||rect.height!==baseSize.height||rect.x+rect.width>c.width||rect.y+rect.height>c.height)throw Error('Invalid sparse base rectangle: '+id);
+   canvas={width:c.width,height:c.height};baseOffset={x:rect.x,y:rect.y};
+  }
   for(const url of [blink,mouth,...frames.map(f=>f.image)]){
    if(!url)continue;const other=files.get(url.slice(prefix.length)).canvas;
    if(other.width!==canvas.width||other.height!==canvas.height)throw Error('Unaligned mascot canvas: '+id);
@@ -57,6 +63,7 @@ export function loadMascotPack(input){
    function part(rawPart){
     if(!rawPart||typeof rawPart.source!=='string'||!rawPart.source.trim()||!Number.isInteger(rawPart.x)||!Number.isInteger(rawPart.y)||!['over','replace'].includes(rawPart.blend))throw Error('Invalid layer evidence or geometry');
     const image=register(rawPart.image,'image'),size=files.get(image.slice(prefix.length)).canvas;
+    if(rawPart.width!==undefined&&(rawPart.width!==size.width||rawPart.height!==size.height))throw Error('Original layer size mismatch: '+id);
     if(rawPart.x<0||rawPart.y<0||rawPart.x+size.width>canvas.width||rawPart.y+size.height>canvas.height)throw Error('Layer outside pose canvas');
     return {image,x:rawPart.x,y:rawPart.y,blend:rawPart.blend};
    }
@@ -68,7 +75,7 @@ export function loadMascotPack(input){
     return {slot:layer.slot,...normal,alternate};
    });
   }
-  poses[id]={layers,character:pose.character,phase:pose.phase,outfit:pose.outfit,expression:pose.expression,gesture:pose.gesture,base,blink,mouth,motion:frames,source:pose.source,canvas};
+  poses[id]={layers,character:pose.character,phase:pose.phase,outfit:pose.outfit,expression:pose.expression,gesture:pose.gesture,base,blink,mouth,motion:frames,source:pose.source,canvas,baseOffset};
  }
  if(!Object.hasOwn(poses,raw.defaultPose)||poses[raw.defaultPose].phase!=='main')throw Error('Unknown default pose');
  for(const line of raw.lines){

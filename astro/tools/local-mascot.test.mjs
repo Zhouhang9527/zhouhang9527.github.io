@@ -41,6 +41,8 @@ test('v2 verifies sparse ordered layers, independent alternatives and silent dia
   const pack={version:2,defaultPose:'a',poses:{a:pose},lines:[{id:'l',speaker:'fixture',text:'fixture',pose:'a',phase:'main',phaseSource:'fixture phase',voice:null,source:'fixture script',verified:true}]};
   const load=()=>{fs.writeFileSync(file,JSON.stringify(pack));return loadMascotPack(file);};
   const result=load();assert.equal(result.manifest.version,2);assert.equal(result.manifest.lines[0].voice,null);assert.deepEqual(result.manifest.poses.a.layers.map(x=>x.slot),['eye','mouth']);
+  pose.baseRect={x:1,y:1,width:2,height:1};pose.canvas={width:3,height:3};assert.deepEqual(load().manifest.poses.a.baseOffset,{x:1,y:1});assert.deepEqual(load().manifest.poses.a.canvas,{width:3,height:3});pose.baseRect.width=3;assert.throws(load,/Invalid sparse base rectangle/);delete pose.baseRect;delete pose.canvas;
+  pose.layers[0].width=2;pose.layers[0].height=1;assert.throws(load,/Original layer size mismatch/);delete pose.layers[0].width;delete pose.layers[0].height;
   pose.layers[0].x=2;assert.throws(load,/Layer outside/);pose.layers[0].x=1;
   pose.layers[0].alternate.source='';assert.throws(load,/Invalid layer evidence/);pose.layers[0].alternate.source='fixture part';
   pose.verified=false;assert.throws(load,/Unverified layered pose/);pose.verified=true;

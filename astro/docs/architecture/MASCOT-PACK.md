@@ -65,3 +65,6 @@ User-approved subtle dynamic enhancement on top of original raster layering: v2 
 
 ## Browser integration fixture
 `npm run check:mascot-browser` starts a temporary loopback Astro dev instance using generated colored pixels and a test tone only. It checks actual sparse canvas pixels, silent dialogue, voice playback/history/save, phase gating, close/focus and desktop/mobile widths. CI runs it independently before whole-site navigation acceptance. Runtime defers private image downloads until interaction, reuses the decoded current layered pose and filters wardrobe by available lines; media callbacks ignore stale element events. The fixture is not original game verification.
+
+## Original sparse base geometry
+Private revision e6891e3 establishes 543/543 exact native filename-hash matches across all six original PBD layer tables (small/medium/large for both forms). v2 optionally accepts a verified `canvas: {width,height}` and `baseRect: {x,y,width,height}` on each pose, allowing the original cropped base image to be drawn at its PBD position without re-encoding. The base rectangle must match the actual decoded image header and remain inside the original canvas; optional layer `width,height` also check original dimensions. Draw order remains explicit. The private source mapping does not by itself certify original visual or audio playback parity.

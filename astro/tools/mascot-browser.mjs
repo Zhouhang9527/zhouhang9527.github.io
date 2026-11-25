@@ -32,7 +32,7 @@ function tone(){
 try{
  png('base.png',4,4,[255,0,0,255]);png('eye.png',1,1,[0,255,0,255]);png('blink.png',1,1,[0,0,255,255]);png('mouth.png',1,1,[255,255,0,255]);png('open.png',1,1,[255,0,255,255]);tone();
  const part=(image,x,y)=>({image,x,y,blend:'over',source:'synthetic integration fixture'});
- const pose={verified:true,phaseSource:'fixture',source:'fixture',character:'child',phase:'main',outfit:'fixture',expression:'neutral',gesture:'idle',base:'base.png',layers:[{slot:'eye',...part('eye.png',1,1),alternate:part('blink.png',1,1)},{slot:'mouth',...part('mouth.png',2,1),alternate:part('open.png',2,1)}]};
+ const pose={verified:true,phaseSource:'fixture',source:'fixture',character:'child',phase:'main',outfit:'fixture',expression:'neutral',gesture:'idle',base:'base.png',canvas:{width:6,height:6},baseRect:{x:1,y:1,width:4,height:4},layers:[{slot:'eye',...part('eye.png',1,1),alternate:part('blink.png',1,1)},{slot:'mouth',...part('mouth.png',2,1),alternate:part('open.png',2,1)}]};
  const line=(id,text,voice,p='main',poseId='a')=>({id,text,voice,phase:p,pose:poseId,speaker:'Synthetic fixture',source:'fixture',phaseSource:'fixture',voiceSource:voice?'generated test tone':null,verified:true});
  const file=path.join(dir,'manifest.json');
  fs.writeFileSync(file,JSON.stringify({version:2,defaultPose:'a',poses:{a:pose,b:{...pose,character:'adult',phase:'afterstory',outfit:'locked'}},lines:[line('silent','Silent fixture',null),line('tone','Tone fixture','tone.wav'),line('locked','Locked fixture',null,'afterstory','b')]}));
@@ -53,6 +53,7 @@ try{
   const canvas=page.locator('[data-mascot-canvas]'),next=page.locator('[data-mascot-window] [data-mascot-action=next]');
   await canvas.waitFor({state:'visible'});
   assert.deepEqual(await canvas.evaluate(c=>Array.from(c.getContext('2d').getImageData(1,1,2,1).data)),[0,255,0,255,255,255,0,255]);
+  assert.deepEqual(await canvas.evaluate(c=>[c.width,c.height,...c.getContext('2d').getImageData(0,0,1,1).data,...c.getContext('2d').getImageData(3,3,1,1).data]),[6,6,0,0,0,0,255,0,0,255]);
   assert.equal(await page.locator('[data-mascot-text]').textContent(),'Silent fixture');
   assert.equal(await page.locator('[data-mascot-action=replay]').isDisabled(),true);
   assert.equal(await page.locator('[data-mascot-action=save]').isDisabled(),true);
