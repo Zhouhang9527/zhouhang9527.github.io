@@ -240,3 +240,5 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 - 39740a9: [VN 45540075464](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45540075464) 和 [Astro Review 45540075452](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45540075452) 全绿。真实 npm ci、typecheck/build/62 旧路由、公开 390/1440、完整主线解锁/NEW/刷新后持久性、存档模式切换与返回、独立 mascot fixture、原作 synthetic geometry 57/57 均通过；artifact 14989295395。BASE-03、STORY-02、SAVE-02 勾选。
 - 直接读取私有 b74501b 的 14 份实际 PBD，按 audit:original 同一比较规则逐项核对 959 项（SYSTEM 345、EXTRA 117），0 mismatch。源数据匹配和合成图像浏览器坐标通过，不等于真实原作像素还原完成。
 - INFORMATION 真实源：000007bd_29BE48A6A6D1AC6C0B2BFFC7DF2D8D8CB3F38A385FBEE351588300BEF1CC8E7D.pbd.json 与英文 000007c0_DC4A510B9F3E59FE3819FB5C25AFCFDFAC6F3F694FECE8109E373DD2DDE93A52.pbd.json；information__bg0 为先前误用的 000007c4；标题 (2,0,524,63)、BACK (1162,644,105,76)，5 组原生栏标题和 7 个外链按钮。未实现独立信息页；下一阶段在保留 /about/ 的前提下接入真实画布、明确博客信息适配及外链。原作 URL 仅静态取证，未验证可达。title_first 的独立 PBD 仍未定位。
+
+- 2026-11-25 CHAR-07/08/09/10/11/12、AUDIO-04、BASE-08：真实 manifest 20 原声/18 姿势/10 服装；完善图层缓存/重试、游戏 NEXT/HIDE、PROGRAM 预览、收藏/回放/停止及私有 HTTP。新增真实本地验收命令 `npm run check:mascot-original`，CI 与原作实测未运行，暂不勾选。

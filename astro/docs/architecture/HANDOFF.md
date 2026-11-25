@@ -186,3 +186,9 @@ npm run check:vn-browser
 ### 公共 UI INFORMATION 接续（2026-11-25）
 - 基线 25a8593，私有 b74501b。FINAL-01/TITLE-01/DATA-01/ENGINE-01：实际读取英文 000007c0，14 个控件、30 个逻辑 sprite、七个 openWebPage 目标。新增独立 /information/、原作 1280×720 布局及原图本地服务，移动端触屏重排；保留 /about/ 与真实作者链接、非官方声明。链接是原作记录，未验证实际可达。不改看板娘、不发布。
 - 已静态检查全部 30 个切片的 atlas 边界；新增源审计、公共构建隔离、公共 browser 和合成 geometry 断言。当前连接仅可提交，尚未运行 Node/Chromium 或真实素材像素验收，不勾选 FINAL-01。下一步查 CI、title_first 及真实原作对照。
+
+
+### 看板娘运行时完善（2026-11-25）
+- 用户明确接续看板娘专线。基线 fc2959d，私有 b74501b 实际读取默认 v2 manifest：20 原声、18 姿势、10 服装（12 主线小银花，8 后日谈大银花），9 个姿势有眼差分、5 个姿势有嘴差分（以实际清单为准）。未将原作数据复制到博客。
+- CHAR-07/08/09/10/11/12、AUDIO-04、BASE-08：加入有界解码缓存、下一合法姿势预热、必需层加载状态/重试、可选眼嘴解码失败保留正常差分；游戏内 NEXT/HIDE 与对白联动，AUTO 停止；PROGRAM 预览、SOUND 独立回放/停止、V.SAVE 切换收藏、BACKLOG 音频回放不弹出角色。私有语音服务使用共用 Host/Origin/Range 校验。新增原作本地 Chromium 验收入口（不上传任何私有截图）与扩展合成测试。
+- 当前仅 GitHub 读写，容器 DNS 不可访问 GitHub；未执行新提交的 Node/Chromium 测试，不标记 CHAR 已完成。下一步验证 CI，在私有本地执行 npm run check:mascot-original，并继续增加有证据的原作眼嘴差分、姿势/对白覆盖。无部署。

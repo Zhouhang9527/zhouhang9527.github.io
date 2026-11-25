@@ -10,6 +10,26 @@ let character='all',outfit='all',motionTimer=0,motionIndex=0;
 let pack:Pack|null=null,loading:Promise<void>|null=null,root:HTMLElement|null=null,audio:HTMLAudioElement|null=null,current:Line|null=null,open=false,volume=80,muted=false,blinkTimer=0,blinkEnd=0,reveal=0,raf=0,ctx:AudioContext|null=null,analyser:AnalyserNode|null=null,lastPose='',generation=0;
 const $=(s:string)=>root?.querySelector<HTMLElement>(s);
 let unavailable=false,layerToken=0,layerImages=new Map<string,HTMLImageElement>(),layerPose:Pose|null=null,layerEye=false,layerMouth=false,layerPending=false;
+// Bounded decoded-image cache. Retain the active composition separately; warm only the next allowed pose.
+const imageCache=new Map<string,HTMLImageElement>(),imagePending=new Map<string,Promise<HTMLImageElement>>();
+function cacheImage(url:string,img:HTMLImageElement){
+ imageCache.delete(url);imageCache.set(url,img);
+ let pixels=[...imageCache.values()].reduce((sum,image)=>sum+image.naturalWidth*image.naturalHeight,0);
+ while(imageCache.size>24||pixels>12_000_000&&imageCache.size>1){const key=imageCache.keys().next().value as string;const removed=imageCache.get(key)!;pixels-=removed.naturalWidth*removed.naturalHeight;imageCache.delete(key);}
+}
+function decodeImage(url:string):Promise<HTMLImageElement>{
+ const ready=imageCache.get(url);if(ready){cacheImage(url,ready);return Promise.resolve(ready);}
+ const pending=imagePending.get(url);if(pending)return pending;
+ const img=new Image();img.src=url;
+ const task=img.decode().then(()=>{cacheImage(url,img);return img;}).finally(()=>imagePending.delete(url));
+ imagePending.set(url,task);return task;
+}
+function poseUrls(p:Pose){return [...new Set([p.base,...(p.layers||[]).map(l=>l.image)])];}
+function renderState(value:'loading'|'ready'|'error'){
+ const portrait=$('.ginka-mascot-portrait'),status=$('[data-mascot-render-status]');
+ if(portrait){portrait.dataset.mascotRender=value;portrait.setAttribute('aria-busy',String(value==='loading'));}
+ if(status){status.hidden=value==='ready';status.textContent=value==='loading'?'正在载入银花…':value==='error'?'立绘载入失败，点击重试':'';}
+}
 function drawLayers(){
  const canvas=$('[data-mascot-canvas]') as HTMLCanvasElement|undefined,p=layerPose;
  if(!canvas||!p?.layers)return;
@@ -18,24 +38,36 @@ function drawLayers(){
  if(canvas.width!==p.canvas.width)canvas.width=p.canvas.width;if(canvas.height!==p.canvas.height)canvas.height=p.canvas.height;
  context.clearRect(0,0,canvas.width,canvas.height);context.drawImage(base,p.baseOffset?.x??0,p.baseOffset?.y??0);
  for(const layer of p.layers){
-  const selected=(layer.slot==='eye'&&layerEye||layer.slot==='mouth'&&layerMouth)&&layer.alternate?layer.alternate:layer;
-  const image=layerImages.get(selected.image);if(!image)continue;
+  const selected=(layer.slot==='eye'&&layerEye||layer.slot==='mouth'&&layerMouth)&&layer.alternate&&layerImages.has(layer.alternate.image)?layer.alternate:layer;
+  const image=layerImages.get(selected.image);if(!image)return;
   if(selected.blend==='replace')context.clearRect(selected.x,selected.y,image.naturalWidth,image.naturalHeight);
   context.drawImage(image,selected.x,selected.y);
  }
- canvas.hidden=false;
+ canvas.hidden=false;renderState('ready');
 }
 function loadLayers(p:Pose){
  const canvas=$('[data-mascot-canvas]') as HTMLCanvasElement|undefined;
  const portrait=$('.ginka-mascot-portrait');
- if(p.layers&&layerPose===p&&(layerPending||layerImages.size)){layerEye=false;layerMouth=false;drawLayers();return;}
+ if(p.layers&&layerPose===p&&(layerPending||layerImages.size)){layerEye=false;layerMouth=false;if(!layerPending)drawLayers();return;}
  const token=++layerToken;
  layerPose=p.layers?p:null;layerEye=false;layerMouth=false;layerImages=new Map();layerPending=false;
  portrait?.toggleAttribute('data-layered',!!p.layers);if(canvas)canvas.hidden=true;
- if(!p.layers)return;
- layerPending=true;
- const urls=new Set([p.base,...p.layers.flatMap(l=>[l.image,...(l.alternate?[l.alternate.image]:[])])]);
- void Promise.all([...urls].map(async url=>{const img=new Image();img.src=url;await img.decode();return [url,img] as const;})).then(entries=>{if(token!==layerToken)return;layerPending=false;layerImages=new Map(entries);drawLayers();}).catch(()=>{if(token===layerToken){layerPending=false;feedback('角色差分素材未能解码');}});
+ if(!p.layers){renderState('ready');return;}
+ const required=poseUrls(p),alternates=[...new Set(p.layers.flatMap(l=>l.alternate?[l.alternate.image]:[]))];
+ const active=()=>token===layerToken&&layerPose===p;
+ const finish=(entries:readonly (readonly [string,HTMLImageElement])[])=>{
+  if(!active())return;layerPending=false;layerImages=new Map(entries);drawLayers();
+  for(const url of alternates)void decodeImage(url).then(img=>{if(active()){layerImages.set(url,img);drawLayers();}}).catch(()=>{/* Optional eye/mouth failure leaves the verified normal layer intact. */});
+ };
+ const cached=required.map(url=>[url,imageCache.get(url)] as const);
+ if(cached.every((entry):entry is readonly [string,HTMLImageElement]=>!!entry[1])){finish(cached);return;}
+ layerPending=true;renderState('loading');
+ void Promise.all(required.map(async url=>[url,await decodeImage(url)] as const)).then(finish).catch(()=>{if(active()){layerPending=false;layerImages.clear();renderState('error');feedback('角色差分素材未能解码');}});
+}
+function warmNext(){
+ const lines=choices(),index=lines.findIndex(x=>x.id===current?.id),next=lines[(index+1)%lines.length];
+ const p=next&&pack?.poses[next.pose];if(!p?.layers||p===layerPose)return;
+ for(const url of poseUrls(p))void decodeImage(url).catch(()=>{});
 }
 let revealTarget:HTMLElement|null=null,readyFrames=new Set<string>(),frameGeneration=0;
 const frameImage=(selector:string)=>$('[data-mascot-'+selector+']') as HTMLImageElement|undefined;
@@ -86,7 +118,13 @@ function renderHistory(){
   list.replaceChildren(fragment);focusTarget?.focus({preventScroll:true});
  }
 }
-function feedback(s:string){const el=$('[data-mascot-feedback]');if(el)el.textContent=s;}
+function feedback(s:string){const el=$('[data-mascot-feedback]');if(el)el.textContent=s;document.querySelectorAll<HTMLElement>('[data-vn-voice-feedback]').forEach(node=>node.textContent=s);}
+function voiceStatus(){
+ const playing=!!audio&&!audio.paused&&!audio.ended;
+ document.querySelectorAll<HTMLButtonElement>('[data-vn-voice-stop]').forEach(e=>e.disabled=!playing);
+ document.querySelectorAll<HTMLElement>('[data-vn-voice-playing]').forEach(e=>e.textContent=playing&&current?.voice?'正在播放 · '+current.speaker:'语音未播放');
+}
+function stopVoice(){generation++;audio?.pause();resetMouth();if(open){scheduleBlink();startMotion();}voiceStatus();}
 function applyVolume(){if(audio){audio.volume=volume/100;audio.muted=muted;}}
 function syncSettings(){
  const ready=!!current?.voice&&allowed(current);document.documentElement.toggleAttribute('data-vn-voice-ready',ready);document.dispatchEvent(new Event('vn:voice-state'));
@@ -94,16 +132,22 @@ function syncSettings(){
  document.querySelectorAll<HTMLOutputElement>('[data-vn-voice-value]').forEach(e=>e.value=String(volume));
  document.querySelectorAll<HTMLButtonElement>('[data-vn-voice-mute]').forEach(e=>{e.textContent=muted?'取消静音':'静音';e.setAttribute('aria-pressed',String(muted));});
  document.querySelectorAll<HTMLButtonElement>('[data-vn-voice-replay],[data-mascot-action=replay],[data-mascot-action=save]').forEach(e=>e.disabled=!ready);
+ document.querySelectorAll<HTMLButtonElement>('[data-mascot-action=save]').forEach(e=>e.setAttribute('aria-pressed',String(!!current&&saved().includes(current.id))));
+ document.querySelectorAll<HTMLButtonElement>('[data-mascot-action=preview]').forEach(e=>e.disabled=!choices().length);
+ voiceStatus();
  document.querySelectorAll<HTMLElement>('[data-vn-voice-status]').forEach(e=>e.textContent=pack?.lines.some(l=>l.voice&&allowed(l))?'已连接本地原作语音':unavailable?'原作素材尚未完成核验':pack?'当前素材仅有已验证文本，语音未匹配':root?.dataset.mascotSource?'等待本地素材包加载':'原作语音需要本地素材包');
  for(const list of document.querySelectorAll<HTMLElement>('[data-vn-voice-saved]')){
-  list.replaceChildren();for(const id of saved()){const l=pack?.lines.find(x=>x.id===id&&!!x.voice&&allowed(x));if(!l)continue;const b=document.createElement('button');b.type='button';b.dataset.vnVoiceSaved=id;b.textContent=l.speaker+' · '+l.text.slice(0,28);list.append(b);}
-  if(!list.childElementCount)list.textContent='暂无语音收藏';
+  const rows=saved().flatMap(id=>{const l=pack?.lines.find(x=>x.id===id&&!!x.voice&&allowed(x));return l?[l]:[];});
+  const key=JSON.stringify(rows.map(l=>l.id));if(list.dataset.savedKey===key)continue;list.dataset.savedKey=key;
+  const fragment=document.createDocumentFragment();
+  for(const l of rows){const row=document.createElement('div');row.className='vn-voice-saved-row';const b=document.createElement('button');b.type='button';b.dataset.vnVoiceSaved=l.id;b.textContent=l.speaker+' · '+l.text.slice(0,28);const remove=document.createElement('button');remove.type='button';remove.dataset.vnVoiceRemove=l.id;remove.textContent='移除';remove.setAttribute('aria-label','移除 '+l.speaker+' 语音收藏');row.append(b,remove);fragment.append(row);}
+  if(!rows.length)fragment.append(document.createTextNode('暂无语音收藏'));list.replaceChildren(fragment);
  }
  const available=Array.from(new Set(pack?.lines.filter(allowed).map(l=>pack!.poses[l.pose])||[]));
  const fill=(selector:string,values:[string,string][],selected:string)=>{for(const el of document.querySelectorAll<HTMLSelectElement>(selector)){const options=values.map(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;return o;});if(el.options.length!==options.length||options.some((o,i)=>el.options[i]?.value!==o.value||el.options[i]?.text!==o.text))el.replaceChildren(...options);el.value=values.some(([v])=>v===selected)?selected:'all';el.disabled=!pack;}};
  const characters:[string,string][]=[['all','全部']];if(available.some(p=>p.character==='child'))characters.push(['child','小银花']);if(available.some(p=>p.character==='adult'))characters.push(['adult','大银花']);if(!characters.some(([v])=>v===character))character='all';
  const outfits:[string,string][]=[['all','全部服装'],...new Map(available.filter(p=>character==='all'||p.character===character).map(p=>[p.outfit,(character==='all'?(p.character==='child'?'小银花 · ':'大银花 · '):'')+(p.outfitLabel||p.outfit)])).entries()];if(!outfits.some(([v])=>v===outfit))outfit='all';
- fill('[data-vn-mascot-character]',characters,character);fill('[data-vn-mascot-outfit]',outfits,outfit);
+ fill('[data-vn-mascot-character]',characters,character);fill('[data-vn-mascot-outfit]',outfits,outfit);document.querySelectorAll<HTMLButtonElement>('[data-mascot-action=preview]').forEach(e=>e.disabled=!choices().length);
  applyVolume();renderHistory();
 }
 function setImage(selector:string,url:string|null){const img=$('[data-mascot-'+selector+']') as HTMLImageElement|undefined;if(!img)return;if(url){if(img.getAttribute('src')!==url)img.src=url;}else img.removeAttribute('src');if(selector!=='base')img.hidden=true;}
@@ -111,14 +155,14 @@ function pose(id:string){const p=pack?.poses[id];if(!p||!poseAllowed(p))return;s
 function startMotion(){stopMotion();const id=lastPose,p=pack?.poses[id];if(!p?.motion.length||reduce()||!open||document.hidden)return;const tick=()=>{if(!open||!audio?.paused||lastPose!==id||reduce()||document.hidden)return;const frame=p.motion[motionIndex++%p.motion.length];if(readyFrames.has(frame.image)&&frameImage('blink')?.hidden!==false&&frameImage('mouth')?.hidden!==false)setImage('base',frame.image);motionTimer=window.setTimeout(tick,frame.ms);};tick();}
 function stopReveal(){cancelAnimationFrame(reveal);reveal=0;revealTarget=null;}
 function finishReveal(){if(!revealTarget||!current)return false;revealTarget.textContent=current.text;stopReveal();return true;}
-function clearDialogue(){stopReveal();const name=document.querySelector<HTMLElement>('[data-vn-dialogue-speaker]'),text=document.querySelector<HTMLElement>('[data-vn-dialogue-text]');if(name)name.hidden=true;if(text)text.hidden=true;document.querySelectorAll<HTMLElement>('[data-vn-current-heading],[data-vn-game-description]:not([data-vn-dialogue-text])').forEach(e=>e.hidden=false);const w=$('[data-mascot-window]');if(w)w.hidden=true;}
+function clearDialogue(){document.documentElement.removeAttribute('data-vn-mascot-dialogue');stopReveal();const name=document.querySelector<HTMLElement>('[data-vn-dialogue-speaker]'),text=document.querySelector<HTMLElement>('[data-vn-dialogue-text]');if(name)name.hidden=true;if(text)text.hidden=true;document.querySelectorAll<HTMLElement>('[data-vn-current-heading],[data-vn-game-description]:not([data-vn-dialogue-text])').forEach(e=>e.hidden=false);const w=$('[data-mascot-window]');if(w)w.hidden=true;}
 function renderLine(line:Line,animate:boolean){
  clearDialogue();pose(line.pose);
  const article=document.querySelector<HTMLElement>('[data-vn-game-window]'),dock=document.querySelector<HTMLElement>('[data-vn-game-reader]');
  const inGame=document.documentElement.dataset.vnMode!=='reader'&&!!article&&!article.hidden&&!!dock&&!dock.hidden;
  const speaker=inGame?article?.querySelector<HTMLElement>('[data-vn-dialogue-speaker]'):$('[data-mascot-speaker]');
  const text=inGame?article?.querySelector<HTMLElement>('[data-vn-dialogue-text]'):$('[data-mascot-text]');
- if(inGame){article?.querySelectorAll<HTMLElement>('[data-vn-current-heading],[data-vn-game-description]:not([data-vn-dialogue-text])').forEach(e=>e.hidden=true);if(speaker)speaker.hidden=false;if(text)text.hidden=false;}
+ if(inGame){document.documentElement.setAttribute('data-vn-mascot-dialogue','');article?.querySelectorAll<HTMLElement>('[data-vn-current-heading],[data-vn-game-description]:not([data-vn-dialogue-text])').forEach(e=>e.hidden=true);if(speaker)speaker.hidden=false;if(text)text.hidden=false;}
  else{const w=$('[data-mascot-window]');if(w)w.hidden=false;}
  if(speaker)speaker.textContent=line.speaker;
  if(!text)return;const chars=Array.from(line.text);if(!animate||reduce()){text.textContent=line.text;return;}
@@ -144,34 +188,40 @@ function scheduleBlink(){stopBlink();
   if(frameImage('mouth')?.hidden!==false&&frameUsable(frameImage('blink'))){showFrame('blink');blinkEnd=window.setTimeout(()=>{if(frameImage('blink')?.hidden===false)showFrame('base');scheduleBlink();},130);}else scheduleBlink();
  },3000+Math.random()*3500);
 }
-async function play(line:Line,animate=true){
+async function play(line:Line,animate=true,presentation=true){
  if(!audio||!allowed(line))return;
- const token=++generation;audio.pause();stopMotion();stopBlink();resetMouth();current=line;open=true;const character=$('[data-mascot-character]');if(character)character.hidden=false;$('[data-mascot-action=open]')?.setAttribute('aria-expanded','true');renderLine(line,animate);scheduleBlink();syncSettings();
+ if(!presentation)close();
+ const token=++generation;audio.pause();stopMotion();stopBlink();resetMouth();current=line;
+ if(presentation){open=true;const character=$('[data-mascot-character]');if(character)character.hidden=false;$('[data-mascot-action=open]')?.setAttribute('aria-expanded','true');renderLine(line,animate);scheduleBlink();warmNext();document.dispatchEvent(new Event('vn:mascot-open'));}
+ feedback('');syncSettings();
  if(!line.voice){audio.removeAttribute('src');audio.load();feedback('此句原作录音尚未匹配');startMotion();return;}
  audio.src=line.voice;applyVolume();
  try{
   // Web Audio is optional: lack of analyser support must not block native playback.
   try{if(!ctx&&typeof AudioContext!=='undefined'){ctx=new AudioContext();analyser=ctx.createAnalyser();analyser.fftSize=256;const node=ctx.createMediaElementSource(audio);node.connect(analyser);analyser.connect(ctx.destination);}if(ctx?.state==='suspended')void ctx.resume().catch(()=>{});}catch{analyser=null;}
-  await audio.play();if(token===generation&&!audio.paused&&open){recordHistory(line);animateMouth();}
+  await audio.play();if(token===generation&&!audio.paused){recordHistory(line);voiceStatus();if(open)animateMouth();}
  }
  catch{if(token===generation){feedback('语音未能播放，请点击 VOICE 重试');resetMouth();startMotion();}}
 }
-function next(){if(finishReveal())return;const lines=choices();if(!lines.length){feedback('当前角色和服装没有已验证对白');return;}const index=lines.findIndex(x=>x.id===current?.id);void play(lines[(index+1)%lines.length]);}
-function close(restoreFocus=false){const focused=root?.contains(document.activeElement);open=false;generation++;stopMotion();stopBlink();audio?.pause();resetMouth();clearDialogue();const c=$('[data-mascot-character]');if(c)c.hidden=true;const launcher=$('[data-mascot-action=open]');launcher?.setAttribute('aria-expanded','false');if(restoreFocus&&focused)launcher?.focus({preventScroll:true});}
-function saveVoice(line:Line|null=current){if(!line?.voice||!allowed(line))return;try{localStorage.setItem(SAVED,JSON.stringify([line.id,...saved().filter(x=>x!==line.id)].slice(0,100)));feedback('语音已收藏');syncSettings();}catch{feedback('无法保存语音收藏');}}
-function action(a:string){if(a==='open'){if(open){close(true);return;}if(current&&choices().includes(current))void play(current,false);else next();}else if(a==='next')next();else if(a==='close')close(true);else if(a==='replay'&&current?.voice&&allowed(current))void play(current,false);else if(a==='save')saveVoice();}
+function next(){if(open&&current&&$('.ginka-mascot-portrait')?.dataset.mascotRender==='error'){pose(current.pose);return;}if(finishReveal())return;const lines=choices();if(!lines.length){feedback('当前角色和服装没有已验证对白');return;}const index=lines.findIndex(x=>x.id===current?.id);void play(lines[(index+1)%lines.length]);}
+function close(restoreFocus=false){const focused=root?.contains(document.activeElement);open=false;generation++;stopMotion();stopBlink();audio?.pause();resetMouth();clearDialogue();const c=$('[data-mascot-character]');if(c)c.hidden=true;const launcher=$('[data-mascot-action=open]');launcher?.setAttribute('aria-expanded','false');if(restoreFocus&&focused)launcher?.focus({preventScroll:true});voiceStatus();}
+function saveVoice(line:Line|null=current,remove=false){if(!line?.voice||!allowed(line))return;try{const existing=saved(),remaining=existing.filter(x=>x!==line.id),deleting=remove||existing.includes(line.id);localStorage.setItem(SAVED,JSON.stringify(deleting?remaining:[line.id,...remaining].slice(0,100)));feedback(deleting?'已移除语音收藏':'语音已收藏');syncSettings();}catch{feedback('无法更新语音收藏');}}
+function action(a:string){if(a==='open'||a==='preview'){if(open){close(true);return;}if(current&&choices().includes(current))void play(current,false);else next();}else if(a==='next')next();else if(a==='close')close(true);else if(a==='replay'&&current?.voice&&allowed(current))void play(current,false);else if(a==='save')saveVoice();}
 function validURL(value:unknown):value is string{return typeof value==='string'&&/^\/__ginka_local_mascot__\/asset-\d+\.(png|webp|ogg|wav|mp3|m4a)$/.test(value);}
 function mount(){
  root=document.querySelector<HTMLElement>('[data-ginka-mascot]');if(!root)return;
- const nextAudio=root.querySelector<HTMLAudioElement>('[data-mascot-audio]');if(audio!==nextAudio){generation++;stopMotion();stopBlink();resetMouth();audio?.pause();if(ctx)void ctx.close().catch(()=>{});cancelAnimationFrame(raf);audio=nextAudio;ctx=null;analyser=null;if(audio){const element=audio;element.addEventListener('ended',()=>{if(audio!==element||!element.ended)return;resetMouth();startMotion();});element.addEventListener('pause',()=>{if(audio===element&&element.paused)resetMouth();});element.addEventListener('error',()=>{if(audio!==element||!element.error)return;resetMouth();startMotion();});}}
+ const nextAudio=root.querySelector<HTMLAudioElement>('[data-mascot-audio]');if(audio!==nextAudio){generation++;stopMotion();stopBlink();resetMouth();audio?.pause();if(ctx)void ctx.close().catch(()=>{});cancelAnimationFrame(raf);audio=nextAudio;ctx=null;analyser=null;if(audio){const element=audio;element.addEventListener('ended',()=>{if(audio!==element||!element.ended)return;resetMouth();startMotion();voiceStatus();});element.addEventListener('pause',()=>{if(audio===element&&element.paused){resetMouth();voiceStatus();}});element.addEventListener('playing',()=>{if(audio===element)voiceStatus();});element.addEventListener('error',()=>{if(audio!==element||!element.error)return;resetMouth();startMotion();voiceStatus();});}}
  if(pack){root.hidden=false;if(open&&current&&allowed(current)){renderLine(current,false);scheduleBlink();if(audio?.paused)startMotion();else animateMouth();}syncSettings();return;}
  const source=root.dataset.mascotSource;if(!source||loading||unavailable){syncSettings();return;}
  loading=fetch(source,{cache:'no-store'}).then(async r=>{if(!r.ok)throw Error('Pack unavailable');const raw=await r.json();if(raw.available===false){unavailable=true;syncSettings();return;}const p=raw as Pack;if(![1,2].includes(p.version)||!Array.isArray(p.lines)||!p.poses||!p.poses[p.defaultPose]||!Object.values(p.poses).every(v=>validURL(v.base)&&(!v.blink||validURL(v.blink))&&(!v.mouth||validURL(v.mouth))&&(!v.layers||(Array.isArray(v.layers)&&v.layers.every(l=>validURL(l.image)&&(!l.alternate||validURL(l.alternate.image)))))&&Array.isArray(v.motion)&&v.motion.every(f=>validURL(f.image)&&Number.isInteger(f.ms)&&f.ms>=40&&f.ms<=10000))||!p.lines.every(l=>typeof l.text==='string'&&(validURL(l.voice)||(p.version===2&&l.voice===null))&&Object.hasOwn(p.poses,l.pose)))throw Error('Invalid pack');pack=p;if(root)root.hidden=false;syncSettings();}).catch(()=>{unavailable=true;feedback('本地看板娘素材包未就绪');syncSettings();}).finally(()=>{loading=null;});
 }
-document.addEventListener('click',event=>{const e=(event.target as Element|null)?.closest<HTMLElement>('[data-mascot-action],[data-vn-voice-mute],[data-vn-voice-replay],[data-vn-voice-saved],[data-vn-voice-history-replay],[data-vn-voice-history-save]');if(!e)return;if(e.dataset.vnVoiceHistoryReplay||e.dataset.vnVoiceHistorySave){const line=pack?.lines.find(l=>l.id===(e.dataset.vnVoiceHistoryReplay??e.dataset.vnVoiceHistorySave)&&!!l.voice&&allowed(l));if(line){if(e.dataset.vnVoiceHistorySave)saveVoice(line);else void play(line,false);}return;}if(e.dataset.mascotAction){action(e.dataset.mascotAction);return;}if(e.hasAttribute('data-vn-voice-mute')){muted=!muted;try{localStorage.setItem(MUTE,muted?'1':'0');}catch{}syncSettings();animateMouth();return;}if(e.hasAttribute('data-vn-voice-replay'))action('replay');if(e.dataset.vnVoiceSaved){const line=pack?.lines.find(l=>l.id===e.dataset.vnVoiceSaved&&!!l.voice&&allowed(l));if(line)void play(line,false);}});
+document.addEventListener('click',event=>{const e=(event.target as Element|null)?.closest<HTMLElement>('[data-mascot-action],[data-vn-voice-mute],[data-vn-voice-replay],[data-vn-voice-saved],[data-vn-voice-remove],[data-vn-voice-stop],[data-vn-voice-history-replay],[data-vn-voice-history-save]');if(!e)return;if(e.dataset.vnVoiceHistoryReplay||e.dataset.vnVoiceHistorySave){const line=pack?.lines.find(l=>l.id===(e.dataset.vnVoiceHistoryReplay??e.dataset.vnVoiceHistorySave)&&!!l.voice&&allowed(l));if(line){if(e.dataset.vnVoiceHistorySave)saveVoice(line);else void play(line,false,false);}return;}if(e.dataset.mascotAction){action(e.dataset.mascotAction);return;}if(e.hasAttribute('data-vn-voice-mute')){muted=!muted;try{localStorage.setItem(MUTE,muted?'1':'0');}catch{}syncSettings();animateMouth();return;}if(e.hasAttribute('data-vn-voice-stop')){stopVoice();return;}if(e.hasAttribute('data-vn-voice-replay')&&current?.voice&&allowed(current)){void play(current,false,false);return;}if(e.dataset.vnVoiceSaved||e.dataset.vnVoiceRemove){const line=pack?.lines.find(l=>l.id===(e.dataset.vnVoiceSaved??e.dataset.vnVoiceRemove)&&!!l.voice&&allowed(l));if(line){if(e.dataset.vnVoiceRemove){saveVoice(line,true);document.querySelector<HTMLElement>('[data-vn-voice-replay]')?.focus({preventScroll:true});}else void play(line,false,false);}}});
 document.addEventListener('change',event=>{const e=event.target;if(!(e instanceof HTMLSelectElement))return;if(e.matches('[data-vn-mascot-character]')){character=e.value;outfit='all';}else if(e.matches('[data-vn-mascot-outfit]'))outfit=e.value;else return;try{localStorage.setItem(CHAR,character);localStorage.setItem(OUTFIT,outfit);}catch{}if(current&&!choices().includes(current)){close();current=null;}syncSettings();});
 document.addEventListener('input',event=>{const e=event.target;if(!(e instanceof HTMLInputElement)||!e.matches('[data-vn-voice-volume]'))return;volume=Math.max(0,Math.min(100,Number(e.value)||0));try{localStorage.setItem(VOL,String(volume));}catch{}syncSettings();});
 document.addEventListener('vn:voice-action',event=>action(String((event as CustomEvent).detail)));
+document.addEventListener('vn:backlog-open',()=>{if(open)close();else stopVoice();});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&open&&!event.defaultPrevented&&!document.querySelector('[data-vn-log-open=true],[data-vn-confirm][open]')){close(true);}});
+window.addEventListener('pagehide',()=>close());
 document.addEventListener('astro:before-preparation',()=>{close();});
 document.addEventListener('astro:page-load',mount);
 document.addEventListener('vn:view-change',()=>{if(open&&current&&allowed(current)){renderLine(current,false);scheduleBlink();if(audio?.paused)startMotion();else animateMouth();}});

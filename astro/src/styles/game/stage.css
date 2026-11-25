@@ -858,3 +858,11 @@ body .vn-information a{color:#ecf7ff!important;text-decoration:none}
  .vn-information[data-vn-ui-original=true] .vn-info-credit{position:absolute;left:2%;bottom:2%;max-width:65%;font-size:clamp(10px,1cqw,14px)}
 }
 @media(max-width:680px){.vn-information{padding:16px;gap:14px}.vn-info-links a{flex:1;min-width:0;padding:8px;overflow-wrap:anywhere;text-align:center}}
+
+/* Original layered portrait: never substitute unrelated artwork while a pose decodes. */
+.ginka-mascot-render-status{position:absolute;left:0;right:0;bottom:15%;background:#102338e8;color:#e5f4ff;padding:8px;font-size:12px;line-height:1.4;text-align:center}
+.ginka-mascot-portrait[data-mascot-render=loading],.ginka-mascot-portrait[data-mascot-render=error]{animation:none}
+.ginka-mascot-window nav button[aria-pressed=true]{background:#326b88;color:#fff}
+.vn-voice-saved-row{display:flex;align-items:center;gap:8px;margin-block:6px;min-width:0}
+.vn-voice-saved-row button:first-child{flex:1;min-width:0;overflow-wrap:anywhere}
+.vn-voice-saved-row button:last-child{flex:none}

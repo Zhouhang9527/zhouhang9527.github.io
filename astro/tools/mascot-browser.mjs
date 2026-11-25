@@ -72,6 +72,18 @@ try{
   await launcher.click();await next.click();await next.click();assert.equal(await page.locator('[data-mascot-text]').textContent(),'Locked fixture');
   await page.evaluate(()=>{localStorage.removeItem('ginka.vn.progress.v1');document.dispatchEvent(new Event('vn:progress-reset'));});
   assert.equal(await page.locator('[data-mascot-character]').isVisible(),false);
+  await page.goto(url+'/settings/#sound',{waitUntil:'domcontentloaded'});
+  await page.locator('[data-vn-voice-saved] [data-vn-voice-saved]').waitFor({state:'visible'});
+  await page.locator('button[data-vn-voice-saved="tone"]').click();
+  await page.waitForFunction(()=>!document.querySelector('[data-mascot-audio]').paused);
+  assert.equal(await page.locator('[data-mascot-character]').isVisible(),false,'Saved voice playback must not open the portrait');
+  await page.locator('[data-vn-voice-stop]').click();
+  assert.equal(await page.locator('[data-mascot-audio]').evaluate(a=>a.paused),true);
+  await page.locator('[data-vn-voice-remove="tone"]').click();
+  assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('ginka.vn.voice.saved.v1'))),[]);
+  await page.locator('[data-vn-option-tab="program"]').click();
+  const preview=page.locator('[data-mascot-action=preview]');await preview.click();await canvas.waitFor({state:'visible'});
+  await page.keyboard.press('Escape');assert.equal(await page.locator('[data-mascot-character]').isVisible(),false);
   assert.deepEqual(errors,[]);
   await page.close();console.log('PASS synthetic layered mascot browser at '+width+'px');
  }

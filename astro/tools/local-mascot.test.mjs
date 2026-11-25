@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {loadMascotPack} from './local-mascot.mjs';
+import {loadMascotPack,localMascot} from './local-mascot.mjs';
 test('verified pack maps only local allowlisted files and rejects escapes',()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ginka-mascot-'));
  try{
@@ -48,4 +48,17 @@ test('v2 verifies sparse ordered layers, independent alternatives and silent dia
   pose.verified=false;assert.throws(load,/Unverified layered pose/);pose.verified=true;
   pack.lines[0].verified=false;assert.throws(load,/Unverified or invalid dialogue/);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
+
+test('private mascot HTTP uses the common origin and range policy',()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ginka-mascot-http-')),previous=process.env.GINKA_MASCOT_MANIFEST;
+ try{
+  const file=path.join(dir,'manifest.json');fs.writeFileSync(file,JSON.stringify({version:1,available:false,status:'evidence_only',defaultPose:null,poses:{},lines:[]}));
+  process.env.GINKA_MASCOT_MANIFEST=file;let middleware;localMascot().configureServer({middlewares:{use(fn){middleware=fn;}}});
+  const request=(headers={},method='GET',url='/__ginka_local_mascot__/manifest.json')=>{const res={statusCode:200,headers:{},setHeader(k,v){this.headers[k]=v;},end(body){this.body=body;}};middleware({url,method,headers:{host:'127.0.0.1:4321',...headers},socket:{remoteAddress:'127.0.0.1'}},res,()=>{res.next=true;});return res;};
+  assert.equal(request().statusCode,200);assert.equal(request().headers['X-Content-Type-Options'],'nosniff');
+  assert.equal(request({host:'evil.test'}).statusCode,403);assert.equal(request({origin:'http://evil.test'}).statusCode,403);assert.equal(request({'sec-fetch-site':'cross-site'}).statusCode,403);
+  assert.equal(request({range:'bytes=-1'}).body.toString(),'}');assert.equal(request({range:'bytes=999-'}).statusCode,416);
+  assert.equal(request({},'HEAD').body,undefined);assert.equal(request({},'POST').statusCode,403);assert.equal(request({},'GET','/__ginka_local_mascot__/../manifest.json').statusCode,404);
+ }finally{if(previous===undefined)delete process.env.GINKA_MASCOT_MANIFEST;else process.env.GINKA_MASCOT_MANIFEST=previous;fs.rmSync(dir,{recursive:true,force:true});}
 });

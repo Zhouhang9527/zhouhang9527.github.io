@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {isPrivateRequest,byteRange,servePrivateBytes} from './private-http.mjs';
 const prefix='/__ginka_local_mascot__/';
 const idPattern=/^[a-zA-Z0-9_-]{1,80}$/;
 const mime={'.png':'image/png','.webp':'image/webp','.ogg':'audio/ogg','.wav':'audio/wav','.mp3':'audio/mpeg','.m4a':'audio/mp4'};
@@ -16,7 +17,7 @@ export function imageCanvas(file){
   else if(chunk==='VP8L'&&h[20]===0x2f){const bits=h.readUInt32LE(21);width=1+(bits&0x3fff);height=1+((bits>>>14)&0x3fff);}
   else if(chunk==='VP8 '&&n>=30&&h[23]===0x9d&&h[24]===1&&h[25]===0x2a){width=h.readUInt16LE(26)&0x3fff;height=h.readUInt16LE(28)&0x3fff;}
  }
- if(!width||!height)throw Error('Invalid PNG/WebP canvas: '+path.basename(file));
+ if(!width||!height||width*height>32_000_000)throw Error('Invalid PNG/WebP canvas: '+path.basename(file));
  return {width,height};
 }
 export function loadMascotPack(input){
@@ -91,13 +92,14 @@ export function localMascot(){
   const pack=loadMascotPack(input);
   server.middlewares.use((req,res,next)=>{
    const url=(req.url||'').split('?')[0];if(!url.startsWith(prefix))return next();
-   if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket.remoteAddress)||!['GET','HEAD'].includes(req.method)){res.statusCode=403;res.end();return;}
-   res.setHeader('Cache-Control','no-store');res.setHeader('Cross-Origin-Resource-Policy','same-origin');
+   if(!isPrivateRequest(req)){res.statusCode=403;res.end();return;}
+   res.setHeader('Cache-Control','no-store');res.setHeader('Cross-Origin-Resource-Policy','same-origin');res.setHeader('X-Content-Type-Options','nosniff');
    const key=url.slice(prefix.length);
-   if(key==='manifest.json'){const body=JSON.stringify(pack.manifest);res.setHeader('Content-Type','application/json; charset=utf-8');res.end(req.method==='HEAD'?undefined:body);return;}
+   if(key==='manifest.json'){servePrivateBytes(req,res,Buffer.from(JSON.stringify(pack.manifest)),'application/json; charset=utf-8');return;}
    const asset=pack.files.get(key);if(!asset){res.statusCode=404;res.end();return;}
    let start=0,end=asset.size-1;
-   if(req.headers.range){const m=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range);if(!m||Number(m[1])>end||(m[2]&&Number(m[2])<Number(m[1]))){res.statusCode=416;res.setHeader('Content-Range','bytes */'+asset.size);res.end();return;}start=Number(m[1]);end=m[2]?Math.min(end,Number(m[2])):end;res.statusCode=206;res.setHeader('Content-Range',`bytes ${start}-${end}/${asset.size}`);}
+   const range=req.method==='GET'&&!req.headers['if-range']?req.headers.range:undefined;
+   if(range!==undefined){const selected=byteRange(range,asset.size);if(!selected){res.statusCode=416;res.setHeader('Content-Range','bytes */'+asset.size);res.setHeader('Content-Length',0);res.end();return;}[start,end]=selected;res.statusCode=206;res.setHeader('Content-Range','bytes '+start+'-'+end+'/'+asset.size);}
    res.setHeader('Content-Type',asset.type);res.setHeader('Accept-Ranges','bytes');res.setHeader('Content-Length',end-start+1);
    if(req.method==='HEAD')res.end();else{const stream=fs.createReadStream(asset.file,{start,end});stream.on('error',()=>res.destroy());stream.pipe(res);}
   });
