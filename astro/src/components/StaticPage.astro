@@ -1,6 +1,7 @@
 ---
 import {getEntry, render} from 'astro:content';
 import {scene} from '../lib/site';
+import Comments from './Comments.astro';
 interface Props {kind:'about'|'links';title:string}
 const {kind,title}=Astro.props;
 const page=await getEntry('pages',kind);
@@ -17,3 +18,4 @@ const style=`--scene-day:url('${art.day}');--scene-night:url('${art.night}')`;
   <div class="journal-masthead-art" aria-hidden="true" style={style}></div>
 </header>}
 <article class="post-block journal-static-content"><div class="post-body"><Content/></div></article>
+{kind==='about'&&<Comments/>}

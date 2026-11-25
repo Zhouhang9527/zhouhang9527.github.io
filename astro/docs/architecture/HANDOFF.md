@@ -1,7 +1,7 @@
 # GINKA VN — 跨会话开发接续
 
 更新：2026-11-25  
-最近通过双 CI 的代码基线：`39740a9e636a1ba5a27d6327b198b67db1f7a7d8`（接手必须重新获取 HEAD；本轮最后一次为文档更新）
+最近通过双 CI 的代码基线：`5bd5b6b5add379c8ae9e7cdbf105814c5cb45ac2`；VN run `45578506416` 与 Astro review run `45578506542` 均成功（CI 范围与未验证项见本文件最新接续记录；接手仍须重新获取 HEAD）
 
 ## 1. 新会话启动协议
 
@@ -9,7 +9,7 @@
 
 - 博客：`Zhouhang9527/zhouhang9527.github.io`
 - 唯一活动开发分支：`feature/ginka-vn`
-- 私有原作素材：`Zhouhang9527/ginka-xp3-assets`，分支 `main`，本次核实 HEAD `b74501b87fed0a079213caf6b4507901a563f578`
+- 私有原作素材：`Zhouhang9527/ginka-xp3-assets`；本轮 fetch 确认远端 `origin/main=4cb17faa38e60cd60cd151bdb965191e77fee8c1`。D 盘本地 clone 仍在 `b74501b87fed0a079213caf6b4507901a563f578`（落后 61）；用户给定 E 盘 clone `e4b85e4f771e3e94c65a7f8f143a47b0bc80c5bd` 更旧，缺 `reference/` 与 `game-archives/`；验收必须固定最新证据版本，不以任一陈旧本地工作树代表远端。
 - 已上线 main 不动；根目录 Hexo/NexT 保留为回滚和共享文章来源
 - 接手前获取两个仓库当前 HEAD，读取根 AGENTS.md、astro/AGENTS.md、本文件、TODO.md、VN-SKIN.md；按任务补读 GINKA-VN.md、MASCOT-PACK.md、design-system/ginka/MASTER.md 和相关实现
 - 本文件给出接续状态，TODO.md 是唯一任务清单，实际代码和最新测试结果优先于旧文档叙述；出现冲突先核对，不擅自扩展需求
@@ -202,3 +202,15 @@ npm run check:vn-browser
 - 用户要求继续逆向原作素材。私有仓库 main 已核实更新为 b780feb7f558b267762332d81a161911f8eef541：`reference/mascot/catalog/stand-catalog.json` 为完整 SINFO/PBD 立绘目录，12 服装、33 身体姿势、142 独立命名脸部件（含两角色各自 dummy）、39 原作表情别名；543 图层和六份 PBD 逐字段核验，663 原作别名组合/1989 三分辨率配方全部可解析，既有 18 个可播放姿势的层序一致。`catalog/preview.html` 支持独立原作差分、别名和真实脚本快照、源证据及本地 PNG 导出；`scripts/render_stand_catalog.py` 支持原图校验和 contact sheets。
 - 实读 45/46 已知对白 PSB，620 种真实 env 快照（小 269/大 351）、312 种角色表情字符串、5637 层记录、1917 同记录语音关联；所有快照都能通过三种原图分辨率配方解析。快照不证明当时可见或解锁。小银花 d4 在已知章节出现，特殊倒计时场景有 11 个同记录 voice ID（未验证音频文件和阶段）；大银花 d6 三分辨率均有原作素材，但已读脚本未见。scn007 原始 blob 1b87ca6d799fc6c8959a989b5aa124db7c363240 超过连接器二进制读取限制，私有新增 `extract_stand_states.py` 供本地继续提取。
 - 新增私有 CI 的全 543 PNG Git blob/alpha/尺寸/解码、663 原作组合 contact sheet 检查（不上传原作图像），当前未获得实际执行结果。可播放 manifest 仍为已验证 20 句/18 姿势/10 服装；不要把 catalog 直接当已解锁/有语音的运行时 pack。下一步分离无语音的真实立绘预览与对白播放、实际素材浏览器验收和原作眼嘴动作/时序的语义核验。未修改博客运行时或生产分支。
+
+## 最新接续（2026-11-25 21:30 +08）
+
+- 当前目标源为 `feature/ginka-vn @ 5bd5b6b5add379c8ae9e7cdbf105814c5cb45ac2`（本会话在隔离 worktree `D:\\GINKA-Blog\\.agents\\worktrees\\feature\\ginka-vn`）；主目录 `D:\\GINKA-Blog` 原 `feature/ginka-artbook` 有用户未提交改动，`D:\\GINKA-Blog-dialogue` 亦有未提交改动，均未触碰。**不同根历史**：VN/artbook 根 `7a0607c`，公开 main 根 `c8db1cc`，无 merge-base；不可假设普通小 PR 可直接并入生产 main。未 merge、push 或 deploy。
+- 远端公共 VN CI 在本 commit 双绿：[VN 45578506416](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45578506416) 与 [Astro review 45578506542](https://github.com/Zhouhang9527/zhouhang9527.github.io/actions/runs/45578506542)。只证明 Node22/Chromium 的公共站点与合成 fixtures；没有运行真实原作素材像素、voice playback、`audit:original` 或全尺寸逐屏验收。PR #9 仍 open/draft，base 为 `feature/ginka-astro`；生产 main 仍是 `f86b0eca`，最新已知 GitHub Pages deployment 指向该 main。
+- **发布阻断候选 PUB-01**：已跟踪的 48 张 `source/images/ginka/scenes/*.webp` 明确由 `tools/build-scene-images.py` 从本地解包的 `cr_event`/`bgimage2` PNG 派生；48 个 Raw URL 在公开 GitHub 的六个开发分支中均匿名可读。它们未出现在目前核验的 remote main tree，`www.mm9527.top` 对 48 个标准 scenes URL 均返回 404；这不代表 GitHub 源仓库仍私密，也不等于生产没有其他早期 GINKA 图像。原 `astro/tools/prepare.mjs` 会按 tracked source/images 复制；本轮已加 `public-asset-policy.mjs`，在删除/写入前拒绝 scenes 目录。实际 prepare 以非零状态拒绝 48 项，public/.generated/dist 仍不存在。短期门禁不是完整许可 allowlist；**不继续 Astro build/typecheck、不上传 dist artifact、不部署**，直至许可/安全 fallback 与完整公开允许清单落地。尚未核验任何新 CI artifact zip 内容，也未作版权定性。
+- 本机仓库情况：用户指定 E 盘 `GINKA-study` 是旧 clone `e4b85e4`；另一 D 盘 clone `b74501b` 本地干净但落后远端 61；本轮 fetch 后 `origin/main=4cb17faa38e60cd60cd151bdb965191e77fee8c1`，私有 PR #4 的相对/循环动作测试在远端 Browser check 成功。catalog 解析数不是可播放/已解锁验收：pack 仍为 20 lines/18 poses/10 outfits，完整解码及真实浏览器字段未通过。
+- 在本 worktree `npm ci` 成功（Node 22.20.0、npm 11.6.1）；`npm audit` 报 4 项（3 high/1 critical，含 Astro 5.16.0 直接依赖），未自动升级。统一命令 `node --experimental-strip-types --test tools/*.test.mjs` 实际 **41/41 PASS、0 fail/skip/todo**：原有 27、Markdown 换行 2、音频旧回调 4、about 内存 Astro 渲染 4、public-asset preflight 4。Astro config import 确认注册 `remark-breaks`；actual prepare 拒绝 48 个待批准路径且生成目录均仍不存在。源文件与测试代码已人工审阅；不把源级或合成通过当浏览器/原作像素验收。
+- 已集成三个局部修复：Hexo `marked.breaks=true` 的软换行兼容；`/about/` 复用现有 Comments（不重复 iframe、不改 pathname）；持久 BGM 切歌/URL retry 撤销旧 `loadedmetadata` seek 回调并校验 generation/source。新增对应源级/内存渲染回归均过，但完整 HTML/浏览器未验。旧 heading fragment 与日期/同日排序问题由独立 worktree 继续处理，未无审查合并候选补丁。产品待决项详见 [DECISIONS.md](DECISIONS.md)，不重复询问已有入口/主线契约。
+- 私有最新研究证据已找到 `title_next`/`hfclear`/`clear` 的原作 PSB string flag writer 和 `goToLine → world.doSflag → kag.doSflag` 静态传递链；公开配置“writers not found”是过时记录，不应笼统沿用。原宿主运行捕获与持久化未验，不能勾选 STORY-01。私有 PR #4 有实际可执行的 SceneScheduler 相对/循环动作，审计 Agent 内存运行 reducer/scheduler 21/21 PASS；GINKA_GRAPH 实图条件测试未注册。它仍只在私有研究 preview，Astro 未导入/消费动作轨，不得标记完整解释器、相机或 ENGINE-04/05 已完成。
+- 实际旧 XP3 Rust parser 离线测试尝试在依赖阶段失败：`ahash v0.8.12` 不在缓存，`cargo test --locked --offline --lib xp3::tests::` 退出 101，实际启动 0 测试；保留原 Cargo.toml 本地 dynamic_linkage 修改及 lock 文件，不报通过。
+- 已实测 `prepare.mjs` 的拒绝路径，但**未执行** Astro typecheck/build、Pagefind、metadata、完整产物验证、VN/mascot 浏览器或原作本地预览。public/.generated/dist 未生成，无部署。接续：先落实 PUB-01 的安全 fallback/许可清单；审查独立旧 fragment、时间精度补丁；在不会泄露未批准素材的路径恢复 build/typecheck/browser，再做真实原作全图、音画和性能验收。当前补丁只准备本地审阅，不自动 push 或部署。

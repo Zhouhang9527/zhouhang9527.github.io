@@ -147,6 +147,8 @@
     let suppressMediaError = 0;
     let playbackWanted = false;
     let lyricMotionTimer = 0;
+    let musicLoadSequence = 0;
+    let pendingSeekRestore = null;
 
     const setRefreshLoading = (loading) => {
       if (!sourceRetryBtn) return;
@@ -586,6 +588,13 @@
       const normalized = normalizeIndex(index);
       const music = musicList[normalized];
       if (!music) return;
+
+      // The persistent element may receive metadata after its source was replaced.
+      const loadSequence = ++musicLoadSequence;
+      if (pendingSeekRestore) {
+        audio.removeEventListener('loadedmetadata', pendingSeekRestore);
+        pendingSeekRestore = null;
+      }
   
       const keepTime = !!opt.keepTime;
       const targetTime = keepTime ? Math.max(0, getStoredNumber(STORAGE.currentTime, 0)) : 0;
@@ -623,12 +632,19 @@
       applyEffectiveVolume(false);
   
       if (keepTime && targetTime > 0) {
-        audio.addEventListener('loadedmetadata', function restoreTime() {
+        const requestedSrc = audio.src;
+        const restoreTime = () => {
+          audio.removeEventListener('loadedmetadata', restoreTime);
+          if (pendingSeekRestore === restoreTime) pendingSeekRestore = null;
+          // Also reject a stale callback already queued before loadMusic replaced it.
+          if (loadSequence !== musicLoadSequence || audio.src !== requestedSrc) return;
           const duration = Number(audio.duration) || 0;
           if (duration > 1) {
             audio.currentTime = Math.min(targetTime, Math.max(0, duration - 0.4));
           }
-        }, { once: true });
+        };
+        pendingSeekRestore = restoreTime;
+        audio.addEventListener('loadedmetadata', restoreTime);
       } else {
         storageSet(STORAGE.currentTime, '0');
       }

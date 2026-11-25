@@ -4,12 +4,15 @@
   "type": "module",
   "scripts": {
     "dev": "node tools/prepare.mjs && astro dev",
-    "build": "npm run check:fonts && npm run check:reading && npm run check:atlas && npm run check:private && npm run check:pbd && npm run check:controls && npm run check:actions && npm run check:options && npm run check:voice-history && npm run check:mascot && node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
+    "build": "npm run check:markdown && npm run check:static-pages && npm run check:fonts && npm run check:reading && npm run check:music && npm run check:atlas && npm run check:private && npm run check:pbd && npm run check:controls && npm run check:actions && npm run check:options && npm run check:voice-history && npm run check:mascot && node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
     "preview": "astro preview",
     "check": "node tools/verify.mjs",
     "typecheck": "node tools/prepare.mjs && astro check",
     "check:fonts": "node --test tools/local-font.test.mjs",
     "check:reading": "node --experimental-strip-types --test tools/reading-state.test.mjs",
+    "check:markdown": "node --test tools/markdown-breaks.test.mjs",
+    "check:static-pages": "node --test tools/static-pages.test.mjs",
+    "check:music": "node --test tools/music-seek-race.test.mjs",
     "check:vn-browser": "node tools/vn-smoke.mjs",
     "dev:original": "node tools/private-preview.mjs",
     "check:atlas": "node --test tools/png-atlas.test.mjs tools/native-storage.test.mjs",
@@ -21,21 +24,22 @@
     "check:actions": "node --experimental-strip-types --test tools/vn-actions.test.mjs",
     "check:mascot-browser": "node tools/mascot-browser.mjs",
     "check:options": "node --experimental-strip-types --test tools/vn-options.test.mjs",
-    "check:private": "node --test tools/private-http.test.mjs tools/local-private-ui.test.mjs",
+    "check:private": "node --test tools/private-http.test.mjs tools/local-private-ui.test.mjs tools/public-asset-policy.test.mjs",
     "check:original-browser": "node tools/original-ui-browser.mjs",
     "check:mascot-original": "node tools/mascot-original-browser.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "@fontsource-variable/noto-serif-sc": "5.3.0",
+    "@fortawesome/fontawesome-free": "7.0.0",
     "astro": "5.16.0",
     "gray-matter": "4.0.3",
-    "@fontsource-variable/noto-serif-sc": "5.3.0",
-    "@fontsource-variable/jetbrains-mono": "5.3.0",
-    "@fortawesome/fontawesome-free": "7.0.0",
-    "pagefind": "1.4.0"
+    "pagefind": "1.4.0",
+    "remark-breaks": "4.0.0"
   },
   "devDependencies": {
-    "playwright": "1.56.1",
     "@astrojs/check": "0.9.4",
+    "playwright": "1.56.1",
     "typescript": "5.9.3"
   },
   "engines": {

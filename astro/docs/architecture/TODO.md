@@ -4,7 +4,7 @@
 开发分支：`feature/ginka-vn`  
 记录基线：`b12f60397bd72d25f6253390118ec210c6f777f8`
 
-新对话或新 Agent 先读 [HANDOFF.md](HANDOFF.md)，获取当前仓库状态、产品约束、原作证据与接续顺序。本文件是后续开发的唯一任务清单，架构契约见 [GINKA-VN.md](GINKA-VN.md)，已有实现及原作证据见 [VN-SKIN.md](VN-SKIN.md)，角色素材接入见 [MASCOT-PACK.md](MASCOT-PACK.md)
+新对话或新 Agent 先读 [HANDOFF.md](HANDOFF.md)，获取当前仓库状态、产品约束、原作证据与接续顺序。本文件是后续开发的唯一任务清单，待确认的产品决定见 [DECISIONS.md](DECISIONS.md)，架构契约见 [GINKA-VN.md](GINKA-VN.md)，已有实现及原作证据见 [VN-SKIN.md](VN-SKIN.md)，角色素材接入见 [MASCOT-PACK.md](MASCOT-PACK.md)
 
 ## 任务管理
 
@@ -204,7 +204,7 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 - [ ] AUDIO-02 确认原作标题、菜单、悬停、确认、返回、翻页、切换的 SE 与 system voice 实际资源 ID
 - [ ] AUDIO-03 原作 BGM/ENV 按场景切换、交叉淡入淡出、语音播放时可配置 ducking，语音结束恢复 BGM
 - [ ] AUDIO-04 原作语音单实例、回放、停止、收藏与历史；避免多句同时播放、被切换的旧语音继续驱动嘴型
-- [ ] AUDIO-05 维持 ClientRouter 跨页 BGM 连续性；媒体权限失败、Range、seek、解码失败、标签页隐藏和重新打开均正确处理
+- [ ] AUDIO-05 维持 ClientRouter 跨页 BGM 连续性；媒体权限失败、Range、seek、解码失败、标签页隐藏和重新打开均正确处理。已局部修复旧曲目 `loadedmetadata` 回调在切歌/重试后误 seek 新曲目：单一 pending disposer + generation/source 校验；生产 `loadMusic` VM 回归 4/4 通过。尚未完成浏览器真实媒体/路由压力验收，不标记完整 AUDIO-05 完成。
 - [ ] AUDIO-06 用户手势后启用音频，不绕过浏览器 autoplay；无本地音频资源时使用明确静音降级
 
 ## 11. P2 — 细节与最终验收
@@ -246,3 +246,14 @@ CI 45461954168 (`36f132d`) typecheck 通过，build 在新增 PBD fixture 的括
 - CHAR-08 / GAME-06：活跃原作对白使用 PREV/NEXT/AUTO/SKIP，非活跃状态保持正文跳转/滚动；自动对白以原录音结束为准、不无限循环；新增 390/1440 合成 fixture 断言，仍待执行。
 
 - 2026-11-25 DATA-04/05、CHAR-01/02/05/06：私有 b780feb 完整 12 服装/33 身体姿势/39 表情别名/543 层，663 组合和三尺度 1989 配方、45/46 PSB 的 620 快照全解析；新增独立私有原作检视器、原图验证/组合 contact sheets CI。scn007 二进制接口限制，d6 未见真实快照，d4 的 11 voice ID 未映射 OGG/阶段；不扩大可播放 manifest，真实原图解码与浏览器验收待实际结果，不勾选完整验收。
+
+## 12. 内容迁移保真与公开资源许可（2026-11-25）
+
+- [ ] CONTENT-01 保持 Hexo `marked.breaks=true` 的软换行语义。Astro 已接入 `remark-breaks@4.0.0`，`astro/tools/markdown-breaks.test.mjs` 2/2 通过；尚未在 Astro 完整渲染产物中核验真实 `ez_tea.md` 行内断行，需在安全的无未授权素材构建路径建立后补验。
+- [ ] CONTENT-02 冻结并保留 15 篇已发布文章的所有旧 heading fragment ID；只读审计发现旧 HTML 52 个正文 heading 与当前 Astro slug 估计有 31 个不一致，兼容别名和基于旧发布 HTML 的自动回归仍待实现/渲染核验；单个波浪符标题待实渲染复核。
+- [ ] CONTENT-03 在不改变 legacy canonical URL 的情况下保留文章完整发布日期/时区，并对同日排序、Atom published/updated、article metadata 与旧发布输出建立断言。
+- [ ] CONTENT-04 恢复旧 `/about/` 页的 Giscus 入口。`StaticPage.astro` 已复用共享 Comments，仅 about 渲染；实际内存 Astro 编译/Container 渲染 4/4 通过，未创建 iframe、未改 Giscus pathname。尚未执行完整构建/真实浏览器与登录、发布、编辑验收。
+- [ ] PUB-01 对 48 张 `source/images/ginka/scenes/*.webp` 建立逐项来源/公开许可/批准状态；在许可证据确认或改用明确获许可/自制替代前，构建/CI artifact 不得再包含它们。当前 48 文件已可从六个 public 开发分支的 GitHub Raw 匿名读取，当前 remote main 未含该目录，已知生产 48 URL 为 404；不得将“生产 404”表述成“素材仍是私有”。
+- [ ] PUB-02 增加 public staging allowlist、symlink/junction 拒绝及完整 dist/CI artifact 递归防漏测试。已先实现 `public-asset-policy.mjs` 路径门禁，在 `prepare.mjs` 删除/写入前拒绝已知 scenes 目录；纯路径与实际 prepare 前置次序测试 4/4 通过，实际执行拒绝 48 项且 public/.generated/dist 仍不存在。它不覆盖其他路径、改名或重编码，不能标记完整隔离完成。
+
+实际验收边界：目标 `5bd5b6b5` 的 VN 与 Astro 两个 GitHub Actions run `45578506416` / `45578506542` 均 success；它们覆盖公共/合成 CI，不运行 `npm run check:mascot-original`、`audit:original` 或真实原作资源浏览器验证。当前本地安全源级测试实际 41/41 通过；已尝试实际 `prepare.mjs` 并按预期在删除/写入前拒绝 48 张待许可场景图，未生成 public/.generated/dist。**没有运行**完整 typecheck、Astro build、VN/mascot browser、生产预览或部署。不得用旧 run 的成功替代当前真实素材、fragment、评论发帖、像素/时序或性能验收。

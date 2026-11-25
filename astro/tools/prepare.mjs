@@ -5,13 +5,16 @@ import matter from 'gray-matter';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {stageRuntimeCompatibility} from './runtime-compat.mjs';
+import {assertPublicStagingApproved} from './public-asset-policy.mjs';
 import legacy from '../config/legacy-routes.json' with {type:'json'};
 const project=fileURLToPath(new URL('../',import.meta.url));
 const root=path.resolve(project,'..'), out=path.join(project,'public'), stage=path.join(project,'.generated');
 const source=path.join(root,'source');
 const excluded=new Set(['images/background.mp4','images/ginka-static-background.webp','fonts/LxgwWenKai.ttf','fonts/OppoSans.ttf','fonts/OppoSans-Bold.ttf','live2d/ATRI/ATRI.cmo3','live2d/ATRI/ATRI.psd','live2d/ATRI/ATRI.4096/texture_00.png']);
-for(const dir of [out,stage]) {fs.rmSync(dir,{recursive:true,force:true});fs.mkdirSync(dir,{recursive:true});}
 const tracked=execFileSync('git',['ls-files','-z','source','astro/vendor-assets'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean);
+// Fail before deleting or writing staging output. Git tracking is not permission.
+assertPublicStagingApproved(tracked);
+for(const dir of [out,stage]) {fs.rmSync(dir,{recursive:true,force:true});fs.mkdirSync(dir,{recursive:true});}
 function copy(src,dest){fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(src,dest);}
 for(const file of tracked){
  const vendor=file.startsWith('astro/vendor-assets/');
