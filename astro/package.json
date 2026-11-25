@@ -18,7 +18,8 @@
     "check:controls": "node --experimental-strip-types --test tools/vn-control.test.mjs",
     "check:voice-history": "node --experimental-strip-types --test tools/voice-history.test.mjs",
     "audit:original": "node --experimental-strip-types tools/audit-original-ui.mjs",
-    "check:actions": "node --experimental-strip-types --test tools/vn-actions.test.mjs"
+    "check:actions": "node --experimental-strip-types --test tools/vn-actions.test.mjs",
+    "check:mascot-browser": "node tools/mascot-browser.mjs"
   },
   "dependencies": {
     "astro": "5.16.0",

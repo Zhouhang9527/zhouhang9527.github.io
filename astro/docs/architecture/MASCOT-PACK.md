@@ -62,3 +62,6 @@ Version 2 line requires verified=true, original source, verified pose, phaseSour
 
 ## Blog-only motion overlay
 User-approved subtle dynamic enhancement on top of original raster layering: v2 uses a rigid 1.5px vertical idle cycle (6s), without independent face/limb deformation. If and only if a verified eye alternate exists, a provisional 4–7.5s blink interval with 145ms closed state is allowed; mouth amplitude and blinking are independent, both redraw the same canvas. Reduced-motion and hidden-tab handling pause or disable these effects. These numbers are blog design choices, not original timing; original affine/timing evidence still takes precedence when available.
+
+## Browser integration fixture
+`npm run check:mascot-browser` starts a temporary loopback Astro dev instance using generated colored pixels and a test tone only. It checks actual sparse canvas pixels, silent dialogue, voice playback/history/save, phase gating, close/focus and desktop/mobile widths. CI runs it independently before whole-site navigation acceptance. Runtime defers private image downloads until interaction, reuses the decoded current layered pose and filters wardrobe by available lines; media callbacks ignore stale element events. The fixture is not original game verification.
