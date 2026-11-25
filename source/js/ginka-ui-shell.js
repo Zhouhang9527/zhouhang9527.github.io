@@ -72,7 +72,7 @@
     closeContextMenu();
     closeMoreMenu(true);
   });
-  document.addEventListener('pjax:send', () => {
+  document.addEventListener('astro:before-preparation', () => {
     closeContextMenu();
     closeMoreMenu(false);
   });

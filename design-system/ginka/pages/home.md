@@ -1,3 +1,3 @@
 # home
 
-Variance 6, motion 4, density 4. Keep original sword CG day/night, no alternate hero. Art supplies atmosphere; preserve face and blade; readable title on both modes. One 700ms blade trace, 450ms star, 400ms decoded CG crossfade only; no mobile decorative sweep. Three gallery pairs, no duplicate full-page gallery or autoplay. Keep CLS below 0.1.
+标题是已有 VN 导航，不重建第二个 Hero。原作完整 CG 仅在经校验的 localhost 模式显示，不能拆角色或拼刀光；公共状态明确无原作图，不使用占位替身。reader 首页保留真实文章/筛选/作者信息，画廊只有 `/gallery/` 一处，不重复整页、不自动播放。reduced motion 可操作，标题/正文无横向溢出，保持键盘、44px 触屏目标和 CLS<0.1 的验收目标（非未测即达标）。

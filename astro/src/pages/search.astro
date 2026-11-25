@@ -1,0 +1,14 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GamePanel from '../components/game/GamePanel.astro';
+---
+<Layout title="搜索" kind="home" noindex>
+ <GamePanel heading="检索记录" label="SEARCH" kind="search">
+  <div class="vn-search-area" data-vn-search hidden>
+   <label for="vn-search-query">搜索文章标题与正文</label>
+   <input id="vn-search-query" data-vn-query type="search" placeholder="输入关键词" autocomplete="off"/>
+   <div data-vn-results class="vn-search-results" aria-live="polite"></div>
+  </div>
+  <noscript><p>全文检索需要 JavaScript，可以直接浏览<a href="/archives/">文章归档</a></p></noscript>
+ </GamePanel>
+</Layout>

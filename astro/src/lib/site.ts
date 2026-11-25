@@ -1,26 +1,26 @@
 import { getCollection } from 'astro:content';
-import sceneMap from '../../../config/ginka-scene-map.json';
 import legacy from '../../config/legacy-routes.json';
+import mainline from '../../config/vn-mainline.json';
 import config from '../../config/site.json';
-import type { Post, Taxonomy, SceneKind, Scene, CollectionProps, RouteProps, StaticRoute } from './types';
+import {comparePosts} from '../../tools/post-dates.mjs';
+import type { Post, Taxonomy, CollectionProps, RouteProps, StaticRoute } from './types';
 
 export const site = config.url;
 export { config };
 export const href = (route: string): string => '/' + route.replace(/^\/+/, '').split('/').map(encodeURIComponent).join('/');
+/** The published v1 mainline stays stable when the journal grows. */
+export function mainlinePaths(posts:readonly Post[]):string[]{
+ const available=new Set(posts.map(p=>p.data.route));
+ if(mainline.version!==1||!mainline.routes.length||new Set(mainline.routes).size!==mainline.routes.length)throw Error('Invalid VN mainline manifest');
+ for(const route of mainline.routes)if(!available.has(route))throw Error('VN mainline route missing: '+route);
+ return mainline.routes.map(href);
+}
 export const tagSlug = (value: string): string => value.trim().toLowerCase().replace(/\s+/g, '-');
 export async function allPosts(): Promise<Post[]> {
-  return (await getCollection('posts')).sort((a, b) =>
-    (b.data.sticky || 0) - (a.data.sticky || 0) ||
-    b.data.date.localeCompare(a.data.date) || a.id.localeCompare(b.id));
+  return (await getCollection('posts')).sort(comparePosts);
 }
 export function taxonomy(posts: Post[], key: Taxonomy): string[] {
   return Array.from(new Set(posts.flatMap(post => post.data[key]))).sort((a,b) => a.localeCompare(b));
-}
-export function scene(kind: SceneKind, slot: 'sidebar' | 'masthead' = 'sidebar'): Scene {
-  const slug = sceneMap.routes[kind][slot][1];
-  const width = slot === 'sidebar' ? 640 : kind === 'about' ? 1280 : 960;
-  const prefix = '/images/ginka/scenes/' + slug;
-  return { day: prefix + '-day-' + width + '.webp', night: prefix + '-night-' + width + '.webp' };
 }
 export async function routes(): Promise<StaticRoute[]> {
   const posts = await allPosts();

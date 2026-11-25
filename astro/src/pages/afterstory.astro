@@ -1,0 +1,14 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GamePanel from '../components/game/GamePanel.astro';
+import {allPosts,mainlinePaths} from '../lib/site';
+const posts=await allPosts();
+---
+<Layout title="后日谈" kind="home" noindex>
+ <GamePanel heading="后日谈" label="NEXT" kind="afterstory">
+  <div data-vn-afterstory data-vn-paths={JSON.stringify(mainlinePaths(posts))}>
+   <section data-vn-afterstory-locked><p>主线阅读完成后解锁后日谈</p><a href="/archives/">返回主线</a></section>
+   <section data-vn-afterstory-content hidden><h2>后日谈</h2><p>主线已完成，后日谈入口已解锁，正文尚未发布</p><a href="/" data-vn-mode-set="game">返回标题</a></section>
+  </div>
+ </GamePanel>
+</Layout>

@@ -148,7 +148,7 @@
       toolbar.className = 'journal-code-toolbar';
       const label = document.createElement('span');
       const classes = `${code.className || ''} ${block.className || ''}`;
-      const language = classes.match(/(?:^|\s)language-([\w+#.-]+)/i)?.[1]
+      const language = block.dataset.language || classes.match(/(?:^|\s)language-([\w+#.-]+)/i)?.[1]
         || [...block.classList].find(name => !['highlight', 'code', 'hljs', 'line-numbers', 'table-container'].includes(name));
       label.className = 'journal-code-language';
       label.textContent = (language || 'CODE').toUpperCase();
@@ -357,8 +357,8 @@
   window.addEventListener('storage', () => {
     document.querySelectorAll('.journal-feedback').forEach(panel => panel._syncLike?.());
   });
-  document.addEventListener('pjax:send', cleanupRuntime);
-  document.addEventListener('pjax:complete', boot);
+  document.addEventListener('astro:before-preparation', cleanupRuntime);
+  document.addEventListener('astro:page-load', boot);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
   else boot();
 })();

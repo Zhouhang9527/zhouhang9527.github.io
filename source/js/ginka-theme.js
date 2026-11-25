@@ -102,7 +102,7 @@
         sendGiscus(frame, giscusTheme(root.getAttribute('data-theme')), true);
       }
     });
-    document.addEventListener('page:loaded', function () {
+    document.addEventListener('astro:page-load', function () {
       syncGiscus(root.getAttribute('data-theme'));
     }, true);
   }
@@ -191,7 +191,7 @@
     };
     if (typeof media.addEventListener === 'function') media.addEventListener('change', onSystemChange);
     else if (typeof media.addListener === 'function') media.addListener(onSystemChange);
-    ['pjax:success', 'pjax:complete', 'page:loaded'].forEach(function (name) {
+    ['astro:after-swap', 'astro:page-load'].forEach(function (name) {
       document.addEventListener(name, function () {
         var mode = root.getAttribute('data-theme-mode') || readMode();
         syncButtons(mode);

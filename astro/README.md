@@ -1,31 +1,9 @@
-# GINKA Astro
-Independent static-site migration on feature/ginka-astro. The original Hexo source remains a rollback reference and the shared content/assets owner until cutover. The Astro build never invokes Hexo or NexT.
+# Astro 站点模块
 
-## Development
-Node 22, npm:
-```sh
-cd astro
-npm install
-npm run dev
-npm run typecheck
-npm run build
-npm run preview -- --host 127.0.0.1
-```
-Build output: astro/dist. Generated directories are disposable. Track new posts/attachments in Git before rebuilding; restart the development server after changes to staged Markdown or shared source assets. Until a verified npm lockfile is committed, npm install is used rather than npm ci; direct dependency versions are pinned.
+唯一项目入口：[根 README](../README.md)；当前架构、任务和接续信息只维护在[根 docs](../docs/ARCHITECTURE.md)。本文件不重复完整规划。
 
-## Ownership
-- config/site.json: public site, Giscus and music configuration
-- config/legacy-routes.json: existing published path contract
-- src/content.config.ts: collection schemas
-- src/lib/: typed content and route logic, scene and asset helpers
-- src/components/: UI, explicit props
-- src/layouts/: persistent shell, metadata, client navigation
-- src/pages/: route entry points
-- src/styles/: native baseline; shared source/css currently provides artbook styling
-- tools/prepare.mjs: deterministic staging and content-hash manifest
-- tools/runtime-compat.mjs: temporary legacy feature adapters, isolated for gradual removal
-- tools/metadata.mjs and verify.mjs: SEO and output contract
-- tools/browser.mjs: actual browser acceptance
+从仓库根执行 `npm ci`、`npm test`、`npm run typecheck`、`npm run build`。开发入口是 `npm run dev`，静态预览是 `npm run preview -- --host 127.0.0.1`。不要在这里创建第二份 lockfile。
 
-## Migration gates
-Keep old published paths, Markdown and image attachments, Giscus pathname mapping, metadata, single persistent audio element, day/moonlit/system, search and keyboard navigation. Preserve the GINKA design system. No untracked game extraction assets enter dist. A successful build is not approval to deploy: complete browser and visual acceptance plus live integration review before replacing the published main branch.
+`src/` 为正式页面/组件/状态/运行时；`config/` 为已声明的站点、旧 URL/fragment、主线、原作几何与公共素材契约；`tools/` 为构建、私有 localhost 中间件和测试。`public/`、`.generated/`、`dist/`、`artifacts/` 是生成物，不手工修改。
+
+本地原作预览：根目录 `npm run dev:original -- "[PRIVATE_ASSETS_ROOT]"`。公共版本不携带原作图像、语音、脚本或字体；有真实私有素材时仍须独立完成真实渲染与声音验收。接口及边界见 [INTERFACES](../docs/INTERFACES.md)，实际测试见 [TESTING](../docs/TESTING.md)。

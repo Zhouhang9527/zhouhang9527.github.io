@@ -1,0 +1,49 @@
+name: GINKA checks
+on:
+  push:
+    branches: [feature/ginka-vn, 'cleanup/**']
+  pull_request:
+    branches: [feature/ginka-artbook, feature/ginka-vn, feature/ginka-astro, main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ginka-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Private transport and original geometry fixtures (synthetic bytes only)
+        run: |
+          npm run check:mascot-browser
+          npm run check:original-browser
+      - name: Start built public preview
+        run: |
+          npm run preview -- --host 127.0.0.1 > /tmp/ginka-preview.log 2>&1 &
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:4321/ >/dev/null && exit 0; sleep 1; done
+          cat /tmp/ginka-preview.log
+          exit 1
+      - name: Public integration and local asset HTTP regression
+        env:
+          GINKA_TEST_BASE_URL: http://127.0.0.1:4321
+        run: npm run check:vn-browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ginka-checks
+          path: |
+            astro/artifacts/
+            /tmp/ginka-preview.log
+          retention-days: 7
+# No deployment, private repository checkout, live credentials, or raw game assets.

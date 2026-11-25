@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "source": {
+    "revision": "f86b0eca81fbb115ab5c572be425d5d884d945e5",
+    "bodySelector": ".post-body",
+    "renderer": "astro@5.16.0"
+  },
+  "articles": [
+    {
+      "file": "[HUBUCTF 2022 新生赛]simple_RE.md",
+      "route": "2025/10/10/[HUBUCTF 2022 新生赛]simple_RE/",
+      "publishedHtmlSha256": "076b6eeb91753bf8bd56d62a3aba7afc071ac4e40534ea1bab225d20497a17ba",
+      "headings": [
+        {"depth": 2, "text": "题目信息", "id": "题目信息"},
+        {"depth": 2, "text": "解题过程", "id": "解题过程"},
+        {"depth": 3, "text": "第一步：文件分析", "id": "第一步：文件分析"},
+        {"depth": 3, "text": "第二步：逆向分析", "id": "第二步：逆向分析"},
+        {"depth": 3, "text": "第三步：深入分析编码函数", "id": "第三步：深入分析编码函数"},
+        {"depth": 3, "text": "第四步：识别编码模式", "id": "第四步：识别编码模式"},
+        {"depth": 3, "text": "第五步：解码验证", "id": "第五步：解码验证"}
+      ]
+    },
+    {
+      "file": "NSSCTF2025入门题目-花指令.md",
+      "route": "2025/10/19/NSSCTF2025入门题目-花指令/",
+      "publishedHtmlSha256": "166176ae3a8e89542725e9ff01103dea345b208de99829ca7ccb2dffa2d72d79",
+      "headings": [
+        {"depth": 2, "text": "题目信息", "id": "题目信息"},
+        {"depth": 2, "text": "解题过程", "id": "解题过程"},
+        {"depth": 3, "text": "第一步：基础分析", "id": "第一步：基础分析"},
+        {"depth": 3, "text": "第二步：主流程梳理", "id": "第二步：主流程梳理"},
+        {"depth": 3, "text": "第三步：清除花指令", "id": "第三步：清除花指令"},
+        {"depth": 3, "text": "第四步：脚本复现", "id": "第四步：脚本复现"},
+        {"depth": 3, "text": "第五步：验证结果", "id": "第五步：验证结果"},
+        {"depth": 2, "text": "总结", "id": "总结"}
+      ]
+    },
+    {
+      "file": "[NSSCTF 2025 秋招赛]CodeRunner.md",
+      "route": "2025/11/05/[NSSCTF 2025 秋招赛]CodeRunner/",
+      "publishedHtmlSha256": "e98b8a485d11332a86015848007a14169d3ead05f8e0f37b724833d27c4d4ce5",
+      "headings": [
+        {"depth": 2, "text": "题目信息", "id": "题目信息"},
+        {"depth": 2, "text": "解题过程", "id": "解题过程"},
+        {"depth": 3, "text": "第一步：文件分析", "id": "第一步：文件分析"},
+        {"depth": 3, "text": "第二步：脱壳处理", "id": "第二步：脱壳处理"},
+        {"depth": 3, "text": "第三步：IL2CPP 反编译", "id": "第三步：IL2CPP-反编译"},
+        {"depth": 3, "text": "第四步：代码反编译", "id": "第四步：代码反编译"},
+        {"depth": 3, "text": "第五步：关键函数定位", "id": "第五步：关键函数定位"},
+        {"depth": 3, "text": "第六步：动态调试", "id": "第六步：动态调试"},
+        {"depth": 3, "text": "第七步：绕过反调试", "id": "第七步：绕过反调试"},
+        {"depth": 3, "text": "第八步：获取矩阵数据", "id": "第八步：获取矩阵数据"},
+        {"depth": 3, "text": "第九步：生成二维码", "id": "第九步：生成二维码"},
+        {"depth": 2, "text": "总结", "id": "总结"},
+        {"depth": 3, "text": "题目六:CodeRunner（简要回顾）", "id": "题目六-CodeRunner（简要回顾）"}
+      ]
+    },
+    {
+      "file": "[NSSCTF 2025 秋招赛]Ultimate Packer for eXecutables.md",
+      "route": "2025/11/05/[NSSCTF 2025 秋招赛]Ultimate Packer for eXecutables/",
+      "publishedHtmlSha256": "e0933e9938f7134d98e9f30c202e9d57ec2133b8011d907cb2015abecdb299ae",
+      "headings": [{"depth": 3, "text": "题目四:Ultimate Packer for eXecutables", "id": "题目四-Ultimate-Packer-for-eXecutables"}]
+    },
+    {
+      "file": "[NSSCTF 2025 秋招赛]debuggggg.md",
+      "route": "2025/11/05/[NSSCTF 2025 秋招赛]debuggggg/",
+      "publishedHtmlSha256": "98d979d4007bbcab30cfca69e8f0d15591f122fc838b03149b175fd1b846189c",
+      "headings": [
+        {"depth": 3, "text": "题目五: debuggggg", "id": "题目五-debuggggg"},
+        {"depth": 2, "text": "总结", "id": "总结"}
+      ]
+    },
+    {
+      "file": "[NSSCTF 2025 秋招赛]ez_tea.md",
+      "route": "2025/11/05/[NSSCTF 2025 秋招赛]ez_tea/",
+      "publishedHtmlSha256": "f8eb8ca36970f9d7156a5840fef9d1e647e32ee23400e7a03e018d2f70355747",
+      "headings": [
+        {"depth": 2, "text": "题目信息", "id": "题目信息"},
+        {"depth": 2, "text": "解题过程", "id": "解题过程"},
+        {"depth": 3, "text": "题目八:ez_tea", "id": "题目八-ez-tea"}
+      ]
+    },
+    {
+      "file": "[NSSCTF 2025 秋招赛]fl-ow-er.md",
+      "route": "2025/11/05/[NSSCTF 2025 秋招赛]fl-ow-er/",
+      "publishedHtmlSha256": "61793c021f3e5618ab2dd095652b1ec5a81231986c24b30386d9c41426bac4c4",
+      "headings": [{"depth": 3, "text": "题目二:flower~", "id": "题目二-flower"}]
+    },
+    {
+      "file": "[NSSCTF 2025 秋招赛]一种很新的签到.md",
+      "route": "2025/11/05/[NSSCTF 2025 秋招赛]一种很新的签到/",
+      "publishedHtmlSha256": "3025bc0e1afd00915f16896f5264bd5c9adbf5ca26ab758b520a2125e4692492",
+      "headings": [{"depth": 3, "text": "题目一:一种很新的签到", "id": "题目一-一种很新的签到"}]
+    },
+    {
+      "file": "[NSSCTF 2025 秋招赛]哈基米.md",
+      "route": "2025/11/05/[NSSCTF 2025 秋招赛]哈基米/",
+      "publishedHtmlSha256": "ab9a4261613398e422723d7fcc4c337ed57d8b20b3b7729d8e4c40e4c62ad92b",
+      "headings": [{"depth": 3, "text": "题目三:哈基米", "id": "题目三-哈基米"}]
+    },
+    {
+      "file": "[NSSCTF 2025 秋招赛]来了嗷，常见加密大杂烩！.md",
+      "route": "2025/11/05/[NSSCTF 2025 秋招赛]来了嗷，常见加密大杂烩！/",
+      "publishedHtmlSha256": "06b3d9fa056813e8dadd7df59d55e739c0c8ac19b47d17cae5f63efb9070661c",
+      "headings": [
+        {"depth": 2, "text": "题目信息", "id": "题目信息"},
+        {"depth": 3, "text": "题目七:来了嗷，常见加密大杂烩！", "id": "题目七-来了嗷，常见加密大杂烩！"}
+      ]
+    },
+    {
+      "file": "[miniVN] Crackme.md",
+      "route": "2025/12/23/[miniVN] Crackme/",
+      "publishedHtmlSha256": "1618bbcd81182eac7c3945087e79ab71066afbb324fe4a0b9b9865dabdffb7fb",
+      "headings": [{"depth": 2, "text": "题目信息", "id": "题目信息"}, {"depth": 2, "text": "解题过程", "id": "解题过程"}]
+    },
+    {
+      "file": "[miniVN] VSnake.md",
+      "route": "2025/12/23/[miniVN] VSnake/",
+      "publishedHtmlSha256": "150a07801eb725b8bb86e50b8c5417062d592d3f1a8649374275e2518161e237",
+      "headings": [{"depth": 2, "text": "题目信息", "id": "题目信息"}, {"depth": 2, "text": "解题过程", "id": "解题过程"}]
+    },
+    {
+      "file": "[miniVN] ezAndroid.md",
+      "route": "2025/12/23/[miniVN] ezAndroid/",
+      "publishedHtmlSha256": "f1a60c43867911d1bc3259526cb122c97067e5f4ff197b2438aa35025a25bee9",
+      "headings": [{"depth": 2, "text": "题目信息", "id": "题目信息"}, {"depth": 2, "text": "解题过程", "id": "解题过程"}]
+    },
+    {
+      "file": "va-to-pa-walk.md",
+      "route": "2026/03/20/va-to-pa-walk/",
+      "publishedHtmlSha256": "f634e656c413988836df144af80be920ae627356020fde451957b81946bb53e8",
+      "headings": [{"depth": 2, "text": "解题过程", "id": "解题过程"}]
+    },
+    {
+      "file": "学x通-梆梆企业版分析.md",
+      "route": "2026/09/18/学x通-梆梆企业版分析/",
+      "publishedHtmlSha256": "23c8bd7711eea2718704c312ba770815ab0fab863a1957b8f874224996d29dd9",
+      "headings": [
+        {"depth": 3, "text": "attachBaseContext", "id": "attachBaseContext"},
+        {"depth": 3, "text": "H.load", "id": "H-load"},
+        {"depth": 3, "text": "AW.doAttach", "id": "AW-doAttach"},
+        {"depth": 3, "text": "Oncreate", "id": "Oncreate"},
+        {"depth": 3, "text": "hook", "id": "hook"},
+        {"depth": 3, "text": "DexHelper", "id": "DexHelper"}
+      ]
+    }
+  ]
+}

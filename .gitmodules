@@ -1,5 +1,0 @@
-[submodule "themes/next"]
-	path = themes/next
-	url = https://github.com/Zhouhang9527/zhouhang9527.github.io.git
-	branch = theme-ginka-art-direction
-	shallow = true

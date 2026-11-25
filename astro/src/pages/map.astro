@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GamePanel from '../components/game/GamePanel.astro';
+import {allPosts,href,tagSlug} from '../lib/site';
+import {buildMapTopics} from '../lib/map-topics';
+import {resolveMapState,localMapFrame,vnScenes,type MapFrameId} from '../lib/vn-scenes';
+const posts=await allPosts();
+const {topics,categories}=buildMapTopics(posts);
+const state=resolveMapState(0);
+const original=import.meta.env.DEV&&!!process.env.GINKA_MAP_DATA;
+const privateMapFrames=Object.fromEntries(vnScenes.map.states.map(item=>[item.id,localMapFrame(item.frame as MapFrameId)]));
+const initialPrivateMapFrame=privateMapFrames[state.id as keyof typeof privateMapFrames];
+---
+<Layout title="岛屿地图" kind="home">
+ <GamePanel heading="姬之岛" label="MAP" kind="map">
+  <div class="vn-map" data-vn-map data-vn-paths={JSON.stringify(posts.map(post=>href(post.data.route)))} data-vn-map-phase={state.id} data-vn-map-frame={state.id} data-vn-map-original={String(original)} data-vn-private-frame-map={original?JSON.stringify(privateMapFrames):undefined}>
+   <div class="vn-map-picture" data-vn-map-art style={original?`--vn-map-frame:url('${initialPrivateMapFrame}')`:undefined} role={original?'img':undefined} aria-label={original?'姬之岛俯视图':undefined}></div>
+   <div class="vn-map-status"><span data-vn-map-count>阅读记录 0 / {posts.length}</span><small>{original?'岛屿昼暮夜映射为暂定阅读进度':'原作地图仅供本地预览'}</small></div>
+   <section class="vn-map-topics" aria-labelledby="map-topics-heading" data-map-enhancement>
+    <header>
+     <p class="vn-kicker">ENHANCEMENT · 博客新增</p>
+     <h2 id="map-topics-heading">技术主题入口</h2>
+     <p class="vn-map-topic-note">以下按真实文章标签分组，不代表原作地点或热点；原作地点坐标与阶段脚本尚未恢复。主题文章始终开放，不受阅读进度限制。</p>
+    </header>
+    {categories.length>0&&<nav class="vn-map-taxonomy" aria-label="已有文章分类"><span>当前分类</span>{categories.map(category=><a href={href('categories/'+tagSlug(category.name)+'/')}>{category.name} · {category.count} 篇</a>)}</nav>}
+    {topics.length>0?<div class="vn-map-topic-list">
+     {topics.map(topic=><details class="vn-map-topic" id={'map-topic-'+topic.id} data-map-topic={topic.id}>
+      <summary><span class="vn-map-topic-heading"><strong>{topic.title}</strong><small>{topic.posts.length} 篇</small></span></summary>
+      <div class="vn-map-topic-content">
+       <nav class="vn-map-taxonomy" aria-label={topic.title+'的实际标签'}>{topic.tags.map(tag=><a href={href('tags/'+tagSlug(tag)+'/')}>#{tag}</a>)}</nav>
+       <ul class="vn-map-topic-posts">{topic.posts.map(post=><li><a href={href(post.data.route)}>{post.data.title}<span aria-hidden="true"> 〉</span></a></li>)}</ul>
+      </div>
+     </details>)}
+    </div>:<p class="vn-map-topic-note">暂无可分组的主题文章，请从归档或搜索继续阅读。</p>}
+    <p class="vn-map-topic-note">同一文章可出现在多个主题，篇数不累加。主线仍从标题 START 进入，章节选择、时间归档与搜索保持独立。</p>
+   </section>
+   <nav class="vn-map-links" aria-label="地图导航"><a href="/archives/">时间归档 〉</a><a href="/categories/">内容分类 〉</a><a href="/tags/">主题标签 〉</a><a href="/library/">读取存档 〉</a><a href="/search/">搜索文章 〉</a><a href="/" data-vn-mode-set="game">主线 START · 返回标题 〉</a></nav>
+  </div>
+ </GamePanel>
+</Layout>
+
+<style>
+ /* Blog navigation stays below the complete scene; these are not map pins. */
+ .vn-map-topics{display:grid;gap:16px;margin-block:8px;min-width:0;color:var(--vn-accent)}
+ .vn-map-topics .vn-kicker{margin:0 0 4px}
+ .vn-map-topics h2{margin:0;color:inherit;font:400 clamp(20px,3vw,26px)/1.4 var(--vn-font-menu)}
+ .vn-map-topic-note{margin:8px 0 0;max-width:72ch;color:inherit;font-size:14px;line-height:1.75;overflow-wrap:anywhere}
+ .vn-map-topic-list{display:grid;gap:8px}
+ .vn-map-topic{min-width:0;border:1px solid var(--vn-border);background:var(--vn-panel);scroll-margin-block:24px}
+ .vn-map-topic summary{min-height:52px;padding:12px 16px;cursor:pointer;font:400 16px/1.5 var(--vn-font-ui);overflow-wrap:anywhere}
+ .vn-map-topic-heading{display:inline-flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px 16px;width:calc(100% - 24px);vertical-align:top}
+ .vn-map-topic-heading strong{font-weight:400}
+ .vn-map-topic-heading small{font-size:13px}
+ .vn-map-topic summary:is(:hover,:focus-visible){background:var(--vn-panel);text-decoration:underline;text-underline-offset:4px}
+ .vn-map-topic summary:focus-visible,.vn-map-topics a:focus-visible{outline:2px solid var(--vn-accent);outline-offset:3px}
+ .vn-map-topic summary:active{filter:brightness(.88)}
+ .vn-map-topic-content{display:grid;gap:12px;padding:4px 16px 16px}
+ .vn-map-taxonomy{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0;font-size:14px}
+ .vn-map-taxonomy>span{margin-inline-end:4px}
+ .vn-map-topics a{color:inherit!important;overflow-wrap:anywhere;scroll-margin-block:24px}
+ .vn-map-taxonomy a{display:inline-flex;align-items:center;min-height:44px;max-width:100%;padding:8px 12px;border:1px solid var(--vn-border);text-decoration:none}
+ .vn-map-topics a:is(:hover,:focus-visible){text-decoration:underline;text-underline-offset:4px}
+ .vn-map-topic-posts{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+ .vn-map-topic-posts a{display:block;min-height:44px;padding:10px 0;line-height:1.6;text-decoration:none;border-bottom:1px solid var(--vn-border)}
+</style>

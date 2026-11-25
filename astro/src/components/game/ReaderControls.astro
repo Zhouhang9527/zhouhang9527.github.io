@@ -1,0 +1,31 @@
+---
+import {vnScenes} from '../../lib/vn-scenes';
+import {rectStyle,stateStyle} from '../../lib/vn-control';
+interface Props {comments:boolean}
+const {comments}=Astro.props;
+const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
+const controls=vnScenes.privateUI.gameControls;
+const labels:Record<string,string>={hold:'固定菜单',save:'SAVE / 保存位置',load:'LOAD / 读取存档',qsave:'QSAVE / 快速保存',qload:'QLOAD / 快速读取',xprev:'上一节',next:'下一节',auto:'AUTO / 自动阅读',skip:'SKIP / 跳到正文末尾',log:'LOG / 历史对话',option:'SYSTEM / 设置',hide:'隐藏操作栏',vreplay:'回放银花语音',vsave:'收藏当前语音'};
+const captions:Record<string,string>={hold:'HOLD',save:'SAVE',load:'LOAD',qsave:'QSAVE',qload:'QLOAD',xprev:'PREV',next:'NEXT',auto:'AUTO',skip:'SKIP',log:'LOG',option:'SYSTEM',hide:'HIDE',vreplay:'VOICE',vsave:'V.SAVE'};
+const url=(k:string)=>'url(/__ginka_local_ui__/'+k+'.png)';
+const art=(atlas:'readerControls'|'gameParts',key:string)=>stateStyle(original,s=>Object.hasOwn(vnScenes.privateUI.logicalSprites[atlas],key+'-'+s)?atlas+'-'+key+'-'+s:null);
+const style=(key:string,quick:boolean)=>{const bounds=quick?controls.quick:controls.bottom;return rectStyle(bounds[key as keyof typeof bounds],quick?controls.quickBase:controls.base)+';'+art(quick?'readerControls':'gameParts',key)};
+const bottom=Object.keys(controls.bottom),side=Object.keys(controls.quick);
+const disabled=(key:string)=>['vreplay','vsave'].includes(key)||(key==='log'&&!comments);
+---
+<div class="vn-game-reader" data-vn-game-reader data-vn-reader-original={String(original)} hidden style={original?'--vn-game-bg:'+url('gameBase')+';--vn-game-frame:'+url('gameWindow-frame')+';--vn-game-name:'+url('gameWindow-name')+';--vn-quick-bg:'+url('quickBase')+';--vn-quick-preview:'+url('saveFrame'):undefined}>
+ <button type="button" class="vn-reader-reopen" data-vn-reader-reopen aria-label="显示游戏操作栏" hidden>MENU</button>
+ <div class="vn-game-window" data-vn-game-window>
+  <div class="vn-game-name"><span data-vn-current-heading>阅读中</span><span data-vn-dialogue-speaker hidden></span></div>
+  <p class="vn-game-description" data-vn-game-description aria-live="off">当前阅读位置</p><p class="vn-game-description" data-vn-dialogue-text hidden></p>
+  <button class="vn-quick-toggle" type="button" data-vn-quick-toggle aria-expanded="false" aria-controls="vn-quick-menu">MENU 〉</button>
+  <nav class="vn-game-buttons" aria-label="原作消息窗操作">
+   {bottom.map(key=><button type="button" data-vn-game-action={key} style={style(key,false)} aria-label={labels[key]} title={labels[key]} disabled={disabled(key)} aria-pressed={['auto','hold'].includes(key)?'false':undefined}><span>{captions[key]}</span></button>)}
+  </nav>
+ </div>
+ <aside id="vn-quick-menu" class="vn-game-quick" data-vn-quick-menu hidden aria-label="游戏快捷菜单">
+  {side.map(key=><button type="button" data-vn-game-action={key} style={style(key,true)} aria-label={labels[key]} title={labels[key]} disabled={disabled(key)} aria-pressed={key==='auto'?'false':undefined}><span>{captions[key]}</span></button>)}
+ </aside>
+ <div class="vn-quick-save-preview" data-vn-quick-preview hidden><strong>QUICK SAVE</strong><span data-vn-quick-summary></span></div>
+ <span class="journal-visually-hidden" data-vn-game-feedback role="status"></span>
+</div>

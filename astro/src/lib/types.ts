@@ -2,7 +2,6 @@ import type { CollectionEntry } from 'astro:content';
 export type Post = CollectionEntry<'posts'>;
 export type Taxonomy = 'tags' | 'categories';
 export type SceneKind = 'home' | 'archive' | Taxonomy | 'links' | 'about' | 'post';
-export interface Scene { day: string; night: string }
 export interface CollectionProps {
   kind: 'home' | 'archive' | Taxonomy;
   title: string;

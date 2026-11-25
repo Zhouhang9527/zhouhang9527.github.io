@@ -4,25 +4,52 @@
   "type": "module",
   "scripts": {
     "dev": "node tools/prepare.mjs && astro dev",
-    "build": "node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
+    "build": "npm test && node tools/prepare.mjs && astro build && pagefind --site dist && node tools/metadata.mjs && node tools/verify.mjs",
+    "test": "node --experimental-strip-types --test tools/*.test.mjs && npm run check:purge",
+    "check:browser": "node tools/browser.mjs",
     "preview": "astro preview",
     "check": "node tools/verify.mjs",
-    "typecheck": "node tools/prepare.mjs && astro check"
+    "typecheck": "node tools/prepare.mjs && astro check",
+    "check:fonts": "node --test tools/local-font.test.mjs",
+    "check:reading": "node --experimental-strip-types --test tools/reading-state.test.mjs",
+    "check:markdown": "node --test tools/markdown-breaks.test.mjs",
+    "check:static-pages": "node --test tools/static-pages.test.mjs",
+    "check:music": "node --test tools/music-seek-race.test.mjs",
+    "check:vn-browser": "node tools/vn-smoke.mjs",
+    "dev:original": "node tools/private-preview.mjs",
+    "check:atlas": "node --test tools/png-atlas.test.mjs tools/native-storage.test.mjs",
+    "check:mascot": "node --test tools/local-mascot.test.mjs",
+    "check:pbd": "node --test tools/pbd-ui.test.mjs",
+    "check:controls": "node --experimental-strip-types --test tools/vn-control.test.mjs",
+    "check:voice-history": "node --experimental-strip-types --test tools/voice-history.test.mjs",
+    "audit:original": "node --experimental-strip-types tools/audit-original-ui.mjs",
+    "check:actions": "node --experimental-strip-types --test tools/vn-actions.test.mjs",
+    "check:mascot-browser": "node tools/mascot-browser.mjs",
+    "check:options": "node --experimental-strip-types --test tools/vn-options.test.mjs",
+    "check:private": "node --test tools/private-http.test.mjs tools/local-private-ui.test.mjs tools/public-asset-policy.test.mjs",
+    "check:original-browser": "node tools/original-ui-browser.mjs",
+    "check:mascot-original": "node tools/mascot-original-browser.mjs",
+    "check:purge": "node ../tools/checks/cloudflare-purge-regression.js"
   },
   "dependencies": {
-    "astro": "5.16.0",
-    "gray-matter": "4.0.3",
-    "@fontsource-variable/noto-serif-sc": "5.3.0",
+    "@astrojs/markdown-remark": "6.3.11",
     "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "@fontsource-variable/noto-serif-sc": "5.3.0",
     "@fortawesome/fontawesome-free": "7.0.0",
-    "pagefind": "1.4.0"
+    "astro": "5.18.2",
+    "gray-matter": "4.0.3",
+    "pagefind": "1.4.0",
+    "rehype-raw": "7.0.0",
+    "remark-breaks": "4.0.0"
   },
   "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@types/node": "22.20.7",
+    "hast-util-from-html": "2.0.3",
     "playwright": "1.56.1",
-    "@astrojs/check": "0.9.4",
     "typescript": "5.9.3"
   },
   "engines": {
-    "node": ">=22.0.0 <25"
+    "node": ">=22.19.0 <25"
   }
 }
