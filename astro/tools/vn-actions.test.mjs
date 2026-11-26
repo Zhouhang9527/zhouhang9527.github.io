@@ -177,6 +177,99 @@ test('unresolved values/objects and overflow reject the entire dispatch without 
  q.advance(75);assert.equal(x(q),100);
 });
 
+test('sine/cosine use verified period, relative amplitude, offset and magnitude',()=>{
+ const q=scheduler();dispatch(q,env([['xpos',[{handler:'SinAction',cycle:200,time:400,value:'@/2',offset:2,mag:2}]],
+  ['ypos',[{handler:'CosAction',cycle:200,time:400,vibration:6}]]]));
+ assert.equal(x(q),22);assert.equal(q.frame().objects.actor.properties.ypos,6);
+ q.advance(50);near(x(q),42);near(q.frame().objects.actor.properties.ypos,0);
+ q.advance(100);near(x(q),2);q.advance(250);assert.equal(x(q),20);assert.equal(q.frame().objects.actor.properties.ypos,0);
+});
+
+test('wave delay/starttime/speed and angular velocity use the same host clock',()=>{
+ const q=scheduler();dispatch(q,env([['xpos',[{handler:'SinAction',cycle:200,time:400,vibration:10,delay:50,starttime:25,speed:2}]],
+  ['ypos',[{handler:'CosAction',angvel:1800,time:400,vibration:8}]]]));
+ assert.equal(x(q),20);assert.equal(q.frame().objects.actor.properties.ypos,8);
+ q.advance(50);near(x(q),30);near(q.frame().objects.actor.properties.ypos,0);
+ q.advance(25);near(x(q),20);q.advance(150);assert.equal(x(q),20);
+ const still=scheduler();dispatch(still,env([['xpos',[{handler:'CosAction',angvel:0,time:100,vibration:3}]]]));
+ still.advance(50);assert.equal(x(still),23);
+});
+
+test('square and triangle project explicit on/off intervals and restore baseline',()=>{
+ const q=scheduler();dispatch(q,env([['xpos',[{handler:'SquareAction',vibration:8,offset:2,ontime:100,offtime:100,time:400}]],
+  ['ypos',[{handler:'TriangleAction',vibration:12,ontime:100,offtime:100,time:400}]]]));
+ assert.equal(x(q),30);assert.equal(q.frame().objects.actor.properties.ypos,0);
+ q.advance(50);assert.equal(q.frame().objects.actor.properties.ypos,6);
+ q.advance(50);assert.equal(x(q),14);assert.equal(q.frame().objects.actor.properties.ypos,12);
+ q.advance(50);assert.equal(q.frame().objects.actor.properties.ypos,6);
+ q.advance(50);assert.equal(x(q),30);assert.equal(q.frame().objects.actor.properties.ypos,0);
+ q.advance(200);assert.equal(x(q),20);assert.equal(q.frame().active,false);
+});
+
+test('indexed random preview requires explicit host policy, bounds and stable sample intervals',()=>{
+ const raw=env([['xpos',[{handler:'RandomAction',vibration:10,offset:2,mag:2,waittime:100,time:300,seed:.25}]]]);
+ const missing=scheduler(),before=missing.frame();assert.equal(missing.dispatch(raw).ok,false);assert.deepEqual(missing.frame(),before);
+ const options={random:{policy:'indexed-preview',seed:5}},a=scheduler(options),b=scheduler(options);
+ dispatch(a,raw);dispatch(b,raw);const first=x(a);assert.ok(first>=2&&first<42);
+ a.advance(99);assert.equal(x(a),first);a.advance(1);assert.notEqual(x(a),first);
+ b.advance(100);assert.equal(x(a),x(b));a.advance(200);assert.equal(x(a),20);assert.equal(a.frame().active,false);
+});
+
+test('host random seed is copied and failed dispatch does not consume its sequence',()=>{
+ const options={random:{policy:'indexed-preview',seed:7}},a=scheduler(options),b=scheduler(options);
+ options.random.seed=999;
+ const raw=env([['xpos',[{handler:'RandomAction',value:10,waittime:10,time:50}]]]);
+ assert.equal(a.dispatch(env([['xpos',1],['zoomy',[{handler:'RandomAction',value:10,waittime:10,time:50}]]])).ok,false);
+ dispatch(a,raw);dispatch(b,raw);assert.deepEqual(a.frame(),b.frame());
+ a.advance(20);b.advance(20);assert.deepEqual(a.frame(),b.frame());
+});
+
+test('indefinite nowait waves stay cancellable without blocking an action wait',()=>{
+ const q=scheduler();dispatch(q,env([['xpos',[{handler:'SinAction',cycle:200,time:null,vibration:10,nowait:true}]]],['wait',{list:[{name:'actor',mode:0}]}]));
+ assert.equal(q.frame().waiting,false);assert.equal(q.frame().active,true);q.advance(50);near(x(q),30);
+ q.cancel('actor');const current=x(q);q.advance(10000);assert.equal(x(q),current);assert.equal(q.frame().active,false);
+});
+
+test('a later nowait step excludes the whole property sequence as verified by its getter',()=>{
+ const q=scheduler();dispatch(q,env([['xpos',[move(40),{handler:'SinAction',cycle:200,time:null,vibration:10,nowait:true}]]],['wait',{list:[{name:'actor',mode:0}]}]));
+ assert.equal(q.frame().waiting,false);q.advance(150);near(x(q),50);q.setReducedMotion(true);assert.equal(x(q),40);assert.equal(q.frame().active,false);
+});
+
+test('LoopMoveAction wraps with explicit endpoint policy; exact native final tick is not claimed',()=>{
+ const raw=env([['xpos',[{handler:'LoopMoveAction',min:0,max:100,start:20,loop:200,time:1000}]]]);
+ assert.equal(scheduler().dispatch(raw).ok,false);
+ const q=scheduler({loopCompletion:'left-limit'});dispatch(q,raw);assert.equal(x(q),20);
+ q.advance(100);assert.equal(x(q),70);q.advance(60);near(x(q),0);q.advance(40);assert.equal(x(q),20);
+ q.cancel('actor',false,'xpos');dispatch(q,env([['xpos',[move('@+40',200)]]]));q.advance(100);assert.equal(x(q),40);q.advance(100);assert.equal(x(q),60);
+ const finish=scheduler({loopCompletion:'left-limit'});dispatch(finish,raw);finish.advance(1000);near(x(finish),19.99999995);assert.equal(finish.frame().active,false);
+});
+
+test('indefinite loop uses explicit cancel or reduced-motion baseline, not an invented final tick',()=>{
+ const q=scheduler();dispatch(q,env([['xpos',[{handler:'LoopMoveAction',min:0,max:100,loop:200,nowait:true}]]]));
+ q.advance(100);assert.equal(x(q),70);q.setReducedMotion(true);assert.equal(x(q),20);assert.equal(q.frame().active,false);
+});
+
+test('wave nofast waits and reduced motion remain separate policies',()=>{
+ const q=scheduler();dispatch(q,env([['xpos',[{handler:'SinAction',cycle:200,time:400,vibration:10,nofast:true}]]],['wait',{list:[{name:'actor',mode:0}]}]));
+ q.advance(50);assert.equal(q.skipWait(),true);assert.equal(q.frame().waiting,true);near(x(q),30);
+ q.setReducedMotion(true);assert.equal(x(q),20);assert.equal(q.frame().waiting,false);assert.equal(q.frame().active,false);
+});
+
+test('invalid relative-handler parameters and unverified composite/sequence loops fail atomically',()=>{
+ const q=scheduler({random:{policy:'indexed-preview',seed:1},loopCompletion:'left-limit'}),before=q.frame();
+ for(const step of [
+  {handler:'SinAction',cycle:0,vibration:10},{handler:'SinAction',cycle:'bad',vibration:10},
+  {handler:'SinAction',cycle:200,vibration:'@/0'},{handler:'CosAction',vibration:10},
+  {handler:'RandomAction',waittime:0,vibration:10},{handler:'RandomAction',waittime:100,vibration:'@+10'},
+  {handler:'RandomAction',waittime:100,vibration:10,seed:Infinity},
+  {handler:'SquareAction',ontime:0,offtime:100,vibration:10},{handler:'TriangleAction',ontime:100,offtime:-1,vibration:10},
+  {handler:'LoopMoveAction',min:100,max:0,loop:100},{handler:'LoopMoveAction',min:0,max:100,loop:0},
+  {handler:'SinAction',cycle:200,vibration:Number.MAX_VALUE,mag:2},{handler:'loop',loop:0,count:2}
+ ]){assert.equal(q.dispatch(env([['ypos',10],['xpos',[step]]])).ok,false,JSON.stringify(step));assert.deepEqual(q.frame(),before);}
+ assert.equal(q.dispatch(env([['xpos',[{handler:'SinAction',cycle:200,vibration:10},move(10)]]])).ok,false);
+ assert.deepEqual(q.frame(),before);
+});
+
 test('empty/oversized/malformed input and unsafe seed state are rejected',()=>{
  for(const raw of [null,'SystemAction.save()',{},[],['envupdate'],['envupdate','update',[{name:'actor',action:new Array(5000).fill(['xpos',1])}]]])assert.equal(parseSceneAction(raw).ok,false);
  for(const state of [null,{objects:{},camera:{properties:{xpos:NaN}}},{objects:{env:{properties:{}}},camera:{properties:{}}},

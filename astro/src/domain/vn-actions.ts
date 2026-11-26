@@ -38,7 +38,13 @@ export type SceneEasing=number|'const'|'accel'|'decel'|'acdec'|'accos';
 export type SceneMove={handler:'MoveAction';value:SceneNumber;start?:SceneNumber;time:number;
  delay:number;speed:number;starttime:number;accel:SceneEasing;nowait:boolean;nofast:boolean};
 export type SceneHold={handler:'wait';time:number;speed:number;nofast:boolean};
-export type ScenePropertyAction={property:SceneProperty;value:number|(SceneMove|SceneHold)[]};
+type SceneTiming={time:number|null;delay:number;speed:number;starttime:number;nowait:boolean;nofast:boolean};
+export type SceneVibration=SceneTiming&{handler:'SinAction'|'CosAction'|'RandomAction'|'SquareAction'|'TriangleAction';
+ value:SceneNumber;offset:SceneNumber;mag:number;cycle:number|null;angvel:number|null;waittime:number|null;ontime:number|null;offtime:number|null;seed:number|null};
+export type SceneLoopMove=SceneTiming&{handler:'LoopMoveAction';min:SceneNumber;max:SceneNumber;start?:SceneNumber;loop:number};
+export type SceneStep=SceneMove|SceneHold|SceneVibration|SceneLoopMove;
+export type SceneSchedulerOptions={reducedMotion?:boolean;random?:{policy:'indexed-preview';seed:number};loopCompletion?:'left-limit'};
+export type ScenePropertyAction={property:SceneProperty;value:number|SceneStep[]};
 export type SceneActionWait={kind:'actions';names:string[];extra:number;canSkip:boolean}|{kind:'time';time:number;canSkip:boolean};
 export type SceneAction={kind:'update';updates:{name:string;actions:ScenePropertyAction[]}[];wait?:SceneActionWait}|SceneActionWait;
 export type SceneActionResult={ok:true;action:SceneAction;diagnostics:[]}|{ok:false;action:null;diagnostics:SceneActionDiagnostic[]};
@@ -133,7 +139,7 @@ export function parseSceneAction(raw:unknown):SceneActionResult{
     // is read only on the scalar setProperty path, never on this array path.
     // Accept the observed 0/1 forms; scalar timing remains separately rejected.
     if(tuple.length===3&&![0,1].includes(numeric(tuple[2])??-1)){issue(q,'unsupported action tuple mode');continue;}
-    const steps:(SceneMove|SceneHold)[]=[];
+    const steps:SceneStep[]=[];
     if(!value.length)issue(q,'empty action sequence');
     for(const [k,step] of value.entries()){
      if(!spend(q))break;const s=q+'.'+k;
@@ -144,9 +150,38 @@ export function parseSceneAction(raw:unknown):SceneActionResult{
       if(speed===null||speed<=0)issue(s+'.speed','expected positive finite speed');
       steps.push({handler:'wait',time:nonnegative(step.time,s+'.time'),speed:speed??1,nofast:bool(step.nofast,s+'.nofast')});continue;
      }
+     const numberValue=(v:unknown)=>numeric(v)!==null||typeof v==='string'&&(v==='@'||/^@[+\-*/](\d+(?:\.\d+)?|\.\d+)$/.test(v));
+     if(['SinAction','CosAction','RandomAction','SquareAction','TriangleAction','LoopMoveAction'].includes(String(step.handler))){
+      const timing:SceneTiming={time:step.time==null?null:nonnegative(step.time,s+'.time'),delay:nonnegative(step.delay,s+'.delay',0),
+       speed:step.speed==null?1:numeric(step.speed)??0,starttime:nonnegative(step.starttime,s+'.starttime',0),
+       nowait:bool(step.nowait,s+'.nowait'),nofast:bool(step.nofast,s+'.nofast')};
+      if(timing.speed<=0)issue(s+'.speed','expected positive finite speed');
+      if(step.handler==='LoopMoveAction'){
+       keys(step,['handler','time','delay','speed','starttime','nowait','nofast','min','max','start','loop'],s);
+       const loop=step.loop==null?timing.time:numeric(step.loop);
+       if(!numberValue(step.min)||!numberValue(step.max)||step.start!=null&&!numberValue(step.start))issue(s,'unsupported loop range');
+       if(loop===null||loop<=0)issue(s+'.loop','expected positive finite loop duration');
+       steps.push({...timing,handler:'LoopMoveAction',min:step.min as SceneNumber,max:step.max as SceneNumber,loop:loop??1,
+        ...(step.start==null?{}:{start:step.start as SceneNumber})});continue;
+      }
+      const handler=step.handler as SceneVibration['handler'];
+      const specific=handler==='RandomAction'?['waittime','seed']:handler==='SquareAction'||handler==='TriangleAction'?['ontime','offtime']:['cycle','angvel'];
+      keys(step,['handler','time','delay','speed','starttime','nowait','nofast','value','vibration','offset','mag',...specific],s);
+      const value=step.value??step.vibration,offset=step.offset??0,mag=step.mag==null?1:numeric(step.mag);
+      if(!numberValue(value)||!numberValue(offset)||mag===null)issue(s,'unsupported vibration parameters');
+      // RandomAction's constructor overwrites VibrateAction's relative value;
+      // only its numeric amplitude is supported, not fabricated @ evaluation.
+      if(handler==='RandomAction'&&numeric(value)===null)issue(s,'RandomAction requires numeric amplitude');
+      const seed=step.seed==null?null:numeric(step.seed),waittime=step.waittime==null?null:numeric(step.waittime);
+      const cycle=step.cycle==null?null:numeric(step.cycle),angvel=step.angvel==null?null:numeric(step.angvel);
+      const ontime=step.ontime==null?null:numeric(step.ontime),offtime=step.offtime==null?null:numeric(step.offtime);
+      if(handler==='RandomAction'&&(waittime===null||waittime<=0||step.seed!=null&&(seed===null||!Number.isFinite(seed*4294967295))))issue(s,'invalid random interval or seed');
+      if((handler==='SinAction'||handler==='CosAction')&&((cycle===null&&angvel===null)||(step.cycle!=null&&(cycle===null||cycle<=0))||(step.angvel!=null&&angvel===null)))issue(s,'invalid wave period or angular velocity');
+      if((handler==='SquareAction'||handler==='TriangleAction')&&(ontime===null||ontime<=0||offtime===null||offtime<0||!Number.isFinite(ontime+offtime)))issue(s,'invalid on/off durations');
+      steps.push({...timing,handler,value:value as SceneNumber,offset:offset as SceneNumber,mag:mag??1,seed,waittime,cycle,angvel,ontime,offtime});continue;
+     }
      if(step.handler!==undefined&&step.handler!=='MoveAction'){issue(s,'unsupported action handler');continue;}
      keys(step,['handler','value','start','time','delay','speed','starttime','accel','nowait','nofast'],s);
-     const numberValue=(v:unknown)=>numeric(v)!==null||typeof v==='string'&&(v==='@'||/^@[+\-*/](\d+(?:\.\d+)?|\.\d+)$/.test(v));
      if(!numberValue(step.value)||step.start!=null&&!numberValue(step.start)){issue(s,'unsupported numeric or relative value');continue;}
      const speed=step.speed==null?1:numeric(step.speed),accel=easingValue(step.accel);
      if(speed===null||speed<=0)issue(s+'.speed','expected positive finite speed');
@@ -181,7 +216,22 @@ export function parseSceneAction(raw:unknown):SceneActionResult{
  return diagnostics.length||!action?{ok:false,action:null,diagnostics}:{ok:true,action,diagnostics:[]};
 }
 
-type Segment={kind:'move'|'hold';from:number;to:number;start:number;end:number;duration:number;speed:number;starttime:number;accel:SceneEasing};
+type SegmentBase={from:number;to:number;start:number;end:number;speed:number;starttime:number};
+type Segment=SegmentBase&({kind:'move';duration:number;accel:SceneEasing}|{kind:'hold';duration:number;accel:SceneEasing}|
+ {kind:'vibration';duration:number|null;handler:SceneVibration['handler'];vibration:number;offset:number;cycle:number|null;angvel:number|null;
+  waittime:number|null;ontime:number|null;offtime:number|null;seed:number}|
+ {kind:'loop';duration:number|null;min:number;max:number;loopStart:number;loop:number});
+// Explicit indexed PREVIEW RNG: the original Math.RandomGenerator stream and
+// tick catch-up are unresolved. A host must opt into this deterministic policy.
+function indexedSceneRandom(seed:number,index:number){
+ let x=(seed+Math.imul(index+1,0x9e3779b9))>>>0;
+ x=Math.imul(x^(x>>>16),0x21f0aaad);x=Math.imul(x^(x>>>15),0x735a2d97);
+ return ((x^(x>>>15))>>>0)/4294967296;
+}
+function loopSceneValue(segment:{min:number;max:number;loopStart:number;loop:number},local:number){
+ const span=segment.max-segment.min;
+ return segment.min+(segment.loopStart-segment.min+span*((local%segment.loop)/segment.loop))%span;
+}
 type Track={name:string;property:SceneProperty;initial:number;segments:Segment[];end:number;nowait:boolean;nofast:boolean};
 type Barrier={kind:'time';until:number;canSkip:boolean}|{kind:'actions';tracks:Track[];extra:number;until:number|null;canSkip:boolean};
 const trackKey=(name:string,property:SceneProperty)=>JSON.stringify([name,property]);
@@ -197,14 +247,20 @@ export class SceneActionScheduler{
  private time=0;
  private generation=0;
  private reducedMotion:boolean;
- constructor(initial:SceneActionState={objects:{},camera:{properties:{}}},options:{reducedMotion?:boolean}={}){
+ private randomPolicy:SceneSchedulerOptions['random'];
+ private randomSerial=0;
+ private loopCompletion:SceneSchedulerOptions['loopCompletion'];
+ constructor(initial:SceneActionState={objects:{},camera:{properties:{}}},options:SceneSchedulerOptions={}){
   if(!record(initial)||!record(initial.objects)||!record(initial.camera)||!record(initial.camera.properties))throw Error('Invalid scene action state');
   for(const [name,o] of [['env',initial.camera],...Object.entries(initial.objects)] as [string,SceneActionObject][]){
    if(!nameOK(name)||!record(o)||!record(o.properties))throw Error('Invalid scene action object');
    for(const [property,value] of Object.entries(o.properties))if(!propertyOK(property)||typeof value!=='number'||!Number.isFinite(value))throw Error('Invalid scene action property');
   }
   if(own(initial.objects,'env'))throw Error('env is reserved for camera properties');
+  if(options.random&&(options.random.policy!=='indexed-preview'||!Number.isFinite(options.random.seed)))throw Error('Invalid host random policy');
+  if(options.loopCompletion!==undefined&&options.loopCompletion!=='left-limit')throw Error('Invalid host loop completion policy');
   this.state=copyState(initial);this.reducedMotion=options.reducedMotion===true;
+  this.randomPolicy=options.random?{...options.random}:undefined;this.loopCompletion=options.loopCompletion;
  }
  private object(name:string,state=this.state){return name==='env'?state.camera:own(state.objects,name)?state.objects[name]:undefined;}
  private sample(track:Track,at=this.time){
@@ -214,13 +270,29 @@ export class SceneActionScheduler{
    if(at>=segment.end){value=segment.to;continue;}
    if(segment.kind==='hold')return segment.from;
    // Source ActionHandler order: add starttime BEFORE multiplying speed.
-   const t=segment.duration===0?1:((at-segment.start+segment.starttime)*segment.speed)/segment.duration;
-   return segment.from+(segment.to-segment.from)*sampleSceneEasing(segment.accel,t);
+   const local=(at-segment.start+segment.starttime)*segment.speed;
+   if(!Number.isFinite(local))throw Error('Action clock overflow');
+   if(segment.kind==='move')return segment.from+(segment.to-segment.from)*sampleSceneEasing(segment.accel,segment.duration===0?1:local/segment.duration);
+   if(segment.kind==='loop')return loopSceneValue(segment,local);
+   let factor=0;
+   if(segment.handler==='RandomAction')factor=2*indexedSceneRandom(segment.seed,Math.floor(local/segment.waittime!))-1;
+   else if(segment.handler==='SquareAction'||segment.handler==='TriangleAction'){
+    const on=segment.ontime!,off=segment.offtime!,phase=local%(on+off);
+    factor=segment.handler==='SquareAction'?(phase<on?1:-1):phase>on?(off>0?(off-(phase-on))/off:0):phase/on;
+   }else{
+    const period=360000/Math.abs(segment.angvel??0);
+    const turns=segment.cycle!==null?(local%segment.cycle)/segment.cycle:segment.angvel===0?0:
+     Number.isFinite(period)?((local%period)/period)*Math.sign(segment.angvel!):local*segment.angvel!/360000;
+    factor=segment.handler==='CosAction'?Math.cos(2*Math.PI*turns):Math.sin(2*Math.PI*turns);
+   }
+   return segment.from+segment.offset+segment.vibration*factor;
   }
   return value;
  }
  private sync(){
-  for(const [key,track] of this.tracks){this.object(track.name)!.properties[track.property]=this.sample(track);if(this.time>=track.end)this.tracks.delete(key);}
+  const samples=[...this.tracks].map(([key,track])=>({key,track,value:this.sample(track)}));
+  if(samples.some(s=>!Number.isFinite(s.value)))throw Error('Non-finite scene action sample');
+  for(const {key,track,value} of samples){this.object(track.name)!.properties[track.property]=value;if(this.time>=track.end)this.tracks.delete(key);}
  }
  private refreshWait(){
   const wait=this.barrier;if(!wait)return;
@@ -239,6 +311,7 @@ export class SceneActionScheduler{
   const parsed=parseSceneAction(raw);if(!parsed.ok)return parsed;
   const action=parsed.action,state=copyState(this.state),tracks=new Map(this.tracks),groups=new Map<string,Track>();
   const diagnostics:SceneActionDiagnostic[]=[];
+  let randomSerial=this.randomSerial;
   const waits=action.kind==='update'?action.wait:action;
   // Plan against detached state; an unresolved initial/overflow never partly
   // mutates the active scene, old tracks or the current wait boundary.
@@ -249,9 +322,9 @@ export class SceneActionScheduler{
     const key=trackKey(update.name,entry.property),path='update.'+i+'.action.'+j;
     if(!groups.has(key)){
      const old=tracks.get(key);
-     // The numeric projection settles the old property before replacement,
-     // following delAction's endpoint behavior. The recovered envupdate array
-     // branch is incomplete: full replacement parity is NOT established.
+     // Recovered bytecode removes the old property action once before adding
+     // its replacement; delAction settles its finite numeric endpoint. This
+     // does not establish native renderer or full scene/tick parity.
      // Explicit host cancel(false) instead freezes the sampled current value.
      if(old)object.properties[entry.property]=old.segments.at(-1)!.to;
      tracks.delete(key);
@@ -265,26 +338,46 @@ export class SceneActionScheduler{
     if(!track){track={name:update.name,property:entry.property,initial:baseline,segments:[],end:this.time,nowait:false,nofast:false};groups.set(key,track);}
     for(const step of entry.value){
      const previous=track.segments.at(-1)?.to??baseline;
-     // Each handler captures @ against the dispatch-time property, whereas an
-     // omitted start takes the preceding segment's value at execution time.
-     const from=step.handler==='wait'?previous:step.start===undefined?previous:resolveSceneNumber(step.start,baseline);
-     const to=step.handler==='wait'?previous:resolveSceneNumber(step.value,baseline);
-     if(from==null||to==null){diagnostics.push({path,reason:'unresolved initial or relative value'});break;}
+     if(!Number.isFinite(track.end)){diagnostics.push({path,reason:'action follows an indefinite segment'});break;}
      const delay=step.handler==='wait'?0:step.delay,starttime=step.handler==='wait'?0:step.starttime;
-     const start=track.end+delay,end=start+Math.max(0,step.time/step.speed-starttime);
-     if(![from,to,to-from,start,end].every(Number.isFinite)){diagnostics.push({path,reason:'non-finite action range or clock'});break;}
-     track.segments.push({kind:step.handler==='wait'?'hold':'move',from,to,start,end,duration:step.time,speed:step.speed,starttime,accel:step.handler==='wait'?0:step.accel});
-     track.end=end;track.nofast||=step.nofast;if(step.handler==='MoveAction')track.nowait||=step.nowait;
+     const start=track.end+delay,end=step.time===null?Infinity:start+Math.max(0,step.time/step.speed-starttime);
+     if(!Number.isFinite(start)||!Number.isFinite(starttime*step.speed)||(step.time!==null&&!Number.isFinite(end))){diagnostics.push({path,reason:'non-finite action clock'});break;}
+     const timing={start,end,speed:step.speed,starttime};
+     if(step.handler==='wait'||step.handler==='MoveAction'){
+      // @ targets capture construction-time state; an omitted start takes the
+      // preceding endpoint only when execution reaches this segment.
+      const from=step.handler==='wait'?previous:step.start===undefined?previous:resolveSceneNumber(step.start,baseline);
+      const to=step.handler==='wait'?previous:resolveSceneNumber(step.value,baseline);
+      if(from==null||to==null||![from,to,to-from].every(Number.isFinite)){diagnostics.push({path,reason:'unresolved initial or non-finite relative range'});break;}
+      track.segments.push({...timing,kind:step.handler==='wait'?'hold':'move',from,to,duration:step.time,accel:step.handler==='wait'?0:step.accel});
+     }else if(step.handler==='LoopMoveAction'){
+      const min=resolveSceneNumber(step.min,baseline),max=resolveSceneNumber(step.max,baseline),loopStart=step.start===undefined?previous:resolveSceneNumber(step.start,baseline);
+      if(min===null||max===null||loopStart===null||max<=min||![max-min,loopStart-min,loopStart-min+(max-min)].every(Number.isFinite)){diagnostics.push({path,reason:'unresolved loop range'});break;}
+      if(step.time!==null&&this.loopCompletion!=='left-limit'){diagnostics.push({path,reason:'finite LoopMoveAction requires explicit host completion policy'});break;}
+      const segment:Segment={...timing,kind:'loop',from:previous,to:previous,duration:step.time,min,max,loopStart,loop:step.loop};
+      // Original completion does not write a new value. A finite continuous
+      // preview endpoint is opt-in, not a claim about the last native tick.
+      if(step.time!==null)segment.to=loopSceneValue(segment,Math.max(starttime*step.speed,step.time-Math.max(1e-7,Math.abs(step.time)*Number.EPSILON*4)));
+      track.segments.push(segment);
+     }else{
+      const vibration=resolveSceneNumber(step.value,baseline),offset=resolveSceneNumber(step.offset,baseline);
+      if(vibration===null||offset===null||![vibration*step.mag,previous+offset+vibration*step.mag,previous+offset-vibration*step.mag].every(Number.isFinite)){diagnostics.push({path,reason:'unresolved or non-finite vibration range'});break;}
+      if(step.handler==='RandomAction'&&!this.randomPolicy){diagnostics.push({path,reason:'RandomAction requires explicit host random policy'});break;}
+      const seed=step.seed===null?((this.randomPolicy?.seed??0)+ ++randomSerial)>>>0:Math.trunc(step.seed*4294967295)>>>0;
+      track.segments.push({...timing,kind:'vibration',from:previous,to:previous,duration:step.time,handler:step.handler,
+       vibration:vibration*step.mag,offset,cycle:step.cycle,angvel:step.angvel,waittime:step.waittime,ontime:step.ontime,offtime:step.offtime,seed});
+     }
+     track.end=end;track.nofast||=step.nofast;if(step.handler!=='wait')track.nowait||=step.nowait;
     }
     if(track.segments.length)tracks.set(key,track);
    }
   }
   if(waits?.kind==='actions')for(const name of waits.names)if(!this.object(name,state))diagnostics.push({path:'wait',reason:'missing verified wait object'});
   const waitDuration=waits?.kind==='time'?waits.time:waits?.extra??0;
-  const lastEnd=Math.max(this.time,...[...tracks.values()].map(t=>t.end));
+  const lastEnd=Math.max(this.time,...[...tracks.values()].map(t=>t.end).filter(Number.isFinite));
   if(!Number.isFinite(lastEnd+waitDuration))diagnostics.push({path:'wait',reason:'non-finite wait clock'});
   if(diagnostics.length)return {ok:false,action:null,diagnostics};
-  this.state=state;this.tracks=tracks;
+  this.state=state;this.tracks=tracks;this.randomSerial=randomSerial;
   if(this.reducedMotion)this.finishTracks();else this.sync();
   if(waits)this.startWait(waits);else this.refreshWait();
   return parsed;
