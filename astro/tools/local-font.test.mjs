@@ -16,6 +16,26 @@ function fixture(){
  b.writeUInt16BE(1,40);b.writeUInt16BE(name.length,42);name.copy(b,46);
  return b;
 }
+function weightedFixture(weight){
+ const nameTable=fixture().subarray(28),b=Buffer.alloc(50+nameTable.length);
+ b.write('OTTO',0);b.writeUInt16BE(2,4);
+ b.write('OS/2',12);b.writeUInt32BE(44,20);b.writeUInt32BE(6,24);b.writeUInt16BE(weight,48);
+ b.write('name',28);b.writeUInt32BE(50,36);b.writeUInt32BE(nameTable.length,40);nameTable.copy(b,50);
+ return b;
+}
+test('configured font weight comes from the original SFNT metadata, not a hardcoded Regular alias',()=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'ginka-font-weight-')),previous=process.env.GINKA_UI_FONT;
+ try{
+  const file=path.join(root,'bold.otf');fs.writeFileSync(file,weightedFixture(700));
+  assert.equal(readFont(file).weight,700);assert.equal(listFonts(root)[0].weight,700);
+  process.env.GINKA_UI_FONT=file;let middleware;
+  localFont().configureServer({middlewares:{use:fn=>middleware=fn}});
+  const res={setHeader(){},end(body){this.body=body;}};
+  middleware({url:'/__ginka_local_font__/ui.css',method:'GET',headers:{host:'127.0.0.1:4321'},socket:{remoteAddress:'127.0.0.1'}},res,()=>assert.fail('Expected font CSS'));
+  assert.match(res.body.toString(),/font-weight:700/);assert.match(res.body.toString(),/\.vn-game-reader/);assert.match(res.body.toString(),/font-family:inherit/);
+  fs.writeFileSync(file,weightedFixture(0));assert.throws(()=>readFont(file),/Invalid OS\/2 font weight/);
+ }finally{if(previous===undefined)delete process.env.GINKA_UI_FONT;else process.env.GINKA_UI_FONT=previous;fs.rmSync(root,{recursive:true,force:true});}
+});
 test('inspect and serve only the configured private font',()=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'ginka-font-'));
  const previous=process.env.GINKA_UI_FONT;

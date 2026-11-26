@@ -2,7 +2,7 @@
 
 ## 唯一实现
 
-Astro 5 静态生成 + TypeScript + 原生 CSS/JavaScript。根 npm workspace 调用 `astro`，根 lockfile 是唯一依赖快照。当前开发架构已收敛；**生产 main 尚未切换**。历史 Hexo/NexT 不在当前树并行运行，回滚通过原 Git 提交恢复。
+Astro 7.4.13 静态生成 + TypeScript + 原生 CSS/JavaScript，Node >=22.23.4 <25。安全升级保留原有 SSG、ClientRouter 和模块边界，不是另建架构。根 npm workspace 调用 `astro`，根 lockfile 是唯一依赖快照。**生产 main 尚未切换**；历史 Hexo/NexT 不在当前树并行运行，回滚通过原 Git 提交恢复。
 
 ```text
 已跟踪 source/_posts + about/links
@@ -41,6 +41,6 @@ astro/dist                 （静态构建；没有部署动作）
 
 ## 证据边界
 
-原始游戏数据、反编译结果、视频参考、独立 scheduler/camera/host 研究及参数保留在私有库。它们未被公共运行时消费不代表可删。公开文档只描述接口和验证级别，原作来源详情不重复外迁。私有研究引擎尚未接入 Astro，不声称完整原作复现。
+原始游戏数据、反编译/字节码结果、参考帧与独立研究 host 保留在私有库。正式 `vn-actions.ts` 只执行已核验的数值投影；`vn-mascot.ts` 在现有单画布、唯一 RAF 中执行逐字与数值动作，经 `mascot-geometry.ts` 投影角色与已核验关联情绪图层。精确来源由私有 assembler 验证，localhost loader 仅发送白名单运行数据与不含来源的媒体 URL。没有完整导入研究 KAG/host，也没有执行原作任意表达式。资源解析、源码数学对照、真实素材合成、原游戏画面及逐帧时序验收仍分层记录，不声称完整原作复现。
 
 决定与删减依据见 [DECISIONS](DECISIONS.md)，接口见 [INTERFACES](INTERFACES.md)，实际验证见 [TESTING](TESTING.md)。

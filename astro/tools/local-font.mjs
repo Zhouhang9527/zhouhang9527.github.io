@@ -15,11 +15,16 @@ export function readFont(file){
  if(!format)throw Error('Expected standalone OTF or TTF');
  const count=bytes.readUInt16BE(4);
  if(!count||12+count*16>bytes.length)throw Error('Invalid SFNT directory');
- let names={};
+ let names={},weight=400;
  for(let i=0;i<count;i++){
   const p=12+i*16, tag=bytes.toString('ascii',p,p+4);
   const offset=bytes.readUInt32BE(p+8), length=bytes.readUInt32BE(p+12);
   if(offset+length>bytes.length)throw Error('Invalid SFNT table '+tag);
+  if(tag==='OS/2'){
+   if(length<6)throw Error('Invalid OS/2 weight table');
+   weight=bytes.readUInt16BE(offset+4);
+   if(weight<1||weight>1000)throw Error('Invalid OS/2 font weight');
+  }
   if(tag!=='name'||length<6)continue;
   const table=bytes.subarray(offset,offset+length);
   const records=table.readUInt16BE(2), strings=table.readUInt16BE(4);
@@ -34,7 +39,7 @@ export function readFont(file){
   }
  }
  names=Object.fromEntries(Object.entries(names).map(([id,values])=>[id,[...values]]));
- return {bytes,format,names};
+ return {bytes,format,names,weight};
 }
 
 export function listFonts(root){
@@ -45,8 +50,8 @@ export function listFonts(root){
    if(item.isDirectory())walk(file);
    else if(item.isFile()&&/\.(otf|ttf)$/i.test(item.name)){
     try{
-     const {bytes,format,names}=readFont(file);
-     result.push({file:path.relative(root,file),size:bytes.length,format,names});
+     const {bytes,format,names,weight}=readFont(file);
+     result.push({file:path.relative(root,file),size:bytes.length,format,names,weight});
     }catch(error){result.push({file:path.relative(root,file),error:String(error)});}
    }
   }
@@ -61,9 +66,12 @@ export function localFont(){
   configureServer(server){
    const input=process.env.GINKA_UI_FONT;
    if(!input)return;
-   const {bytes,format,names}=readFont(path.resolve(input));
+   const {bytes,format,names,weight}=readFont(path.resolve(input));
    const ext=format==='opentype'?'otf':'ttf';
-   const css='@font-face{font-family:"'+FAMILY+'";src:url("'+PREFIX+'ui.'+ext+'") format("'+format+'");font-style:normal;font-weight:400;font-display:swap}:root{--vn-font-original:"'+FAMILY+'";}';
+   const css='@font-face{font-family:"'+FAMILY+'";src:url("'+PREFIX+'ui.'+ext+'") format("'+format+'");font-style:normal;font-weight:'+weight+';font-display:swap}'
+    +':root{--vn-font-original:"'+FAMILY+'";--vn-font-ui:"'+FAMILY+'",sans-serif;--vn-font-original-weight:'+weight+';}'
+    +':is(.vn-stage,.vn-game-reader,#ginka-mascot,.vn-confirm,[data-vn-log-open=true]){font-family:"'+FAMILY+'",sans-serif;font-synthesis:none;}'
+    +':is(.vn-stage,.vn-game-reader,#ginka-mascot,.vn-confirm,[data-vn-log-open=true]) :is(button,input,select){font-family:inherit;}';
    server.middlewares.use((req,res,next)=>{
     const url=(req.url||'').split('?')[0];
     if(!url.startsWith(PREFIX))return next();

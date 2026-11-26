@@ -4,7 +4,8 @@
 export const runtimeScenes = {
   title: {
     states: [
-      { id: 'arrival', minCompleted: 0, present: false, expression: null },
+      // Observed first-launch title uses the complete data-003 CG (eyes open).
+      { id: 'arrival', minCompleted: 0, present: true, expression: 'eyes-open' },
       { id: 'first-encounter', minCompleted: 1, present: true, expression: 'eyes-open' },
       { id: 'familiar', minCompleted: 3, present: true, expression: 'eyes-closed' },
     ],

@@ -9,16 +9,16 @@
       {
         "id": "arrival",
         "minCompleted": 0,
-        "present": false,
-        "expression": null,
-        "frame": "data-004"
+        "present": true,
+        "expression": "eyes-open",
+        "frame": "data-003"
       },
       {
         "id": "first-encounter",
         "minCompleted": 1,
         "present": true,
         "expression": "eyes-open",
-        "frame": "data-003"
+        "frame": "data-004"
       },
       {
         "id": "familiar",

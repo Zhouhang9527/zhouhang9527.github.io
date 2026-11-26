@@ -7,9 +7,10 @@ import {localTitleArt} from './tools/local-title-art.mjs';
 import {localFont} from './tools/local-font.mjs';
 import {localVNUI} from './tools/local-vn-ui.mjs';
 import {localMascot} from './tools/local-mascot.mjs';
+import {devSearch} from './tools/dev-search.mjs';
 export default defineConfig({
  devToolbar:{enabled:!process.env.GINKA_MASCOT_MANIFEST&&!process.env.GINKA_TITLE_DATA&&!process.env.GINKA_VN_UI_DATA},
- vite:{plugins:[localTitleArt(),localFont(),localVNUI(),localMascot()]},
+ vite:{plugins:[localTitleArt(),localFont(),localVNUI(),localMascot(),devSearch()]},
  site:config.url, output:'static', trailingSlash:'always',
  // Keep the established HTML spacing and remark/rehype heading pipeline on Astro 7.
  compressHTML:true,

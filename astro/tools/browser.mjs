@@ -71,7 +71,7 @@ try {
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'arrival');
    const fixedCover=await page.locator('[data-vn-art]').evaluate(el=>getComputedStyle(el).backgroundImage);
    assert.equal(fixedCover,'none','public title must not substitute unapproved artwork');
-   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-present'),'false');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-present'),'true','initial title stage follows observed title_base/data-003 state');
    const feed=await page.locator('.journal-feed').evaluate(el=>({width:el.getBoundingClientRect().width,layout:el.parentElement.getBoundingClientRect().width}));
    assert.ok(width>960||feed.width>=feed.layout-2,'mobile feed squeezed: '+JSON.stringify(feed));
    await page.screenshot({path:`artifacts/${width}-${mode}-home.png`});

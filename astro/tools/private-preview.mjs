@@ -1,10 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
+import {parseArgs} from 'node:util';
 import {listFonts} from './local-font.mjs';
 import manifest from '../config/vn-scenes.json' with {type:'json'};
-const input=process.argv[2]||process.env.GINKA_ASSETS_ROOT;
-if(!input)throw Error('Usage: npm run dev:original -- <private asset repository or assets directory>');
+const {values,positionals}=parseArgs({options:{port:{type:'string'}},allowPositionals:true});
+const input=positionals[0]||process.env.GINKA_ASSETS_ROOT;
+if(!input||positionals.length>1)throw Error('Usage: npm run dev:original -- <private asset repository or assets directory> [--port PORT]');
+if(values.port!==undefined&&(!/^[1-9]\d{0,4}$/.test(values.port)||Number(values.port)>65535))throw Error('Private preview port must be 1..65535');
 let root=path.resolve(input);
 if(fs.existsSync(path.join(root,'assets','data')))root=path.join(root,'assets');
 const data=path.join(root,'data'),bgimage=path.join(root,'bgimage');
@@ -23,6 +26,6 @@ if(!env.GINKA_UI_FONT){
 }
 const npm=process.env.npm_execpath;
 if(!npm)throw Error('Run through npm run dev:original');
-const child=spawn(process.execPath,[npm,'run','dev','--','--host','127.0.0.1'],{env,stdio:'inherit'});
+const child=spawn(process.execPath,[npm,'run','dev','--','--host','127.0.0.1',...(values.port?['--port',values.port]:[])],{env,stdio:'inherit'});
 child.on('error',error=>{console.error(error);process.exitCode=1;});
 child.on('exit',code=>{process.exitCode=code??1;});
