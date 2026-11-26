@@ -34,11 +34,12 @@ function tone(){
  fs.writeFileSync(path.join(dir,'tone.wav'),Buffer.concat([h,pcm]));
 }
 try{
- png('base.png',4,4,[255,0,0,255]);png('eye.png',1,1,[0,255,0,255]);png('blink.png',1,1,[0,0,255,255]);png('mouth.png',1,1,[255,255,0,255]);png('open.png',1,1,[255,0,255,255]);tone();
+ png('base.png',4,4,[255,0,0,255]);png('base100.png',4,4,[255,0,0,255]);png('base200.png',4,4,[255,0,0,255]);png('eye.png',1,1,[0,255,0,255]);png('blink.png',1,1,[0,0,255,255]);png('mouth.png',1,1,[255,255,0,255]);png('open.png',1,1,[255,0,255,255]);tone();
  const part=(image,x,y)=>({image,x,y,blend:'over',source:'synthetic integration fixture'});
  const pose={verified:true,phaseSource:'fixture',source:'fixture',character:'child',phase:'main',outfit:'fixture',expression:'neutral',gesture:'idle',base:'base.png',canvas:{width:6,height:6},baseRect:{x:1,y:1,width:4,height:4},layers:[{slot:'eye',...part('eye.png',1,1),alternate:part('blink.png',1,1)},{slot:'mouth',...part('mouth.png',2,1),alternate:part('open.png',2,1)}]};
+ pose.tiers=[{...pose,resolution:50},{...pose,resolution:100,base:'base100.png',canvas:{width:7,height:7}},{...pose,resolution:200,base:'base200.png',canvas:{width:9,height:9}}];
  const line=(id,text,voice,p='main',poseId='a')=>({id,text,voice,phase:p,pose:poseId,speaker:'Synthetic fixture',source:'fixture',phaseSource:'fixture',voiceSource:voice?'generated test tone':null,verified:true});
- const sceneAction={verified:true,source:'fixture',initial:{objects:{actor:{properties:{xpos:0}}},camera:{properties:{}}},actions:[['envupdate','update',[{name:'actor',action:[['xpos',[{handler:'MoveAction',value:2,time:800}]]]}]]],projection:{verified:true,source:'synthetic calibration only',stage:{width:12,height:12},resolution:100,rightHanded:false,camera:{cameraoffsetz:-100,cameraoffsetzmax:100,camerarh:0},properties:{xpos:0}}};
+ const sceneAction={verified:true,source:'fixture',initial:{objects:{actor:{properties:{xpos:0,zoomx:100,zoomy:100}}},camera:{properties:{}}},actions:[['envupdate','update',[{name:'actor',action:[['xpos',[{handler:'MoveAction',value:2,time:800}]],['zoomx',[{handler:'MoveAction',value:200,time:800}]],['zoomy',[{handler:'MoveAction',value:200,time:800}]]]}]]],projection:{verified:true,source:'synthetic calibration only',stage:{width:12,height:12},resolution:100,rightHanded:false,camera:{cameraoffsetz:-100,cameraoffsetzmax:100,camerarh:0},properties:{xpos:0}}};
  const spoken={...line('tone','Tone fixture','tone.wav'),sceneAction,translations:{'zh-CN':{speaker:'Synthetic fixture',text:'Tone fixture'},ja:{speaker:'検証',text:'日本語 fixture 字幕'},en:{speaker:null,text:'English fixture subtitles'}}};
  const locked={...line('locked','Locked fixture',null,'afterstory','b'),sceneAction:{...sceneAction,actions:[],overlays:[{verified:true,source:'synthetic static overlay only',image:'blink.png',canvas:{width:1,height:1},origin:{x:0,y:0},resolution:100,properties:{xpos:-3,ypos:3,order:3},linkmode:0,linkmask:0,rightHanded:true}]}};
  const file=path.join(dir,'manifest.json');
@@ -72,6 +73,7 @@ try{
   await page.waitForFunction(()=>JSON.parse(localStorage.getItem('ginka.vn.voice.history.v1')||'null')?.entries?.some(e=>e.id==='tone'));
   assert.equal(await page.locator('[data-mascot-text]').textContent(),'Tone fixture');
   assert.equal(await page.locator('[data-ginka-mascot]').getAttribute('data-mascot-scene'),'complete','reduced motion samples the supported numeric endpoint');
+  await page.waitForFunction(()=>document.querySelector('.ginka-mascot-portrait').dataset.mascotResolution==='200');assert.deepEqual(await canvas.evaluate(c=>[c.width,c.height]),[9,9],'source zoom selects the decoded explicit original tier, not canvas*DPR');
   const historyBeforeReplay=await page.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1'));
   await page.locator('[data-mascot-action=replay]').click();await page.waitForFunction(()=>!document.querySelector('[data-mascot-audio]').paused);
   assert.equal(await page.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1')),historyBeforeReplay,'VOICE replay must not recursively append history');
@@ -178,5 +180,17 @@ try{
  await animated.locator('[data-mascot-character] [data-mascot-action=close]').click();
  assert.deepEqual(animationErrors,[]);
  await animated.close();console.log('PASS synthetic numeric replay, source subtitles, storage-denied preferences and disabled unverified alternatives');
+ // Delayed source-tier decode may never overwrite a newer line or resurrect a closed host.
+ const safePack=await (await fetch(url+'/__ginka_local_mascot__/manifest.json')).json(),tierUrl=safePack.poses.a.tiers.find(tier=>tier.resolution===200).base;
+ const race=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:'reduce'});let releaseTier,requestedTier;
+ const tierGate=new Promise(resolve=>releaseTier=resolve),tierRequested=new Promise(resolve=>requestedTier=resolve);
+ await race.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!==url)return route.abort();if(u.pathname===tierUrl){requestedTier();await tierGate;}return route.continue();});
+ await race.addInitScript(()=>localStorage.setItem('ginka.vn.mode.v1','reader'));await race.goto(url+'/',{waitUntil:'domcontentloaded'});await race.locator('[data-mascot-action=open]').click();
+ await race.locator('[data-mascot-window] [data-mascot-action=next]').click();await tierRequested;
+ assert.deepEqual(await race.locator('[data-mascot-canvas]').evaluate(c=>[c.width,c.height]),[6,6],'keep the decoded tier and its own geometry while replacement is pending');
+ await race.locator('[data-mascot-window] [data-mascot-action=next]').click();const finished=race.waitForResponse(response=>new URL(response.url()).pathname===tierUrl);releaseTier();await (await finished).finished();
+ await race.evaluate(async url=>{const img=new Image();img.src=url;await img.decode();await new Promise(requestAnimationFrame);await new Promise(requestAnimationFrame);},tierUrl);
+ assert.equal(await race.locator('[data-mascot-text]').textContent(),'Silent fixture');assert.deepEqual(await race.locator('[data-mascot-canvas]').evaluate(c=>[c.width,c.height]),[6,6],'late decode is generation-scoped and cannot replace the new line');
+ await race.locator('[data-mascot-character] [data-mascot-action=close]').click();await race.close();console.log('PASS source-tier selection, pending-decode retention and stale-tier cancellation');
 } catch(error){console.error(log);throw error;}
 finally{await browser?.close();if(server){server.kill();if(server.exitCode===null)await new Promise(resolve=>{server.once('exit',resolve);setTimeout(resolve,2000).unref();});}fs.rmSync(dir,{recursive:true,force:true});}

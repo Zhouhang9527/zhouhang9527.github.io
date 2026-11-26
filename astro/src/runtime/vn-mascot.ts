@@ -1,6 +1,6 @@
 import {KEY,parse} from '../domain/reading-state';
 import {HISTORY_KEY,parseHistory,appendHistory} from '../domain/voice-history';
-import {computeMascotGeometry,projectMascotCamera,projectLinkedMascotOverlay} from '../lib/mascot-geometry';
+import {computeMascotGeometry,projectMascotCamera,projectLinkedMascotOverlay,measureMascotSourceZoom,selectMascotSourceResolution} from '../lib/mascot-geometry';
 import type {MascotProjectionInput,LinkedMascotOverlayInput} from '../lib/mascot-geometry';
 import {SceneActionScheduler} from '../domain/vn-actions';
 import type {SceneActionState,SceneActionFrame} from '../domain/vn-actions';
@@ -8,7 +8,8 @@ import {PLAYBACK_KEY,parsePlayback} from '../domain/vn-options';
 let playback=parsePlayback(null);
 type Part={image:string;x:number;y:number;blend:'over'|'replace'};
 type Layer=Part&{slot:string;alternate:Part|null};
-type Pose={layers:Layer[]|null;canvas:{width:number;height:number};baseOffset?:{x:number;y:number};character:'child'|'adult';phase:'main'|'afterstory';outfit:string;outfitLabel?:string;expression:string;gesture:string;base:string;blink:string|null;mouth:string|null;motion:{image:string;ms:number}[]};
+type Tier={resolution:number;layers:Layer[];canvas:{width:number;height:number};baseOffset:{x:number;y:number};base:string};
+type Pose={tiers?:Tier[];resolution?:number;layers:Layer[]|null;canvas:{width:number;height:number};baseOffset?:{x:number;y:number};character:'child'|'adult';phase:'main'|'afterstory';outfit:string;outfitLabel?:string;expression:string;gesture:string;base:string;blink:string|null;mouth:string|null;motion:{image:string;ms:number}[]};
 type Overlay=Omit<LinkedMascotOverlayInput,'stage'|'camera'|'parentProperties'>&{image:string};
 type SceneBinding={initial:SceneActionState;actions:unknown[];projection:Omit<MascotProjectionInput,'canvas'>;overlays?:Overlay[]};
 type SubtitleLanguage='zh-CN'|'ja'|'en';
@@ -34,7 +35,8 @@ function syncLanguage(){
  document.querySelectorAll<HTMLElement>('[data-mascot-subtitle-status]').forEach(el=>el.textContent=!pack?'本地字幕包暂不可用':current&&!subtitle(current)?unavailableSubtitle():'仅切换字幕；原录音不变。');
 }
 let openTrigger:HTMLElement|null=null,dialogueAuto=false,autoTimer=0;
-let unavailable=false,layerToken=0,layerImages=new Map<string,HTMLImageElement>(),layerPose:Pose|null=null,layerPending=false;
+let unavailable=false,layerToken=0,layerImages=new Map<string,HTMLImageElement>(),layerPose:Pose|null=null,layerPending=false,targetPose:Pose|null=null,failedSourcePose:Pose|null=null;
+const tierPoses=new WeakMap<Tier,Pose>();
 // The original stand engine has eye/lip variables, but this pack has no verified timing/pairing.
 // Render the observed normal layers only. Do not turn visually inspected alternatives into scripted animation.
 const imageCache=new Map<string,HTMLImageElement>(),imagePending=new Map<string,Promise<HTMLImageElement>>();
@@ -59,11 +61,11 @@ function renderState(value:'loading'|'ready'|'error'){
 let portraitObserver:ResizeObserver|null=null,observedPortrait:HTMLElement|null=null;
 let scene:SceneActionScheduler|null=null,sceneBinding:SceneBinding|null=null,sceneFrame:SceneActionFrame|null=null,commandIndex=0,hostTimestamp:number|null=null,revealElapsed=0;
 function positionMedia(){
- const portrait=$('.ginka-mascot-portrait'),p=lastPose&&pack?.poses[lastPose];if(!portrait||!p||portrait.clientWidth<=0||portrait.clientHeight<=0)return;
+ const portrait=$('.ginka-mascot-portrait'),p=layerPose||(lastPose&&pack?.poses[lastPose]);if(!portrait||!p||portrait.clientWidth<=0||portrait.clientHeight<=0)return;
  const viewport={width:portrait.clientWidth,height:portrait.clientHeight},composite=!!sceneBinding?.overlays?.length&&!!sceneFrame,displayCanvas=composite?sceneBinding!.projection.stage:p.canvas;
  let g=computeMascotGeometry({canvas:{...p.canvas,baseOffset:p.baseOffset},viewport}),matrix=g.matrix,opacity=1;
  if(sceneBinding&&sceneFrame&&!composite){
-  const p0=sceneBinding.projection,raw=projectMascotCamera({...p0,canvas:p.canvas,properties:{...p0.properties,...sceneFrame.objects.actor.properties},camera:{...p0.camera,...sceneFrame.camera.properties} as MascotProjectionInput['camera']});
+  const p0=sceneBinding.projection,raw=projectMascotCamera({...p0,canvas:p.canvas,resolution:p.resolution??p0.resolution,properties:{...p0.properties,...sceneFrame.objects.actor.properties},camera:{...p0.camera,...sceneFrame.camera.properties} as MascotProjectionInput['camera']});
   // Fit the explicit original stage into the blog portrait viewport; raw coordinates never become CSS deltas.
   g=computeMascotGeometry({canvas:p0.stage,viewport});const [a,b,c,d,e,f]=raw.matrix,k=g.scale;
   matrix=[k*a,k*b,k*c,k*d,k*e+g.drawRect.x,k*f+g.drawRect.y];opacity=raw.visible?raw.opacity:0;
@@ -86,25 +88,44 @@ function drawLayers(){
  const drawActor=()=>{context.drawImage(base,p.baseOffset?.x??0,p.baseOffset?.y??0);for(const layer of p.layers!){const image=layerImages.get(layer.image);if(!image)throw Error('Missing verified layer');if(layer.blend==='replace')context.clearRect(layer.x,layer.y,image.naturalWidth,image.naturalHeight);context.drawImage(image,layer.x,layer.y);}};
  if(composite){
   const projection=sceneBinding!.projection,frame=sceneFrame!,properties={...projection.properties,...frame.objects.actor.properties},camera={...projection.camera,...frame.camera.properties} as MascotProjectionInput['camera'];
-  const actor=projectMascotCamera({...projection,canvas:p.canvas,properties,camera}),nodes=[{order:properties.order??0,draw:()=>{if(!actor.visible)return;context.setTransform(...actor.matrix);context.globalAlpha=actor.opacity;drawActor();}}];
+  const actor=projectMascotCamera({...projection,canvas:p.canvas,resolution:p.resolution??projection.resolution,properties,camera}),nodes=[{order:properties.order??0,draw:()=>{if(!actor.visible)return;context.setTransform(...actor.matrix);context.globalAlpha=actor.opacity;drawActor();}}];
   for(const overlay of overlays){const image=layerImages.get(overlay.image);if(!image)throw Error('Missing verified overlay');const {image:_,...input}=overlay,geometry=projectLinkedMascotOverlay({...input,stage:projection.stage,camera,parentProperties:properties});nodes.push({order:overlay.properties.order??0,draw:()=>{if(!geometry.visible)return;context.setTransform(...geometry.matrix);context.globalAlpha=geometry.opacity;context.drawImage(image,0,0);}});}
   for(const node of nodes.sort((a,b)=>a.order-b.order)){context.save();node.draw();context.restore();}
  }else drawActor();
  context.setTransform(1,0,0,1,0,0);context.globalAlpha=1;canvas.dataset.mascotComposition=composite?'stage':'portrait';
- canvas.dataset.mascotEye='false';canvas.dataset.mascotMouth='false';canvas.hidden=false;positionMedia();renderState('ready');
+ canvas.dataset.mascotEye='false';canvas.dataset.mascotMouth='false';canvas.hidden=false;positionMedia();const portrait=$('.ginka-mascot-portrait');if(portrait)portrait.dataset.mascotResolution=String(p.resolution??(p.tiers?50:sceneBinding?.projection.resolution??''));renderState(failedSourcePose?'error':layerPending?'loading':'ready');
 }
-function loadLayers(p:Pose){
+function loadLayers(p:Pose,keepCurrent=false){
  const canvas=$('[data-mascot-canvas]') as HTMLCanvasElement|undefined,portrait=$('.ginka-mascot-portrait'),required=[...poseUrls(p),...(sceneBinding?.overlays??[]).map(overlay=>overlay.image)];
- if(p.layers&&layerPose===p&&!layerPending&&required.every(url=>layerImages.has(url))){drawLayers();return;}
- const token=++layerToken;layerPose=p.layers?p:null;layerImages=new Map();layerPending=false;
- portrait?.toggleAttribute('data-layered',!!p.layers);if(canvas)canvas.hidden=true;
- const active=()=>open&&token===layerToken&&lastPose!==''&&pack?.poses[lastPose]===p;
+ if(layerPending&&targetPose===p)return;
+ if(p.layers&&layerPose===p&&required.every(url=>layerImages.has(url))){layerToken++;layerPending=false;failedSourcePose=null;targetPose=p;drawLayers();return;}
+ const token=++layerToken;targetPose=p;failedSourcePose=null;layerPending=false;
+ if(!keepCurrent||!layerPose){layerPose=null;layerImages=new Map();if(canvas)canvas.hidden=true;}
+ portrait?.toggleAttribute('data-layered',!!p.layers);
+ const active=()=>open&&token===layerToken&&lastPose!==''&&targetPose===p;
  if(!p.layers){renderState('loading');void decodeImage(p.base).then(()=>{if(active())renderState('ready');}).catch(()=>{if(active())renderState('error');});return;}
- const finish=(entries:readonly (readonly [string,HTMLImageElement])[])=>{if(!active())return;layerPending=false;layerImages=new Map(entries);drawLayers();};
+ const finish=(entries:readonly (readonly [string,HTMLImageElement])[])=>{if(!active())return;layerPending=false;layerPose=p;layerImages=new Map(entries);drawLayers();};
  const cached=required.map(url=>[url,imageCache.get(url)] as const);
  if(cached.every((entry):entry is readonly [string,HTMLImageElement]=>!!entry[1])){finish(cached);return;}
  layerPending=true;renderState('loading');
- void Promise.all(required.map(async url=>[url,await decodeImage(url)] as const)).then(finish).catch(()=>{if(active()){layerPending=false;layerImages.clear();renderState('error');feedback('角色差分素材未能解码');}});
+ void Promise.all(required.map(async url=>[url,await decodeImage(url)] as const)).then(finish).catch(()=>{if(active()){layerPending=false;failedSourcePose=p;renderState('error');feedback('所需原始差分素材未能解码，点击立绘重试');}});
+}
+// Select only from verified original source tiers. CSS fit, DPR and viewport size
+// never enter the original logical zoom decision. Keep the current decoded tier
+// and its own resolution until the new tier's complete composition is decoded.
+function sourcePose(p:Pose):Pose{
+ if(!p.tiers?.length||!sceneBinding||!sceneFrame)return p;
+ const projection=sceneBinding.projection,raw=projectMascotCamera({...projection,canvas:p.canvas,properties:{...projection.properties,...sceneFrame.objects.actor.properties},camera:{...projection.camera,...sceneFrame.camera.properties} as MascotProjectionInput['camera']});
+ if(!raw.visible)return p;
+ const resolution=selectMascotSourceResolution(measureMascotSourceZoom(raw.logicalMatrix),p.tiers.map(tier=>tier.resolution));
+ if(resolution===50)return p;
+ const tier=p.tiers.find(tier=>tier.resolution===resolution)!;let selected=tierPoses.get(tier);
+ if(!selected){selected={...p,...tier,tiers:undefined,blink:null,mouth:null,motion:[]};tierPoses.set(tier,selected);}return selected;
+}
+function refreshSourceTier(){
+ const p=lastPose?pack?.poses[lastPose]:null;if(!p?.tiers?.length)return false;
+ const selected=sourcePose(p);if(selected===failedSourcePose||targetPose===selected&&(layerPending||layerPose===selected))return false;
+ loadLayers(selected,true);return true;
 }
 function warmNext(){
  const lines=choices(),index=lines.findIndex(x=>x.id===current?.id),next=lines[(index+1)%lines.length],p=next&&pack?.poses[next.pose];
@@ -193,7 +214,7 @@ function syncSettings(){
 }
 function setImage(selector:string,url:string|null){const img=frameImage(selector);if(!img)return;if(url){if(img.getAttribute('src')!==url)img.src=url;}else img.removeAttribute('src');}
 function pose(id:string){
- const p=pack?.poses[id];if(!p||!poseAllowed(p))return;stopMotion();motionIndex=0;if(!p.layers&&lastPose!==id)preloadPose(p);lastPose=id;loadLayers(p);setImage('base',p.layers?null:p.base);const base=frameImage('base');if(base)base.hidden=!!p.layers;positionMedia();
+ const p=pack?.poses[id];if(!p||!poseAllowed(p))return;stopMotion();motionIndex=0;if(!p.layers&&lastPose!==id)preloadPose(p);lastPose=id;failedSourcePose=null;loadLayers(sourcePose(p));setImage('base',p.layers?null:p.base);const base=frameImage('base');if(base)base.hidden=!!p.layers;positionMedia();
  const portrait=$('.ginka-mascot-portrait');if(portrait){portrait.dataset.mascotPose=id;portrait.setAttribute('aria-label',(p.character==='child'?'小银花':'大银花')+' · '+(p.outfitLabel||p.outfit)+' · '+p.expression+' · '+p.gesture+' · 下一句');}
 }
 function startMotion(){stopMotion();const id=lastPose,p=pack?.poses[id];if(!p?.motion.length||reduce()||!open||document.hidden)return;const tick=()=>{if(!open||!audio?.paused||lastPose!==id||reduce()||document.hidden)return;const frame=p.motion[motionIndex++%p.motion.length];if(readyFrames.has(frame.image))setImage('base',frame.image);motionTimer=window.setTimeout(tick,frame.ms);};tick();}
@@ -206,7 +227,7 @@ function pumpScene(){
 }
 function startScene(line:Line){
  stopScene();positionMedia();if(!line.sceneAction)return;
- try{sceneBinding=line.sceneAction;commandIndex=0;scene=new SceneActionScheduler(sceneBinding.initial,{reducedMotion:reduce()});pumpScene();const p=pack?.poses[line.pose];if(sceneBinding.overlays?.length&&p){layerPose=null;loadLayers(p);}positionMedia();startHost();}
+ try{sceneBinding=line.sceneAction;commandIndex=0;scene=new SceneActionScheduler(sceneBinding.initial,{reducedMotion:reduce()});pumpScene();const p=pack?.poses[line.pose];if(p){const selected=sourcePose(p);if(sceneBinding.overlays?.length||selected!==layerPose){targetPose=null;loadLayers(selected,true);}}positionMedia();startHost();}
  catch{stopScene();sceneStatus('invalid');feedback('此句演出投影尚不受支持；保留已验证静态立绘');positionMedia();}
 }
 // One RAF owns both text reveal and the bounded numeric action host.
@@ -214,7 +235,7 @@ function startHost(){if(reveal||!open||document.hidden||!revealTarget&&!sceneFra
 function hostTick(now:number){
  reveal=0;if(!open||document.hidden){hostTimestamp=null;return;}
  const delta=hostTimestamp===null?0:Math.max(0,now-hostTimestamp);hostTimestamp=now;
- if(scene&&sceneFrame?.active){try{scene.advance(delta*playback.effectSpeed);pumpScene();if(sceneBinding?.overlays?.length&&!layerPending)drawLayers();else positionMedia();}catch{stopScene();sceneStatus('invalid');feedback('演出投影未能继续，已停止');}}
+ if(scene&&sceneFrame?.active){try{scene.advance(delta*playback.effectSpeed);pumpScene();refreshSourceTier();if(sceneBinding?.overlays?.length&&layerPose)drawLayers();else positionMedia();}catch{stopScene();sceneStatus('invalid');feedback('演出投影未能继续，已停止');}}
  if(revealTarget&&current){revealElapsed+=delta;const chars=Array.from(displayedText),count=playback.textRevealMs===0?chars.length:Math.min(chars.length,Math.floor(revealElapsed/playback.textRevealMs)+1);revealTarget.textContent=chars.slice(0,count).join('');if(count===chars.length){revealTarget=null;scheduleAuto();}}
  if(revealTarget||sceneFrame?.active)reveal=requestAnimationFrame(hostTick);else hostTimestamp=null;
 }
@@ -261,7 +282,7 @@ async function play(line:Line,animate=true,presentation=true,record=true){
 }
 function next(){setAuto(false);if(open&&$('.ginka-mascot-portrait')?.dataset.mascotRender==='error'&&lastPose){pose(lastPose);return;}if(finishReveal())return;const lines=choices();if(!lines.length){previewSelection();feedback('当前差分没有同记录绑定的已验证对白');return;}const index=lines.findIndex(x=>x.id===current?.id);void play(lines[(index+1)%lines.length]);}
 function close(restoreFocus=false){
- const focused=root?.contains(document.activeElement);setAuto(false);open=false;generation++;stopMotion();stopScene();cancelAnimationFrame(reveal);reveal=0;hostTimestamp=null;audio?.pause();playingId=null;clearDialogue();layerToken++;frameGeneration++;layerPending=false;layerPose=null;layerImages.clear();lastPose='';
+ const focused=root?.contains(document.activeElement);setAuto(false);open=false;generation++;stopMotion();stopScene();cancelAnimationFrame(reveal);reveal=0;hostTimestamp=null;audio?.pause();playingId=null;clearDialogue();layerToken++;frameGeneration++;layerPending=false;layerPose=null;targetPose=null;failedSourcePose=null;layerImages.clear();lastPose='';
  const c=$('[data-mascot-character]');if(c)c.hidden=true;const launcher=$('[data-mascot-action=open]');launcher?.setAttribute('aria-expanded','false');if(restoreFocus&&focused){const visible=(element:HTMLElement|null|undefined)=>!!element?.isConnected&&!element.closest('[hidden],[inert]')&&element.getClientRects().length>0&&getComputedStyle(element).visibility!=='hidden';const target=visible(openTrigger)?openTrigger:Array.from(document.querySelectorAll<HTMLElement>('[data-mascot-action=preview]')).find(visible)??(visible(launcher)?launcher:null);target?.focus({preventScroll:true});}openTrigger=null;voiceStatus();
 }
 function saveVoice(line:Line|null=current,remove=false){if(!line?.voice||!allowed(line))return;try{const existing=saved(),remaining=existing.filter(x=>x!==line.id),deleting=remove||existing.includes(line.id);localStorage.setItem(SAVED,JSON.stringify(deleting?remaining:[line.id,...remaining].slice(0,100)));feedback(deleting?'已移除语音收藏':'语音已收藏');syncSettings();}catch{feedback('无法更新语音收藏');}}
@@ -327,7 +348,7 @@ document.addEventListener('vn:progress-change',refreshEligibility);
 window.addEventListener('storage',()=>{readSettings();refreshEligibility();});
 document.addEventListener('visibilitychange',()=>{document.documentElement.toggleAttribute('data-mascot-page-hidden',document.hidden);if(document.hidden){setAuto(false);generation++;finishReveal();audio?.pause();playingId=null;stopMotion();stopScene(false);cancelAnimationFrame(reveal);reveal=0;hostTimestamp=null;voiceStatus();}else if(open)startMotion();});
 const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
-function resyncMotion(){if(!open)return;try{scene?.setReducedMotion(reduce());if(scene){pumpScene();if(sceneBinding?.overlays?.length&&!layerPending)drawLayers();else positionMedia();startHost();}}catch{stopScene();sceneStatus('invalid');feedback('演出投影未能继续，已停止');positionMedia();}if(reduce()){stopMotion();finishReveal();}else if(audio?.paused)startMotion();}
+function resyncMotion(){if(!open)return;try{scene?.setReducedMotion(reduce());if(scene){pumpScene();refreshSourceTier();if(sceneBinding?.overlays?.length&&layerPose)drawLayers();else positionMedia();startHost();}}catch{stopScene();sceneStatus('invalid');feedback('演出投影未能继续，已停止');positionMedia();}if(reduce()){stopMotion();finishReveal();}else if(audio?.paused)startMotion();}
 motionPreference.addEventListener('change',resyncMotion);
 document.documentElement.toggleAttribute('data-mascot-page-hidden',document.hidden);
 readSettings();mount();

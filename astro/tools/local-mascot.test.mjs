@@ -49,6 +49,14 @@ test('v2 verifies sparse ordered layers, independent alternatives and silent dia
   pose.phaseVerified=false;assert.throws(load,/Unverified layered pose/);delete pose.phaseVerified;
   pack.lines[0].phaseVerified=false;assert.throws(load,/Invalid unlock phase/);delete pack.lines[0].phaseVerified;
   pose.source='_hxv4_hash/private nativeStorage nameHash';pack.lines[0].source=pose.source;pack.lines[0].voiceSource=pose.source;const projected=JSON.stringify(load().manifest);assert.doesNotMatch(projected,/source|Source|_hxv4_hash|nativeStorage|nameHash/);
+  pose.tiers=[{...pose,resolution:50,canvas:{width:2,height:1},baseRect:{x:0,y:0,width:2,height:1}},{...pose,resolution:100,canvas:{width:4,height:3},baseRect:{x:1,y:1,width:2,height:1}}];
+  const tiers=load().manifest.poses.a.tiers;assert.deepEqual(tiers.map(tier=>tier.resolution),[50,100]);assert.deepEqual(tiers[1].canvas,{width:4,height:3});assert.deepEqual(tiers[1].baseOffset,{x:1,y:1});assert.doesNotMatch(JSON.stringify(tiers),/source|Source|_hxv4_hash|nativeStorage|nameHash|verified/);
+  pose.tiers[1].verified=false;assert.throws(load,/Unverified or duplicate source tier/);pose.tiers[1].verified=true;
+  pose.tiers[1].resolution=50;assert.throws(load,/Unverified or duplicate source tier/);pose.tiers[1].resolution=100;
+  pose.tiers[0].baseRect.x=1;pose.tiers[0].canvas.width=3;assert.throws(load,/tier 50 does not match/);pose.tiers[0].baseRect.x=0;pose.tiers[0].canvas.width=2;
+  pose.tiers[1].base='../outside.png';assert.throws(load,/asset path|ENOENT/);pose.tiers[1].base='base.png';
+  pose.tiers[1].canvas.width=1;assert.throws(load,/sparse base rectangle/);pose.tiers[1].canvas.width=4;
+  delete pose.tiers;
   pose.verified=false;assert.throws(load,/Unverified layered pose/);pose.verified=true;
   pack.lines[0].verified=false;assert.throws(load,/Unverified or invalid dialogue/);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}

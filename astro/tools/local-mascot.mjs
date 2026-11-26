@@ -95,10 +95,7 @@ export function loadMascotPack(input){
   if(registered.has(file))return registered.get(file);
   const size=fs.statSync(file).size;if(!size)throw Error('Empty asset');const canvas=kind==='image'?imageCanvas(file):null;const key='asset-'+files.size+ext;files.set(key,{file,type,size,canvas});registered.set(file,prefix+key);return prefix+key;
  }
- for(const [id,pose] of Object.entries(raw.poses)){
-  if(!idPattern.test(id)||!pose||typeof pose.source!=='string'||!pose.source.trim())throw Error('Invalid pose evidence');
-  if(!['child','adult'].includes(pose.character)||!['main','afterstory'].includes(pose.phase)||!['outfit','expression','gesture'].every(k=>typeof pose[k]==='string'&&pose[k].trim()&&pose[k].length<=80))throw Error('Missing character/wardrobe/expression/gesture metadata: '+id);
-  if(layered&&(pose.verified!==true||pose.phaseVerified===false||typeof pose.phaseSource!=='string'||!pose.phaseSource.trim()))throw Error('Unverified layered pose or phase: '+id);
+ function composition(pose,id,layered){
   const base=register(pose.base,'image');
   const motion=pose.motion??[];
   if(!Array.isArray(motion)||motion.length>120)throw Error('Invalid pose motion');
@@ -135,8 +132,30 @@ export function loadMascotPack(input){
     return {slot:layer.slot,...normal,alternate};
    });
   }
+  return {layers,base,blink,mouth,motion:frames,canvas,baseOffset};
+ }
+ for(const [id,pose] of Object.entries(raw.poses)){
+  if(!idPattern.test(id)||!pose||typeof pose.source!=='string'||!pose.source.trim())throw Error('Invalid pose evidence');
+  if(!['child','adult'].includes(pose.character)||!['main','afterstory'].includes(pose.phase)||!['outfit','expression','gesture'].every(k=>typeof pose[k]==='string'&&pose[k].trim()&&pose[k].length<=80))throw Error('Missing character/wardrobe/expression/gesture metadata: '+id);
+  if(layered&&(pose.verified!==true||pose.phaseVerified===false||typeof pose.phaseSource!=='string'||!pose.phaseSource.trim()))throw Error('Unverified layered pose or phase: '+id);
+  const primary=composition(pose,id,layered);
+  const {layers,base,blink,mouth,motion:frames,canvas,baseOffset}=primary;
+  let tiers;
+  if(pose.tiers!==undefined){
+   if(!layered||!Array.isArray(pose.tiers)||!pose.tiers.length||pose.tiers.length>4)throw Error('Invalid source tiers');
+   const seen=new Set();
+   tiers=pose.tiers.map(tier=>{
+    if(!tier||tier.verified!==true||typeof tier.source!=='string'||!tier.source.trim()||![50,100,200,250].includes(tier.resolution)||seen.has(tier.resolution))throw Error('Unverified or duplicate source tier');
+    seen.add(tier.resolution);const part=composition(tier,id+' tier',true);
+    if(!tier.canvas||part.canvas.width!==tier.canvas.width||part.canvas.height!==tier.canvas.height)throw Error('Source tier canvas mismatch');
+    return {resolution:tier.resolution,base:part.base,canvas:part.canvas,baseOffset:part.baseOffset,layers:part.layers};
+   }).sort((a,b)=>a.resolution-b.resolution);
+   const normal=part=>({base:part.base,canvas:part.canvas,baseOffset:part.baseOffset,layers:part.layers.map(({alternate,...layer})=>layer)});
+   const original=tiers.find(tier=>tier.resolution===50);
+   if(!original||JSON.stringify(normal(original))!==JSON.stringify(normal(primary)))throw Error('Source tier 50 does not match the verified base composition');
+  }
   // Evidence remains server-side. The browser receives only display metadata and opaque local asset URLs.
-  poses[id]={layers,character:pose.character,phase:pose.phase,outfit:pose.outfit,outfitLabel:typeof pose.outfitLabel==='string'&&pose.outfitLabel.trim()&&pose.outfitLabel.length<=80?pose.outfitLabel:pose.outfit,expression:pose.expression,gesture:pose.gesture,base,blink,mouth,motion:frames,canvas,baseOffset};
+  poses[id]={layers,character:pose.character,phase:pose.phase,outfit:pose.outfit,outfitLabel:typeof pose.outfitLabel==='string'&&pose.outfitLabel.trim()&&pose.outfitLabel.length<=80?pose.outfitLabel:pose.outfit,expression:pose.expression,gesture:pose.gesture,base,blink,mouth,motion:frames,canvas,baseOffset,...(tiers?{tiers}:{})};
  }
  if(!Object.hasOwn(poses,raw.defaultPose)||poses[raw.defaultPose].phase!=='main')throw Error('Unknown default pose');
  for(const line of raw.lines){

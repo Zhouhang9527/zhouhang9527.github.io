@@ -1,7 +1,7 @@
 // Local-only acceptance for the real verified pack. Never upload its screenshots or recordings to CI.
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
-import {projectMascotCamera,computeMascotGeometry,projectLinkedMascotOverlay} from '../src/lib/mascot-geometry.ts';
+import {projectMascotCamera,computeMascotGeometry,projectLinkedMascotOverlay,measureMascotSourceZoom,selectMascotSourceResolution} from '../src/lib/mascot-geometry.ts';
 import {SceneActionScheduler} from '../src/domain/vn-actions.ts';
 const origin=new URL(process.env.GINKA_TEST_BASE_URL||'http://127.0.0.1:4321');
 assert.ok(['127.0.0.1','localhost','[::1]'].includes(origin.hostname),'Use a private loopback preview only');
@@ -12,10 +12,33 @@ assert.doesNotMatch(JSON.stringify(pack),/"(?:source|voiceSource|phaseSource|sou
 const lines=pack.lines,poses=pack.poses;
 assert.ok(lines.some(l=>l.phase==='main'&&poses[l.pose].character==='child'&&l.voice),'Missing voiced child');
 assert.ok(lines.some(l=>l.phase==='afterstory'&&poses[l.pose].character==='adult'&&l.voice),'Missing voiced adult');
+function reviewedEndpoint(binding){
+ const scheduler=new SceneActionScheduler(binding.initial,{reducedMotion:true});
+ for(const command of binding.actions){assert.equal(scheduler.frame().waiting,false,'This acceptance sample must provide a separately reviewed finite wait boundary');assert.equal(scheduler.dispatch(command).ok,true);}
+ assert.equal(scheduler.frame().waiting,false);return scheduler.frame();
+}
+function sourceComposition(pose,binding){
+ if(!pose.tiers?.length||!binding)return pose;
+ const frame=reviewedEndpoint(binding),projection=binding.projection,raw=projectMascotCamera({...projection,canvas:pose.canvas,properties:{...projection.properties,...frame.objects.actor.properties},camera:{...projection.camera,...frame.camera.properties}});
+ if(!raw.visible)return pose;
+ const resolution=selectMascotSourceResolution(measureMascotSourceZoom(raw.logicalMatrix),pose.tiers.map(tier=>tier.resolution));
+ return {...pose,...pose.tiers.find(tier=>tier.resolution===resolution)};
+}
+async function assertSourcePixels(page,pose){
+ const changed=await page.evaluate(async pose=>{
+  const actual=document.querySelector('[data-mascot-canvas]'),reference=document.createElement('canvas');reference.width=pose.canvas.width;reference.height=pose.canvas.height;const c=reference.getContext('2d'),cache=new Map();
+  for(const url of new Set([pose.base,...pose.layers.map(layer=>layer.image)])){const image=new Image();image.src=url;await image.decode();cache.set(url,image);}
+  c.drawImage(cache.get(pose.base),pose.baseOffset?.x??0,pose.baseOffset?.y??0);
+  for(const layer of pose.layers){const image=cache.get(layer.image);if(layer.blend==='replace')c.clearRect(layer.x,layer.y,image.naturalWidth,image.naturalHeight);c.drawImage(image,layer.x,layer.y);}
+  const expected=c.getImageData(0,0,reference.width,reference.height).data,got=actual.getContext('2d').getImageData(0,0,actual.width,actual.height).data;let changed=0;
+  if(expected.length!==got.length)return -1;for(let i=0;i<expected.length;i++)if(expected[i]!==got[i])changed++;return changed;
+ },pose);
+ assert.equal(changed,0,'Selected original tier must compose its own native PNG/rects pixel-exactly, not an upscaled s page');
+}
 async function assertOverlayPixels(page,line,pose){
  const binding=line.sceneAction,p0=binding.projection,frame=binding.initial,properties={...p0.properties,...frame.objects.actor.properties},camera={...p0.camera,...frame.camera.properties};
  assert.equal(binding.actions.length,0,'Static emotion acceptance must not imply show/hide timeline support');
- const actor=projectMascotCamera({...p0,canvas:pose.canvas,properties,camera});
+ const actor=projectMascotCamera({...p0,canvas:pose.canvas,resolution:pose.resolution??p0.resolution,properties,camera});
  const overlays=binding.overlays.map(overlay=>{const {image,...input}=overlay;return {image,order:overlay.properties.order??0,...projectLinkedMascotOverlay({...input,stage:p0.stage,camera,parentProperties:properties})};});
  const result=await page.evaluate(async({pose,actor,overlays,stage,actorOrder})=>{
   const actual=document.querySelector('[data-mascot-canvas]'),expected=document.createElement('canvas');expected.width=stage.width;expected.height=stage.height;const c=expected.getContext('2d'),cache=new Map();
@@ -34,7 +57,7 @@ const browser=await chromium.launch();const results=[];
 try{
  for(const width of [390,1440]){
   for(const unlocked of [false,true]){
-   const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
+   const page=await browser.newPage({viewport:{width,height:900},deviceScaleFactor:width===390?3:1,reducedMotion:'reduce'});
    const errors=[],failures=[];page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.url().startsWith(origin.origin+'/__ginka_local_mascot__/')&&r.status()>=400)failures.push(r.status());});
    await page.route('**/*',r=>new URL(r.request().url()).origin===origin.origin?r.continue():r.abort());
    await page.addInitScript(unlocked=>{localStorage.setItem('ginka.vn.mode.v1','reader');if(unlocked)localStorage.setItem('ginka.vn.progress.v1',JSON.stringify({version:1,completed:[],mainCleared:true}));},unlocked);
@@ -43,12 +66,14 @@ try{
    const allowed=lines.filter(l=>unlocked||l.phase==='main'&&poses[l.pose].phase==='main');
    await launcher.click();
    await canvas.evaluate(c=>window.__originalMascotCanvas=c);
-   let projected=0,overlays=0,captions=0;
+   let projected=0,overlays=0,captions=0;const tierCounts={};
    for(const [i,line] of allowed.entries()){
     if(i)await next.click();
     await page.waitForFunction(text=>document.querySelector('[data-mascot-text]')?.textContent===text,line.text);
     await page.waitForFunction(()=>document.querySelector('.ginka-mascot-portrait')?.dataset.mascotRender==='ready');
-    const pose=poses[line.pose],composite=!!line.sceneAction?.overlays?.length,size=composite?line.sceneAction.projection.stage:pose.canvas;assert.deepEqual(await canvas.evaluate(c=>[c.width,c.height]),[size.width,size.height]);
+    const pose=sourceComposition(poses[line.pose],line.sceneAction),composite=!!line.sceneAction?.overlays?.length,size=composite?line.sceneAction.projection.stage:pose.canvas;await page.waitForFunction(({width,height})=>{const c=document.querySelector('[data-mascot-canvas]');return c.width===width&&c.height===height&&document.querySelector('.ginka-mascot-portrait').dataset.mascotRender==='ready';},size);
+    assert.deepEqual(await canvas.evaluate(c=>[c.width,c.height]),[size.width,size.height]);
+    if(poses[line.pose].tiers){const resolution=pose.resolution??50;assert.equal(await page.locator('.ginka-mascot-portrait').getAttribute('data-mascot-resolution'),String(resolution));tierCounts[resolution]=(tierCounts[resolution]??0)+1;if(line.sceneAction&&!composite)await assertSourcePixels(page,pose);}
     if(composite){await assertOverlayPixels(page,line,pose);overlays++;}
     assert.ok(await canvas.evaluate(c=>{const p=c.getContext('2d').getImageData(0,0,c.width,c.height).data;for(let i=3;i<p.length;i+=4)if(p[i])return true;return false;}),'Blank original portrait');
     assert.ok(await canvas.evaluate(c=>c===window.__originalMascotCanvas),'No second portrait renderer');
@@ -96,7 +121,7 @@ try{
    await page.locator('.ginka-mascot-selection summary').click();
    await page.locator('[data-mascot-character] [data-mascot-action=close]').click();assert.equal(await audio.evaluate(a=>a.paused),true);
    assert.deepEqual(errors,[]);assert.deepEqual(failures,[]);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-   results.push({width,unlocked,lines:allowed.length,poses:new Set(allowed.map(l=>l.pose)).size,projected,selections,overlays,captions});
+   results.push({width,unlocked,lines:allowed.length,poses:new Set(allowed.map(l=>l.pose)).size,projected,selections,overlays,captions,tierCounts});
    await page.close();
   }
  }
@@ -113,9 +138,8 @@ try{
   const canvas=page.locator('[data-mascot-canvas]'),initial=await canvas.evaluate(c=>c.style.transform);
   await page.waitForFunction(m=>document.querySelector('[data-mascot-canvas]').style.transform!==m,initial);
   await page.waitForFunction(()=>document.querySelector('[data-ginka-mascot]').dataset.mascotScene==='complete');
-  const {projection}=dynamic.sceneAction,p=poses[dynamic.pose],scheduler=new SceneActionScheduler(dynamic.sceneAction.initial);
-  for(const command of dynamic.sceneAction.actions){assert.equal(scheduler.dispatch(command).ok,true);scheduler.advance(1e6);}
-  const frame=scheduler.frame(),raw=projectMascotCamera({...projection,canvas:p.canvas,properties:{...projection.properties,...frame.objects.actor.properties},camera:{...projection.camera,...frame.camera.properties}});
+  const {projection}=dynamic.sceneAction,p=sourceComposition(poses[dynamic.pose],dynamic.sceneAction),frame=reviewedEndpoint(dynamic.sceneAction);
+  const raw=projectMascotCamera({...projection,canvas:p.canvas,resolution:p.resolution??projection.resolution,properties:{...projection.properties,...frame.objects.actor.properties},camera:{...projection.camera,...frame.camera.properties}});
   // Compare the observed endpoint against the independently supplied original projection for this sample.
   assert.ok(raw.matrix.every(Number.isFinite));
   const size=await page.locator('.ginka-mascot-portrait').evaluate(p=>({width:p.clientWidth,height:p.clientHeight})),fit=computeMascotGeometry({canvas:projection.stage,viewport:size});
