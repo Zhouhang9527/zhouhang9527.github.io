@@ -6,11 +6,11 @@ import {setVNFullscreen} from './vn-ui';
 import {optionPages as tabs,optionPage,textSize as parseTextSize,resetPages,optionReturn,defaultTextSize,defaultBgmVolume,CONFIRM_KEY,parseConfirmations,isConfirmAction,defaultConfirmations,PLAYBACK_KEY,parsePlayback,defaultPlayback,type PlaybackOptions,type OptionPage} from '../domain/vn-options';
 let currentPage:OptionPage='display',returnTarget=optionReturn(document.referrer,location.origin);
 const help:Record<OptionPage,string>={display:'全屏、画面效果和阅读主题；原作画面保持固定色彩',program:'打开阅读索引与存档，选择已验证的看板娘',text:'调整实际正文文字大小，下方同步预览',sound:'控制现有背景音乐与语音播放器，不重复创建音频',dialog:'选择存读档确认方式；清除全部记录始终确认',touch:'点击选择，原生滑动浏览，不接管系统返回手势',shortcut:'菜单、页签和弹窗均可使用键盘操作'};
-let textSize=defaultTextSize,playback=defaultPlayback();
+let textSize=defaultTextSize,playback=defaultPlayback(),persistenceFailures=0;
 function loadPlayback(){let raw=null;try{raw=localStorage.getItem(PLAYBACK_KEY);}catch{}playback=parsePlayback(raw);}
 function publishPlayback(){persist(PLAYBACK_KEY,JSON.stringify({version:1,...playback}));document.dispatchEvent(new CustomEvent('vn:playback-change',{detail:{...playback}}));}
 function feedback(message:string){const node=document.querySelector<HTMLElement>('[data-vn-option-feedback]');if(node)node.textContent=message;}
-function persist(key:string,value:string){try{localStorage.setItem(key,value);return true;}catch{feedback('无法保存本机设置，请检查浏览器存储权限');return false;}}
+function persist(key:string,value:string){try{localStorage.setItem(key,value);return true;}catch{persistenceFailures++;feedback('无法保存本机设置，请检查浏览器存储权限');return false;}}
 function loadText(){textSize=defaultTextSize;try{textSize=parseTextSize(localStorage.getItem(TEXT_KEY));}catch{}}
 function applyText(root:Document=document){root.documentElement.style.setProperty('--vn-reader-size',textSize+'px');}
 function themeAPI(){return (window as Window&{GINKA_THEME?:{set:(v:string)=>void;mode:string}}).GINKA_THEME;}
@@ -58,6 +58,7 @@ document.addEventListener('click',async event=>{
  if(!pages.length){feedback('本页是功能入口或操作说明，没有可重置的设置');return;}
  // Deliberately no action argument: reset always asks, even with all toggles off.
  if(!await confirmVN(all?'恢复全部公共设置？不会清除阅读记录或语音收藏。':'恢复当前页默认设置？')||!config.isConnected)return;
+ const failedBefore=persistenceFailures;
  if(pages.includes('display')){
   for(const selector of ['input[name="vn-motion"][value="system"]','input[name="vn-mode"][value="game"]']){const radio=config.querySelector<HTMLInputElement>(selector);if(radio){radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));}}
   themeAPI()?.set('system');playback.effectSpeed=defaultPlayback().effectSpeed;if(document.fullscreenElement)await setVNFullscreen(false);
@@ -69,7 +70,7 @@ document.addEventListener('click',async event=>{
   document.dispatchEvent(new Event('vn:voice-defaults'));
  }
  if(pages.includes('dialog'))persist(CONFIRM_KEY,JSON.stringify({version:1,...defaultConfirmations()}));
- sync();feedback(all?'已恢复全部公共设置；阅读记录与语音收藏未改变':'已恢复当前页默认设置');
+ sync();feedback(persistenceFailures!==failedBefore?'默认设置未能全部保存；请检查浏览器存储权限，重新打开页面后可能恢复旧值':all?'已恢复全部公共设置；阅读记录与语音收藏未改变':'已恢复当前页默认设置');
 });
 function updatePlayback(input:HTMLInputElement){
  const key=input.dataset.vnPlayback as keyof PlaybackOptions;if(!Object.hasOwn(playback,key))return;

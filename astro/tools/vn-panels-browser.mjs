@@ -86,6 +86,19 @@ try{
      await page.evaluate(()=>document.documentElement.requestFullscreen=window.__dRequestFullscreen);
     }
    });
+   await check('read-only storage keeps validated session event and truthful DEFAULT failure feedback',async()=>{
+    await page.locator('[data-vn-option-tab=text]').click();await page.locator('[data-vn-playback=textRevealMs]').focus();await page.keyboard.press('End');
+    await page.evaluate(()=>{const original=Storage.prototype.setItem;window.__dRestoreStorage=()=>Storage.prototype.setItem=original;Storage.prototype.setItem=function(key,value){if(key==='ginka.vn.playback.v1'||key==='ginka.vn.text-size.v1')throw new DOMException('D read-only fixture','QuotaExceededError');return original.call(this,key,value);};window.__dPlaybackSeen=null;document.addEventListener('vn:playback-change',event=>window.__dPlaybackSeen=event.detail);});
+    await page.locator('[data-vn-playback=textRevealMs]').focus();await page.keyboard.press('Home');
+    assert.equal(await page.evaluate(()=>window.__dPlaybackSeen.textRevealMs),0);assert.equal(await page.locator('[data-vn-playback=textRevealMs]').inputValue(),'0');
+    assert.equal(await page.evaluate(k=>JSON.parse(localStorage.getItem(k)).textRevealMs,settingsKey),100);
+    await page.locator('.vn-option-footer [data-vn-option-default]').click();await confirm(true);
+    await page.waitForFunction(()=>document.querySelector('[data-vn-option-feedback]').textContent.includes('未能全部保存'));
+    assert.equal(await page.evaluate(()=>window.__dPlaybackSeen.textRevealMs),30);
+    assert.equal(await page.evaluate(k=>JSON.parse(localStorage.getItem(k)).textRevealMs,settingsKey),100);
+    await page.evaluate(()=>window.__dRestoreStorage());await page.reload();await wait('[data-vn-option-panel=text]');
+    assert.equal(await page.locator('[data-vn-playback=textRevealMs]').inputValue(),'100');
+   });
    await page.goto(base+'/library/');await wait('[data-vn-manual-grid]:not([hidden])');
    await check('all 150 independent manual slots and 15 pages are reachable',async()=>{
     const slots=[];
