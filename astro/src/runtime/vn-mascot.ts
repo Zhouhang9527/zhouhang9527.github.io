@@ -256,7 +256,9 @@ function mount(){
  root=document.querySelector<HTMLElement>('[data-ginka-mascot]');if(!root)return;observePortrait();
  const nextAudio=root.querySelector<HTMLAudioElement>('[data-mascot-audio]');
  if(audio!==nextAudio){close();audio=nextAudio;if(audio){const element=audio;element.addEventListener('ended',()=>{if(audio!==element||!element.ended)return;playingId=null;startMotion();voiceStatus();scheduleAuto();});element.addEventListener('pause',()=>{if(audio===element&&element.paused)voiceStatus();});element.addEventListener('playing',()=>{if(audio===element)voiceStatus();});element.addEventListener('error',()=>{if(audio!==element||!element.error)return;generation++;setAuto(false);playingId=null;feedback('语音未能解码，请点击 VOICE 重试');startMotion();voiceStatus();});}}
- if(pack){root.hidden=false;if(open&&current&&allowed(current))renderLine(current,false);syncSettings();return;}
+ // The persistent host is already mounted. Navigation closes it before swap;
+ // view relocation has its own event. Repeated page-load must not reset clocks.
+ if(pack){root.hidden=false;syncSettings();return;}
  const source=root.dataset.mascotSource;if(!source||loading||unavailable){syncSettings();return;}
  loading=fetch(source,{cache:'no-store'}).then(async r=>{if(!r.ok)throw Error('Pack unavailable');const raw=await r.json();if(raw.available===false){unavailable=true;syncSettings();return;}if(!validPack(raw))throw Error('Invalid pack');pack=raw;if(root)root.hidden=false;syncSettings();}).catch(()=>{unavailable=true;if(root)root.hidden=false;feedback('本地看板娘素材包未就绪，点击银花重试');syncSettings();}).finally(()=>{loading=null;});
 }
