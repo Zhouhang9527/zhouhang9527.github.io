@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {computeMascotGeometry,projectMascotCamera,cameraDepthScale,transformPoint,transformRect,fullPageRasterMatrix,interpolateLevelOffset} from '../src/lib/mascot-geometry.ts';
+import {computeMascotGeometry,projectMascotCamera,projectLinkedMascotOverlay,cameraDepthScale,transformPoint,transformRect,fullPageRasterMatrix,interpolateLevelOffset} from '../src/lib/mascot-geometry.ts';
 
 const close=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-9,`${actual} != ${expected}`);
 const matrixClose=(actual,expected)=>actual.forEach((n,i)=>close(n,expected[i]));
@@ -159,4 +159,30 @@ test('raw projection refuses absent calibration, link/mask/class and nonnumeric 
  for(const properties of [{link:1},{class:79},{leveloffset:'#1,2'},{xpos:'@+1'},{linkmask:1}])assert.throws(()=>projectMascotCamera({...projection,properties}),RangeError);
  assert.throws(()=>projectMascotCamera({...projection,link:'parent'}),RangeError);
  assert.throws(()=>projectMascotCamera({...projection,linkmask:1}),RangeError);
+});
+
+const overlay={canvas:{width:101,height:203},origin:{x:50,y:101},resolution:100,stage:projection.stage,camera:projection.camera,properties:{xpos:-10,ypos:15,order:3},parentProperties:{xpos:20,ypos:5},rightHanded:true,linkmode:0,linkmask:0};
+test('linked bitmap follows only the parent position and its explicit original center',()=>{
+ const g=projectLinkedMascotOverlay(overlay);
+ assert.deepEqual(g.matrix,[1,0,0,1,60,-71]);
+ assert.deepEqual(transformPoint(g.matrix,overlay.origin),{x:110,y:30});
+ assert.equal(g.visible,true);assert.equal(g.opacity,1);
+ const changed=projectLinkedMascotOverlay({...overlay,parentProperties:{...overlay.parentProperties,zpos:-40,zoomx:900,zoomy:80,rotate:75,opacity:0,visvalue:0}});
+ assert.deepEqual(changed,g);
+ const shifted=projectLinkedMascotOverlay({...overlay,parentProperties:{xpos:30,ypos:15}});
+ assert.deepEqual(shifted.matrix,[1,0,0,1,70,-81]);
+});
+test('linked bitmap own flip, scale and opacity remain independent of actor geometry',()=>{
+ const g=projectLinkedMascotOverlay({...overlay,resolution:200,properties:{...overlay.properties,flipx:1,opacity:128,visvalue:50}});
+ matrixClose(g.matrix,[-.5,0,0,.5,135,-20.5]);
+ close(g.opacity,128*50/25500);
+ const c=projectLinkedMascotOverlay({...overlay,camera:{...overlay.camera,camerax:30,cameray:40,camerazoom:150}});
+ close(c.matrix[0],1.5);close(c.matrix[3],1.5);
+});
+test('linked bitmap never silently supports inherited matrices, clipping, unknown flags or unresolved origins',()=>{
+ for(const extra of [{linkmode:1},{linkmask:1},{mode:79},{image:'not geometry'},{rightHanded:1}])assert.throws(()=>projectLinkedMascotOverlay({...overlay,...extra}),RangeError);
+ assert.throws(()=>projectLinkedMascotOverlay({...overlay,origin:{x:NaN,y:0}}),RangeError);
+ assert.throws(()=>projectLinkedMascotOverlay({...overlay,resolution:0}),RangeError);
+ assert.throws(()=>projectLinkedMascotOverlay({...overlay,properties:{xpos:Infinity}}),RangeError);
+ assert.equal(projectLinkedMascotOverlay({...overlay,camera:{...overlay.camera,camerazoom:0}}).visible,false);
 });

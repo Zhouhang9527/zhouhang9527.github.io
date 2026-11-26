@@ -16,6 +16,11 @@ export type MascotProjectionInput=Readonly<{
  levelOffsets?:Readonly<{levels:readonly number[];offsets:readonly Point[]}>;
  placementOffset?:Point;
 }>;
+export type LinkedMascotOverlayInput=Readonly<{
+ canvas:Size;origin:Point;resolution:number;stage:Size;camera:MascotCameraProperties;
+ properties:MascotPoseProperties;parentProperties:MascotPoseProperties;
+ linkmode:0;linkmask:0;rightHanded:boolean;
+}>;
 export type Depth = Readonly<{offsetZ:number;cameraZ?:number;z?:number}>;
 export type MascotCamera = Readonly<{
  x?:number;y?:number;zoom?:number;rotate?:number;flipX?:boolean;flipY?:boolean;depth?:Depth;
@@ -197,4 +202,49 @@ export function projectMascotCamera(input:MascotProjectionInput){
  }
  const matrix=fullPageRasterMatrix(m,canvas,resolution);
  return {matrix,drawRect:transformRect(matrix,[0,0,canvas.width,canvas.height]),visible,opacity,depthScale:depth,levelOffset:offset};
+}
+
+/**
+ * Position-only linked bitmap branch. Parent pose rotation, zoom, depth, alpha
+ * and level offsets are deliberately NOT inherited. No guessed facial anchor,
+ * source image, show/hide timer or second renderer lives in this function.
+ * The caller supplies the source-proven bitmap origin and source resolution.
+ */
+export function projectLinkedMascotOverlay(input:LinkedMascotOverlayInput){
+ const allowed=['canvas','origin','resolution','stage','camera','properties','parentProperties','linkmode','linkmask','rightHanded'];
+ if(Object.keys(input).some(key=>!allowed.includes(key))||input.linkmode!==0||input.linkmask!==0)throw new RangeError('Unsupported linked overlay branch');
+ const {canvas,origin,resolution,stage,camera:c,properties:p,parentProperties:parent,rightHanded}=input;
+ size(canvas,'overlay canvas');size(stage,'stage');point(origin,'bitmap origin');finite(resolution,'source resolution');
+ if(resolution<=0||origin.x<0||origin.y<0||origin.x>canvas.width||origin.y>canvas.height||typeof rightHanded!=='boolean')throw new RangeError('Invalid linked bitmap calibration');
+ numericProperties(c,cameraKeys,'camera');numericProperties(p,poseKeys,'overlay');numericProperties(parent,poseKeys,'parent');
+ if(![0,1].includes(c.camerarh))throw new RangeError('Explicit camera handedness required');
+ const own=(key:typeof poseKeys[number],fallback=0)=>p[key]??fallback;
+ const cam=(key:typeof cameraKeys[number],fallback=0)=>c[key]??fallback;
+ const visible=cam('camerazoom',100)!==0,opacity=Math.max(0,Math.min(1,own('opacity',255)*own('visvalue',100)/25500));
+ let m:Matrix=[0,0,0,0,stage.width/2,stage.height/2];
+ if(visible){
+  m=translation(stage.width/2,stage.height/2);
+  m=multiply(m,scaling(cam('basezoom',100)/100));
+  m=multiply(m,translation(own('originx'),own('originy')));
+  m=multiply(m,scaling(cam('scalex',1),cam('scaley',1)));
+  m=multiply(m,translation(cam('cameraox')+cam('shiftx'),cam('cameraoy')+cam('shifty')));
+  m=pivot(m,cam('zcenterx'),cam('zcentery'),scaling(cam('zoomx',100)/100,cam('zoomy',100)/100));
+  const sign=c.camerarh?1:-1;
+  m=multiply(m,rotation(sign*cam('camerarotate')));
+  m=multiply(m,scaling(cam('camerazoom',100)/100));
+  m=multiply(m,translation(-(cam('cameraoffsetx')+cam('camerax')),sign*(cam('cameraoffsety')+cam('cameray'))));
+  if(rightHanded)m=multiply(m,scaling(1,-1));
+  m=multiply(m,translation(parent.xpos??0,parent.ypos??0));
+  m=multiply(m,translation(own('xpos'),own('ypos')));
+  m=pivot(m,own('rcenterx',own('centerx')),own('rcentery',own('centery')),rotation(own('rotate')));
+  m=pivot(m,own('zcenterx',own('centerx')),own('zcentery',own('centery')),scaling(own('zoomx',100)/100,own('zoomy',100)/100));
+  m=multiply(m,[1,own('slanty'),own('slantx'),1,0,0]);
+  if(own('flipy'))m=multiply(m,scaling(1,-1));
+  if(own('flipx'))m=multiply(m,scaling(-1,1));
+  m=multiply(m,translation(own('offsetx'),own('offsety')));
+  if(rightHanded)m=multiply(m,scaling(1,-1));
+ }
+ const matrix=normalized(multiply(multiply(m,scaling(100/resolution)),translation(-origin.x,-origin.y)));
+ if(!matrix.every(Number.isFinite))throw new RangeError('Invalid linked bitmap projection');
+ return {matrix,drawRect:transformRect(matrix,[0,0,canvas.width,canvas.height]),visible,opacity};
 }
