@@ -935,3 +935,8 @@ body .vn-information a{color:#ecf7ff!important;text-decoration:none}
  .vn-load-footer nav,.vn-load-footer [data-vn-page-numbers]{gap:2px}
  .vn-load-footer :is(button,a){min-width:38px}
 }
+/* Touch hit areas are a blog adaptation; fine-pointer original PBD geometry is unchanged. */
+@media(pointer:coarse){
+ body .vn-menu > :is(a,button),body .vn-title[data-vn-title-menu-original=true] .vn-menu > a{min-height:44px;min-width:44px}
+ body .vn-game-reader button,body .vn-game-reader[data-vn-reader-original=true] button[data-vn-game-action]{min-height:44px;min-width:44px}
+}

@@ -4,7 +4,7 @@ import {parseSaveRecord,type SaveRecord} from '../domain/reading-state';
 import {confirmVN} from './vn-confirm';
 import {beginManualSave,beginManualLoad,captureSaveRecord,restoreSave} from './vn-progress';
 import {isReaderAction} from '../domain/vn-actions';
-import {PLAYBACK_KEY,parsePlayback} from '../domain/vn-options';
+import {PLAYBACK_KEY,parsePlayback,type PlaybackOptions} from '../domain/vn-options';
 const KEY='ginka.vn.quick.v1';
 let playback=parsePlayback(null);
 function readPlayback(){try{playback=parsePlayback(localStorage.getItem(PLAYBACK_KEY));}catch{playback=parsePlayback(null);}}
@@ -104,6 +104,6 @@ document.addEventListener('vn:mascot-open',stop);
 document.addEventListener('vn:progress-reset',sync);
 document.addEventListener('vn:voice-state',sync);
 window.addEventListener('storage',event=>{if(event.key===PLAYBACK_KEY||event.key===null)readPlayback();sync();queueDock();});
-document.addEventListener('vn:playback-change',readPlayback);
+document.addEventListener('vn:playback-change',event=>{playback=(event as CustomEvent<PlaybackOptions>).detail;});
 document.addEventListener('vn:view-change',()=>{if(document.documentElement.dataset.vnMode==='reader'){stop();showQuick(false);}queueDock();});
 mount();
