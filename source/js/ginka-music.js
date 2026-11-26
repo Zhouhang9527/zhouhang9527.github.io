@@ -165,8 +165,9 @@
 
     const setRefreshLoading = (loading) => {
       if (!sourceRetryBtn) return;
-      sourceRetryBtn.classList.toggle('is-loading', !!loading);
-      sourceRetryBtn.setAttribute('aria-busy', String(!!loading));
+      const busy = !!loading || !!playlistRequest || !!trackRefreshRequest;
+      sourceRetryBtn.classList.toggle('is-loading', busy);
+      sourceRetryBtn.setAttribute('aria-busy', String(busy));
     };
     function clearTrackRefresh() {
       if (!trackRefreshRequest) return;

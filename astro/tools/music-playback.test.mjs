@@ -13,6 +13,7 @@ const numberSource=implementation('    function getStoredNumber(', '    function
 const playbackSource=implementation('    async function attemptPlay(', '    function togglePlay(');
 const errorSource=implementation('    let errorSkipCount = 0;', '    toggleBtn.addEventListener(');
 const clearRefreshSource=implementation('    function clearTrackRefresh()', '    const setActiveList =');
+const spinnerSource=implementation('    const setRefreshLoading =', '    function clearTrackRefresh()');
 const loadSource=implementation('    function loadMusic(', '    function renderPlaylist(');
 const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
 function harness(){
@@ -26,6 +27,18 @@ function harness(){
  vm.runInContext(`let musicLoadSequence=0,playbackRequestSequence=0,playbackWanted=false,hasStartedPlayback=false,pendingSeekRestore=null,autoGainFactor=1,suppressMediaError=0,currentSource='online',trackRefreshRequest=0,playlistRequest=null;\n${clearRefreshSource}\n${numberSource}\n${playbackSource}\n${loadSource}`,context);
  return {context,audio,pending,states,storage,refreshLoading,selectTrack:context.loadMusic};
 }
+
+test('a shared refresh control stays busy while either real request owner is pending',()=>{
+ const control={busy:false,aria:'false'},sourceRetryBtn={classList:{toggle:(_name,busy)=>{control.busy=busy;}},setAttribute:(_name,value)=>{control.aria=value;}};
+ const context=vm.createContext({sourceRetryBtn});
+ vm.runInContext(`let playlistRequest=null,trackRefreshRequest=0;\n${spinnerSource}`,context);
+ for(const owners of ['playlistRequest=Promise.resolve([]);trackRefreshRequest=0','playlistRequest=null;trackRefreshRequest=7']){
+  vm.runInContext(owners+';setRefreshLoading(false)',context);
+  assert.equal(control.busy,true);assert.equal(control.aria,'true','an unrelated completion cannot clear the active owner');
+ }
+ vm.runInContext('playlistRequest=null;trackRefreshRequest=0;setRefreshLoading(false)',context);
+ assert.equal(control.busy,false);assert.equal(control.aria,'false');
+});
 
 test('absent or invalid volume uses its default without losing an explicit mute',()=>{
  const {context,storage}=harness();
