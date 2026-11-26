@@ -152,7 +152,7 @@ async function renderMap({data = posts, original = false} = {}) {
   const mapURL = await compile(mapSource, 'map.astro', {
     '../layouts/Layout.astro': layoutURL, '../components/game/GamePanel.astro': panelURL,
     '../lib/site': data === posts ? realSiteURL : siteModule(data), '../lib/vn-scenes': sceneURL,
-    '../lib/map-topics': helperURL,
+    '../lib/map-topics': helperURL, '../../config/vn-mainline.json': jsonModule(mainline),
   }, original);
   const {default: MapPage} = await import(mapURL);
   const container = await experimental_AstroContainer.create();
@@ -199,11 +199,12 @@ test('map phase, progress paths and private-frame selection remain the existing 
     const mapTag = html.match(/<div\b[^>]*\sdata-vn-map\s[^>]*>/)?.[0];
     assert.ok(mapTag);
     const paths = mapTag.match(/data-vn-paths="([^"]+)"/)?.[1];
-    assert.deepEqual(JSON.parse(decodeAttribute(paths)), sitePosts.map(item => realSite.href(item.data.route)));
+    assert.deepEqual(JSON.parse(decodeAttribute(paths)), mainline.routes.map(realSite.href));
+    assert.equal(sitePosts.length,15);
     assert.ok(mapTag.includes(`data-vn-map-phase="${state.id}"`));
     assert.ok(mapTag.includes(`data-vn-map-frame="${state.id}"`));
     assert.ok(mapTag.includes(`data-vn-map-original="${original}"`));
-    assert.match(html, /阅读记录 0 \/ 15/);
+    assert.match(html, /主线阅读 0 \/ 15/);
     assert.equal(count(html, /<details\b/g), 8);
     if (original) {
       const privateState=scenes.map.states.find(item=>item.id===state.id);

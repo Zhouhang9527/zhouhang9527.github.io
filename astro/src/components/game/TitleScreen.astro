@@ -18,7 +18,7 @@ const menuBounds=rectStyle(menu.states.CONTINUE.bounds,[0,0,...menu.canvas]);
 const menuLayout=localOriginal?menuBounds+';--vn-menu-gap:'+((menu.rowHeight-menu.buttonSize[1])/menu.canvas[0]*100)+'cqw;--vn-menu-height:'+(menu.buttonSize[1]/menu.canvas[0]*100)+'cqw':undefined;
 const coverStyle=localOriginal?`--vn-original-frame:url('${initialPrivateFrame}')`:undefined;
 ---
-<section class="vn-stage vn-title" data-vn-title data-vn-title-menu-original={String(menuOriginal)} data-vn-title-unlocked="false" data-vn-cover={background.id} data-vn-stage={initial.id} data-vn-character-present={String(initial.present)} data-vn-expression={initial.expression??"none"} data-vn-frame={initial.id} data-vn-original={String(localOriginal)} data-vn-frame-render={localOriginal?"original":"unavailable"} data-vn-private-frame-map={localOriginal?JSON.stringify(privateTitleFrames):undefined} data-vn-private-title-timing={localOriginal?JSON.stringify(vnScenes.motion.title):undefined} data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} data-vn-mainline={JSON.stringify(required)} aria-labelledby="vn-title-heading">
+<section class="vn-stage vn-title" data-vn-title data-vn-title-menu-original={String(menuOriginal)} data-vn-title-unlocked="false" data-vn-menu-phase="first" data-vn-reading-stage="unread" data-vn-cover={background.id} data-vn-stage={initial.id} data-vn-character-present={String(initial.present)} data-vn-expression={initial.expression??"none"} data-vn-frame={initial.id} data-vn-original={String(localOriginal)} data-vn-frame-render={localOriginal?"original":"unavailable"} data-vn-private-frame-map={localOriginal?JSON.stringify(privateTitleFrames):undefined} data-vn-private-title-timing={localOriginal?JSON.stringify(vnScenes.motion.title):undefined} data-vn-paths={JSON.stringify(posts.map(p=>href(p.data.route)))} data-vn-mainline={JSON.stringify(required)} aria-labelledby="vn-title-heading">
  <div class="vn-cover" aria-hidden="true">
   <div class="vn-cover-art" data-vn-art={background.id} style={coverStyle}></div>
   {localOriginal&&<div class="vn-original-logo" style="--vn-logo-art:url(/__ginka_local_title__/logo.png)"></div>}
@@ -32,7 +32,7 @@ const coverStyle=localOriginal?`--vn-original-frame:url('${initialPrivateFrame}'
     <span class="vn-menu-disabled" data-vn-no-save aria-disabled="true"><span style={menuStyle('CONTINUE')}>CONTINUE</span><small>暂无阅读记录</small></span>
     <a data-vn-next href="/afterstory/" hidden><span style={menuStyle('NEXT')}>NEXT</span><small>后日谈</small></a>
     <span class="vn-menu-disabled" data-vn-no-next aria-disabled="true" aria-hidden={menuOriginal?true:undefined}><span style={menuStyle('NEXT')}>NEXT</span><small>通关后解锁</small></span>
-    <a data-vn-start href="/archives/"><span style={menuStyle('START')}>START</span><small>开始阅读</small></a>
+    <a data-vn-start href="/archives/"><span style={menuStyle('START')}>START</span><small>NEW GAME · 重开当前阅读路线</small></a>
     <a href="/library/"><span style={menuStyle('LOAD')}>LOAD</span><small>读取存档</small></a>
     <a href="/settings/"><span style={menuStyle('SYSTEM')}>SYSTEM</span><small>系统设置</small></a>
     <a data-vn-extra href="/gallery/" hidden><span style={menuStyle('EXTRA')}>EXTRA</span><small>鉴赏与索引</small></a><span class="vn-menu-disabled" data-vn-no-extra aria-disabled="true"><span style={menuStyle('EXTRA')}>EXTRA</span><small>通关后解锁</small></span>
@@ -41,6 +41,7 @@ const coverStyle=localOriginal?`--vn-original-frame:url('${initialPrivateFrame}'
    </nav>
    <span class="vn-next-new" data-vn-next-new hidden style={menuOriginal?"--vn-new-art:url(/__ginka_local_ui__/title-new.png)":undefined}>NEW</span>
    <p class="vn-save-status" data-vn-progress aria-live="polite">主线阅读 0 / {required.length}</p>
+   <p class="vn-save-status" data-vn-title-feedback role="status" hidden></p>
   </div>
   <div class="vn-title-tools">
    <button type="button" data-vn-fullscreen hidden>全屏</button>

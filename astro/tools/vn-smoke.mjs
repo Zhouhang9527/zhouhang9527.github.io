@@ -50,7 +50,10 @@ try{
    await shot('information');
    await back('[data-vn-info="back"]');
    let audio=await page.evaluateHandle(()=>document.querySelector('#bg-music'));
-   await page.locator('[data-vn-start]').click();
+   await page.locator('[data-vn-start]').click();await visible('[data-vn-confirm][open]');
+   await page.locator('[data-vn-confirm-no]').click();await page.locator('[data-vn-confirm]').waitFor({state:'hidden'});
+   assert.equal(new URL(page.url()).pathname,'/','Cancel START must remain at title');
+   await page.locator('[data-vn-start]').click();await visible('[data-vn-confirm][open]');await page.locator('[data-vn-confirm-yes]').click();
    await visible('[data-vn-chapter]');
    await shot('chapter');
    const links=await page.locator('[data-vn-post]').evaluateAll(nodes=>nodes.map(a=>a.getAttribute('href')));
@@ -211,7 +214,7 @@ try{
   finally{results.push(result);await page.close();}
  }
  const motionPage=await browser.newPage({viewport:{width:1280,height:720},reducedMotion:'no-preference'});
- try{await motionPage.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());await motionPage.goto(base+'/');await motionPage.locator('[data-vn-start]').click();const overlay=motionPage.locator('[data-vn-title-departure]');await overlay.waitFor({state:'attached'});assert.equal(await overlay.evaluate(el=>el.getAnimations()[0]?.effect?.getTiming().duration),900);await motionPage.keyboard.press('Escape');await motionPage.waitForURL(url=>url.pathname==='/archives/');await motionPage.locator('[data-vn-chapter]').waitFor();assert.equal(await overlay.count(),0);results.push({mode:'title-motion',ok:true});}catch(error){results.push({mode:'title-motion',ok:false,error:String(error),url:motionPage.url()});}finally{await motionPage.close();}
+ try{await motionPage.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());await motionPage.goto(base+'/');await motionPage.locator('[data-vn-start]').click();await motionPage.locator('[data-vn-confirm][open]').waitFor({state:'visible'});await motionPage.locator('[data-vn-confirm-yes]').click();const overlay=motionPage.locator('[data-vn-title-departure]');await overlay.waitFor({state:'attached'});assert.equal(await overlay.evaluate(el=>el.getAnimations()[0]?.effect?.getTiming().duration),original?1000:900);await motionPage.keyboard.press('Escape');await motionPage.waitForURL(url=>url.pathname==='/archives/');await motionPage.locator('[data-vn-chapter]').waitFor();assert.equal(await overlay.count(),0);results.push({mode:'title-motion',ok:true});}catch(error){results.push({mode:'title-motion',ok:false,error:String(error),url:motionPage.url()});}finally{await motionPage.close();}
  const page=await browser.newPage({javaScriptEnabled:false,viewport:{width:390,height:900}});
  try{await page.goto(base+'/');await page.locator('[data-vn-start]').click();await page.locator('[data-vn-post]').first().click();await page.locator('.post-body').waitFor();results.push({mode:'no-js',ok:true});}
  catch(error){results.push({mode:'no-js',ok:false,error:String(error)});}finally{await page.close();}
