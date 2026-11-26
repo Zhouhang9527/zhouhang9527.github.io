@@ -122,7 +122,7 @@ export function parseSceneAction(raw:unknown):SceneActionResult{
    if(!spend(path))break;const p=path+'.'+i;
    if(!record(item)||!nameOK(item.name)){issue(p,'expected existing named object update');continue;}
    keys(item,['name','action'],p);
-   const actions:ScenePropertyAction[]=[];
+   const actions:ScenePropertyAction[]=[],queued=new Set<SceneProperty>();
    if(!Array.isArray(item.action)){issue(p+'.action','expected property action list');continue;}
    for(const [j,tuple] of item.action.entries()){
     if(!spend(p))break;const q=p+'.action.'+j;
@@ -131,6 +131,10 @@ export function parseSceneAction(raw:unknown):SceneActionResult{
     if(!Array.isArray(tuple)||tuple.length<2||tuple.length>3||!propertyOK(tuple[0])){issue(q,'unsupported property tuple or original stop slot');continue;}
     const property=tuple[0],value=tuple[1];
     if(!Array.isArray(value)){
+     // The native per-object dictionary avoids deleting a property twice.
+     // A scalar following queued actions therefore needs native setProperty
+     // interaction, not a made-up cancellation rule in this projection.
+     if(queued.has(property)){issue(q,'scalar after queued property actions requires native support');continue;}
      const n=numeric(value);
      if(n===null||tuple.length===3&&numeric(tuple[2])!==0){issue(q,'only immediate finite numeric sets are supported');continue;}
      actions.push({property,value:n});continue;
@@ -139,6 +143,7 @@ export function parseSceneAction(raw:unknown):SceneActionResult{
     // is read only on the scalar setProperty path, never on this array path.
     // Accept the observed 0/1 forms; scalar timing remains separately rejected.
     if(tuple.length===3&&![0,1].includes(numeric(tuple[2])??-1)){issue(q,'unsupported action tuple mode');continue;}
+    queued.add(property);
     const steps:SceneStep[]=[];
     if(!value.length)issue(q,'empty action sequence');
     for(const [k,step] of value.entries()){
@@ -309,7 +314,7 @@ export class SceneActionScheduler{
  }
  dispatch(raw:unknown):SceneActionResult{
   const parsed=parseSceneAction(raw);if(!parsed.ok)return parsed;
-  const action=parsed.action,state=copyState(this.state),tracks=new Map(this.tracks),groups=new Map<string,Track>();
+  const action=parsed.action,state=copyState(this.state),tracks=new Map(this.tracks);
   const diagnostics:SceneActionDiagnostic[]=[];
   let randomSerial=this.randomSerial;
   const waits=action.kind==='update'?action.wait:action;
@@ -318,6 +323,9 @@ export class SceneActionScheduler{
   if(action.kind==='update')for(const [i,update] of action.updates.entries()){
    const object=this.object(update.name,state);
    if(!object){diagnostics.push({path:'update.'+i,reason:'missing verified object'});continue;}
+   // updateProperty creates its de-duplication dictionary per object call,
+   // not across pretrans/update or separate records for the same target.
+   const groups=new Map<string,Track>();
    for(const [j,entry] of update.actions.entries()){
     const key=trackKey(update.name,entry.property),path='update.'+i+'.action.'+j;
     if(!groups.has(key)){

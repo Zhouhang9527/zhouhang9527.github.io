@@ -65,10 +65,19 @@ test('relative targets capture dispatch baseline, omitted starts capture precedi
  q.advance(50);assert.equal(x(q),60); // Not 120: @ belongs to construction-time value 20.
 });
 
-test('same property tuples in one update append, a numeric set replaces that sequence',()=>{
+test('same property arrays append but a later scalar is not silently treated as cancel',()=>{
  const q=scheduler();dispatch(q,env([['xpos',0],['xpos',[move(10)]],['xpos',[move(30)]]]));
- q.advance(150);assert.equal(x(q),20);
- dispatch(q,env([['xpos',[move(99)]],['xpos',7]]));q.advance(1000);assert.equal(x(q),7);assert.equal(q.frame().active,false);
+ q.advance(150);assert.equal(x(q),20);const before=q.frame();
+ assert.equal(q.dispatch(env([['xpos',[move(99)]],['xpos',7]])).ok,false);assert.deepEqual(q.frame(),before);
+ dispatch(q,env([['xpos',7]]));q.advance(1000);assert.equal(x(q),7);assert.equal(q.frame().active,false);
+});
+
+test('separate object updates reset the property dictionary and do not append old queued tracks',()=>{
+ const q=scheduler();dispatch(q,['envupdate','update',[
+  {name:'actor',action:[['xpos',[move(40)]]]},
+  {name:'actor',action:[['xpos',[move('@+20')]]]}
+ ]]);
+ assert.equal(x(q),40);q.advance(50);assert.equal(x(q),50);q.advance(50);assert.equal(x(q),60);assert.equal(q.frame().active,false);
 });
 
 test('explicit starts apply after delay; scalar pretrans precedes update',()=>{
