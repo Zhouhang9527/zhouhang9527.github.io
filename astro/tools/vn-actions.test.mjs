@@ -34,7 +34,7 @@ test('source polynomial/cosine easing, never CSS approximations',()=>{
 });
 
 test('envupdate parses finite numeric projection and normalized parameters',()=>{
- const result=parseSceneAction(env([['xpos','8'],['ypos',[move('@+10','100',{delay:null,speed:'2',starttime:'5',accel:'ACDEC',nowait:'1',nofast:0})],1]]));
+ const result=parseSceneAction(env([['xpos','8'],['ypos',[move('@+10','100',{delay:null,speed:'2',starttime:'5',accel:'ACDEC',nowait:'1',nofast:0})],0]]));
  assert.equal(result.ok,true);
  assert.deepEqual(result.action.updates[0].actions,[{property:'xpos',value:8},{property:'ypos',value:[{handler:'MoveAction',value:'@+10',time:100,delay:0,speed:2,starttime:5,accel:'acdec',nowait:true,nofast:false}]}]);
  assert.equal(parseSceneAction(['envupdate','update',[],'wait',{list:[]}]).ok,true);
@@ -147,7 +147,7 @@ test('unsupported handlers, expressions, stop slots, metadata and wait modes fai
   env([null]),env([1]),env([['constructor',1]]),env([['xpos',[move('#&steal()')]]]),env([['xpos',[move('@+1+2')]]]),
   env([['xpos',[move(1,10,{complete:'evil()'})]]]),env([['xpos',[move(1,10,{accel:'function(t){return t}'})]]]),
   env([['xpos',[{handler:'RandomAction',time:10}]]]),env([['xpos',[[move(1),move(2)]]]]),env([['xpos',1,10]]),
-  env([['xpos',[move(1,10,{speed:0})]]]),env([['xpos',[move(1,10,{speed:-1})]]]),env([['xpos',[move(1,-1)]]]),
+  env([['xpos',[move(1)],1]]),env([['xpos',[move(1,10,{speed:0})]]]),env([['xpos',[move(1,10,{speed:-1})]]]),env([['xpos',[move(1,-1)]]]),
   env([['xpos',[move(1,10,{delay:Infinity})]]]),env([['xpos',[move(1,10,{nowait:'maybe'})]]]),
   ['envupdate','update',[],'trans',{time:10}],['envupdate','update',[{name:'actor',action:[],redraw:{}}]],
   ['envupdate','update',[['new','actor','bu']]],wait([null]),wait([{name:'actor',mode:1}]),wait([{name:'actor',mode:2}]),
