@@ -69,6 +69,16 @@ export function projectSceneAction(raw,lineSource,canvas,registerOverlay){
  }
  return {initial:state,actions,projection,...(overlays.length?{overlays}:{})};
 }
+export function projectTranslations(raw){
+ if(raw===undefined)return null;
+ if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).some(key=>!['zh-CN','ja','en'].includes(key)))throw Error('Invalid subtitle languages');
+ const translations={};
+ for(const [language,caption] of Object.entries(raw)){
+  if(!caption||typeof caption!=='object'||Array.isArray(caption)||(caption.speaker!==null&&(typeof caption.speaker!=='string'||!caption.speaker.trim()||caption.speaker.length>80))||typeof caption.text!=='string'||!caption.text.trim()||caption.text.length>600)throw Error('Unverified or invalid subtitle');
+  translations[language]={speaker:caption.speaker,text:caption.text};
+ }
+ return translations;
+}
 export function loadMascotPack(input){
  const manifest=fs.realpathSync(input),root=path.dirname(manifest),raw=JSON.parse(fs.readFileSync(manifest,'utf8'));
  // A declared evidence-only pack is not an error and never exposes its evidence files.
@@ -132,12 +142,13 @@ export function loadMascotPack(input){
  for(const line of raw.lines){
   if(!line||typeof line.id!=='string'||!idPattern.test(line.id)||ids.has(line.id)||typeof line.text!=='string'||!line.text.trim()||line.text.length>600||typeof line.speaker!=='string'||!line.speaker.trim()||!Object.hasOwn(poses,line.pose)||typeof line.source!=='string'||!line.source.trim()||((!layered||line.voice!==null)&&(typeof line.voiceSource!=='string'||!line.voiceSource.trim()))||line.verified!==true||(layered&&(typeof line.phaseSource!=='string'||!line.phaseSource.trim())))throw Error('Unverified or invalid dialogue entry');
   if(line.phaseVerified===false||!['main','afterstory'].includes(line.phase)||(line.phase==='main'&&poses[line.pose].phase==='afterstory'))throw Error('Invalid unlock phase');
+  const translations=projectTranslations(line.translations);
   const sceneAction=projectSceneAction(line.sceneAction,line.source,poses[line.pose].canvas,(relative,canvas)=>{
    if(!layered)throw Error('Linked overlay requires layered portrait');
    const image=register(relative,'image'),actual=files.get(image.slice(prefix.length)).canvas;
    if(actual.width!==canvas.width||actual.height!==canvas.height)throw Error('Overlay bitmap size mismatch');return image;
   });
-  ids.add(line.id);lines.push({id:line.id,speaker:line.speaker,text:line.text,pose:line.pose,phase:line.phase,voice:layered&&line.voice===null?null:register(line.voice,'audio'),...(sceneAction?{sceneAction}:{})});
+  ids.add(line.id);lines.push({id:line.id,speaker:line.speaker,text:line.text,pose:line.pose,phase:line.phase,voice:layered&&line.voice===null?null:register(line.voice,'audio'),...(sceneAction?{sceneAction}:{}),...(translations?{translations}:{})});
  }
  return {files,manifest:{version:raw.version,available:true,defaultPose:raw.defaultPose,poses,lines}};
 }

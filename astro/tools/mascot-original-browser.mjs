@@ -43,7 +43,7 @@ try{
    const allowed=lines.filter(l=>unlocked||l.phase==='main'&&poses[l.pose].phase==='main');
    await launcher.click();
    await canvas.evaluate(c=>window.__originalMascotCanvas=c);
-   let projected=0,overlays=0;
+   let projected=0,overlays=0,captions=0;
    for(const [i,line] of allowed.entries()){
     if(i)await next.click();
     await page.waitForFunction(text=>document.querySelector('[data-mascot-text]')?.textContent===text,line.text);
@@ -63,6 +63,21 @@ try{
      await page.waitForFunction(({id,voice})=>{const a=document.querySelector('[data-mascot-audio]');return a?.currentSrc.endsWith(voice)&&Number.isFinite(a.duration)&&a.duration>0&&JSON.parse(localStorage.getItem('ginka.vn.voice.history.v1')||'null')?.entries?.some(e=>e.id===id);},{id:line.id,voice:line.voice});
      assert.ok(await audio.evaluate(a=>!a.error),'Original voice decode error');
     }
+    const historyBeforeCaptions=await page.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1')),audioBeforeCaptions=await audio.evaluate(a=>{window.__captionAudio=a;return {src:a.currentSrc,time:a.currentTime};}),sceneBeforeCaptions=await page.locator('[data-ginka-mascot]').getAttribute('data-mascot-scene'),matrixBeforeCaptions=await canvas.evaluate(c=>c.style.transform);
+    await page.locator('.ginka-mascot-selection summary').click();
+    const language=page.locator('.ginka-mascot-selection [data-vn-mascot-language]');
+    for(const locale of ['ja','en','zh-CN']){
+     const provided=locale==='zh-CN'||lines.some(l=>!!l.translations?.[locale]);
+     if(!provided){assert.equal(await language.locator('option[value="'+locale+'"]').isDisabled(),true,'missing package language is visibly unavailable');continue;}
+     await language.selectOption(locale);
+     const caption=line.translations?.[locale]??(locale==='zh-CN'?{speaker:line.speaker,text:line.text}:null);
+     if(caption){assert.equal(await page.locator('[data-mascot-text]').textContent(),caption.text,'exact original PSB subtitle, not a generated translation');assert.equal(await page.locator('[data-mascot-speaker]').textContent(),caption.speaker??'');assert.equal(await page.locator('[data-mascot-speaker]').isVisible(),!!caption.speaker);captions++;}
+     else assert.match(await page.locator('[data-mascot-text]').textContent(),/尚无已核验/);
+    }
+    await page.locator('.ginka-mascot-selection summary').click();
+    assert.equal(await page.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1')),historyBeforeCaptions,'changing captions never appends history');
+    assert.ok(await audio.evaluate((a,before)=>a===window.__captionAudio&&a.currentSrc===before.src&&a.currentTime>=before.time-.01,audioBeforeCaptions),'source audio identity, original recording and playback position survive language switching');
+    assert.equal(await page.locator('[data-ginka-mascot]').getAttribute('data-mascot-scene'),sceneBeforeCaptions);assert.equal(await canvas.evaluate(c=>c.style.transform),matrixBeforeCaptions,'subtitle selection does not restart source action');
    }
    const before=await page.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1'));
    await page.locator('[data-mascot-action=replay]').click();await page.waitForFunction(()=>!document.querySelector('[data-mascot-audio]').paused);
@@ -81,7 +96,7 @@ try{
    await page.locator('.ginka-mascot-selection summary').click();
    await page.locator('[data-mascot-character] [data-mascot-action=close]').click();assert.equal(await audio.evaluate(a=>a.paused),true);
    assert.deepEqual(errors,[]);assert.deepEqual(failures,[]);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-   results.push({width,unlocked,lines:allowed.length,poses:new Set(allowed.map(l=>l.pose)).size,projected,selections,overlays});
+   results.push({width,unlocked,lines:allowed.length,poses:new Set(allowed.map(l=>l.pose)).size,projected,selections,overlays,captions});
    await page.close();
   }
  }

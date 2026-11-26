@@ -14,11 +14,13 @@ const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
   <details class="ginka-mascot-selection">
    <summary>角色与已验证差分</summary>
    <div>
+    <label>字幕 <select data-vn-mascot-language aria-label="字幕语言"></select></label>
     <label>角色 <select data-vn-mascot-character aria-label="银花角色"></select></label>
     <label>服装 <select data-vn-mascot-outfit aria-label="银花服装"></select></label>
     <label>表情 <select data-vn-mascot-expression aria-label="银花表情"></select></label>
     <label>姿势 <select data-vn-mascot-gesture aria-label="银花姿势"></select></label>
     <small>仅显示已核验且符合博客预览阶段的差分。自动眨眼、语音嘴型时序尚未核验，当前不启用。</small>
+    <small data-mascot-subtitle-status>仅切换字幕；原录音不变。</small>
     <small data-mascot-scene-status>此句无已核验演出绑定；仅显示静态立绘</small>
    </div>
   </details>

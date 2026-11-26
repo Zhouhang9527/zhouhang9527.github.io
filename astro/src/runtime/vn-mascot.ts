@@ -11,12 +11,28 @@ type Layer=Part&{slot:string;alternate:Part|null};
 type Pose={layers:Layer[]|null;canvas:{width:number;height:number};baseOffset?:{x:number;y:number};character:'child'|'adult';phase:'main'|'afterstory';outfit:string;outfitLabel?:string;expression:string;gesture:string;base:string;blink:string|null;mouth:string|null;motion:{image:string;ms:number}[]};
 type Overlay=Omit<LinkedMascotOverlayInput,'stage'|'camera'|'parentProperties'>&{image:string};
 type SceneBinding={initial:SceneActionState;actions:unknown[];projection:Omit<MascotProjectionInput,'canvas'>;overlays?:Overlay[]};
-type Line={id:string;speaker:string;text:string;pose:string;phase:'main'|'afterstory';voice:string|null;sceneAction?:SceneBinding};
+type SubtitleLanguage='zh-CN'|'ja'|'en';
+type Subtitle={speaker:string|null;text:string};
+type Line={id:string;speaker:string;text:string;pose:string;phase:'main'|'afterstory';voice:string|null;sceneAction?:SceneBinding;translations?:Partial<Record<SubtitleLanguage,Subtitle>>};
 type Pack={version:1|2;defaultPose:string;poses:Record<string,Pose>;lines:Line[]};
 const VOL='ginka.vn.voice.volume.v1',SAVED='ginka.vn.voice.saved.v1',MUTE='ginka.vn.voice.mute.v1',CHAR='ginka.vn.mascot.character.v1',OUTFIT='ginka.vn.mascot.outfit.v1',EXPR='ginka.vn.mascot.expression.v1',GESTURE='ginka.vn.mascot.gesture.v1';
 let character='all',outfit='all',expression='all',gesture='all',motionTimer=0,motionIndex=0;
 let pack:Pack|null=null,loading:Promise<void>|null=null,root:HTMLElement|null=null,audio:HTMLAudioElement|null=null,current:Line|null=null,open=false,volume=80,muted=false,reveal=0,lastPose='',generation=0,playingId:string|null=null;
 const $=(s:string)=>root?.querySelector<HTMLElement>(s);
+// Subtitle choice belongs to this persistent host, not a second store or audio track.
+let subtitleLanguage:SubtitleLanguage='zh-CN',displayedText='';
+const subtitleNames={'zh-CN':'简体中文',ja:'日本語',en:'English'};
+function subtitle(line:Line):Subtitle|null{return line.translations?.[subtitleLanguage]??(subtitleLanguage==='zh-CN'?{speaker:line.speaker,text:line.text}:null);}
+const unavailableSubtitle=()=>`此句尚无已核验的${subtitleNames[subtitleLanguage]}字幕；原录音不变。`;
+function syncLanguage(){
+ const languages=['zh-CN','ja','en'] as const;
+ for(const select of document.querySelectorAll<HTMLSelectElement>('[data-vn-mascot-language]')){
+  const options=languages.map(value=>{const option=document.createElement('option'),available=value==='zh-CN'||!!pack?.lines.some(line=>!!line.translations?.[value]);option.value=value;option.textContent=subtitleNames[value]+(available?'':'（暂不可用）');option.disabled=!available;return option;});
+  if(select.options.length!==options.length||options.some((option,index)=>select.options[index]?.value!==option.value||select.options[index]?.text!==option.text||select.options[index]?.disabled!==option.disabled))select.replaceChildren(...options);
+  select.value=subtitleLanguage;select.disabled=!pack;
+ }
+ document.querySelectorAll<HTMLElement>('[data-mascot-subtitle-status]').forEach(el=>el.textContent=!pack?'本地字幕包暂不可用':current&&!subtitle(current)?unavailableSubtitle():'仅切换字幕；原录音不变。');
+}
 let openTrigger:HTMLElement|null=null,dialogueAuto=false,autoTimer=0;
 let unavailable=false,layerToken=0,layerImages=new Map<string,HTMLImageElement>(),layerPose:Pose|null=null,layerPending=false;
 // The original stand engine has eye/lip variables, but this pack has no verified timing/pairing.
@@ -160,7 +176,7 @@ function syncSelection(){
  document.querySelectorAll<HTMLButtonElement>('[data-mascot-action=preview]').forEach(e=>e.disabled=!available.some(matchingPose));
 }
 function syncSettings(){
- syncSelection();const ready=!!current?.voice&&allowed(current);document.documentElement.toggleAttribute('data-vn-voice-ready',ready);document.dispatchEvent(new Event('vn:voice-state'));
+ syncSelection();syncLanguage();const ready=!!current?.voice&&allowed(current);document.documentElement.toggleAttribute('data-vn-voice-ready',ready);document.dispatchEvent(new Event('vn:voice-state'));
  document.querySelectorAll<HTMLInputElement>('[data-vn-voice-volume]').forEach(e=>e.value=String(volume));
  document.querySelectorAll<HTMLOutputElement>('[data-vn-voice-value]').forEach(e=>e.value=String(volume));
  document.querySelectorAll<HTMLButtonElement>('[data-vn-voice-mute]').forEach(e=>{e.textContent=muted?'取消静音':'静音';e.setAttribute('aria-pressed',String(muted));});
@@ -199,11 +215,11 @@ function hostTick(now:number){
  reveal=0;if(!open||document.hidden){hostTimestamp=null;return;}
  const delta=hostTimestamp===null?0:Math.max(0,now-hostTimestamp);hostTimestamp=now;
  if(scene&&sceneFrame?.active){try{scene.advance(delta*playback.effectSpeed);pumpScene();if(sceneBinding?.overlays?.length&&!layerPending)drawLayers();else positionMedia();}catch{stopScene();sceneStatus('invalid');feedback('演出投影未能继续，已停止');}}
- if(revealTarget&&current){revealElapsed+=delta;const chars=Array.from(current.text),count=playback.textRevealMs===0?chars.length:Math.min(chars.length,Math.floor(revealElapsed/playback.textRevealMs)+1);revealTarget.textContent=chars.slice(0,count).join('');if(count===chars.length){revealTarget=null;scheduleAuto();}}
+ if(revealTarget&&current){revealElapsed+=delta;const chars=Array.from(displayedText),count=playback.textRevealMs===0?chars.length:Math.min(chars.length,Math.floor(revealElapsed/playback.textRevealMs)+1);revealTarget.textContent=chars.slice(0,count).join('');if(count===chars.length){revealTarget=null;scheduleAuto();}}
  if(revealTarget||sceneFrame?.active)reveal=requestAnimationFrame(hostTick);else hostTimestamp=null;
 }
 function stopReveal(){revealTarget=null;revealElapsed=0;if(!sceneFrame?.active){cancelAnimationFrame(reveal);reveal=0;hostTimestamp=null;}}
-function finishReveal(){if(!revealTarget||!current)return false;revealTarget.textContent=current.text;stopReveal();scheduleAuto();return true;}
+function finishReveal(){if(!revealTarget||!current)return false;revealTarget.textContent=displayedText;stopReveal();scheduleAuto();return true;}
 function clearDialogue(){document.documentElement.removeAttribute('data-vn-mascot-dialogue');stopReveal();const name=document.querySelector<HTMLElement>('[data-vn-dialogue-speaker]'),text=document.querySelector<HTMLElement>('[data-vn-dialogue-text]');if(name)name.hidden=true;if(text)text.hidden=true;document.querySelectorAll<HTMLElement>('[data-vn-current-heading],[data-vn-game-description]:not([data-vn-dialogue-text])').forEach(e=>e.hidden=false);const w=$('[data-mascot-window]');if(w)w.hidden=true;}
 function messageTargets(){
  dialogueView=document.documentElement.dataset.vnMode;clearDialogue();
@@ -212,9 +228,11 @@ function messageTargets(){
  else{const w=$('[data-mascot-window]');if(w)w.hidden=false;}
  const speaker=inGame?article.querySelector<HTMLElement>('[data-vn-dialogue-speaker]'):$('[data-mascot-speaker]'),text=inGame?article.querySelector<HTMLElement>('[data-vn-dialogue-text]'):$('[data-mascot-text]');if(speaker)speaker.hidden=false;if(text)text.hidden=false;return {speaker,text};
 }
-function renderLine(line:Line,animate:boolean){
- const {speaker,text}=messageTargets();pose(line.pose);if(speaker)speaker.textContent=line.speaker;
- if(!text)return;if(!animate||reduce()||playback.textRevealMs===0){text.textContent=line.text;scheduleAuto();return;}
+function renderLine(line:Line,animate:boolean){pose(line.pose);renderSubtitle(line,animate);}
+function renderSubtitle(line:Line,animate:boolean){
+ const {speaker,text}=messageTargets(),caption=subtitle(line);displayedText=caption?.text??unavailableSubtitle();
+ if(speaker){speaker.textContent=caption?.speaker??'';speaker.hidden=!caption?.speaker;}
+ if(!text)return;if(!animate||reduce()||playback.textRevealMs===0||!caption){text.textContent=displayedText;scheduleAuto();return;}
  text.textContent='';revealTarget=text;revealElapsed=0;startHost();
 }
 function openPortrait(){open=true;const c=$('[data-mascot-character]');if(c)c.hidden=false;$('[data-mascot-action=open]')?.setAttribute('aria-expanded','true');document.dispatchEvent(new Event('vn:mascot-open'));}
@@ -244,7 +262,7 @@ async function play(line:Line,animate=true,presentation=true,record=true){
 function next(){setAuto(false);if(open&&$('.ginka-mascot-portrait')?.dataset.mascotRender==='error'&&lastPose){pose(lastPose);return;}if(finishReveal())return;const lines=choices();if(!lines.length){previewSelection();feedback('当前差分没有同记录绑定的已验证对白');return;}const index=lines.findIndex(x=>x.id===current?.id);void play(lines[(index+1)%lines.length]);}
 function close(restoreFocus=false){
  const focused=root?.contains(document.activeElement);setAuto(false);open=false;generation++;stopMotion();stopScene();cancelAnimationFrame(reveal);reveal=0;hostTimestamp=null;audio?.pause();playingId=null;clearDialogue();layerToken++;frameGeneration++;layerPending=false;layerPose=null;layerImages.clear();lastPose='';
- const c=$('[data-mascot-character]');if(c)c.hidden=true;const launcher=$('[data-mascot-action=open]');launcher?.setAttribute('aria-expanded','false');if(restoreFocus&&focused){const target=openTrigger?.isConnected?openTrigger:launcher;target?.focus({preventScroll:true});}openTrigger=null;voiceStatus();
+ const c=$('[data-mascot-character]');if(c)c.hidden=true;const launcher=$('[data-mascot-action=open]');launcher?.setAttribute('aria-expanded','false');if(restoreFocus&&focused){const visible=(element:HTMLElement|null|undefined)=>!!element?.isConnected&&!element.closest('[hidden],[inert]')&&element.getClientRects().length>0&&getComputedStyle(element).visibility!=='hidden';const target=visible(openTrigger)?openTrigger:Array.from(document.querySelectorAll<HTMLElement>('[data-mascot-action=preview]')).find(visible)??(visible(launcher)?launcher:null);target?.focus({preventScroll:true});}openTrigger=null;voiceStatus();
 }
 function saveVoice(line:Line|null=current,remove=false){if(!line?.voice||!allowed(line))return;try{const existing=saved(),remaining=existing.filter(x=>x!==line.id),deleting=remove||existing.includes(line.id);localStorage.setItem(SAVED,JSON.stringify(deleting?remaining:[line.id,...remaining].slice(0,100)));feedback(deleting?'已移除语音收藏':'语音已收藏');syncSettings();}catch{feedback('无法更新语音收藏');}}
 function action(a:string){
@@ -284,8 +302,13 @@ document.addEventListener('click',event=>{
 });
 document.addEventListener('change',event=>{
  const e=event.target;if(!(e instanceof HTMLSelectElement))return;
+ if(e.matches('[data-vn-mascot-language]')){
+  if(!['zh-CN','ja','en'].includes(e.value))return;
+  const next=e.value as SubtitleLanguage;if(next!=='zh-CN'&&!pack?.lines.some(line=>line.translations?.[next])){feedback('此字幕语言尚未提供');syncLanguage();return;}
+  subtitleLanguage=next;if(open&&current){if(!root?.contains(e))openTrigger=e;renderSubtitle(current,false);}syncLanguage();return;
+ }
  if(e.matches('[data-vn-mascot-character]')){character=e.value;outfit=expression=gesture='all';}else if(e.matches('[data-vn-mascot-outfit]')){outfit=e.value;expression=gesture='all';}else if(e.matches('[data-vn-mascot-expression]')){expression=e.value;gesture='all';}else if(e.matches('[data-vn-mascot-gesture]'))gesture=e.value;else return;
- syncSelection();persistSelection();previewSelection();
+ if(!root?.contains(e))openTrigger=e;syncSelection();persistSelection();previewSelection();
 });
 document.addEventListener('input',event=>{const e=event.target;if(!(e instanceof HTMLInputElement)||!e.matches('[data-vn-voice-volume]'))return;volume=Math.max(0,Math.min(100,Number(e.value)||0));try{localStorage.setItem(VOL,String(volume));}catch{}syncSettings();});
 document.addEventListener('vn:voice-action',event=>action(String((event as CustomEvent).detail)));

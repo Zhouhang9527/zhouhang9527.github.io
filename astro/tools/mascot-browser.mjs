@@ -39,7 +39,7 @@ try{
  const pose={verified:true,phaseSource:'fixture',source:'fixture',character:'child',phase:'main',outfit:'fixture',expression:'neutral',gesture:'idle',base:'base.png',canvas:{width:6,height:6},baseRect:{x:1,y:1,width:4,height:4},layers:[{slot:'eye',...part('eye.png',1,1),alternate:part('blink.png',1,1)},{slot:'mouth',...part('mouth.png',2,1),alternate:part('open.png',2,1)}]};
  const line=(id,text,voice,p='main',poseId='a')=>({id,text,voice,phase:p,pose:poseId,speaker:'Synthetic fixture',source:'fixture',phaseSource:'fixture',voiceSource:voice?'generated test tone':null,verified:true});
  const sceneAction={verified:true,source:'fixture',initial:{objects:{actor:{properties:{xpos:0}}},camera:{properties:{}}},actions:[['envupdate','update',[{name:'actor',action:[['xpos',[{handler:'MoveAction',value:2,time:800}]]]}]]],projection:{verified:true,source:'synthetic calibration only',stage:{width:12,height:12},resolution:100,rightHanded:false,camera:{cameraoffsetz:-100,cameraoffsetzmax:100,camerarh:0},properties:{xpos:0}}};
- const spoken={...line('tone','Tone fixture','tone.wav'),sceneAction};
+ const spoken={...line('tone','Tone fixture','tone.wav'),sceneAction,translations:{'zh-CN':{speaker:'Synthetic fixture',text:'Tone fixture'},ja:{speaker:'検証',text:'日本語 fixture 字幕'},en:{speaker:null,text:'English fixture subtitles'}}};
  const locked={...line('locked','Locked fixture',null,'afterstory','b'),sceneAction:{...sceneAction,actions:[],overlays:[{verified:true,source:'synthetic static overlay only',image:'blink.png',canvas:{width:1,height:1},origin:{x:0,y:0},resolution:100,properties:{xpos:-3,ypos:3,order:3},linkmode:0,linkmask:0,rightHanded:true}]}};
  const file=path.join(dir,'manifest.json');
  fs.writeFileSync(file,JSON.stringify({version:2,defaultPose:'a',poses:{a:pose,b:{...pose,character:'adult',phase:'afterstory',outfit:'locked'},c:{...pose,expression:'smile',gesture:'wave'}},lines:[line('silent','Silent fixture',null),spoken,locked]}));
@@ -113,6 +113,9 @@ try{
   await page.keyboard.press('Escape');assert.equal(await page.locator('[data-mascot-character]').isVisible(),false);
   assert.equal(await auto.getAttribute('aria-pressed'),'false');
   assert.equal(await preview.evaluate(el=>document.activeElement===el),true);
+  const settingsOutfit=page.locator('[data-vn-option-panel=program] [data-vn-mascot-outfit]');await settingsOutfit.focus();await settingsOutfit.selectOption('fixture');await canvas.waitFor({state:'visible'});
+  await page.locator('[data-mascot-window] [data-mascot-action=close]').click();assert.equal(await settingsOutfit.evaluate(el=>document.activeElement===el),true,'HIDE must restore the actual external select, not an invisible launcher');
+  await settingsOutfit.selectOption('all');await page.keyboard.press('Escape');assert.equal(await settingsOutfit.evaluate(el=>document.activeElement===el),true);
   await page.locator('[data-vn-option-panel=program] a[data-vn-mode-set=game]').click();
   await page.locator('[data-vn-start]').click();if(await page.locator('[data-vn-confirm][open]').count())await page.locator('[data-vn-confirm-yes]').click();await page.locator('[data-vn-post]').first().click();
   const dock=page.locator('.vn-game-buttons');
@@ -152,6 +155,17 @@ try{
  assert.equal(await animated.locator('[data-mascot-text]').textContent(),'Tone fixture');
  await animated.evaluate(()=>{Storage.prototype.getItem=window.__playbackGet;delete window.__playbackGet;});
  assert.equal(await animated.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1')),historyBeforeDynamicReplay,'Replayed numeric fragment must restart but never append voice history');
+ const subtitleAudio=await animated.locator('[data-mascot-audio]').evaluate(a=>{window.__subtitleAudio=a;return {src:a.currentSrc,time:a.currentTime};}),subtitleMatrix=await animated.locator('[data-mascot-canvas]').evaluate(c=>c.style.transform);
+ await animated.locator('.ginka-mascot-selection summary').click();
+ const language=animated.locator('.ginka-mascot-selection [data-vn-mascot-language]');
+ await language.selectOption('ja');assert.equal(await animated.locator('[data-mascot-text]').textContent(),'日本語 fixture 字幕');assert.equal(await animated.locator('[data-mascot-speaker]').textContent(),'検証');
+ await language.selectOption('en');assert.equal(await animated.locator('[data-mascot-text]').textContent(),'English fixture subtitles');assert.equal(await animated.locator('[data-mascot-speaker]').isVisible(),false,'null source speaker must not borrow another language name');
+ assert.ok(await animated.locator('[data-mascot-audio]').evaluate((a,state)=>a===window.__subtitleAudio&&a.currentSrc===state.src&&a.currentTime>=state.time-.01,subtitleAudio),'subtitle changes must preserve native audio identity/source/time');
+ assert.equal(await animated.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1')),historyBeforeDynamicReplay);assert.equal(await animated.locator('[data-mascot-canvas]').evaluate(c=>c.style.transform),subtitleMatrix,'subtitle change does not restart the numeric scene');
+ await animated.locator('.ginka-mascot-selection summary').click();
+ await animated.locator('[data-mascot-window] [data-mascot-action=next]').click();
+ assert.match(await animated.locator('[data-mascot-text]').textContent(),/尚无已核验的English字幕/,'missing per-line caption is explicit, never another-language fallback');
+ await animated.locator('.ginka-mascot-selection summary').click();await language.selectOption('zh-CN');assert.equal(await animated.locator('[data-mascot-text]').textContent(),'Silent fixture');await animated.locator('.ginka-mascot-selection summary').click();
  await animated.waitForTimeout(3500);
  assert.deepEqual(await animated.locator('[data-mascot-canvas]').evaluate(c=>[c.dataset.mascotEye,c.dataset.mascotMouth,...c.getContext('2d').getImageData(1,1,2,1).data]),['false','false',0,255,0,255,255,255,0,255]);
  await animated.locator('.ginka-mascot-selection summary').click();
@@ -163,6 +177,6 @@ try{
  assert.equal(await animated.locator('[data-ginka-mascot]').getAttribute('data-mascot-scene'),'unavailable');
  await animated.locator('[data-mascot-character] [data-mascot-action=close]').click();
  assert.deepEqual(animationErrors,[]);
- await animated.close();console.log('PASS synthetic numeric replay, storage-denied playback preferences and disabled unverified alternatives');
+ await animated.close();console.log('PASS synthetic numeric replay, source subtitles, storage-denied preferences and disabled unverified alternatives');
 } catch(error){console.error(log);throw error;}
 finally{await browser?.close();if(server){server.kill();if(server.exitCode===null)await new Promise(resolve=>{server.once('exit',resolve);setTimeout(resolve,2000).unref();});}fs.rmSync(dir,{recursive:true,force:true});}

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {loadMascotPack,localMascot,projectSceneAction} from './local-mascot.mjs';
+import {loadMascotPack,localMascot,projectSceneAction,projectTranslations} from './local-mascot.mjs';
 test('verified pack maps only local allowlisted files and rejects escapes',()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ginka-mascot-'));
  try{
@@ -91,4 +91,18 @@ test('numeric scene projection binds the exact record, strips provenance, and re
  overlay.rightHanded=undefined;assert.throws(()=>projectSceneAction(raw,source,canvas,register),/calibration/);overlay.rightHanded=true;
  overlay.verified=false;assert.throws(()=>projectSceneAction(raw,source,canvas,register),/Unverified linked overlay/);
  assert.equal(projectSceneAction(undefined,source,canvas),null);
+});
+
+
+test('optional exact subtitles preserve null speakers and never project evidence or invent missing languages',()=>{
+ assert.equal(projectTranslations(undefined),null);
+ const original={'zh-CN':{speaker:'测试',text:'原文'},ja:{speaker:'検証',text:'　日本語 fixture　',source:'private _hxv4_hash/nameHash'},en:{speaker:null,text:'English fixture'}};
+ const out=projectTranslations(original);assert.deepEqual(out,{'zh-CN':{speaker:'测试',text:'原文'},ja:{speaker:'検証',text:'　日本語 fixture　'},en:{speaker:null,text:'English fixture'}});
+ assert.doesNotMatch(JSON.stringify(out),/source|_hxv4_hash|nameHash/);assert.deepEqual(projectTranslations({ja:original.ja}),{ja:out.ja},'missing variants remain missing, not translated or borrowed');
+ assert.throws(()=>projectTranslations({fr:{speaker:null,text:'unknown'}}),/languages/);
+ assert.throws(()=>projectTranslations({ja:{text:'no speaker field'}}),/subtitle/);
+ assert.throws(()=>projectTranslations({ja:{speaker:null,text:''}}),/subtitle/);
+ assert.throws(()=>projectTranslations({ja:{speaker:123,text:'invalid speaker'}}),/subtitle/);
+ assert.throws(()=>projectTranslations({ja:{speaker:null,text:'x'.repeat(601)}}),/subtitle/);
+ assert.equal(original.ja.source,'private _hxv4_hash/nameHash','projection must not mutate source variants');
 });
