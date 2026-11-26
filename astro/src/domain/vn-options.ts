@@ -26,3 +26,17 @@ export function parseConfirmations(raw:string|null):Confirmations{
  }catch{}return settings;
 }
 export function shouldConfirm(action:ConfirmAction,raw:string|null):boolean{return parseConfirmations(raw)[action];}
+
+// Blog playback preferences over the existing clocks; these are not recovered
+// original defaults. No second timer, store, audio object or scene flags.
+export const PLAYBACK_KEY='ginka.vn.playback.v1';
+export type PlaybackOptions={textRevealMs:number;autoGapMs:number;autoScrollSpeed:number;skipSeenOnly:boolean;effectSpeed:number};
+export const defaultPlayback=():PlaybackOptions=>({textRevealMs:30,autoGapMs:700,autoScrollSpeed:45,skipSeenOnly:true,effectSpeed:1});
+export function parsePlayback(raw:string|null):PlaybackOptions{
+ const out=defaultPlayback();
+ try{const value=JSON.parse(raw||'null');if(value?.version!==1)return out;
+  for(const [key,min,max] of [['textRevealMs',0,100],['autoGapMs',0,5000],['autoScrollSpeed',10,180]] as const){const n=value[key];if(Number.isInteger(n)&&n>=min&&n<=max)out[key]=n;}
+  if(typeof value.skipSeenOnly==='boolean')out.skipSeenOnly=value.skipSeenOnly;
+  if([.5,.75,1,1.25,1.5,1.75,2].includes(value.effectSpeed))out.effectSpeed=value.effectSpeed;
+ }catch{}return out;
+}

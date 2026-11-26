@@ -15,6 +15,15 @@ test('DIALOG preferences are strict booleans; unknown or corrupt fields stay saf
  assert.deepEqual(options.resetPages('dialog',false),['dialog']);assert.deepEqual(options.resetPages('touch',false),[]);
 });
 
+test('playback prefs validate numeric type, bounded integers and explicit effect steps',()=>{
+ const defaults={textRevealMs:30,autoGapMs:700,autoScrollSpeed:45,skipSeenOnly:true,effectSpeed:1};
+ for(const raw of [null,'broken','[]','{"version":2,"textRevealMs":0}'])assert.deepEqual(options.parsePlayback(raw),defaults);
+ const invalid={version:1,textRevealMs:'0',autoGapMs:5001,autoScrollSpeed:9,skipSeenOnly:0,effectSpeed:1.1};assert.deepEqual(options.parsePlayback(JSON.stringify(invalid)),defaults);
+ const custom={textRevealMs:0,autoGapMs:5000,autoScrollSpeed:180,skipSeenOnly:false,effectSpeed:.5};assert.deepEqual(options.parsePlayback(JSON.stringify({version:1,...custom})),custom);
+ for(const key of ['textRevealMs','autoGapMs','autoScrollSpeed'])for(const v of [-1,Infinity,null,1.2])assert.equal(options.parsePlayback(JSON.stringify({version:1,[key]:v}))[key],defaults[key]);
+ assert.notEqual(options.defaultPlayback(),options.defaultPlayback());
+});
+
 // The native-modal unit harness controls close timing to exercise delayed events
 // and navigation races. It does not claim browser focus/inert verification.
 function modalHarness(raw=null){
