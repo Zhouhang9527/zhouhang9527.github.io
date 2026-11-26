@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import {vnScenes} from '../lib/vn-scenes';
 import {rectStyle} from '../lib/vn-control';
+const confirmSettings=[['overwrite','覆盖手动存档'],['load','读取手动存档'],['qsave','快速存档'],['qload','读取快速存档'],['delete','删除存档']] as const;
 const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
 const privateAsset=(name:string)=>`url(/__ginka_local_ui__/${name}.png)`;
 const geometry=vnScenes.privateUI.optionGeometry;
@@ -28,6 +29,8 @@ const tabs=[['display','DISPLAY'],['program','PROGRAM'],['text','TEXT'],['sound'
        <fieldset data-vn-display-group="window"><legend>画面尺寸</legend><div class="vn-option-buttons"><button type="button" data-vn-display-control data-vn-window="window" aria-pressed="true" style={displaySkin('window')}>窗口</button><button type="button" data-vn-display-control data-vn-window="full" aria-pressed="false" style={displaySkin('fullscreen')}>全屏</button></div></fieldset>
        <fieldset data-vn-display-group="effect"><legend>画面效果</legend><div class="vn-option-buttons"><label data-vn-display-control style={displaySkin('effectOn')}><input type="radio" name="vn-motion" value="system"/> ON</label><label data-vn-display-control style={displaySkin('effectOff')}><input type="radio" name="vn-motion" value="reduced"/> OFF</label></div></fieldset>
        <fieldset data-vn-display-group="mode"><legend>画面表现</legend><div class="vn-option-buttons"><label><input type="radio" name="vn-mode" value="game"/> 游戏</label><label><input type="radio" name="vn-mode" value="reader"/> 阅读</label></div></fieldset>
+       <fieldset data-vn-display-group="theme"><legend>阅读模式主题</legend><div class="vn-option-buttons"><button type="button" data-vn-theme="day" aria-pressed="false">日间</button><button type="button" data-vn-theme="moonlit" aria-pressed="false">月夜</button><button type="button" data-vn-theme="system" aria-pressed="true">跟随系统</button></div><p>只调整阅读界面；原作画面不随主题变色</p></fieldset>
+       <fieldset data-vn-display-group="speed"><legend>演出速度 · 博客适配</legend><div class="vn-option-slider"><span>0.5×</span><input type="range" min="0.5" max="2" step="0.25" value="1" data-vn-playback="effectSpeed" aria-label="演出速度倍率"/><span>2×</span><output data-vn-playback-value="effectSpeed">1</output></div><p>只调整既有演出时钟；不会改写原作动作参数。</p></fieldset><p data-vn-display-feedback class="vn-option-wide" role="status"></p>
       </div>
      </section>
      <section id="vn-option-program" role="tabpanel" aria-labelledby="vn-tab-program" data-vn-option-panel="program" hidden>
@@ -40,23 +43,28 @@ const tabs=[['display','DISPLAY'],['program','PROGRAM'],['text','TEXT'],['sound'
       <div class="vn-option-grid">
        <fieldset><legend>正文文字大小</legend><div class="vn-option-slider"><span>MIN</span><input type="range" min="14" max="22" step="1" value="16" data-vn-text-size aria-label="正文文字大小"/><span>MAX</span><output data-vn-text-value>16</output></div></fieldset>
        <fieldset><legend>文字显示示例</legend><p class="vn-text-sample" data-vn-text-sample>在姬之岛的夏日里，记录每一次阅读</p></fieldset>
+       <fieldset><legend>对白逐字间隔</legend><div class="vn-option-slider"><span>0</span><input type="range" min="0" max="100" step="1" value="30" data-vn-playback="textRevealMs" aria-label="对白逐字间隔毫秒"/><span>100ms</span><output data-vn-playback-value="textRevealMs">30</output></div><p>0 为立即显示。作用于已验证的本地对白，不延缓博客正文。</p></fieldset>
+       <fieldset><legend>AUTO 对白间隔</legend><div class="vn-option-slider"><span>0</span><input type="range" min="0" max="5000" step="100" value="700" data-vn-playback="autoGapMs" aria-label="AUTO对白间隔毫秒"/><span>5s</span><output data-vn-playback-value="autoGapMs">700</output></div><p>对白文字显示与语音结束后，再等待此间隔。</p></fieldset>
+       <fieldset><legend>AUTO 正文滚动</legend><div class="vn-option-slider"><span>10</span><input type="range" min="10" max="180" step="5" value="45" data-vn-playback="autoScrollSpeed" aria-label="AUTO正文滚动速度"/><span>180px/s</span><output data-vn-playback-value="autoScrollSpeed">45</output></div></fieldset>
+       <fieldset><legend>SKIP 方式</legend><div class="vn-confirm-settings"><label><input type="checkbox" data-vn-playback="skipSeenOnly" checked/><span>只跳过已有实际播放记录的对白</span></label></div><p>博客适配偏好，不对应原作已读 flags；不会跳入未绑定剧情。</p></fieldset>
+       <p class="vn-option-wide">以上默认值是博客偏好，非原作默认参数；恢复默认不会清除实际语音历史。</p>
       </div>
      </section>
      <section id="vn-option-sound" role="tabpanel" aria-labelledby="vn-tab-sound" data-vn-option-panel="sound" hidden>
       <div class="vn-option-grid" data-vn-music>
        <fieldset data-vn-sound-bgm style={original?'--vn-sound-caption:'+privateAsset('optionAtlas-sound-caption')+';--vn-sound-label:'+privateAsset('soundLabels-label3')+';--vn-option-range-rail:'+privateAsset('optionAtlas-sound-range-rail')+';--vn-option-range-railDisabled:'+privateAsset('optionAtlas-sound-range-railDisabled'):undefined}><legend>BGM 音量</legend><div class="vn-option-slider"><span>MIN</span><input type="range" min="0" max="100" step="1" value="88" data-vn-volume aria-label="BGM 音量"/><span>MAX</span><output data-vn-volume-value>88</output></div><div class="vn-option-buttons"><button type="button" data-vn-music-action="music-volume-toggle">静音</button><button type="button" data-vn-music-action="music-toggle">播放</button><button type="button" data-vn-music-action="music-next">下一首</button></div></fieldset>
-       <fieldset><legend>正在播放</legend><div class="vn-option-track"><span data-vn-music-title>读取歌单中</span><small data-vn-music-artist></small><progress data-vn-music-progress max="1" value="0" aria-label="播放进度"></progress><small data-vn-music-time></small></div></fieldset>
+       <fieldset><legend>正在播放</legend><div class="vn-option-track"><span data-vn-music-title>读取歌单中</span><small data-vn-music-artist></small><progress data-vn-music-progress max="1" value="0" aria-label="播放进度"></progress><small data-vn-music-time></small></div><p data-vn-music-feedback role="status" hidden></p></fieldset>
        <fieldset><legend>VOICE / 银花语音</legend><div class="vn-option-slider"><span>MIN</span><input type="range" min="0" max="100" value="80" data-vn-voice-volume aria-label="语音音量"/><span>MAX</span><output data-vn-voice-value>80</output></div><div class="vn-option-buttons"><button type="button" data-vn-voice-mute aria-pressed="false">静音</button><button type="button" data-vn-voice-replay disabled>回放</button><button type="button" data-vn-voice-stop disabled>停止</button></div><p data-vn-voice-playing aria-live="polite">语音未播放</p><p data-vn-voice-feedback role="status"></p><p data-vn-voice-status>原作语音需要本地素材包</p></fieldset><fieldset><legend>VOICE SAVE / 语音收藏</legend><div data-vn-voice-saved></div></fieldset><fieldset class="vn-option-wide"><legend>音乐列表</legend><div data-vn-track-list class="vn-option-playlist"></div><p data-vn-track-status role="status">正在读取歌单</p><button type="button" data-vn-music-action="music-source-retry">刷新歌单</button></fieldset>
       </div>
      </section>
      <section id="vn-option-dialog" role="tabpanel" aria-labelledby="vn-tab-dialog" data-vn-option-panel="dialog" hidden>
-      <div class="vn-option-grid"><fieldset><legend>清除阅读记录</legend><div class="vn-option-buttons"><button type="button" data-vn-reset>清除存档</button></div><p>操作前会再次确认</p></fieldset></div>
+      <div class="vn-option-grid"><fieldset><legend>存读档确认</legend><div class="vn-confirm-settings">{confirmSettings.map(([key,label])=><label><input type="checkbox" data-vn-confirm-setting={key} checked/><span>{label}前确认</span></label>)}</div><p>博客默认全部开启；不改变存档内容。清除全部记录与恢复默认设置始终确认。</p></fieldset><fieldset><legend>清除本机阅读记录</legend><div class="vn-option-buttons"><button type="button" data-vn-reset>清除阅读存档与收藏</button></div><p>将清除阅读进度、150 个手动档、快速档与文章收藏；不会删除语音收藏。</p></fieldset></div>
      </section>
      <section id="vn-option-touch" role="tabpanel" aria-labelledby="vn-tab-touch" data-vn-option-panel="touch" hidden>
       <div class="vn-option-grid"><fieldset><legend>触屏操作</legend><p>点击选择，滑动浏览文章和存档列表</p></fieldset><fieldset><legend>返回</legend><p>使用界面下方返回按钮，不拦截系统手势</p></fieldset></div>
      </section>
      <section id="vn-option-shortcut" role="tabpanel" aria-labelledby="vn-tab-shortcut" data-vn-option-panel="shortcut" hidden>
-      <div class="vn-option-grid"><fieldset><legend>菜单操作</legend><p>↑ / ↓ 选择，Enter 确认</p></fieldset><fieldset><legend>文章检索</legend><p>Ctrl / Command + K</p></fieldset><fieldset><legend>关闭弹窗</legend><p>Esc</p></fieldset></div>
+      <div class="vn-option-grid"><fieldset><legend>菜单与设置页签</legend><p>↑ / ↓ 选择菜单；← / → 切换设置页；Home / End 到首尾；Enter 确认</p></fieldset><fieldset><legend>文章检索</legend><p>Ctrl / Command + K</p></fieldset><fieldset><legend>弹窗操作</legend><p>Tab / Shift + Tab 在弹窗内移动；Esc 取消；确认框 ← / → 切换 YES / NO，Enter 确认当前选择</p></fieldset><fieldset><legend>恢复设置</legend><p>DEFAULT 只重置当前页；Shift + DEFAULT 或“恢复全部公共设置”重置全部设置，不清除阅读与语音收藏</p></fieldset></div>
      </section>
     </div>
     <footer class="vn-option-footer"><button type="button" data-vn-option-default title="恢复当前页，按住 Shift 恢复全部公共设置" aria-label="恢复当前页默认设置，Shift 恢复全部公共设置" style={footerSkin('defaults')}>DEFAULT<small>默认设置</small></button><a href="/" data-vn-option-back style={footerSkin('back')}>BACK<small>返回</small></a><a href="/" data-vn-mode-set="game" style={footerSkin('title')}>TITLE<small>标题</small></a></footer>

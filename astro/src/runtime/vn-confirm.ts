@@ -30,10 +30,10 @@ export function confirmVN(message:string,action?:ConfirmAction):Promise<boolean>
 document.addEventListener('keydown',event=>{
  const dialog=document.querySelector<HTMLDialogElement>('[data-vn-confirm][open]');if(!dialog||!dialog.contains(event.target as Node))return;
  if(event.repeat&&event.key==='Enter'){event.preventDefault();return;}
- if(event.key!=='ArrowLeft'&&event.key!=='ArrowRight')return;
+ if(!['Tab','ArrowLeft','ArrowRight'].includes(event.key))return;
  const buttons=Array.from(dialog.querySelectorAll<HTMLButtonElement>('button:not([disabled])'));
- const current=buttons.indexOf(document.activeElement as HTMLButtonElement);if(current<0)return;
- event.preventDefault();buttons[(current+1)%buttons.length]?.focus();
+ const current=buttons.indexOf(document.activeElement as HTMLButtonElement);if(current<0||!buttons.length)return;
+ event.preventDefault();const step=event.key==='Tab'&&event.shiftKey?-1:1;buttons[(current+step+buttons.length)%buttons.length]?.focus();
 });
 document.addEventListener('astro:before-preparation',()=>cancelPending?.());
 window.addEventListener('pagehide',()=>cancelPending?.());

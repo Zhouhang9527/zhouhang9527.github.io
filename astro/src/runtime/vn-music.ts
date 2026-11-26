@@ -27,6 +27,8 @@ function mount(){
   const list=room.querySelector<HTMLElement>('[data-vn-track-list]');
   const tracks=Array.from(player.querySelectorAll<HTMLButtonElement>('.music-playlist-item[data-index]'));
   const state=player.dataset.ginkaMusicState;
+  const playback=room.querySelector<HTMLElement>('[data-vn-music-feedback]');
+  if(playback){const message=player.dataset.ginkaPlaybackMessage||'';if(playback.textContent!==message)playback.textContent=message;playback.hidden=!message;playback.dataset.vnPlaybackState=player.dataset.ginkaPlaybackState||'paused';}
   const next=JSON.stringify(tracks.map(t=>[t.dataset.index,t.textContent,t.className]));
   if(list&&next!==signature){
    signature=next;
@@ -46,7 +48,7 @@ function mount(){
  const signal=abort.signal;
  for(const event of ['play','pause','timeupdate','loadedmetadata','volumechange','ended'])audio.addEventListener(event,sync,{signal});
  observer=new MutationObserver(sync);
- observer.observe(player,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class','data-ginka-music-state']});
+ observer.observe(player,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class','data-ginka-music-state','data-ginka-playback-state','data-ginka-playback-message']});
  sync();
 }
 document.addEventListener('click',event=>{

@@ -4,6 +4,15 @@ import {allPosts,href} from '../lib/site';
 import {vnScenes} from '../lib/vn-scenes';
 import {rectStyle,stateStyle} from '../lib/vn-control';
 const posts=await allPosts();
+// Derive a preview only from an already-staged image in this article's own
+// attachment directory. No new screenshots or persistent thumbnail payloads.
+const thumbnail=(post:typeof posts[number])=>{
+ const body=(post.body||'').replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g,'');
+ for(const image of body.matchAll(/!\[[^\]\n]*\]\((\/[^\s)]+)(?:[^\n)]*)\)/g)){
+  if(image[1].startsWith(href(post.data.route))&&/\.(?:png|jpe?g|webp|gif|avif)$/i.test(image[1]))return image[1];
+ }
+ return undefined;
+};
 const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
 const geometry=vnScenes.privateUI.loadGeometry;
 const control=(key:'save'|'load'|'quick'|'title'|'back'|'exit')=>original?rectStyle(geometry.controls[key],[0,0,...geometry.canvas])+';'+stateStyle(true,s=>s==='normal'||s==='hover'||s==='pressed'?'loadLabels-'+key+'-'+s:null):undefined;
@@ -22,9 +31,9 @@ const skin=original?'--vn-load-base:url(/__ginka_local_ui__/loadBase.png);--vn-l
     <nav class="vn-library-index" role="group" aria-label="博客阅读索引"><button type="button" data-vn-filter="recent" aria-pressed="false">最近阅读</button><button type="button" data-vn-filter="bookmarks" aria-pressed="false">收藏</button><button type="button" data-vn-filter="completed" aria-pressed="false">已读</button></nav>
    </div>
    <div class="vn-load-body">
-    <div class="vn-save-grid vn-load-grid" data-vn-manual-grid hidden>{Array.from({length:10},(_,i)=><article class="vn-save-slot" data-vn-manual-slot={i}><button type="button" class="vn-save-link" data-vn-manual-action={i}><span class="vn-slot-thumbnail" aria-hidden="true"></span><span class="vn-slot-copy"><strong data-vn-manual-title>No Data</strong><span class="vn-load-meta"><small data-vn-manual-date></small><span data-vn-manual-status></span></span></span></button><button type="button" data-vn-manual-delete={i} hidden>删除</button></article>)}</div><p data-vn-manual-feedback role="status" class="journal-visually-hidden"></p>
+    <div class="vn-save-grid vn-load-grid" data-vn-manual-grid hidden>{Array.from({length:10},(_,i)=><article class="vn-save-slot" data-vn-manual-slot={i}><button type="button" class="vn-save-link" data-vn-manual-action={i}><span class="vn-slot-thumbnail" aria-hidden="true"><img data-vn-manual-thumbnail alt="" loading="lazy" hidden/><span class="vn-slot-number" data-vn-manual-number>{String(i+1).padStart(3,'0')}</span></span><span class="vn-slot-copy"><strong data-vn-manual-title>No Data</strong><span class="vn-load-meta"><small data-vn-manual-date></small><span data-vn-manual-status></span></span></span></button><button type="button" data-vn-manual-delete={i} hidden>删除</button></article>)}</div><p data-vn-manual-feedback role="status" class="vn-library-feedback"></p>
     <div class="vn-save-grid vn-load-grid" data-vn-library hidden>
-     {posts.map(post=><article class="vn-save-slot" data-vn-slot={href(post.data.route)} hidden><a href={href(post.data.route)} class="vn-save-link" data-vn-resume><span class="vn-slot-thumbnail" aria-hidden="true">GINKA</span><span class="vn-slot-copy"><strong>{post.data.title}</strong><span class="vn-load-meta"><small data-vn-slot-date data-published={post.data.dateOnly}>{post.data.dateOnly}</small><span data-vn-slot-status></span></span></span></a><button type="button" data-vn-bookmark aria-pressed="false" aria-label={'收藏 '+post.data.title}>收藏</button></article>)}
+     {posts.map(post=><article class="vn-save-slot" data-vn-slot={href(post.data.route)} data-vn-thumbnail={thumbnail(post)} hidden><a href={href(post.data.route)} class="vn-save-link" data-vn-resume><span class="vn-slot-thumbnail" aria-hidden="true">{thumbnail(post)?<img src={thumbnail(post)} alt="" loading="lazy"/>:<span>文字记录</span>}</span><span class="vn-slot-copy"><strong>{post.data.title}</strong><span class="vn-load-meta"><small data-vn-slot-date data-published={post.data.dateOnly}>{post.data.dateOnly}</small><span data-vn-slot-status></span></span></span></a><button type="button" data-vn-bookmark aria-pressed="false" aria-label={'收藏 '+post.data.title}>收藏</button></article>)}
      {Array.from({length:10},()=> <div class="vn-load-empty-slot" data-vn-empty-slot hidden aria-label="空存档">No Data</div>)}
     </div>
     <p class="journal-visually-hidden" data-vn-library-empty hidden>暂无记录</p>
