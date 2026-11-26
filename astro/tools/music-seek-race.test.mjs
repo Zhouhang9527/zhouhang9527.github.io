@@ -41,7 +41,7 @@ function createHarness(){
   getStoredNumber:(key,fallback)=>{const value=Number(storage.get(key));return Number.isFinite(value)?value:fallback;},
   storageSet:(key,value)=>storage.set(key,String(value)),
   resetLyrics(){},prepareLyricsForTrack(){},stopAutoGainSampler(){},autoGainFactor:1,
-  applyEffectiveVolume(){},updateProgressUI(){},updatePlaylistActive(){},setPlaybackState(){}
+  applyEffectiveVolume(){},updateProgressUI(){},updatePlaylistActive(){},setPlaybackState(){},clearTrackRefresh(){}
  });
  vm.runInContext(`let currentMusicIndex=0; let musicLoadSequence=0; let pendingSeekRestore=null;\n${loadMusicSource}`,context);
  return {audio,context,storage,tracks};

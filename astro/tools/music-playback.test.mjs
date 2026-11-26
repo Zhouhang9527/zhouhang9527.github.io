@@ -12,16 +12,19 @@ function implementation(start,end){
 const numberSource=implementation('    function getStoredNumber(', '    function formatTime(');
 const playbackSource=implementation('    async function attemptPlay(', '    function togglePlay(');
 const errorSource=implementation('    let errorSkipCount = 0;', '    toggleBtn.addEventListener(');
+const clearRefreshSource=implementation('    function clearTrackRefresh()', '    const setActiveList =');
+const loadSource=implementation('    function loadMusic(', '    function renderPlaylist(');
 const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
 function harness(){
- const storage=new Map(),pending=[],states=[];
- const audio={src:'https://media.example.test/a.mp3',paused:true,play(){const call=deferred();pending.push(call);return call.promise;},pause(){this.paused=true;}};
- const context=vm.createContext({audio,STORAGE:{playing:'playing'},musicList:[{title:'Track'}],currentMusicIndex:0,musicTitle:{textContent:'Track'},
+ const storage=new Map(),pending=[],states=[],refreshLoading=[];
+ const audio={src:'https://media.example.test/a.mp3',paused:true,currentTime:0,duration:180,removeAttribute(){},load(){},play(){const call=deferred();pending.push(call);return call.promise;},pause(){this.paused=true;}};
+ const context=vm.createContext({audio,STORAGE:{playing:'playing',currentTime:'time'},musicList:[{id:'a',title:'Track A',src:audio.src},{id:'b',title:'Track B',src:'https://media.example.test/b.mp3'}],currentMusicIndex:0,musicTitle:{textContent:'Track'},musicArtist:null,musicCover:null,
   storageGet:key=>storage.has(key)?storage.get(key):null,storageSet:(key,value)=>storage.set(key,String(value)),
-  updatePlayIcon(){},ensureLyricLinesRendered(){},setPlaybackState:(state,message)=>states.push({state,message}),log(){},
+  normalizeIndex:index=>index,resetLyrics(){},prepareLyricsForTrack(){},stopAutoGainSampler(){},applyEffectiveVolume(){},updateProgressUI(){},updatePlaylistActive(){},
+  updatePlayIcon(){},ensureLyricLinesRendered(){},setPlaybackState:(state,message)=>states.push({state,message}),setRefreshLoading:value=>refreshLoading.push(value),log(){},
  });
- vm.runInContext(`let musicLoadSequence=0,playbackRequestSequence=0,playbackWanted=false,hasStartedPlayback=false;\n${numberSource}\n${playbackSource}`,context);
- return {context,audio,pending,states,storage};
+ vm.runInContext(`let musicLoadSequence=0,playbackRequestSequence=0,playbackWanted=false,hasStartedPlayback=false,pendingSeekRestore=null,autoGainFactor=1,suppressMediaError=0,currentSource='online',trackRefreshRequest=0,playlistRequest=null;\n${clearRefreshSource}\n${numberSource}\n${playbackSource}\n${loadSource}`,context);
+ return {context,audio,pending,states,storage,refreshLoading,selectTrack:context.loadMusic};
 }
 
 test('absent or invalid volume uses its default without losing an explicit mute',()=>{
@@ -69,7 +72,7 @@ test('a genuine media playback failure stays distinct from a playlist failure',a
 
 function errorHarness(){
  const h=harness(),refresh=deferred();
- Object.assign(h.context,{currentSource:'online',suppressMediaError:0,getCurrentTrack:()=>h.context.musicList[0],stopAutoGainSampler(){},setRefreshLoading(){},
+ Object.assign(h.context,{getCurrentTrack:()=>h.context.musicList[h.context.currentMusicIndex],
   refreshOnlineTrackUrl:()=>refresh.promise,loadMusic:()=>assert.fail('obsolete audio reloaded'),nextMusic:()=>assert.fail('obsolete audio skipped'),
  });
  h.context.musicList[0]={id:'a',source:'online',title:'Track A'};
@@ -78,9 +81,11 @@ function errorHarness(){
 }
 
 test('pausing during URL recovery cannot restart or skip the persistent audio',async()=>{
- const {context,refresh,states}=errorHarness();const recovery=context.handleAudioError();
- context.pausePlayback('user pause');refresh.resolve('https://media.example.test/retry.mp3');await recovery;
- assert.equal(states.at(-1).state,'paused');assert.equal(vm.runInContext('onlineFailureCount',context),0);
+ const {context,refresh,states,refreshLoading}=errorHarness();const recovery=context.handleAudioError();
+ assert.equal(refreshLoading.at(-1),true);
+ context.pausePlayback('user pause');assert.equal(refreshLoading.at(-1),false,'pause clears its pending retry spinner synchronously');
+ refresh.resolve('https://media.example.test/retry.mp3');await recovery;
+ assert.equal(refreshLoading.at(-1),false);assert.equal(states.at(-1).state,'paused');assert.equal(vm.runInContext('onlineFailureCount',context),0);
 });
 
 test('a failed old URL recovery cannot mark or skip the newly selected track',async()=>{
@@ -92,6 +97,35 @@ test('a failed old URL recovery cannot mark or skip the newly selected track',as
 });
 
 test('exhausted current URL recovery clears persisted playing and shows the real error',async()=>{
- const {context,refresh,storage,states}=errorHarness();const recovery=context.handleAudioError();refresh.resolve('');await recovery;
+ const {context,refresh,storage,states}=errorHarness();vm.runInContext('onlineFailureCount=2',context);
+ const recovery=context.handleAudioError();refresh.resolve('');await recovery;
  assert.equal(storage.get('playing'),'false');assert.equal(states.at(-1).state,'error');assert.match(states.at(-1).message,/在线音频/);
+});
+
+for(const outcome of ['success','empty'])test('track replacement clears pending retry loading before obsolete '+outcome,async()=>{
+ const {context,selectTrack,refresh,states,refreshLoading}=errorHarness();const recovery=context.handleAudioError();
+ assert.equal(refreshLoading.at(-1),true);selectTrack(1,{keepTime:false});
+ assert.equal(refreshLoading.at(-1),false,'production loadMusic clears the old owner');
+ assert.equal(context.currentMusicIndex,1);const changes=states.length;
+ refresh.resolve(outcome==='success'?'https://media.example.test/retry.mp3':'');await recovery;
+ assert.equal(refreshLoading.at(-1),false);assert.equal(states.length,changes,'late retry cannot change new track status');
+ assert.equal(vm.runInContext('onlineFailureCount',context),0);
+});
+
+test('an obsolete retry completion cannot clear the new track retry spinner',async()=>{
+ const {context,selectTrack,refresh,refreshLoading}=errorHarness();const first=context.handleAudioError();
+ selectTrack(1,{keepTime:false});vm.runInContext('suppressMediaError=0',context); // media loadstart has completed
+ const secondRefresh=deferred();context.refreshOnlineTrackUrl=()=>secondRefresh.promise;
+ const second=context.handleAudioError();assert.equal(refreshLoading.at(-1),true);
+ refresh.resolve('https://media.example.test/old.mp3');await first;
+ assert.equal(refreshLoading.at(-1),true,'new owner remains loading');
+ context.pausePlayback('pause current');assert.equal(refreshLoading.at(-1),false);
+ secondRefresh.resolve('');await second;assert.equal(refreshLoading.at(-1),false);
+});
+
+test('canceling a track retry preserves a genuinely pending playlist spinner',async()=>{
+ const {context,refresh,refreshLoading}=errorHarness();const retry=context.handleAudioError();
+ vm.runInContext('playlistRequest=Promise.resolve([])',context);context.pausePlayback('pause');
+ assert.equal(refreshLoading.at(-1),true,'unrelated playlist fetch remains loading');
+ refresh.resolve('');await retry;assert.equal(refreshLoading.at(-1),true);
 });

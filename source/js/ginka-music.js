@@ -152,6 +152,7 @@
     let playlistRequest = null;
     let playlistRequestSequence = 0;
     let trackRequestSequence = 0;
+    let trackRefreshRequest = 0;
     let onlineFailureCount = 0;
     let onlineFailedTrackIds = new Set();
     let onlineRetryForTrack = '';
@@ -167,6 +168,12 @@
       sourceRetryBtn.classList.toggle('is-loading', !!loading);
       sourceRetryBtn.setAttribute('aria-busy', String(!!loading));
     };
+    function clearTrackRefresh() {
+      if (!trackRefreshRequest) return;
+      trackRefreshRequest = 0;
+      // A playlist fetch may share the refresh control, but never its ownership.
+      setRefreshLoading(!!playlistRequest);
+    }
     const setActiveList = (source, tracks, options) => {
       const opt = options || {};
       const normalized = Array.isArray(tracks) ? tracks.filter((track) => track && track.id && track.src) : [];
@@ -514,6 +521,7 @@
 
       // The persistent element may receive metadata after its source was replaced.
       const loadSequence = ++musicLoadSequence;
+      clearTrackRefresh();
       setPlaybackState('paused');
       if (pendingSeekRestore) {
         audio.removeEventListener('loadedmetadata', pendingSeekRestore);
@@ -617,6 +625,7 @@
   
     async function attemptPlay(reason) {
       const request = ++playbackRequestSequence;
+      clearTrackRefresh();
       const load = musicLoadSequence;
       const source = audio.src;
       const current = () => request === playbackRequestSequence && load === musicLoadSequence && source === audio.src;
@@ -656,6 +665,7 @@
   
     function pausePlayback(reason) {
       ++playbackRequestSequence;
+      clearTrackRefresh();
       playbackWanted = false;
       audio.pause();
       updatePlayIcon(false);
@@ -1004,12 +1014,14 @@
         const trackKey = `${failedTrack.source}:${failedTrack.id}`;
         if (onlineRetryForTrack !== trackKey) {
           onlineRetryForTrack = trackKey;
+          clearTrackRefresh();
+          trackRefreshRequest = request;
           setRefreshLoading(true);
           setPlaybackState('loading', '正在重试音频…');
           const refreshed = await refreshOnlineTrackUrl(failedTrack);
+          if (trackRefreshRequest === request) clearTrackRefresh();
           const stillCurrent = request === playbackRequestSequence && load === musicLoadSequence && source === audio.src && playbackWanted && getCurrentTrack() === failedTrack;
           if (!stillCurrent) return;
-          setRefreshLoading(false);
           if (refreshed) {
             failedTrack.src = refreshed;
             loadMusic(currentMusicIndex, { keepTime: false });
