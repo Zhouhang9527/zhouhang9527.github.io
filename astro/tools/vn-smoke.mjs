@@ -29,7 +29,7 @@ async function profileLifecycle(width){
  const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce',hasTouch:width===390});
  const cdp=await page.context().newCDPSession(page),requests=new Map(),errors=[],durations=[],samples=[];
  const result={mode:original?'real-private-lifecycle':'public-noassets-lifecycle',width,cycles:0,soakMs,ok:false,
-  measurementScope:'Headless Chromium; external requests blocked with Playwright routing, which disables HTTP cache; request repetition is not a transferred-byte/cache regression by itself.'};
+  measurementScope:'Headless Chromium; V8 heap and DOM counters exclude native decoded-image/audio/GPU memory. External requests blocked with Playwright routing, which disables HTTP cache; request repetition is not a transferred-byte/cache regression by itself.'};
  let audio;
  page.on('pageerror',e=>errors.push(e.message));
  page.on('request',request=>{
