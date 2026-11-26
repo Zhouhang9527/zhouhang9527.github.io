@@ -171,7 +171,7 @@ function pose(id:string){
  const portrait=$('.ginka-mascot-portrait');if(portrait){portrait.dataset.mascotPose=id;portrait.setAttribute('aria-label',(p.character==='child'?'小银花':'大银花')+' · '+(p.outfitLabel||p.outfit)+' · '+p.expression+' · '+p.gesture+' · 下一句');}
 }
 function startMotion(){stopMotion();const id=lastPose,p=pack?.poses[id];if(!p?.motion.length||reduce()||!open||document.hidden)return;const tick=()=>{if(!open||!audio?.paused||lastPose!==id||reduce()||document.hidden)return;const frame=p.motion[motionIndex++%p.motion.length];if(readyFrames.has(frame.image))setImage('base',frame.image);motionTimer=window.setTimeout(tick,frame.ms);};tick();}
-function sceneStatus(value:string){if(root)root.dataset.mascotScene=value;}
+function sceneStatus(value:string){if(root)root.dataset.mascotScene=value;const status=$('[data-mascot-scene-status]');if(status)status.textContent=value==='static-verified'?'已核验：同记录静态相机快照（非动画）':value==='playing'?'正在播放已核验数值片段（非完整演出）':value==='complete'?'已核验数值片段已结束（非完整演出）':value==='stopped'?'数值演出已停止':value==='invalid'?'数值演出尚不受支持，保留静态立绘':'此句无已核验演出绑定；仅显示静态立绘';}
 function stopScene(clear=true){scene?.cancel();sceneFrame=scene?.frame()??null;commandIndex=sceneBinding?.actions.length??0;hostTimestamp=null;if(clear){scene=null;sceneBinding=null;sceneFrame=null;}sceneStatus(clear?'unavailable':'stopped');}
 function pumpScene(){
  if(!scene||!sceneBinding)return;
@@ -180,7 +180,7 @@ function pumpScene(){
 }
 function startScene(line:Line){
  stopScene();positionMedia();if(!line.sceneAction)return;
- try{sceneBinding=line.sceneAction;scene=new SceneActionScheduler(sceneBinding.initial,{reducedMotion:reduce()});pumpScene();positionMedia();startHost();}
+ try{sceneBinding=line.sceneAction;commandIndex=0;scene=new SceneActionScheduler(sceneBinding.initial,{reducedMotion:reduce()});pumpScene();positionMedia();startHost();}
  catch{stopScene();sceneStatus('invalid');feedback('此句演出投影尚不受支持；保留已验证静态立绘');positionMedia();}
 }
 // One RAF owns both text reveal and the bounded numeric action host.
@@ -223,9 +223,9 @@ function scheduleAuto(){
 async function play(line:Line,animate=true,presentation=true,record=true){
  if(!audio||document.hidden||!allowed(line))return;
  if(!presentation)close();
- cancelAutoTimer();const token=++generation,element=audio;element.pause();playingId=null;stopMotion();current=line;
+ cancelAutoTimer();const token=++generation,element=audio;element.pause();playingId=null;stopMotion();current=line;feedback('');
  if(presentation){openPortrait();renderLine(line,animate);startScene(line);warmNext();}
- feedback('');syncSettings();
+ syncSettings();
  if(!line.voice){element.removeAttribute('src');element.load();feedback('此句原作录音尚未匹配');startMotion();scheduleAuto();return;}
  element.src=line.voice;applyVolume();
  try{await element.play();if(token!==generation||audio!==element||element.paused||document.hidden)return;playingId=line.id;if(record)recordHistory(line);voiceStatus();}
@@ -277,7 +277,7 @@ document.addEventListener('change',event=>{
 });
 document.addEventListener('input',event=>{const e=event.target;if(!(e instanceof HTMLInputElement)||!e.matches('[data-vn-voice-volume]'))return;volume=Math.max(0,Math.min(100,Number(e.value)||0));try{localStorage.setItem(VOL,String(volume));}catch{}syncSettings();});
 document.addEventListener('vn:voice-action',event=>action(String((event as CustomEvent).detail)));
-document.addEventListener('vn:playback-change',()=>{playback=parsePlayback(localStorage.getItem(PLAYBACK_KEY));cancelAutoTimer();if(playback.textRevealMs===0)finishReveal();scheduleAuto();});
+document.addEventListener('vn:playback-change',event=>{const detail=(event as CustomEvent).detail;if(!detail||typeof detail!=='object'||Array.isArray(detail))return;try{playback=parsePlayback(JSON.stringify({...detail,version:1}));}catch{return;}cancelAutoTimer();if(playback.textRevealMs===0)finishReveal();scheduleAuto();});
 document.addEventListener('vn:voice-defaults',()=>{volume=80;muted=false;try{localStorage.setItem(VOL,'80');localStorage.setItem(MUTE,'0');}catch{}syncSettings();});
 document.addEventListener('vn:backlog-open',()=>{if(open)close();else stopVoice();});
 document.addEventListener('vn:backlog-opened',()=>{if(open)close();else stopVoice();});
@@ -292,7 +292,7 @@ document.addEventListener('vn:progress-change',refreshEligibility);
 window.addEventListener('storage',()=>{readSettings();refreshEligibility();});
 document.addEventListener('visibilitychange',()=>{document.documentElement.toggleAttribute('data-mascot-page-hidden',document.hidden);if(document.hidden){setAuto(false);generation++;finishReveal();audio?.pause();playingId=null;stopMotion();stopScene(false);cancelAnimationFrame(reveal);reveal=0;hostTimestamp=null;voiceStatus();}else if(open)startMotion();});
 const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
-function resyncMotion(){if(!open)return;scene?.setReducedMotion(reduce());if(scene){pumpScene();positionMedia();startHost();}if(reduce()){stopMotion();finishReveal();}else if(audio?.paused)startMotion();}
+function resyncMotion(){if(!open)return;try{scene?.setReducedMotion(reduce());if(scene){pumpScene();positionMedia();startHost();}}catch{stopScene();sceneStatus('invalid');feedback('演出投影未能继续，已停止');positionMedia();}if(reduce()){stopMotion();finishReveal();}else if(audio?.paused)startMotion();}
 motionPreference.addEventListener('change',resyncMotion);
 document.documentElement.toggleAttribute('data-mascot-page-hidden',document.hidden);
 readSettings();mount();

@@ -81,6 +81,8 @@ test('numeric scene projection binds the exact record, strips provenance, and re
  assert.throws(change(v=>v.actions[0][2][0].action[0][1][0].handler='eval'),/Unsupported scene action/);
  assert.throws(change(v=>v.actions[0][2][0].name='sourceBlob'),/Unsupported scene action/);
  assert.throws(change(v=>v.initial.objects.actor.properties.xpos=Infinity));
+ raw.actions.push(['wait','time',250],['envupdate','update',[{name:'actor',action:[['xpos',[{handler:'MoveAction',value:'@+1',time:400}]]]}]]);
+ assert.deepEqual(projectSceneAction(raw,source,canvas).actions,raw.actions,'projection preserves consecutive commands and explicit waits without advancing a synthetic per-command clock');
  raw.actions=[];assert.equal(projectSceneAction(raw,source,canvas).actions.length,0,'static verified snapshot is not fabricated motion');
  assert.equal(projectSceneAction(undefined,source,canvas),null);
 });

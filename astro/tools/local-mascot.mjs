@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import {SceneActionScheduler} from '../src/domain/vn-actions.ts';
+import {SceneActionScheduler,parseSceneAction} from '../src/domain/vn-actions.ts';
 import {projectMascotCamera} from '../src/lib/mascot-geometry.ts';
 import {isPrivateRequest,byteRange,servePrivateBytes} from './private-http.mjs';
 const prefix='/__ginka_local_mascot__/';
@@ -46,8 +46,15 @@ export function projectSceneAction(raw,lineSource,canvas){
  const actions=[];
  for(const command of raw.actions){
   if(JSON.stringify(command).length>65536)throw Error('Scene action budget exceeded');
-  const result=scheduler.dispatch(command);if(!result.ok)throw Error('Unsupported scene action projection');
-  project(scheduler.frame());scheduler.advance(1e9);project(scheduler.frame());actions.push(structuredClone(command));
+  // Parse only: playback dispatches consecutive commands until an explicit wait.
+  // Advancing each command here would invent a different schedule, and finite
+  // preview sampling cannot prove every future frame/loop safe. The host keeps
+  // exact dispatch errors and non-projectable states visible at runtime.
+  const result=parseSceneAction(command);if(!result.ok)throw Error('Unsupported scene action projection');
+  const action=result.action,known=name=>name==='actor'||name==='env';
+  const wait=action.kind==='update'?action.wait:action;
+  if(action.kind==='update'&&action.updates.some(update=>!known(update.name))||wait?.kind==='actions'&&wait.names.some(name=>!known(name)))throw Error('Unsupported scene action target');
+  actions.push(structuredClone(command));
  }
  return {initial:state,actions,projection};
 }

@@ -125,7 +125,8 @@ try{
   await page.close();console.log('PASS synthetic layered mascot browser at '+width+'px');
  }
  // Alternatives are real fixture pixels, not verified animation timing: never auto-enable them.
- const animated=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:'no-preference'});
+ const animated=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:'no-preference'}),animationErrors=[];
+ animated.on('pageerror',error=>animationErrors.push(error.message));
  await animated.route('**/*',route=>new URL(route.request().url()).origin===url?route.continue():route.abort());
  await animated.addInitScript(()=>localStorage.setItem('ginka.vn.mode.v1','reader'));
  await animated.goto(url+'/',{waitUntil:'domcontentloaded'});
@@ -137,6 +138,16 @@ try{
  const before=await animated.locator('[data-mascot-canvas]').evaluate(c=>c.style.transform);
  await animated.waitForFunction(value=>document.querySelector('[data-mascot-canvas]').style.transform!==value,before);
  await animated.waitForFunction(()=>document.querySelector('[data-ginka-mascot]').dataset.mascotScene==='complete');
+ const historyBeforeDynamicReplay=await animated.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1'));
+ await animated.evaluate(()=>{window.__playbackGet=Storage.prototype.getItem;Storage.prototype.getItem=function(key){if(key==='ginka.vn.playback.v1')throw new DOMException('Storage denied','SecurityError');return window.__playbackGet.call(this,key);};document.dispatchEvent(new CustomEvent('vn:playback-change',{detail:{textRevealMs:0,autoGapMs:700,autoScrollSpeed:45,skipSeenOnly:true,effectSpeed:1}}));});
+ await animated.locator('[data-mascot-action=replay]').click();
+ await animated.waitForFunction(()=>document.querySelector('[data-ginka-mascot]').dataset.mascotScene==='playing');
+ const replayStart=await animated.locator('[data-mascot-canvas]').evaluate(c=>c.style.transform);
+ await animated.waitForFunction(value=>document.querySelector('[data-mascot-canvas]').style.transform!==value,replayStart);
+ await animated.waitForFunction(()=>document.querySelector('[data-ginka-mascot]').dataset.mascotScene==='complete');
+ assert.equal(await animated.locator('[data-mascot-text]').textContent(),'Tone fixture');
+ await animated.evaluate(()=>{Storage.prototype.getItem=window.__playbackGet;delete window.__playbackGet;});
+ assert.equal(await animated.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1')),historyBeforeDynamicReplay,'Replayed numeric fragment must restart but never append voice history');
  await animated.waitForTimeout(3500);
  assert.deepEqual(await animated.locator('[data-mascot-canvas]').evaluate(c=>[c.dataset.mascotEye,c.dataset.mascotMouth,...c.getContext('2d').getImageData(1,1,2,1).data]),['false','false',0,255,0,255,255,255,0,255]);
  await animated.locator('.ginka-mascot-selection summary').click();
@@ -147,6 +158,7 @@ try{
  assert.equal(await animated.evaluate(()=>localStorage.getItem('ginka.vn.mascot.expression.v1')),'smile');
  assert.equal(await animated.locator('[data-ginka-mascot]').getAttribute('data-mascot-scene'),'unavailable');
  await animated.locator('[data-mascot-character] [data-mascot-action=close]').click();
- await animated.close();console.log('PASS synthetic unverified alternatives remain disabled');
+ assert.deepEqual(animationErrors,[]);
+ await animated.close();console.log('PASS synthetic numeric replay, storage-denied playback preferences and disabled unverified alternatives');
 } catch(error){console.error(log);throw error;}
 finally{await browser?.close();if(server){server.kill();if(server.exitCode===null)await new Promise(resolve=>{server.once('exit',resolve);setTimeout(resolve,2000).unref();});}fs.rmSync(dir,{recursive:true,force:true});}
