@@ -1,7 +1,7 @@
 // Local-only acceptance for the real verified pack. Never upload its screenshots or recordings to CI.
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
-import {projectMascotCamera,computeMascotGeometry} from '../src/lib/mascot-geometry.ts';
+import {projectMascotCamera,computeMascotGeometry,projectLinkedMascotOverlay} from '../src/lib/mascot-geometry.ts';
 import {SceneActionScheduler} from '../src/domain/vn-actions.ts';
 const origin=new URL(process.env.GINKA_TEST_BASE_URL||'http://127.0.0.1:4321');
 assert.ok(['127.0.0.1','localhost','[::1]'].includes(origin.hostname),'Use a private loopback preview only');
@@ -12,6 +12,24 @@ assert.doesNotMatch(JSON.stringify(pack),/"(?:source|voiceSource|phaseSource|sou
 const lines=pack.lines,poses=pack.poses;
 assert.ok(lines.some(l=>l.phase==='main'&&poses[l.pose].character==='child'&&l.voice),'Missing voiced child');
 assert.ok(lines.some(l=>l.phase==='afterstory'&&poses[l.pose].character==='adult'&&l.voice),'Missing voiced adult');
+async function assertOverlayPixels(page,line,pose){
+ const binding=line.sceneAction,p0=binding.projection,frame=binding.initial,properties={...p0.properties,...frame.objects.actor.properties},camera={...p0.camera,...frame.camera.properties};
+ assert.equal(binding.actions.length,0,'Static emotion acceptance must not imply show/hide timeline support');
+ const actor=projectMascotCamera({...p0,canvas:pose.canvas,properties,camera});
+ const overlays=binding.overlays.map(overlay=>{const {image,...input}=overlay;return {image,order:overlay.properties.order??0,...projectLinkedMascotOverlay({...input,stage:p0.stage,camera,parentProperties:properties})};});
+ const result=await page.evaluate(async({pose,actor,overlays,stage,actorOrder})=>{
+  const actual=document.querySelector('[data-mascot-canvas]'),expected=document.createElement('canvas');expected.width=stage.width;expected.height=stage.height;const c=expected.getContext('2d'),cache=new Map();
+  for(const url of new Set([pose.base,...pose.layers.map(layer=>layer.image),...overlays.map(overlay=>overlay.image)])){const img=new Image();img.src=url;await img.decode();cache.set(url,img);}
+  const nodes=[{order:actorOrder,draw(){if(!actor.visible)return;c.setTransform(...actor.matrix);c.globalAlpha=actor.opacity;c.drawImage(cache.get(pose.base),pose.baseOffset?.x??0,pose.baseOffset?.y??0);for(const layer of pose.layers){const img=cache.get(layer.image);if(layer.blend==='replace')c.clearRect(layer.x,layer.y,img.naturalWidth,img.naturalHeight);c.drawImage(img,layer.x,layer.y);}}}];
+  // Independent test compositor: matrices come from source-backed pure geometry,
+  // not the production runtime's CSS or canvas transformations.
+  for(const overlay of overlays)nodes.push({order:overlay.order,draw(){if(!overlay.visible)return;c.setTransform(...overlay.matrix);c.globalAlpha=overlay.opacity;c.drawImage(cache.get(overlay.image),0,0);}});
+  for(const node of nodes.sort((a,b)=>a.order-b.order)){c.save();node.draw();c.restore();}
+  const want=c.getImageData(0,0,expected.width,expected.height).data,got=actual.getContext('2d').getImageData(0,0,actual.width,actual.height).data;let changedChannels=0;for(let i=0;i<want.length;i++)if(want[i]!==got[i])changedChannels++;
+  return {changedChannels,canvasCount:document.querySelectorAll('[data-mascot-canvas]').length,composition:actual.dataset.mascotComposition};
+ },{pose,actor,overlays,stage:p0.stage,actorOrder:properties.order??0});
+ assert.deepEqual(result,{changedChannels:0,canvasCount:1,composition:'stage'},'Source static emotion and actor must compose pixel-exactly in the existing single stage canvas');
+}
 const browser=await chromium.launch();const results=[];
 try{
  for(const width of [390,1440]){
@@ -25,12 +43,13 @@ try{
    const allowed=lines.filter(l=>unlocked||l.phase==='main'&&poses[l.pose].phase==='main');
    await launcher.click();
    await canvas.evaluate(c=>window.__originalMascotCanvas=c);
-   let projected=0;
+   let projected=0,overlays=0;
    for(const [i,line] of allowed.entries()){
     if(i)await next.click();
     await page.waitForFunction(text=>document.querySelector('[data-mascot-text]')?.textContent===text,line.text);
     await page.waitForFunction(()=>document.querySelector('.ginka-mascot-portrait')?.dataset.mascotRender==='ready');
-    const pose=poses[line.pose];assert.deepEqual(await canvas.evaluate(c=>[c.width,c.height]),[pose.canvas.width,pose.canvas.height]);
+    const pose=poses[line.pose],composite=!!line.sceneAction?.overlays?.length,size=composite?line.sceneAction.projection.stage:pose.canvas;assert.deepEqual(await canvas.evaluate(c=>[c.width,c.height]),[size.width,size.height]);
+    if(composite){await assertOverlayPixels(page,line,pose);overlays++;}
     assert.ok(await canvas.evaluate(c=>{const p=c.getContext('2d').getImageData(0,0,c.width,c.height).data;for(let i=3;i<p.length;i+=4)if(p[i])return true;return false;}),'Blank original portrait');
     assert.ok(await canvas.evaluate(c=>c===window.__originalMascotCanvas),'No second portrait renderer');
     const binding=line.sceneAction;
@@ -62,7 +81,7 @@ try{
    await page.locator('.ginka-mascot-selection summary').click();
    await page.locator('[data-mascot-character] [data-mascot-action=close]').click();assert.equal(await audio.evaluate(a=>a.paused),true);
    assert.deepEqual(errors,[]);assert.deepEqual(failures,[]);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-   results.push({width,unlocked,lines:allowed.length,poses:new Set(allowed.map(l=>l.pose)).size,projected,selections});
+   results.push({width,unlocked,lines:allowed.length,poses:new Set(allowed.map(l=>l.pose)).size,projected,selections,overlays});
    await page.close();
   }
  }

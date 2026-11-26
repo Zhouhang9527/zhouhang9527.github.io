@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {SceneActionScheduler,parseSceneAction} from '../src/domain/vn-actions.ts';
-import {projectMascotCamera} from '../src/lib/mascot-geometry.ts';
+import {projectMascotCamera,projectLinkedMascotOverlay} from '../src/lib/mascot-geometry.ts';
 import {isPrivateRequest,byteRange,servePrivateBytes} from './private-http.mjs';
 const prefix='/__ginka_local_mascot__/';
 const idPattern=/^[a-zA-Z0-9_-]{1,80}$/;
@@ -24,7 +24,7 @@ export function imageCanvas(file){
 }
 // Validate through the same bounded scheduler/projection consumed by the renderer.
 // Provenance never crosses the HTTP boundary; no original expressions are evaluated.
-export function projectSceneAction(raw,lineSource,canvas){
+export function projectSceneAction(raw,lineSource,canvas,registerOverlay){
  if(raw==null)return null;
  if(raw.verified!==true||raw.source!==lineSource||!raw.initial||!raw.projection||!Array.isArray(raw.actions)||raw.actions.length>32)throw Error('Unverified scene action binding');
  const p=raw.projection;if(p.verified!==true||typeof p.source!=='string'||!p.source.trim())throw Error('Unverified scene projection');
@@ -56,7 +56,18 @@ export function projectSceneAction(raw,lineSource,canvas){
   if(action.kind==='update'&&action.updates.some(update=>!known(update.name))||wait?.kind==='actions'&&wait.names.some(name=>!known(name)))throw Error('Unsupported scene action target');
   actions.push(structuredClone(command));
  }
- return {initial:state,actions,projection};
+ const overlays=[];
+ if(raw.overlays!==undefined){
+  if(!Array.isArray(raw.overlays)||raw.overlays.length>4)throw Error('Invalid overlay count');
+  for(const item of raw.overlays){
+   if(!item||item.verified!==true||typeof item.source!=='string'||!item.source.trim()||typeof registerOverlay!=='function')throw Error('Unverified linked overlay');
+   const bitmap=numeric(item.canvas);if(Object.keys(bitmap).some(k=>!['width','height'].includes(k))||!Number.isInteger(bitmap.width)||!Number.isInteger(bitmap.height))throw Error('Invalid overlay canvas');
+   const input={canvas:{width:bitmap.width,height:bitmap.height},origin:point(item.origin),resolution:item.resolution,properties:numeric(item.properties),linkmode:item.linkmode,linkmask:item.linkmask,rightHanded:item.rightHanded};
+   projectLinkedMascotOverlay({...input,stage:projection.stage,camera:{...projection.camera,...state.camera.properties},parentProperties:{...projection.properties,...state.objects.actor.properties}});
+   const image=registerOverlay(item.image,input.canvas);overlays.push({image,...input});
+  }
+ }
+ return {initial:state,actions,projection,...(overlays.length?{overlays}:{})};
 }
 export function loadMascotPack(input){
  const manifest=fs.realpathSync(input),root=path.dirname(manifest),raw=JSON.parse(fs.readFileSync(manifest,'utf8'));
@@ -121,7 +132,11 @@ export function loadMascotPack(input){
  for(const line of raw.lines){
   if(!line||typeof line.id!=='string'||!idPattern.test(line.id)||ids.has(line.id)||typeof line.text!=='string'||!line.text.trim()||line.text.length>600||typeof line.speaker!=='string'||!line.speaker.trim()||!Object.hasOwn(poses,line.pose)||typeof line.source!=='string'||!line.source.trim()||((!layered||line.voice!==null)&&(typeof line.voiceSource!=='string'||!line.voiceSource.trim()))||line.verified!==true||(layered&&(typeof line.phaseSource!=='string'||!line.phaseSource.trim())))throw Error('Unverified or invalid dialogue entry');
   if(line.phaseVerified===false||!['main','afterstory'].includes(line.phase)||(line.phase==='main'&&poses[line.pose].phase==='afterstory'))throw Error('Invalid unlock phase');
-  const sceneAction=projectSceneAction(line.sceneAction,line.source,poses[line.pose].canvas);
+  const sceneAction=projectSceneAction(line.sceneAction,line.source,poses[line.pose].canvas,(relative,canvas)=>{
+   if(!layered)throw Error('Linked overlay requires layered portrait');
+   const image=register(relative,'image'),actual=files.get(image.slice(prefix.length)).canvas;
+   if(actual.width!==canvas.width||actual.height!==canvas.height)throw Error('Overlay bitmap size mismatch');return image;
+  });
   ids.add(line.id);lines.push({id:line.id,speaker:line.speaker,text:line.text,pose:line.pose,phase:line.phase,voice:layered&&line.voice===null?null:register(line.voice,'audio'),...(sceneAction?{sceneAction}:{})});
  }
  return {files,manifest:{version:raw.version,available:true,defaultPose:raw.defaultPose,poses,lines}};

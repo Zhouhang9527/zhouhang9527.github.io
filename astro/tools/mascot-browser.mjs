@@ -40,8 +40,9 @@ try{
  const line=(id,text,voice,p='main',poseId='a')=>({id,text,voice,phase:p,pose:poseId,speaker:'Synthetic fixture',source:'fixture',phaseSource:'fixture',voiceSource:voice?'generated test tone':null,verified:true});
  const sceneAction={verified:true,source:'fixture',initial:{objects:{actor:{properties:{xpos:0}}},camera:{properties:{}}},actions:[['envupdate','update',[{name:'actor',action:[['xpos',[{handler:'MoveAction',value:2,time:800}]]]}]]],projection:{verified:true,source:'synthetic calibration only',stage:{width:12,height:12},resolution:100,rightHanded:false,camera:{cameraoffsetz:-100,cameraoffsetzmax:100,camerarh:0},properties:{xpos:0}}};
  const spoken={...line('tone','Tone fixture','tone.wav'),sceneAction};
+ const locked={...line('locked','Locked fixture',null,'afterstory','b'),sceneAction:{...sceneAction,actions:[],overlays:[{verified:true,source:'synthetic static overlay only',image:'blink.png',canvas:{width:1,height:1},origin:{x:0,y:0},resolution:100,properties:{xpos:-3,ypos:3,order:3},linkmode:0,linkmask:0,rightHanded:true}]}};
  const file=path.join(dir,'manifest.json');
- fs.writeFileSync(file,JSON.stringify({version:2,defaultPose:'a',poses:{a:pose,b:{...pose,character:'adult',phase:'afterstory',outfit:'locked'},c:{...pose,expression:'smile',gesture:'wave'}},lines:[line('silent','Silent fixture',null),spoken,line('locked','Locked fixture',null,'afterstory','b')]}));
+ fs.writeFileSync(file,JSON.stringify({version:2,defaultPose:'a',poses:{a:pose,b:{...pose,character:'adult',phase:'afterstory',outfit:'locked'},c:{...pose,expression:'smile',gesture:'wave'}},lines:[line('silent','Silent fixture',null),spoken,locked]}));
  server=spawn(process.execPath,[astroCli,'dev','--host','127.0.0.1','--port',port],{env:{...process.env,GINKA_MASCOT_MANIFEST:file},stdio:['ignore','pipe','pipe']});
  for(const stream of [server.stdout,server.stderr])stream.on('data',c=>{log=(log+c).slice(-12000);});
  for(let i=0;i<90;i++){if(server.exitCode!==null)throw Error('Fixture dev server exited');try{if((await fetch(url+'/__ginka_local_mascot__/manifest.json')).ok)break;}catch{}await new Promise(r=>setTimeout(r,500));}
@@ -83,6 +84,9 @@ try{
   assert.equal(await page.evaluate(()=>document.activeElement?.matches('[data-mascot-action=open]')),true);
   await page.evaluate(()=>{localStorage.setItem('ginka.vn.progress.v1',JSON.stringify({version:1,completed:[],mainCleared:true}));window.dispatchEvent(new StorageEvent('storage'));});
   await launcher.click();await next.click();await next.click();assert.equal(await page.locator('[data-mascot-text]').textContent(),'Locked fixture');
+  await page.waitForFunction(()=>document.querySelector('[data-mascot-canvas]').dataset.mascotComposition==='stage');
+  assert.deepEqual(await canvas.evaluate(c=>[c.width,c.height,...c.getContext('2d').getImageData(3,3,1,1).data]),[12,12,0,0,255,255],'static linked bitmap uses the same stage canvas with independent source matrix');
+  assert.equal(await page.locator('[data-mascot-canvas]').count(),1,'overlay must not create a second renderer');
   await page.evaluate(()=>{localStorage.removeItem('ginka.vn.progress.v1');document.dispatchEvent(new Event('vn:progress-reset'));});
   assert.equal(await page.locator('[data-mascot-character]').isVisible(),false);
   await page.goto(url+'/settings/#sound',{waitUntil:'domcontentloaded'});

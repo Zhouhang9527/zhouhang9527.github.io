@@ -84,5 +84,11 @@ test('numeric scene projection binds the exact record, strips provenance, and re
  raw.actions.push(['wait','time',250],['envupdate','update',[{name:'actor',action:[['xpos',[{handler:'MoveAction',value:'@+1',time:400}]]]}]]);
  assert.deepEqual(projectSceneAction(raw,source,canvas).actions,raw.actions,'projection preserves consecutive commands and explicit waits without advancing a synthetic per-command clock');
  raw.actions=[];assert.equal(projectSceneAction(raw,source,canvas).actions.length,0,'static verified snapshot is not fabricated motion');
+ const overlay={verified:true,source:'private overlay sourceBlob',image:'private.png',canvas:{width:1,height:1},origin:{x:0,y:0},resolution:100,properties:{xpos:0,ypos:0,order:3},linkmode:0,linkmask:0,rightHanded:true};
+ raw.overlays=[overlay];const register=(path,canvas)=>{assert.equal(path,'private.png');assert.deepEqual(canvas,{width:1,height:1});return '/__ginka_local_mascot__/asset-99.png';};
+ const projected=projectSceneAction(raw,source,canvas,register);assert.equal(projected.overlays[0].image,'/__ginka_local_mascot__/asset-99.png');assert.doesNotMatch(JSON.stringify(projected),/source|Source|_hxv4_hash|nativeStorage|nameHash|private/);
+ overlay.linkmode=1;assert.throws(()=>projectSceneAction(raw,source,canvas,register),/Unsupported linked overlay/);overlay.linkmode=0;
+ overlay.rightHanded=undefined;assert.throws(()=>projectSceneAction(raw,source,canvas,register),/calibration/);overlay.rightHanded=true;
+ overlay.verified=false;assert.throws(()=>projectSceneAction(raw,source,canvas,register),/Unverified linked overlay/);
  assert.equal(projectSceneAction(undefined,source,canvas),null);
 });

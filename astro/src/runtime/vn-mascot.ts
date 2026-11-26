@@ -1,7 +1,7 @@
 import {KEY,parse} from '../domain/reading-state';
 import {HISTORY_KEY,parseHistory,appendHistory} from '../domain/voice-history';
-import {computeMascotGeometry,projectMascotCamera} from '../lib/mascot-geometry';
-import type {MascotProjectionInput} from '../lib/mascot-geometry';
+import {computeMascotGeometry,projectMascotCamera,projectLinkedMascotOverlay} from '../lib/mascot-geometry';
+import type {MascotProjectionInput,LinkedMascotOverlayInput} from '../lib/mascot-geometry';
 import {SceneActionScheduler} from '../domain/vn-actions';
 import type {SceneActionState,SceneActionFrame} from '../domain/vn-actions';
 import {PLAYBACK_KEY,parsePlayback} from '../domain/vn-options';
@@ -9,7 +9,8 @@ let playback=parsePlayback(null);
 type Part={image:string;x:number;y:number;blend:'over'|'replace'};
 type Layer=Part&{slot:string;alternate:Part|null};
 type Pose={layers:Layer[]|null;canvas:{width:number;height:number};baseOffset?:{x:number;y:number};character:'child'|'adult';phase:'main'|'afterstory';outfit:string;outfitLabel?:string;expression:string;gesture:string;base:string;blink:string|null;mouth:string|null;motion:{image:string;ms:number}[]};
-type SceneBinding={initial:SceneActionState;actions:unknown[];projection:Omit<MascotProjectionInput,'canvas'>};
+type Overlay=Omit<LinkedMascotOverlayInput,'stage'|'camera'|'parentProperties'>&{image:string};
+type SceneBinding={initial:SceneActionState;actions:unknown[];projection:Omit<MascotProjectionInput,'canvas'>;overlays?:Overlay[]};
 type Line={id:string;speaker:string;text:string;pose:string;phase:'main'|'afterstory';voice:string|null;sceneAction?:SceneBinding};
 type Pack={version:1|2;defaultPose:string;poses:Record<string,Pose>;lines:Line[]};
 const VOL='ginka.vn.voice.volume.v1',SAVED='ginka.vn.voice.saved.v1',MUTE='ginka.vn.voice.mute.v1',CHAR='ginka.vn.mascot.character.v1',OUTFIT='ginka.vn.mascot.outfit.v1',EXPR='ginka.vn.mascot.expression.v1',GESTURE='ginka.vn.mascot.gesture.v1';
@@ -43,15 +44,16 @@ let portraitObserver:ResizeObserver|null=null,observedPortrait:HTMLElement|null=
 let scene:SceneActionScheduler|null=null,sceneBinding:SceneBinding|null=null,sceneFrame:SceneActionFrame|null=null,commandIndex=0,hostTimestamp:number|null=null,revealElapsed=0;
 function positionMedia(){
  const portrait=$('.ginka-mascot-portrait'),p=lastPose&&pack?.poses[lastPose];if(!portrait||!p||portrait.clientWidth<=0||portrait.clientHeight<=0)return;
- const viewport={width:portrait.clientWidth,height:portrait.clientHeight};
+ const viewport={width:portrait.clientWidth,height:portrait.clientHeight},composite=!!sceneBinding?.overlays?.length&&!!sceneFrame,displayCanvas=composite?sceneBinding!.projection.stage:p.canvas;
  let g=computeMascotGeometry({canvas:{...p.canvas,baseOffset:p.baseOffset},viewport}),matrix=g.matrix,opacity=1;
- if(sceneBinding&&sceneFrame){
+ if(sceneBinding&&sceneFrame&&!composite){
   const p0=sceneBinding.projection,raw=projectMascotCamera({...p0,canvas:p.canvas,properties:{...p0.properties,...sceneFrame.objects.actor.properties},camera:{...p0.camera,...sceneFrame.camera.properties} as MascotProjectionInput['camera']});
   // Fit the explicit original stage into the blog portrait viewport; raw coordinates never become CSS deltas.
   g=computeMascotGeometry({canvas:p0.stage,viewport});const [a,b,c,d,e,f]=raw.matrix,k=g.scale;
   matrix=[k*a,k*b,k*c,k*d,k*e+g.drawRect.x,k*f+g.drawRect.y];opacity=raw.visible?raw.opacity:0;
  }
- for(const node of portrait.querySelectorAll<HTMLElement>('img,canvas')){node.style.inset='auto';node.style.left='0px';node.style.top='0px';node.style.width=p.canvas.width+'px';node.style.height=p.canvas.height+'px';node.style.objectFit='fill';node.style.objectPosition='initial';node.style.transformOrigin='0 0';node.style.transform='matrix('+matrix.join(',')+')';node.style.opacity=String(opacity);}
+ if(composite){matrix=computeMascotGeometry({canvas:displayCanvas,viewport}).matrix;opacity=1;}
+ for(const node of portrait.querySelectorAll<HTMLElement>('img,canvas')){node.style.inset='auto';node.style.left='0px';node.style.top='0px';node.style.width=displayCanvas.width+'px';node.style.height=displayCanvas.height+'px';node.style.objectFit='fill';node.style.objectPosition='initial';node.style.transformOrigin='0 0';node.style.transform='matrix('+matrix.join(',')+')';node.style.opacity=String(opacity);}
  portrait.dataset.mascotGeometry='shared';
 }
 function observePortrait(){
@@ -62,19 +64,27 @@ function drawLayers(){
  const canvas=$('[data-mascot-canvas]') as HTMLCanvasElement|undefined,p=layerPose;
  if(!open||!canvas||!p?.layers)return;
  const base=layerImages.get(p.base),context=canvas.getContext('2d');if(!base||!context)return;
- if(canvas.width!==p.canvas.width)canvas.width=p.canvas.width;if(canvas.height!==p.canvas.height)canvas.height=p.canvas.height;
- context.clearRect(0,0,canvas.width,canvas.height);context.drawImage(base,p.baseOffset?.x??0,p.baseOffset?.y??0);
- for(const layer of p.layers){const image=layerImages.get(layer.image);if(!image)return;if(layer.blend==='replace')context.clearRect(layer.x,layer.y,image.naturalWidth,image.naturalHeight);context.drawImage(image,layer.x,layer.y);}
+ const overlays=sceneBinding?.overlays??[],composite=overlays.length>0&&!!sceneFrame,size=composite?sceneBinding!.projection.stage:p.canvas;
+ if(canvas.width!==size.width)canvas.width=size.width;if(canvas.height!==size.height)canvas.height=size.height;
+ context.setTransform(1,0,0,1,0,0);context.globalAlpha=1;context.clearRect(0,0,canvas.width,canvas.height);
+ const drawActor=()=>{context.drawImage(base,p.baseOffset?.x??0,p.baseOffset?.y??0);for(const layer of p.layers!){const image=layerImages.get(layer.image);if(!image)throw Error('Missing verified layer');if(layer.blend==='replace')context.clearRect(layer.x,layer.y,image.naturalWidth,image.naturalHeight);context.drawImage(image,layer.x,layer.y);}};
+ if(composite){
+  const projection=sceneBinding!.projection,frame=sceneFrame!,properties={...projection.properties,...frame.objects.actor.properties},camera={...projection.camera,...frame.camera.properties} as MascotProjectionInput['camera'];
+  const actor=projectMascotCamera({...projection,canvas:p.canvas,properties,camera}),nodes=[{order:properties.order??0,draw:()=>{if(!actor.visible)return;context.setTransform(...actor.matrix);context.globalAlpha=actor.opacity;drawActor();}}];
+  for(const overlay of overlays){const image=layerImages.get(overlay.image);if(!image)throw Error('Missing verified overlay');const {image:_,...input}=overlay,geometry=projectLinkedMascotOverlay({...input,stage:projection.stage,camera,parentProperties:properties});nodes.push({order:overlay.properties.order??0,draw:()=>{if(!geometry.visible)return;context.setTransform(...geometry.matrix);context.globalAlpha=geometry.opacity;context.drawImage(image,0,0);}});}
+  for(const node of nodes.sort((a,b)=>a.order-b.order)){context.save();node.draw();context.restore();}
+ }else drawActor();
+ context.setTransform(1,0,0,1,0,0);context.globalAlpha=1;canvas.dataset.mascotComposition=composite?'stage':'portrait';
  canvas.dataset.mascotEye='false';canvas.dataset.mascotMouth='false';canvas.hidden=false;positionMedia();renderState('ready');
 }
 function loadLayers(p:Pose){
- const canvas=$('[data-mascot-canvas]') as HTMLCanvasElement|undefined,portrait=$('.ginka-mascot-portrait');
- if(p.layers&&layerPose===p&&(layerPending||layerImages.size)){if(!layerPending)drawLayers();return;}
+ const canvas=$('[data-mascot-canvas]') as HTMLCanvasElement|undefined,portrait=$('.ginka-mascot-portrait'),required=[...poseUrls(p),...(sceneBinding?.overlays??[]).map(overlay=>overlay.image)];
+ if(p.layers&&layerPose===p&&!layerPending&&required.every(url=>layerImages.has(url))){drawLayers();return;}
  const token=++layerToken;layerPose=p.layers?p:null;layerImages=new Map();layerPending=false;
  portrait?.toggleAttribute('data-layered',!!p.layers);if(canvas)canvas.hidden=true;
  const active=()=>open&&token===layerToken&&lastPose!==''&&pack?.poses[lastPose]===p;
  if(!p.layers){renderState('loading');void decodeImage(p.base).then(()=>{if(active())renderState('ready');}).catch(()=>{if(active())renderState('error');});return;}
- const required=poseUrls(p),finish=(entries:readonly (readonly [string,HTMLImageElement])[])=>{if(!active())return;layerPending=false;layerImages=new Map(entries);drawLayers();};
+ const finish=(entries:readonly (readonly [string,HTMLImageElement])[])=>{if(!active())return;layerPending=false;layerImages=new Map(entries);drawLayers();};
  const cached=required.map(url=>[url,imageCache.get(url)] as const);
  if(cached.every((entry):entry is readonly [string,HTMLImageElement]=>!!entry[1])){finish(cached);return;}
  layerPending=true;renderState('loading');
@@ -171,7 +181,7 @@ function pose(id:string){
  const portrait=$('.ginka-mascot-portrait');if(portrait){portrait.dataset.mascotPose=id;portrait.setAttribute('aria-label',(p.character==='child'?'小银花':'大银花')+' · '+(p.outfitLabel||p.outfit)+' · '+p.expression+' · '+p.gesture+' · 下一句');}
 }
 function startMotion(){stopMotion();const id=lastPose,p=pack?.poses[id];if(!p?.motion.length||reduce()||!open||document.hidden)return;const tick=()=>{if(!open||!audio?.paused||lastPose!==id||reduce()||document.hidden)return;const frame=p.motion[motionIndex++%p.motion.length];if(readyFrames.has(frame.image))setImage('base',frame.image);motionTimer=window.setTimeout(tick,frame.ms);};tick();}
-function sceneStatus(value:string){if(root)root.dataset.mascotScene=value;const status=$('[data-mascot-scene-status]');if(status)status.textContent=value==='static-verified'?'已核验：同记录静态相机快照（非动画）':value==='playing'?'正在播放已核验数值片段（非完整演出）':value==='complete'?'已核验数值片段已结束（非完整演出）':value==='stopped'?'数值演出已停止':value==='invalid'?'数值演出尚不受支持，保留静态立绘':'此句无已核验演出绑定；仅显示静态立绘';}
+function sceneStatus(value:string){if(root)root.dataset.mascotScene=value;const status=$('[data-mascot-scene-status]');if(status)status.textContent=value==='static-verified'?(sceneBinding?.overlays?.length?'已核验：同记录静态相机与情绪快照（无显隐时序）':'已核验：同记录静态相机快照（非动画）'):value==='playing'?'正在播放已核验数值片段（非完整演出）':value==='complete'?'已核验数值片段已结束（非完整演出）':value==='stopped'?'数值演出已停止':value==='invalid'?'数值演出尚不受支持，保留静态立绘':'此句无已核验演出绑定；仅显示静态立绘';}
 function stopScene(clear=true){scene?.cancel();sceneFrame=scene?.frame()??null;commandIndex=sceneBinding?.actions.length??0;hostTimestamp=null;if(clear){scene=null;sceneBinding=null;sceneFrame=null;}sceneStatus(clear?'unavailable':'stopped');}
 function pumpScene(){
  if(!scene||!sceneBinding)return;
@@ -180,7 +190,7 @@ function pumpScene(){
 }
 function startScene(line:Line){
  stopScene();positionMedia();if(!line.sceneAction)return;
- try{sceneBinding=line.sceneAction;commandIndex=0;scene=new SceneActionScheduler(sceneBinding.initial,{reducedMotion:reduce()});pumpScene();positionMedia();startHost();}
+ try{sceneBinding=line.sceneAction;commandIndex=0;scene=new SceneActionScheduler(sceneBinding.initial,{reducedMotion:reduce()});pumpScene();const p=pack?.poses[line.pose];if(sceneBinding.overlays?.length&&p){layerPose=null;loadLayers(p);}positionMedia();startHost();}
  catch{stopScene();sceneStatus('invalid');feedback('此句演出投影尚不受支持；保留已验证静态立绘');positionMedia();}
 }
 // One RAF owns both text reveal and the bounded numeric action host.
@@ -188,7 +198,7 @@ function startHost(){if(reveal||!open||document.hidden||!revealTarget&&!sceneFra
 function hostTick(now:number){
  reveal=0;if(!open||document.hidden){hostTimestamp=null;return;}
  const delta=hostTimestamp===null?0:Math.max(0,now-hostTimestamp);hostTimestamp=now;
- if(scene&&sceneFrame?.active){try{scene.advance(delta*playback.effectSpeed);pumpScene();positionMedia();}catch{stopScene();sceneStatus('invalid');feedback('演出投影未能继续，已停止');}}
+ if(scene&&sceneFrame?.active){try{scene.advance(delta*playback.effectSpeed);pumpScene();if(sceneBinding?.overlays?.length&&!layerPending)drawLayers();else positionMedia();}catch{stopScene();sceneStatus('invalid');feedback('演出投影未能继续，已停止');}}
  if(revealTarget&&current){revealElapsed+=delta;const chars=Array.from(current.text),count=playback.textRevealMs===0?chars.length:Math.min(chars.length,Math.floor(revealElapsed/playback.textRevealMs)+1);revealTarget.textContent=chars.slice(0,count).join('');if(count===chars.length){revealTarget=null;scheduleAuto();}}
  if(revealTarget||sceneFrame?.active)reveal=requestAnimationFrame(hostTick);else hostTimestamp=null;
 }
@@ -224,7 +234,7 @@ async function play(line:Line,animate=true,presentation=true,record=true){
  if(!audio||document.hidden||!allowed(line))return;
  if(!presentation)close();
  cancelAutoTimer();const token=++generation,element=audio;element.pause();playingId=null;stopMotion();current=line;feedback('');
- if(presentation){openPortrait();renderLine(line,animate);startScene(line);warmNext();}
+ if(presentation){stopScene();openPortrait();renderLine(line,animate);startScene(line);warmNext();}
  syncSettings();
  if(!line.voice){element.removeAttribute('src');element.load();feedback('此句原作录音尚未匹配');startMotion();scheduleAuto();return;}
  element.src=line.voice;applyVolume();
@@ -294,7 +304,7 @@ document.addEventListener('vn:progress-change',refreshEligibility);
 window.addEventListener('storage',()=>{readSettings();refreshEligibility();});
 document.addEventListener('visibilitychange',()=>{document.documentElement.toggleAttribute('data-mascot-page-hidden',document.hidden);if(document.hidden){setAuto(false);generation++;finishReveal();audio?.pause();playingId=null;stopMotion();stopScene(false);cancelAnimationFrame(reveal);reveal=0;hostTimestamp=null;voiceStatus();}else if(open)startMotion();});
 const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
-function resyncMotion(){if(!open)return;try{scene?.setReducedMotion(reduce());if(scene){pumpScene();positionMedia();startHost();}}catch{stopScene();sceneStatus('invalid');feedback('演出投影未能继续，已停止');positionMedia();}if(reduce()){stopMotion();finishReveal();}else if(audio?.paused)startMotion();}
+function resyncMotion(){if(!open)return;try{scene?.setReducedMotion(reduce());if(scene){pumpScene();if(sceneBinding?.overlays?.length&&!layerPending)drawLayers();else positionMedia();startHost();}}catch{stopScene();sceneStatus('invalid');feedback('演出投影未能继续，已停止');positionMedia();}if(reduce()){stopMotion();finishReveal();}else if(audio?.paused)startMotion();}
 motionPreference.addEventListener('change',resyncMotion);
 document.documentElement.toggleAttribute('data-mascot-page-hidden',document.hidden);
 readSettings();mount();
