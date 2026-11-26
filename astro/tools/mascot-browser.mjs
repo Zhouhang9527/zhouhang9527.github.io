@@ -53,7 +53,7 @@ try{
   const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',route=>new URL(route.request().url()).origin===url?route.continue():route.abort());
-  await page.addInitScript(()=>localStorage.setItem('ginka.vn.mode.v1','reader'));
+  await page.addInitScript(()=>{localStorage.setItem('ginka.vn.mode.v1','reader');window.__mascotLifecycle=[];for(const type of ['astro:before-preparation','astro:before-swap','astro:after-swap','astro:page-load'])document.addEventListener(type,()=>{window.__mascotLifecycle.push({type,path:location.pathname,at:performance.now()});if(type==='astro:page-load')window.__mascotPageLoad=location.pathname;});});
   await page.goto(url+'/',{waitUntil:'domcontentloaded'});
   const launcher=page.locator('[data-mascot-action=open]');
   await launcher.waitFor({state:'visible'});
@@ -120,9 +120,12 @@ try{
   await settingsOutfit.selectOption('all');await page.keyboard.press('Escape');assert.equal(await settingsOutfit.evaluate(el=>document.activeElement===el),true);
   await page.locator('[data-vn-option-panel=program] a[data-vn-mode-set=game]').click();
   await page.locator('[data-vn-start]').click();if(await page.locator('[data-vn-confirm][open]').count())await page.locator('[data-vn-confirm-yes]').click();await page.locator('[data-vn-post]').first().click();
+  // DOM swap and URL commit precede Astro's current-route initialization.
+  await page.waitForFunction(()=>window.__mascotPageLoad===location.pathname&&!!document.querySelector('[data-vn-game-reader]')&&!document.querySelector('[data-vn-game-reader]').hidden&&!document.querySelector('[data-vn-game-window]')?.hidden);
   const dock=page.locator('.vn-game-buttons');
   await launcher.click();
-  await page.waitForFunction(()=>['Silent fixture','Tone fixture'].includes(document.querySelector('[data-vn-dialogue-text]')?.textContent));
+  const navigationState=()=>page.evaluate(()=>({path:location.pathname,pageLoadPath:window.__mascotPageLoad,mode:document.documentElement.dataset.vnMode,hidden:document.hidden,open:document.querySelector('[data-mascot-action=open]')?.getAttribute('aria-expanded'),characterHidden:document.querySelector('[data-mascot-character]')?.hidden,rootConnected:document.querySelector('[data-ginka-mascot]')?.isConnected,rootHidden:document.querySelector('[data-ginka-mascot]')?.hidden,pose:document.querySelector('.ginka-mascot-portrait')?.dataset.mascotPose,render:document.querySelector('.ginka-mascot-portrait')?.dataset.mascotRender,scene:document.querySelector('[data-ginka-mascot]')?.dataset.mascotScene,gameWindowHidden:document.querySelector('[data-vn-game-window]')?.hidden,readerHidden:document.querySelector('[data-vn-game-reader]')?.hidden,gameText:document.querySelector('[data-vn-dialogue-text]')?.textContent,mascotText:document.querySelector('[data-mascot-text]')?.textContent,audio:{paused:document.querySelector('[data-mascot-audio]')?.paused,src:document.querySelector('[data-mascot-audio]')?.getAttribute('src')},events:window.__mascotLifecycle}));
+  try{await page.waitForFunction(()=>['Silent fixture','Tone fixture'].includes(document.querySelector('[data-vn-dialogue-text]')?.textContent));}catch(error){console.error('Synthetic navigation failure',JSON.stringify(await navigationState()),errors);throw error;}
   if(await page.locator('[data-vn-dialogue-text]').textContent()==='Tone fixture')await dock.locator('[data-vn-game-action=xprev]').click();
   await page.waitForFunction(()=>document.querySelector('[data-vn-dialogue-text]')?.textContent==='Silent fixture');
   await dock.locator('[data-vn-game-action=next]').click();
