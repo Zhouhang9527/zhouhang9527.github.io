@@ -144,6 +144,8 @@ body .main-inner.post.posts-expand {
 }
 .journal-reading-nav { grid-column: 1 / -1; }
 body .main-inner.post .journal-reading-shell > .post-block {
+  /* Layout/paint containment captures and clips the viewport-fixed VN dock. */
+  contain: style;
   grid-column: 1;
   grid-row: 2;
   min-width: 0;
