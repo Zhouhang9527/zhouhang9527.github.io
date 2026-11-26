@@ -132,13 +132,15 @@ export function interpolateLevelOffset(offsets:readonly Point[],levels:readonly 
 /**
  * Measure the projected constant-depth plane before full-page raster conversion.
  * Keep the source's projected-basis row norms and truncation to hundredths.
+ * This normalized affine input already contains the basis coefficients: read
+ * them directly to avoid the original point-minus-origin cancellation when
+ * translations are large. Do not reproduce that unrelated floating-point loss.
  * Never pass the inverse-source-resolution raster matrix, rounded CSS or DPR.
  */
 export function measureMascotSourceZoom(logicalMatrix:Matrix):number{
- const origin=transformPoint(logicalMatrix,{x:0,y:0});
- const x=transformPoint(logicalMatrix,{x:1,y:0}),y=transformPoint(logicalMatrix,{x:0,y:1});
- const ax=x.x-origin.x,cx=y.x-origin.x,by=x.y-origin.y,dy=y.y-origin.y;
- const zoom=Math.max(Math.sqrt(ax*ax+cx*cx),Math.sqrt(by*by+dy*dy));
+ if(logicalMatrix.length!==6||!logicalMatrix.every(Number.isFinite))throw new RangeError('Invalid source zoom matrix');
+ const [a,b,c,d]=logicalMatrix;
+ const zoom=Math.max(Math.sqrt(a*a+c*c),Math.sqrt(b*b+d*d));
  return Math.trunc(finite(zoom*100,'source zoom'))/100;
 }
 

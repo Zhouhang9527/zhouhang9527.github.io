@@ -201,6 +201,18 @@ test('source zoom measures projected basis rows and truncates hundredths before 
  assert.equal(measureMascotSourceZoom(skewed),Math.trunc(Math.sqrt(20)*100)/100);
  assert.notEqual(measureMascotSourceZoom(skewed),Math.trunc(Math.sqrt(25)*100)/100);
 });
+test('normalized source zoom is translation-independent, including beyond point-subtraction precision',()=>{
+ for(const matrix of [[1,0,0,1,0,0],[.9,0,0,.9,0,0],[2,0,0,2,0,0],[1,2,3,4,0,0]]){
+  const baseline=measureMascotSourceZoom(matrix),tier=selectMascotSourceResolution(baseline,[50,100,200,250]);
+  for(const position of [360,1920,1e20,-1e20,Number.MAX_VALUE]){
+   const translated=[...matrix.slice(0,4),position,-position];
+   assert.equal(measureMascotSourceZoom(translated),baseline);
+   assert.equal(selectMascotSourceResolution(measureMascotSourceZoom(translated),[50,100,200,250]),tier);
+  }
+ }
+ assert.equal(measureMascotSourceZoom([1,0,0,1,1e20,1e20]),1);
+ assert.throws(()=>measureMascotSourceZoom([1,0,0,1,NaN,0]),RangeError);
+});
 test('camera exposes pre-raster matrix so depth two selects the original double-resolution tier, not raster four',()=>{
  const g=projectMascotCamera({...projection,resolution:50,properties:{zpos:-40}});
  assert.equal(g.matrix[0],4);assert.equal(g.logicalMatrix[0],2);
