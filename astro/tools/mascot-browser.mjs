@@ -5,11 +5,13 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {createRequire} from 'node:module';
-const astroCli=path.join(path.dirname(createRequire(import.meta.url).resolve('astro/package.json')),'astro.js');
+const require=createRequire(import.meta.url),astroPackage=require.resolve('astro/package.json');
+const astroCli=path.resolve(path.dirname(astroPackage),require(astroPackage).bin.astro);
 import {spawn} from 'node:child_process';
 import {deflateSync} from 'node:zlib';
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ginka-mascot-browser-'));
-const url='http://127.0.0.1:4379';
+const port=process.env.GINKA_TEST_PORT||'4379';
+const url='http://127.0.0.1:'+port;
 let server,browser,log='';
 function crc32(buffer){
  let crc=0xffffffff;
@@ -36,9 +38,11 @@ try{
  const part=(image,x,y)=>({image,x,y,blend:'over',source:'synthetic integration fixture'});
  const pose={verified:true,phaseSource:'fixture',source:'fixture',character:'child',phase:'main',outfit:'fixture',expression:'neutral',gesture:'idle',base:'base.png',canvas:{width:6,height:6},baseRect:{x:1,y:1,width:4,height:4},layers:[{slot:'eye',...part('eye.png',1,1),alternate:part('blink.png',1,1)},{slot:'mouth',...part('mouth.png',2,1),alternate:part('open.png',2,1)}]};
  const line=(id,text,voice,p='main',poseId='a')=>({id,text,voice,phase:p,pose:poseId,speaker:'Synthetic fixture',source:'fixture',phaseSource:'fixture',voiceSource:voice?'generated test tone':null,verified:true});
+ const sceneAction={verified:true,source:'fixture',initial:{objects:{actor:{properties:{xpos:0}}},camera:{properties:{}}},actions:[['envupdate','update',[{name:'actor',action:[['xpos',[{handler:'MoveAction',value:2,time:800}]]]}]]],projection:{verified:true,source:'synthetic calibration only',stage:{width:12,height:12},resolution:100,rightHanded:false,camera:{cameraoffsetz:-100,cameraoffsetzmax:100,camerarh:0},properties:{xpos:0}}};
+ const spoken={...line('tone','Tone fixture','tone.wav'),sceneAction};
  const file=path.join(dir,'manifest.json');
- fs.writeFileSync(file,JSON.stringify({version:2,defaultPose:'a',poses:{a:pose,b:{...pose,character:'adult',phase:'afterstory',outfit:'locked'}},lines:[line('silent','Silent fixture',null),line('tone','Tone fixture','tone.wav'),line('locked','Locked fixture',null,'afterstory','b')]}));
- server=spawn(process.execPath,[astroCli,'dev','--host','127.0.0.1','--port','4379'],{env:{...process.env,GINKA_MASCOT_MANIFEST:file},stdio:['ignore','pipe','pipe']});
+ fs.writeFileSync(file,JSON.stringify({version:2,defaultPose:'a',poses:{a:pose,b:{...pose,character:'adult',phase:'afterstory',outfit:'locked'},c:{...pose,expression:'smile',gesture:'wave'}},lines:[line('silent','Silent fixture',null),spoken,line('locked','Locked fixture',null,'afterstory','b')]}));
+ server=spawn(process.execPath,[astroCli,'dev','--host','127.0.0.1','--port',port],{env:{...process.env,GINKA_MASCOT_MANIFEST:file},stdio:['ignore','pipe','pipe']});
  for(const stream of [server.stdout,server.stderr])stream.on('data',c=>{log=(log+c).slice(-12000);});
  for(let i=0;i<90;i++){if(server.exitCode!==null)throw Error('Fixture dev server exited');try{if((await fetch(url+'/__ginka_local_mascot__/manifest.json')).ok)break;}catch{}await new Promise(r=>setTimeout(r,500));}
  const response=await fetch(url+'/__ginka_local_mascot__/manifest.json');assert.equal(response.status,200);assert.equal((await response.json()).version,2);
@@ -57,12 +61,19 @@ try{
   assert.deepEqual(await canvas.evaluate(c=>Array.from(c.getContext('2d').getImageData(1,1,2,1).data)),[0,255,0,255,255,255,0,255]);
   assert.deepEqual(await canvas.evaluate(c=>[c.width,c.height,...c.getContext('2d').getImageData(0,0,1,1).data,...c.getContext('2d').getImageData(3,3,1,1).data]),[6,6,0,0,0,0,255,0,0,255]);
   assert.equal(await page.locator('[data-mascot-text]').textContent(),'Silent fixture');
+  assert.equal(await page.locator('[data-ginka-mascot]').getAttribute('data-mascot-scene'),'unavailable');
+  assert.ok(await canvas.evaluate(c=>{const p=c.closest('.ginka-mascot-portrait'),r=c.getBoundingClientRect(),b=p.getBoundingClientRect(),scale=Math.min(p.clientWidth/c.width,p.clientHeight/c.height);return Math.abs(r.width-c.width*scale)<.1&&Math.abs(r.bottom-b.bottom)<.1;}),'shared geometry preserves contain/bottom anchor');
+  assert.ok(!(await page.locator('.ginka-mascot-selection [data-vn-mascot-character]').innerHTML()).includes('adult'),'locked adult metadata must not appear');
   assert.equal(await page.locator('[data-mascot-action=replay]').isDisabled(),true);
   assert.equal(await page.locator('[data-mascot-action=save]').isDisabled(),true);
   assert.equal(await page.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1')),null);
   await next.click();
   await page.waitForFunction(()=>JSON.parse(localStorage.getItem('ginka.vn.voice.history.v1')||'null')?.entries?.some(e=>e.id==='tone'));
   assert.equal(await page.locator('[data-mascot-text]').textContent(),'Tone fixture');
+  assert.equal(await page.locator('[data-ginka-mascot]').getAttribute('data-mascot-scene'),'complete','reduced motion samples the supported numeric endpoint');
+  const historyBeforeReplay=await page.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1'));
+  await page.locator('[data-mascot-action=replay]').click();await page.waitForFunction(()=>!document.querySelector('[data-mascot-audio]').paused);
+  assert.equal(await page.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1')),historyBeforeReplay,'VOICE replay must not recursively append history');
   await page.locator('[data-mascot-action=save]').click();
   assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('ginka.vn.voice.saved.v1'))),['tone']);
   await next.click();assert.equal(await page.locator('[data-mascot-text]').textContent(),'Silent fixture');
@@ -79,6 +90,11 @@ try{
   await page.locator('button[data-vn-voice-saved="tone"]').click();
   await page.waitForFunction(()=>!document.querySelector('[data-mascot-audio]').paused);
   assert.equal(await page.locator('[data-mascot-character]').isVisible(),false,'Saved voice playback must not open the portrait');
+  const historyBeforeSaved=await page.evaluate(()=>localStorage.getItem('ginka.vn.voice.history.v1'));
+  assert.equal(historyBeforeSaved,null,'saved playback after a history reset is not new history');
+  await page.locator('[data-vn-voice-volume]').fill('12');await page.locator('[data-vn-voice-mute]').click();
+  await page.evaluate(()=>document.dispatchEvent(new Event('vn:voice-defaults')));
+  assert.deepEqual(await page.locator('[data-mascot-audio]').evaluate(a=>[a.volume,a.muted]),[.8,false]);
   await page.locator('[data-vn-voice-stop]').click();
   assert.equal(await page.locator('[data-mascot-audio]').evaluate(a=>a.paused),true);
   await page.locator('[data-vn-voice-remove="tone"]').click();
@@ -94,7 +110,7 @@ try{
   assert.equal(await auto.getAttribute('aria-pressed'),'false');
   assert.equal(await preview.evaluate(el=>document.activeElement===el),true);
   await page.locator('[data-vn-option-panel=program] a[data-vn-mode-set=game]').click();
-  await page.locator('[data-vn-start]').click();await page.locator('[data-vn-post]').first().click();
+  await page.locator('[data-vn-start]').click();if(await page.locator('[data-vn-confirm][open]').count())await page.locator('[data-vn-confirm-yes]').click();await page.locator('[data-vn-post]').first().click();
   const dock=page.locator('.vn-game-buttons');
   await launcher.click();
   await page.waitForFunction(()=>['Silent fixture','Tone fixture'].includes(document.querySelector('[data-vn-dialogue-text]')?.textContent));
@@ -108,7 +124,7 @@ try{
   assert.deepEqual(errors,[]);
   await page.close();console.log('PASS synthetic layered mascot browser at '+width+'px');
  }
- // Real animation path with a generated test tone and independent eye/mouth pixels.
+ // Alternatives are real fixture pixels, not verified animation timing: never auto-enable them.
  const animated=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:'no-preference'});
  await animated.route('**/*',route=>new URL(route.request().url()).origin===url?route.continue():route.abort());
  await animated.addInitScript(()=>localStorage.setItem('ginka.vn.mode.v1','reader'));
@@ -116,9 +132,21 @@ try{
  await animated.locator('[data-mascot-action=open]').click();
  await animated.waitForFunction(()=>document.querySelector('[data-mascot-text]')?.textContent==='Silent fixture');
  await animated.locator('[data-mascot-window] [data-mascot-action=next]').click();
- await animated.waitForFunction(()=>{const c=document.querySelector('[data-mascot-canvas]');return c?.dataset.mascotMouth==='true'&&Array.from(c.getContext('2d').getImageData(2,1,1,1).data).join(',')==='255,0,255,255';},{},{timeout:10000});
- await animated.waitForFunction(()=>{const c=document.querySelector('[data-mascot-canvas]');return c?.dataset.mascotEye==='true'&&Array.from(c.getContext('2d').getImageData(1,1,1,1).data).join(',')==='0,0,255,255';},{},{timeout:12000});
+ await animated.waitForFunction(()=>!document.querySelector('[data-mascot-audio]').paused);
+ await animated.waitForFunction(()=>document.querySelector('[data-ginka-mascot]').dataset.mascotScene==='playing');
+ const before=await animated.locator('[data-mascot-canvas]').evaluate(c=>c.style.transform);
+ await animated.waitForFunction(value=>document.querySelector('[data-mascot-canvas]').style.transform!==value,before);
+ await animated.waitForFunction(()=>document.querySelector('[data-ginka-mascot]').dataset.mascotScene==='complete');
+ await animated.waitForTimeout(3500);
+ assert.deepEqual(await animated.locator('[data-mascot-canvas]').evaluate(c=>[c.dataset.mascotEye,c.dataset.mascotMouth,...c.getContext('2d').getImageData(1,1,2,1).data]),['false','false',0,255,0,255,255,255,0,255]);
+ await animated.locator('.ginka-mascot-selection summary').click();
+ await animated.locator('.ginka-mascot-selection [data-vn-mascot-expression]').selectOption('smile');
+ await animated.waitForFunction(()=>document.querySelector('[data-mascot-speaker]').textContent==='已验证差分预览');
+ assert.equal(await animated.locator('.ginka-mascot-portrait').getAttribute('data-mascot-pose'),'c');
+ assert.equal(await animated.locator('[data-mascot-action=replay]').isDisabled(),true,'pose-only selection must never borrow unrelated speech');
+ assert.equal(await animated.evaluate(()=>localStorage.getItem('ginka.vn.mascot.expression.v1')),'smile');
+ assert.equal(await animated.locator('[data-ginka-mascot]').getAttribute('data-mascot-scene'),'unavailable');
  await animated.locator('[data-mascot-character] [data-mascot-action=close]').click();
- await animated.close();console.log('PASS independent synthetic mouth/eye animation pixels');
+ await animated.close();console.log('PASS synthetic unverified alternatives remain disabled');
 } catch(error){console.error(log);throw error;}
 finally{await browser?.close();if(server){server.kill();if(server.exitCode===null)await new Promise(resolve=>{server.once('exit',resolve);setTimeout(resolve,2000).unref();});}fs.rmSync(dir,{recursive:true,force:true});}

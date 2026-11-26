@@ -5,14 +5,33 @@ const original=import.meta.env.DEV&&!!process.env.GINKA_VN_UI_DATA;
 <div id="ginka-mascot" data-ginka-mascot data-mascot-source={enabled?'/__ginka_local_mascot__/manifest.json':undefined} transition:persist="ginka-mascot" hidden>
  <button class="ginka-mascot-launcher" type="button" data-mascot-action="open" aria-label="打开银花" aria-expanded="false" aria-controls="ginka-mascot-character"><span aria-hidden="true">银花</span></button>
  <div id="ginka-mascot-character" class="ginka-mascot-character" data-mascot-character hidden>
-  <button class="ginka-mascot-portrait" type="button" data-mascot-action="next" aria-label="银花 · 下一句"><img data-mascot-base alt="银花"/><img data-mascot-blink alt="" hidden/><img data-mascot-mouth alt="" hidden/><canvas data-mascot-canvas aria-hidden="true" hidden></canvas><span class="ginka-mascot-render-status" data-mascot-render-status hidden></span></button>
+  <button class="ginka-mascot-portrait" style="animation:none" type="button" data-mascot-action="next" aria-label="银花 · 下一句"><img data-mascot-base alt="银花"/><canvas data-mascot-canvas aria-hidden="true" hidden></canvas><span class="ginka-mascot-render-status" data-mascot-render-status hidden></span></button>
   <button class="ginka-mascot-close" type="button" data-mascot-action="close" aria-label="收起银花">×</button>
  </div>
  <section class="ginka-mascot-window" data-mascot-window hidden style={original?'--vn-mascot-frame:url(/__ginka_local_ui__/gameBase.png);--vn-mascot-name:url(/__ginka_local_ui__/gameWindow-name.png);--vn-mascot-decor:url(/__ginka_local_ui__/gameWindow-frame.png)':undefined} aria-label="银花原作对话">
   <div class="ginka-mascot-name" data-mascot-speaker></div>
   <p data-mascot-text></p>
+  <details class="ginka-mascot-selection">
+   <summary>角色与已验证差分</summary>
+   <div>
+    <label>角色 <select data-vn-mascot-character aria-label="银花角色"></select></label>
+    <label>服装 <select data-vn-mascot-outfit aria-label="银花服装"></select></label>
+    <label>表情 <select data-vn-mascot-expression aria-label="银花表情"></select></label>
+    <label>姿势 <select data-vn-mascot-gesture aria-label="银花姿势"></select></label>
+    <small>仅显示已核验且符合博客预览阶段的差分。自动眨眼、语音嘴型时序尚未核验，当前不启用。</small>
+   </div>
+  </details>
   <nav aria-label="对话操作"><button type="button" data-mascot-action="replay">VOICE</button><button type="button" data-mascot-action="save">V.SAVE</button><button type="button" data-mascot-action="auto" aria-pressed="false">AUTO</button><button type="button" data-mascot-action="next">NEXT 〉</button><button type="button" data-mascot-action="close">HIDE</button></nav>
  </section>
  <audio data-mascot-audio preload="none"></audio>
  <span class="journal-visually-hidden" data-mascot-feedback role="status"></span>
 </div>
+<style>
+ .ginka-mascot-selection{position:absolute;top:4px;right:12px;max-width:50%;font-size:13px}
+ .ginka-mascot-selection summary{min-height:44px;display:flex;align-items:center;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+ .ginka-mascot-selection>div{position:absolute;right:0;bottom:100%;width:min(350px,calc(100vw - 24px));max-height:60dvh;overflow:auto;display:grid;gap:8px;padding:12px;background:#142b46;color:#d6eaf6;border:1px solid #6ca5c6}
+ .ginka-mascot-selection label{display:grid;grid-template-columns:3em minmax(0,1fr);align-items:center;gap:8px}
+ .ginka-mascot-selection select{min-height:44px;min-width:0;max-width:100%;background:#d6eaf6;color:#142b46;border:1px solid #6ca5c6;font:inherit}
+ .ginka-mascot-selection small{font-size:12px;line-height:1.5}
+ .ginka-mascot-selection :focus-visible{outline:2px solid #d6eaf6;outline-offset:2px}
+</style>

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import {loadMascotPack,localMascot} from './local-mascot.mjs';
+import {loadMascotPack,localMascot,projectSceneAction} from './local-mascot.mjs';
 test('verified pack maps only local allowlisted files and rejects escapes',()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ginka-mascot-'));
  try{
@@ -14,6 +14,7 @@ test('verified pack maps only local allowlisted files and rejects escapes',()=>{
   const file=path.join(dir,'manifest.json'),pack={version:1,defaultPose:'a',poses:{a:{base:'base.png',source:'test pose',character:'child',phase:'main',outfit:'fixture',expression:'neutral',gesture:'idle'}},lines:[{id:'l',speaker:'test',text:'fixture',pose:'a',phase:'main',voice:'voice.ogg',source:'test script',voiceSource:'test audio',verified:true}]};
   fs.writeFileSync(file,JSON.stringify(pack));const result=loadMascotPack(file);assert.equal(result.files.size,2);assert.match(result.manifest.lines[0].voice,/asset-1\.ogg$/);
   assert.equal(result.manifest.poses.a.character,'child');
+  const json=JSON.stringify(result.manifest);assert.ok(!/source|voiceSource|nameHash|nativeStorage|_hxv4_hash/.test(json),'runtime projection must not expose provenance');
   assert.deepEqual(result.manifest.poses.a.canvas,{width:1,height:1});
   pack.poses.a.blink='wide.png';fs.writeFileSync(file,JSON.stringify(pack));assert.throws(()=>loadMascotPack(file),/Unaligned mascot canvas/);
   pack.poses.a.blink='base.png';pack.poses.a.motion=[{image:'wide.png',ms:120}];fs.writeFileSync(file,JSON.stringify(pack));assert.throws(()=>loadMascotPack(file),/Unaligned mascot canvas/);
@@ -45,6 +46,9 @@ test('v2 verifies sparse ordered layers, independent alternatives and silent dia
   pose.layers[0].width=2;pose.layers[0].height=1;assert.throws(load,/Original layer size mismatch/);delete pose.layers[0].width;delete pose.layers[0].height;
   pose.layers[0].x=2;assert.throws(load,/Layer outside/);pose.layers[0].x=1;
   pose.layers[0].alternate.source='';assert.throws(load,/Invalid layer evidence/);pose.layers[0].alternate.source='fixture part';
+  pose.phaseVerified=false;assert.throws(load,/Unverified layered pose/);delete pose.phaseVerified;
+  pack.lines[0].phaseVerified=false;assert.throws(load,/Invalid unlock phase/);delete pack.lines[0].phaseVerified;
+  pose.source='_hxv4_hash/private nativeStorage nameHash';pack.lines[0].source=pose.source;pack.lines[0].voiceSource=pose.source;const projected=JSON.stringify(load().manifest);assert.doesNotMatch(projected,/source|Source|_hxv4_hash|nativeStorage|nameHash/);
   pose.verified=false;assert.throws(load,/Unverified layered pose/);pose.verified=true;
   pack.lines[0].verified=false;assert.throws(load,/Unverified or invalid dialogue/);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
@@ -61,4 +65,22 @@ test('private mascot HTTP uses the common origin and range policy',()=>{
   assert.equal(request({range:'bytes=-1'}).body.toString(),'}');assert.equal(request({range:'bytes=999-'}).statusCode,416);
   assert.equal(request({},'HEAD').body,undefined);assert.equal(request({},'POST').statusCode,403);assert.equal(request({},'GET','/__ginka_local_mascot__/../manifest.json').statusCode,404);
  }finally{if(previous===undefined)delete process.env.GINKA_MASCOT_MANIFEST;else process.env.GINKA_MASCOT_MANIFEST=previous;fs.rmSync(dir,{recursive:true,force:true});}
+});
+
+
+test('numeric scene projection binds the exact record, strips provenance, and rejects unsupported input',()=>{
+ const source='fixture _hxv4_hash/source#record',canvas={width:6,height:6};
+ const raw={verified:true,source,initial:{objects:{actor:{properties:{xpos:0}}},camera:{properties:{}}},actions:[['envupdate','update',[{name:'actor',action:[['xpos',[{handler:'MoveAction',value:2,time:400}]]]}]]],projection:{verified:true,source:'private calibration nameHash nativeStorage',stage:{width:12,height:12},resolution:100,rightHanded:false,camera:{cameraoffsetz:-100,cameraoffsetzmax:100,camerarh:0},properties:{xpos:0}}};
+ const safe=projectSceneAction(raw,source,canvas);assert.equal(safe.actions.length,1);assert.doesNotMatch(JSON.stringify(safe),/source|Source|_hxv4_hash|nativeStorage|nameHash/);
+ assert.throws(()=>projectSceneAction(raw,'another record',canvas),/binding/);
+ const change=fn=>{const v=structuredClone(raw);fn(v);return ()=>projectSceneAction(v,source,canvas);};
+ assert.throws(change(v=>v.projection.verified=false),/projection/);
+ assert.throws(change(v=>v.initial.objects.nameHash=v.initial.objects.actor),/canonical actor/);
+ assert.throws(change(v=>v.projection.stage.nameHash=123),/stage/);
+ assert.throws(change(v=>v.projection.camera.nativeStorage=1),/Unsupported camera property/);
+ assert.throws(change(v=>v.actions[0][2][0].action[0][1][0].handler='eval'),/Unsupported scene action/);
+ assert.throws(change(v=>v.actions[0][2][0].name='sourceBlob'),/Unsupported scene action/);
+ assert.throws(change(v=>v.initial.objects.actor.properties.xpos=Infinity));
+ raw.actions=[];assert.equal(projectSceneAction(raw,source,canvas).actions.length,0,'static verified snapshot is not fabricated motion');
+ assert.equal(projectSceneAction(undefined,source,canvas),null);
 });

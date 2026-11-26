@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {SceneActionScheduler} from '../src/domain/vn-actions.ts';
+import {projectMascotCamera} from '../src/lib/mascot-geometry.ts';
 import {isPrivateRequest,byteRange,servePrivateBytes} from './private-http.mjs';
 const prefix='/__ginka_local_mascot__/';
 const idPattern=/^[a-zA-Z0-9_-]{1,80}$/;
@@ -20,6 +22,35 @@ export function imageCanvas(file){
  if(!width||!height||width*height>32_000_000)throw Error('Invalid PNG/WebP canvas: '+path.basename(file));
  return {width,height};
 }
+// Validate through the same bounded scheduler/projection consumed by the renderer.
+// Provenance never crosses the HTTP boundary; no original expressions are evaluated.
+export function projectSceneAction(raw,lineSource,canvas){
+ if(raw==null)return null;
+ if(raw.verified!==true||raw.source!==lineSource||!raw.initial||!raw.projection||!Array.isArray(raw.actions)||raw.actions.length>32)throw Error('Unverified scene action binding');
+ const p=raw.projection;if(p.verified!==true||typeof p.source!=='string'||!p.source.trim())throw Error('Unverified scene projection');
+ const initial=raw.initial;
+ if(!initial.objects||Object.keys(initial.objects).length!==1||!Object.hasOwn(initial.objects,'actor')||!initial.objects.actor?.properties||!initial.camera?.properties)throw Error('Scene requires one canonical actor and explicit seed');
+ const state={objects:{actor:{properties:{...initial.objects.actor.properties}}},camera:{properties:{...initial.camera.properties}}};
+ const scheduler=new SceneActionScheduler(state);
+ const projection={stage:p.stage,resolution:p.resolution,rightHanded:p.rightHanded,camera:p.camera,properties:p.properties,...(p.levelOffsets?{levelOffsets:p.levelOffsets}:{}),...(p.placementOffset?{placementOffset:p.placementOffset}:{})};
+ if(!projection.camera||!projection.properties)throw Error('Missing projection seed');
+ // Rebuild every nested numeric structure rather than forwarding arbitrary metadata.
+ const numeric=o=>{if(!o||typeof o!=='object'||Array.isArray(o)||Object.values(o).some(v=>typeof v!=='number'||!Number.isFinite(v)))throw Error('Non-numeric scene projection');return {...o};};
+ const point=o=>{const v=numeric(o);if(Object.keys(v).some(k=>!['x','y'].includes(k))||!Number.isFinite(v.x)||!Number.isFinite(v.y))throw Error('Invalid projection point');return {x:v.x,y:v.y};};
+ const stage=numeric(p.stage);if(Object.keys(stage).some(k=>!['width','height'].includes(k))||stage.width*stage.height>32_000_000)throw Error('Invalid projection stage');
+ projection.stage={width:stage.width,height:stage.height};projection.camera=numeric(p.camera);projection.properties=numeric(p.properties);
+ if(p.placementOffset)projection.placementOffset=point(p.placementOffset);
+ if(p.levelOffsets){if(!Array.isArray(p.levelOffsets.levels)||!Array.isArray(p.levelOffsets.offsets)||p.levelOffsets.levels.length>64||p.levelOffsets.levels.some(v=>typeof v!=='number'||!Number.isFinite(v)))throw Error('Invalid level offsets');projection.levelOffsets={levels:[...p.levelOffsets.levels],offsets:p.levelOffsets.offsets.map(point)};}
+ const project=frame=>projectMascotCamera({...projection,canvas,properties:{...projection.properties,...frame.objects.actor.properties},camera:{...projection.camera,...frame.camera.properties}});
+ project(scheduler.frame());
+ const actions=[];
+ for(const command of raw.actions){
+  if(JSON.stringify(command).length>65536)throw Error('Scene action budget exceeded');
+  const result=scheduler.dispatch(command);if(!result.ok)throw Error('Unsupported scene action projection');
+  project(scheduler.frame());scheduler.advance(1e9);project(scheduler.frame());actions.push(structuredClone(command));
+ }
+ return {initial:state,actions,projection};
+}
 export function loadMascotPack(input){
  const manifest=fs.realpathSync(input),root=path.dirname(manifest),raw=JSON.parse(fs.readFileSync(manifest,'utf8'));
  // A declared evidence-only pack is not an error and never exposes its evidence files.
@@ -39,7 +70,7 @@ export function loadMascotPack(input){
  for(const [id,pose] of Object.entries(raw.poses)){
   if(!idPattern.test(id)||!pose||typeof pose.source!=='string'||!pose.source.trim())throw Error('Invalid pose evidence');
   if(!['child','adult'].includes(pose.character)||!['main','afterstory'].includes(pose.phase)||!['outfit','expression','gesture'].every(k=>typeof pose[k]==='string'&&pose[k].trim()&&pose[k].length<=80))throw Error('Missing character/wardrobe/expression/gesture metadata: '+id);
-  if(layered&&(pose.verified!==true||typeof pose.phaseSource!=='string'||!pose.phaseSource.trim()))throw Error('Unverified layered pose or phase: '+id);
+  if(layered&&(pose.verified!==true||pose.phaseVerified===false||typeof pose.phaseSource!=='string'||!pose.phaseSource.trim()))throw Error('Unverified layered pose or phase: '+id);
   const base=register(pose.base,'image');
   const motion=pose.motion??[];
   if(!Array.isArray(motion)||motion.length>120)throw Error('Invalid pose motion');
@@ -76,13 +107,15 @@ export function loadMascotPack(input){
     return {slot:layer.slot,...normal,alternate};
    });
   }
-  poses[id]={layers,character:pose.character,phase:pose.phase,outfit:pose.outfit,outfitLabel:typeof pose.outfitLabel==='string'&&pose.outfitLabel.trim()&&pose.outfitLabel.length<=80?pose.outfitLabel:pose.outfit,expression:pose.expression,gesture:pose.gesture,base,blink,mouth,motion:frames,source:pose.source,canvas,baseOffset};
+  // Evidence remains server-side. The browser receives only display metadata and opaque local asset URLs.
+  poses[id]={layers,character:pose.character,phase:pose.phase,outfit:pose.outfit,outfitLabel:typeof pose.outfitLabel==='string'&&pose.outfitLabel.trim()&&pose.outfitLabel.length<=80?pose.outfitLabel:pose.outfit,expression:pose.expression,gesture:pose.gesture,base,blink,mouth,motion:frames,canvas,baseOffset};
  }
  if(!Object.hasOwn(poses,raw.defaultPose)||poses[raw.defaultPose].phase!=='main')throw Error('Unknown default pose');
  for(const line of raw.lines){
   if(!line||typeof line.id!=='string'||!idPattern.test(line.id)||ids.has(line.id)||typeof line.text!=='string'||!line.text.trim()||line.text.length>600||typeof line.speaker!=='string'||!line.speaker.trim()||!Object.hasOwn(poses,line.pose)||typeof line.source!=='string'||!line.source.trim()||((!layered||line.voice!==null)&&(typeof line.voiceSource!=='string'||!line.voiceSource.trim()))||line.verified!==true||(layered&&(typeof line.phaseSource!=='string'||!line.phaseSource.trim())))throw Error('Unverified or invalid dialogue entry');
-  if(!['main','afterstory'].includes(line.phase)||(line.phase==='main'&&poses[line.pose].phase==='afterstory'))throw Error('Invalid unlock phase');
-  ids.add(line.id);lines.push({id:line.id,speaker:line.speaker,text:line.text,pose:line.pose,phase:line.phase,voice:layered&&line.voice===null?null:register(line.voice,'audio'),source:line.source,voiceSource:line.voiceSource??null});
+  if(line.phaseVerified===false||!['main','afterstory'].includes(line.phase)||(line.phase==='main'&&poses[line.pose].phase==='afterstory'))throw Error('Invalid unlock phase');
+  const sceneAction=projectSceneAction(line.sceneAction,line.source,poses[line.pose].canvas);
+  ids.add(line.id);lines.push({id:line.id,speaker:line.speaker,text:line.text,pose:line.pose,phase:line.phase,voice:layered&&line.voice===null?null:register(line.voice,'audio'),...(sceneAction?{sceneAction}:{})});
  }
  return {files,manifest:{version:raw.version,available:true,defaultPose:raw.defaultPose,poses,lines}};
 }
