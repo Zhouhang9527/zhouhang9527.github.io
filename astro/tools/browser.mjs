@@ -7,6 +7,45 @@ const base=process.env.GINKA_TEST_BASE_URL||'http://127.0.0.1:4321';
 fs.mkdirSync('artifacts',{recursive:true});
 const results=[];
 const overflow=page=>page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
+async function checkStaticComments(page) {
+ await page.goto(base+'/about/',{waitUntil:'domcontentloaded'});
+ const audio=await page.evaluateHandle(()=>document.querySelector('#bg-music'));
+ async function checkAbout() {
+  await page.locator('.journal-static-content').waitFor();
+  await page.locator('.giscus-container').waitFor({state:'attached'});
+  assert.equal(await page.locator('.giscus-container').count(),1,'one about comment surface');
+  assert.equal(await page.locator('#journal-comments').count(),1,'one about comment anchor');
+  for(const [attribute,key] of Object.entries({'repo':'repo','repo-id':'repoId','category-id':'categoryId','mapping':'mapping'})) {
+   assert.equal(await page.locator('.giscus-container').getAttribute('data-'+attribute),config.giscus[key]);
+  }
+  await page.locator('#journal-comments').scrollIntoViewIfNeeded();
+  const frame=page.locator('iframe.giscus-frame');
+  await frame.waitFor({state:'attached',timeout:20000});
+  assert.equal(await frame.count(),1,'no duplicate about Giscus iframe');
+  const src=new URL(await frame.getAttribute('src'));
+  assert.equal(src.origin,'https://giscus.app');
+  assert.equal(src.searchParams.get('repo'),config.giscus.repo);
+  assert.equal(src.searchParams.get('repoId'),config.giscus.repoId);
+  assert.equal(src.searchParams.get('categoryId'),config.giscus.categoryId);
+  assert.equal(src.searchParams.get('term'),'about/','legacy pathname discussion term');
+  await page.frameLocator('iframe.giscus-frame').locator('.gsc-comment-box').first().waitFor({state:'visible',timeout:25000});
+  assert.ok(!await overflow(page),'about overflow');
+ }
+ await checkAbout();
+ await page.locator('[data-journal-sidebar-open]:visible').first().click();
+ await page.locator('.journal-sidebar-links a[href="/links/"]').click();
+ await page.waitForURL(base+'/links/');
+ await page.locator('.journal-static-content').waitFor();
+ assert.equal(await page.locator('.giscus-container,iframe.giscus-frame,[data-vn-backlog]').count(),0,'links must not inherit about comments');
+ assert.ok(await page.evaluate(old=>old===document.querySelector('#bg-music'),audio),'about to links replaced persistent audio');
+ await page.goBack();
+ await page.waitForURL(base+'/about/');
+ await checkAbout();
+ assert.ok(await page.evaluate(old=>old===document.querySelector('#bg-music'),audio),'about history return replaced persistent audio');
+ await page.goto(base+'/information/',{waitUntil:'domcontentloaded'});
+ assert.equal(await page.locator('.giscus-container,iframe.giscus-frame,[data-vn-backlog]').count(),0,'INFORMATION must not duplicate about comments');
+ return {term:'about/',loaded:true,linksClean:true,historyIdentity:true,informationClean:true};
+}
 async function checkNav(page) {
  const bounds=await page.evaluate(()=>{
   const nav=document.querySelector('.site-nav').getBoundingClientRect();
@@ -57,6 +96,8 @@ try {
    await page.waitForFunction(()=>document.documentElement.dataset.vnMode==='game');
    const old=await page.evaluateHandle(()=>document.querySelector('#bg-music'));
    await page.locator('[data-vn-start]').click();
+   await page.locator('[data-vn-confirm][open]').waitFor({state:'visible'});
+   await page.locator('[data-vn-confirm-yes]').click();
    await page.waitForURL(base+'/archives/');
    await page.locator('[data-vn-chapter]').waitFor();
    await checkNav(page);
@@ -75,6 +116,9 @@ try {
    const frame=page.locator('iframe.giscus-frame');
    await frame.waitFor({state:'attached',timeout:20000});
    assert.equal(await frame.count(),1);
+   const articleFrame=new URL(await frame.getAttribute('src'));
+   assert.equal(articleFrame.searchParams.get('term'),new URL(page.url()).pathname.replace(/^\//,''),'article pathname discussion term');
+   assert.equal(articleFrame.searchParams.get('repo'),config.giscus.repo);
    const editor=page.frameLocator('iframe.giscus-frame').locator('.gsc-comment-box').first();
    await editor.waitFor({state:'visible',timeout:25000});
    result.giscus=await editor.evaluate(e=>({gradient:getComputedStyle(e).backgroundImage,toolbar:getComputedStyle(e.querySelector('.gsc-comment-box-tabs'),'::after').backgroundImage}));
@@ -148,6 +192,17 @@ try {
    result.url=page.url();result.error=String(error);
    await page.screenshot({path:`artifacts/${width}-${mode}-failure.png`}).catch(()=>{});
   } finally {results.push(result);await page.close();}
+ }
+ for(const width of [390,1440])for(const mode of ['day','moonlit']){
+  const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
+  const result={width,mode,check:'live-static-comments',ok:false,errors:[]};
+  page.on('pageerror',error=>result.errors.push(error.message));
+  try{
+   await page.addInitScript(theme=>{localStorage.setItem('ginka-theme',theme);localStorage.setItem('ginka.vn.mode.v1','reader');},mode);
+   result.giscus=await checkStaticComments(page);
+   result.ok=true;
+  }catch(error){result.url=page.url();result.error=String(error);await page.screenshot({path:`artifacts/${width}-${mode}-static-comments-failure.png`}).catch(()=>{});}
+  finally{results.push(result);await page.close();}
  }
  const noJS=await browser.newPage({javaScriptEnabled:false,viewport:{width:390,height:900}});
  try{
