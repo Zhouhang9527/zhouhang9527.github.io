@@ -97,7 +97,7 @@ test('projection is immutable and includes future real articles without an unloc
 // functions and scene manifest. Only Layout and astro:content are fixtures: no
 // generated assets, browser, network, private bytes or persistent state are used.
 const require = createRequire(import.meta.url);
-const {transform} = require('@astrojs/compiler');
+const {transform} = require('@astrojs/compiler-rs');
 const ts = require('typescript');
 const {experimental_AstroContainer} = await import(pathToFileURL(require.resolve('astro/container')).href);
 const runtime = pathToFileURL(require.resolve('astro/compiler-runtime')).href;
@@ -134,7 +134,7 @@ const sceneURL = compileTS(read('../src/lib/vn-scenes.ts'), 'vn-scenes.ts', {'..
 const helperURL = new URL('../src/lib/map-topics.ts', import.meta.url).href;
 async function compile(source, filename, imports = {}, original = false) {
   const compiled = await transform(source, {filename, internalURL: runtime, renderScript: true, resolvePath: specifier => imports[specifier] || specifier});
-  assert.deepEqual(compiled.diagnostics.filter(item => item.severity === 1), [], filename + ' compile errors');
+  assert.deepEqual(compiled.diagnostics.filter(item => item.severity === 'error'), [], filename + ' compile errors');
   const code = compiled.code.replaceAll('import.meta.env.DEV', String(original))
     .replaceAll('process.env.GINKA_MAP_DATA', JSON.stringify(original ? '/fixture-not-read' : ''));
   // Node has no Vite CSS loader: resolve the actual compiled scoped stylesheet

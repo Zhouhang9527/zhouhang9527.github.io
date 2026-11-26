@@ -8,7 +8,7 @@ import config from '../config/site.json' with {type:'json'};
 // Render real templates in memory. Markdown and scene URLs are fixtures, not game media.
 // No prepare/build, filesystem writes or network requests occur.
 const require=createRequire(import.meta.url);
-const {transform}=require('@astrojs/compiler');
+const {transform}=require('@astrojs/compiler-rs');
 const ts=require('typescript');
 const {experimental_AstroContainer}=await import(pathToFileURL(require.resolve('astro/container')).href);
 const runtime=pathToFileURL(require.resolve('astro/compiler-runtime')).href;
@@ -16,7 +16,7 @@ const moduleURL=code=>'data:text/javascript;base64,'+Buffer.from(code).toString(
 const site=moduleURL(`export const config=${JSON.stringify(config)};export const scene=()=>({day:'/fixture-day.webp',night:'/fixture-night.webp'});`);
 async function compile(source,filename,imports={}){
  const compiled=await transform(source,{filename,internalURL:runtime,renderScript:true,resolvePath:specifier=>imports[specifier]||specifier});
- assert.deepEqual(compiled.diagnostics.filter(d=>d.severity===1),[],filename+' compile errors');
+ assert.deepEqual(compiled.diagnostics.filter(d=>d.severity==='error'),[],filename+' compile errors');
  let code=compiled.code.replaceAll('import.meta.env.DEV','false');
  for(const [specifier,url] of Object.entries(imports)){
   code=code.replaceAll(JSON.stringify(specifier),JSON.stringify(url)).replaceAll("'"+specifier+"'",JSON.stringify(url));

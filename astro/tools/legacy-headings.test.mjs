@@ -21,22 +21,24 @@ const text=node=>node.type==='text'?node.value:(node.children??[]).map(text).joi
 const elements=html=>{const all=[];walk(fromHtml(html,{fragment:true}),(node,parent)=>{if(node.type==='element')all.push({node,parent});});return all;};
 const aliasPattern=/<span id="[^"]*" aria-hidden="true" data-legacy-heading-alias="[^"]*"><\/span>/g;
 const isLegacyHeadingsPlugin=plugin=>(Array.isArray(plugin)?plugin[0]:plugin)===rehypeLegacyHeadings;
-const otherRehypePlugins=(config.markdown.rehypePlugins??[]).filter(plugin=>!isLegacyHeadingsPlugin(plugin));
-const baselineMarkdown={...config.markdown,rehypePlugins:otherRehypePlugins};
+assert.equal(config.markdown.processor.name,'unified','production keeps the established remark/rehype pipeline');
+const markdown={...config.markdown,...config.markdown.processor.options};
+const otherRehypePlugins=markdown.rehypePlugins.filter(plugin=>!isLegacyHeadingsPlugin(plugin));
+const baselineMarkdown={...markdown,rehypePlugins:otherRehypePlugins};
 const withLegacy={...baselineMarkdown,rehypePlugins:[...otherRehypePlugins,rehypeLegacyHeadings]};
 assert.equal(baselineMarkdown.rehypePlugins.filter(isLegacyHeadingsPlugin).length,0,'baseline explicitly excludes legacy heading plugin');
 assert.equal(withLegacy.rehypePlugins.filter(isLegacyHeadingsPlugin).length,1,'compatible renderer uses legacy heading plugin exactly once');
 const plain=await createMarkdownProcessor(baselineMarkdown);
 const compatible=await createMarkdownProcessor(withLegacy);
 const require=createRequire(import.meta.url);
-const {transform}=require('@astrojs/compiler');
+const {transform}=require('@astrojs/compiler-rs');
 const ts=require('typescript');
 const {experimental_AstroContainer}=await import(pathToFileURL(require.resolve('astro/container')).href);
 const runtime=pathToFileURL(require.resolve('astro/compiler-runtime')).href;
 const moduleURL=code=>'data:text/javascript;base64,'+Buffer.from(code).toString('base64');
 async function compile(source,filename,imports={}){
  const output=await transform(source,{filename,internalURL:runtime,renderScript:true,resolvePath:specifier=>imports[specifier]??specifier});
- assert.deepEqual(output.diagnostics.filter(d=>d.severity===1),[],filename+' compile errors');
+ assert.deepEqual(output.diagnostics.filter(d=>d.severity==='error'),[],filename+' compile errors');
  let code=output.code.replaceAll('import.meta.env.DEV','false');
  for(const [specifier,url] of Object.entries(imports))code=code.replaceAll(JSON.stringify(specifier),JSON.stringify(url)).replaceAll("'"+specifier+"'",JSON.stringify(url));
  return moduleURL(ts.transpileModule(code,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText);
@@ -75,10 +77,14 @@ function assertCoverage(entry,baseline,result){
 test('renderer and Markdown package match the committed lockfile',()=>{
  const lock=JSON.parse(fs.readFileSync(new URL('../../package-lock.json',import.meta.url),'utf8'));
  for(const name of ['astro','@astrojs/markdown-remark']){
-  const installed=JSON.parse(fs.readFileSync(name==='astro'?require.resolve('astro/package.json'):path.resolve(path.dirname(require.resolve(name)),'../package.json'),'utf8'));
-  assert.equal(installed.version,lock.packages['node_modules/'+name].version);
+  const packagePath=name==='astro'?require.resolve('astro/package.json'):path.resolve(path.dirname(require.resolve(name)),'../package.json');
+  const installed=JSON.parse(fs.readFileSync(packagePath,'utf8'));
+  const lockPath=path.relative(root,path.dirname(packagePath)).replaceAll('\\','/');
+  assert.equal(installed.version,lock.packages[lockPath].version);
+  assert.equal(installed.version,lock.packages.astro.dependencies[name]);
  }
- assert.equal(lock.packages['node_modules/astro'].version,'5.18.2');
+ assert.equal(lock.packages.astro.dependencies.astro,'7.4.13');
+ assert.equal(require('@astrojs/compiler-rs/package.json').version,require('astro/package.json').dependencies['@astrojs/compiler-rs'].replace(/^\^/,''));
  assert.equal(legacy.source.renderer,'astro@5.16.0');
 });
 

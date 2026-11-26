@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import {unified} from '@astrojs/markdown-remark';
 import config from './config/site.json' with {type:'json'};
 import remarkBreaks from 'remark-breaks';
 import rehypeLegacyHeadings from './tools/legacy-headings/rehype-legacy-headings.mjs';
@@ -10,5 +11,7 @@ export default defineConfig({
  devToolbar:{enabled:!process.env.GINKA_MASCOT_MANIFEST&&!process.env.GINKA_TITLE_DATA&&!process.env.GINKA_VN_UI_DATA},
  vite:{plugins:[localTitleArt(),localFont(),localVNUI(),localMascot()]},
  site:config.url, output:'static', trailingSlash:'always',
- build:{format:'directory'}, markdown:{remarkPlugins:[remarkBreaks],rehypePlugins:[rehypeLegacyHeadings],shikiConfig:{themes:{light:'github-light',dark:'github-dark-dimmed'},defaultColor:false},gfm:true}
+ // Keep the established HTML spacing and remark/rehype heading pipeline on Astro 7.
+ compressHTML:true,
+ build:{format:'directory'}, markdown:{processor:unified({remarkPlugins:[remarkBreaks],rehypePlugins:[rehypeLegacyHeadings],gfm:true}),shikiConfig:{themes:{light:'github-light',dark:'github-dark-dimmed'},defaultColor:false}}
 });

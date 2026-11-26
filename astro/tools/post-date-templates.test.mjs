@@ -17,7 +17,8 @@ import vnScenes from '../config/vn-scenes.json' with {type:'json'};
 // UI/media children and the content loader are fixtures; no prepare/build, media
 // reads, generated-directory writes, network, browser or real-content rendering here.
 const require=createRequire(import.meta.url);
-const {transform, convertToTSX}=require('@astrojs/compiler');
+const {transform}=require('@astrojs/compiler-rs');
+const {convertToTsx}=require('@astrojs/astro2tsx');
 const ts=require('typescript');
 const {experimental_AstroContainer}=await import(pathToFileURL(require.resolve('astro/container')).href);
 const runtime=pathToFileURL(require.resolve('astro/compiler-runtime')).href;
@@ -56,8 +57,8 @@ function remap(code, imports){
 }
 const transpile=source=>ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
 async function compile(source,filename,imports={}){
- const result=await transform(source,{filename,internalURL:runtime,renderScript:true,resolvePath:async specifier=>imports[specifier]||specifier});
- assert.deepEqual(result.diagnostics.filter(d=>d.severity===1),[],filename+' compiler errors');
+ const result=await transform(source,{filename,internalURL:runtime,renderScript:true,resolvePath:specifier=>imports[specifier]||specifier});
+ assert.deepEqual(result.diagnostics.filter(d=>d.severity==='error'),[],filename+' compiler errors');
  return moduleURL(transpile(remap(result.code.replaceAll('import.meta.env.DEV','false'),imports)));
 }
 const routeByStem=legacyPostRoutes(legacy);
@@ -75,7 +76,8 @@ const siteURL=moduleURL(remap(transpile(read('../src/lib/site.ts')),{
 }));
 const siteModule=await import(siteURL);
 const schemaURL=moduleURL(remap(transpile(read('../src/content.config.ts')),{
- 'astro:content':moduleURL('export {z} from '+JSON.stringify(pathToFileURL(require.resolve('astro/zod')).href)+';export const defineCollection=value=>value;'),
+ 'astro:content':moduleURL('export const defineCollection=value=>value;'),
+ 'astro/zod':pathToFileURL(require.resolve('astro/zod')).href,
  'astro/loaders':moduleURL('export const glob=()=>({name:"memory loader"});')
 }));
 const {collections}=await import(schemaURL);
@@ -104,7 +106,8 @@ const layoutURL=await compile(read('../src/layouts/Layout.astro'),'Layout.astro'
  'astro:transitions':moduleURL('export {default as ClientRouter} from '+JSON.stringify(noUI)+';'),
  '../components/game/ConfirmDialog.astro':noUI,'../components/Header.astro':noUI,'../components/Sidebar.astro':noUI,'../components/game/GinkaMascot.astro':noUI,
  '@fontsource-variable/noto-serif-sc':empty,'@fontsource-variable/jetbrains-mono':empty,'@fortawesome/fontawesome-free/css/all.min.css':empty,
- 'astro/components/viewtransitions.css':empty
+ // Rust compiler injects this transition stylesheet; Node has no CSS loader.
+ 'transitions.css':empty
 });
 const Layout=(await import(layoutURL)).default;
 const routeURL=await compile(read('../src/pages/[...path].astro'),'[...path].astro',{
@@ -130,7 +133,9 @@ async function typeDiagnostics(){
  const entries=fs.readdirSync(path.join(project,'src'),{recursive:true}).filter(file=>file.endsWith('.astro'));
  for(const file of entries){
   const filename=path.join(project,'src',file);
-  const result=await convertToTSX(fs.readFileSync(filename,'utf8'),{filename:filename.replaceAll('\\','/'),includeScripts:false});
+  const result=convertToTsx(fs.readFileSync(filename,'utf8'),{filename:filename.replaceAll('\\','/'),ambientTypes:true});
+  assert.equal(result.hasParseErrors,false,filename+' TSX parse errors');
+  assert.deepEqual(result.diagnostics.filter(d=>d.severity===1),[],filename+' TSX diagnostics');
   put(path.join('src',file)+'.tsx',result.code);
  }
  const astroDir=path.dirname(require.resolve('astro/package.json'));
