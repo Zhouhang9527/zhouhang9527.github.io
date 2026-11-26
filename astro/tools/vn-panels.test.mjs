@@ -44,6 +44,12 @@ test('navigation cancels before delayed close; a detached dialog never accepts',
  const h=modalHarness(),pending=h.confirm('Delete?');h.document.dispatchEvent(new Event('astro:before-preparation'));assert.equal(await pending,false);assert.equal(h.opener.focusCount,0);
  const next=h.confirm('Again?');h.dialog.isConnected=false;h.dialog.close('yes');assert.equal(await next,false);
 });
+test('a queued old close event cannot cancel a same-tick reopened confirmation',async()=>{
+ const h=modalHarness(),first=h.confirm('Old?');h.document.dispatchEvent(new Event('astro:before-preparation'));
+ const next=h.confirm('New?');let settled=false;next.then(()=>settled=true);
+ assert.equal(await first,false);await Promise.resolve();assert.equal(h.dialog.open,true);assert.equal(settled,false);
+ h.dialog.close('yes');assert.equal(await next,true);
+});
 test('disabled action preference skips only that action, never unconditional reset',async()=>{
  const h=modalHarness('{"version":1,"qsave":false}');assert.equal(await h.confirm('Quick?','qsave'),true);assert.equal(h.dialog.open,false);
  const forced=h.confirm('Reset?');assert.equal(h.dialog.open,true);h.dialog.close('no');assert.equal(await forced,false);

@@ -20,7 +20,7 @@ export function confirmVN(message:string,action?:ConfirmAction):Promise<boolean>
    if(restoreFocus&&opener?.isConnected&&!opener.closest('[hidden],[inert]')&&opener.getClientRects().length)opener.focus({preventScroll:true});
    resolve(accepted&&dialog.isConnected);
   };
-  const onClose=()=>finish(dialog.returnValue==='yes');
+  const onClose=()=>{if(!dialog.open)finish(dialog.returnValue==='yes');};
   cancelPending=()=>finish(false,false);
   dialog.addEventListener('close',onClose);
   try{dialog.showModal();dialog.querySelector<HTMLElement>('[data-vn-confirm-no]')?.focus({preventScroll:true});}
