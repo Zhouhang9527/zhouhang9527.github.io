@@ -922,6 +922,7 @@ body .vn-information a{color:#ecf7ff!important;text-decoration:none}
  .vn-option-buttons label:has(select) select{min-height:44px}
  [data-vn-backlog-original=true][data-vn-log-open=true] .vn-backlog-controls button{min-width:44px;min-height:44px}
 }
+@media(max-width:959px){.vn-load-footer :is(button,a){min-width:44px;min-height:44px}}
 @media(max-width:600px){
  [data-vn-log-open=true] .vn-backlog-header{flex-wrap:wrap;gap:8px}
  [data-vn-log-open=true] .vn-backlog-controls{margin-left:0;gap:8px;width:100%;justify-content:space-between}
@@ -932,8 +933,10 @@ body .vn-information a{color:#ecf7ff!important;text-decoration:none}
  .vn-option-header.vn-panel-header{flex-wrap:wrap;padding:12px}
  .vn-option-playlist{grid-template-columns:1fr}
  .vn-load-footer{padding-inline:8px;gap:8px}
- .vn-load-footer nav,.vn-load-footer [data-vn-page-numbers]{gap:2px}
- .vn-load-footer :is(button,a){min-width:38px}
+ .vn-load-footer nav,.vn-load-footer [data-vn-page-numbers]{gap:8px}
+ .vn-load-footer :is(button,a){min-width:44px}
+ .vn-load-footer [data-vn-library-pages]{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;width:100%;max-width:100%}
+ .vn-load-footer [data-vn-page-numbers]{min-width:0;justify-content:center}
 }
 /* Touch hit areas are a blog adaptation; fine-pointer original PBD geometry is unchanged. */
 @media(pointer:coarse){

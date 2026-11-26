@@ -63,6 +63,11 @@ document.addEventListener('click',async event=>{
   for(const selector of ['input[name="vn-motion"][value="system"]','input[name="vn-mode"][value="game"]']){const radio=config.querySelector<HTMLInputElement>(selector);if(radio){radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));}}
   themeAPI()?.set('system');playback.effectSpeed=defaultPlayback().effectSpeed;if(document.fullscreenElement)await setVNFullscreen(false);
  }
+ if(pages.includes('program')){
+  const character=config.querySelector<HTMLSelectElement>('[data-vn-mascot-character]');
+  if(character&&!character.disabled){character.value='all';character.dispatchEvent(new Event('change',{bubbles:true}));document.dispatchEvent(new CustomEvent('vn:voice-action',{detail:'close'}));}
+  const language=config.querySelector<HTMLSelectElement>('[data-vn-mascot-language]');if(language&&!language.disabled){language.value='zh-CN';language.dispatchEvent(new Event('change',{bubbles:true}));}
+ }
  if(pages.includes('text')){textSize=defaultTextSize;persist(TEXT_KEY,String(textSize));applyText();const defaults=defaultPlayback();playback={...defaults,effectSpeed:playback.effectSpeed};}
  if(pages.includes('display')||pages.includes('text'))publishPlayback();
  if(pages.includes('sound')){
@@ -70,6 +75,10 @@ document.addEventListener('click',async event=>{
   document.dispatchEvent(new Event('vn:voice-defaults'));
  }
  if(pages.includes('dialog'))persist(CONFIRM_KEY,JSON.stringify({version:1,...defaultConfirmations()}));
+ // Existing theme/voice/music consumers own their keys and may reject writes.
+ // Check their persisted postconditions once; never overwrite their stores here.
+ const ownedDefaults:[string,string][]=[...(pages.includes('display')?[['ginka.vn.motion.v1','system'],['ginka.vn.mode.v1','game'],['ginka-theme','system']] as [string,string][]:[]),...(pages.includes('program')?['character','outfit','expression','gesture'].map(key=>['ginka.vn.mascot.'+key+'.v1','all'] as [string,string]):[]),...(pages.includes('sound')?[['music_volume',String(defaultBgmVolume/100)],['ginka.vn.voice.volume.v1','80'],['ginka.vn.voice.mute.v1','0']] as [string,string][]:[])];
+ try{if(ownedDefaults.some(([key,expected])=>{const value=localStorage.getItem(key);return value!==null&&value!==expected;}))persistenceFailures++;}catch{persistenceFailures++;}
  sync();feedback(persistenceFailures!==failedBefore?'默认设置未能全部保存；请检查浏览器存储权限，重新打开页面后可能恢复旧值':all?'已恢复全部公共设置；阅读记录与语音收藏未改变':'已恢复当前页默认设置');
 });
 function updatePlayback(input:HTMLInputElement){

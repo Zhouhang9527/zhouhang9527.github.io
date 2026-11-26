@@ -108,7 +108,7 @@ try{
      assert.deepEqual(values,Array.from({length:10},(_,i)=>index*10+i));slots.push(...values);
      if(index<14&&width<960&&!(await page.locator('[data-vn-page="'+(index+1)+'"]').count()))throw Error('Next page inaccessible');
     }
-    assert.equal(new Set(slots).size,150);await overflow();
+    assert.equal(new Set(slots).size,150);if(width<960){const small=await page.locator('[data-vn-library-pages] button').evaluateAll(nodes=>nodes.filter(n=>n.getClientRects().length).some(n=>{const r=n.getBoundingClientRect();return r.width<44||r.height<44;}));assert.equal(small,false,'pagination touch targets must be at least 44×44');}await overflow();
    });
    if(original&&width>=960)await check('LOAD PBD geometry incl viewport wider than 16:9 canvas',async()=>{
     const actual=await page.locator('[data-vn-manual-slot]').first().evaluate(e=>{const r=e.getBoundingClientRect(),s=e.closest('.vn-load').getBoundingClientRect(),scale=1280/s.width;return [(r.x-s.x)*scale,(r.y-s.y)*scale,r.width*scale,r.height*scale];});
