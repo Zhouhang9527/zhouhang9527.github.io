@@ -4,12 +4,94 @@ import fs from 'node:fs';
 const base=process.env.GINKA_TEST_BASE_URL||'http://127.0.0.1:4321';
 const origin=new URL(base).origin;
 const original=process.env.GINKA_TEST_ORIGINAL==='1';
+const widths=[390,1440,1920];
+const out=process.env.GINKA_TEST_REPORT_DIR||'artifacts/vn';
+const cycles=Number(process.env.GINKA_TEST_LIFECYCLE_CYCLES||0);
+const soakMs=Number(process.env.GINKA_TEST_SOAK_MS||0);
+assert.ok(Number.isInteger(cycles)&&cycles>=0&&cycles<=500,'Lifecycle cycles must be 0..500');
+assert.ok(Number.isFinite(soakMs)&&soakMs>=0&&soakMs<=3600000,'Soak must be 0..3600000 ms');
+if(original)assert.ok(['127.0.0.1','localhost','[::1]'].includes(new URL(base).hostname),'Private acceptance must stay on loopback');
 const browser=await chromium.launch();
-fs.mkdirSync('artifacts/vn',{recursive:true});
+fs.mkdirSync(out,{recursive:true});
 const results=[];
+
+async function startRun(page,{touch=false,waitForChapter=true}={}){
+ const start=page.locator('[data-vn-start]');
+ if(touch)await start.tap();else await start.click();
+ await page.waitForFunction(()=>!!document.querySelector('[data-vn-confirm][open],[data-vn-chapter],[data-vn-title-departure]'));
+ if(await page.locator('[data-vn-confirm][open]').isVisible())await page.locator('[data-vn-confirm-yes]').click();
+ if(waitForChapter)await page.locator('[data-vn-chapter]').waitFor({state:'visible'});
+}
+
+// Opt-in bounded stress, using the actual ClientRouter rather than document reloads.
+// CDP counters are observations, not a proof that all possible leaks are absent.
+async function profileLifecycle(width){
+ const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce',hasTouch:width===390});
+ const cdp=await page.context().newCDPSession(page),requests=new Map(),errors=[],durations=[],samples=[];
+ const result={mode:original?'real-private-lifecycle':'public-noassets-lifecycle',width,cycles:0,soakMs,ok:false,
+  measurementScope:'Headless Chromium; external requests blocked with Playwright routing, which disables HTTP cache; request repetition is not a transferred-byte/cache regression by itself.'};
+ let audio;
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('request',request=>{
+  if(new URL(request.url()).origin!==origin)return;
+  const key=request.url(),row=requests.get(key)||{url:key,type:request.resourceType(),count:0};row.count++;requests.set(key,row);
+ });
+ await page.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
+ const listeners=async expression=>{
+  const {result}=await cdp.send('Runtime.evaluate',{expression,objectGroup:'ginka-smoke-observation'});
+  if(!result.objectId)return {};
+  const {listeners}=await cdp.send('DOMDebugger.getEventListeners',{objectId:result.objectId});
+  return listeners.reduce((counts,l)=>{counts[l.type]=(counts[l.type]||0)+1;return counts;},{});
+ };
+ const sample=async label=>{
+  const beforeGC=await cdp.send('Runtime.getHeapUsage');
+  await cdp.send('HeapProfiler.collectGarbage');
+  const heap=await cdp.send('Runtime.getHeapUsage'),dom=await cdp.send('Memory.getDOMCounters');
+  const roots={document:await listeners('document'),window:await listeners('window'),audio:await listeners('document.querySelector("#bg-music")')};
+  await cdp.send('Runtime.releaseObjectGroup',{objectGroup:'ginka-smoke-observation'});
+  const row={label,elapsedMs:Date.now()-started,heapBeforeGC:beforeGC.usedSize,heapAfterGC:heap.usedSize,...dom,roots};samples.push(row);return row;
+ };
+ const cycle=async()=>{
+  const begin=performance.now();
+  await startRun(page,{touch:width===390});
+  await page.locator('[data-vn-post]').first().click();await page.locator('.post-body').waitFor({state:'visible'});
+  assert.equal(await page.locator('audio#bg-music').count(),1);
+  assert.ok(await page.evaluate(old=>old===document.querySelector('#bg-music'),audio),'Lifecycle replaced the persistent BGM');
+  await page.locator('[data-vn-return]').click();await page.locator('[data-vn-title]').waitFor({state:'visible'});
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Lifecycle horizontal overflow');
+  assert.equal(await page.locator('[data-vn-title-departure],dialog[open],[data-vn-log-open=true]').count(),0,'Stale overlay after navigation');
+  durations.push(performance.now()-begin);result.cycles++;
+ };
+ const started=Date.now();
+ try{
+  await page.goto(base+'/',{waitUntil:'domcontentloaded'});await page.locator('[data-vn-title]').waitFor({state:'visible'});
+  audio=await page.evaluateHandle(()=>document.querySelector('#bg-music'));
+  for(let i=0;i<3;i++)await cycle();
+  const initial=await sample('warm-after-3-cycles');
+  for(let i=0;i<cycles;i++){await cycle();if((i+1)%10===0)await sample('cycle-'+(i+1));}
+  const deadline=Date.now()+soakMs;
+  while(Date.now()<deadline){await cycle();await new Promise(resolve=>setTimeout(resolve,Math.min(1000,Math.max(0,deadline-Date.now()))));}
+  const final=await sample('final');
+  assert.deepEqual(final.roots,initial.roots,'Persistent-root event listeners grew across repeated navigation');
+  assert.deepEqual(errors,[]);
+  if(!original)assert.ok(![...requests.keys()].some(url=>new URL(url).pathname.startsWith('/__ginka_local_')),'Public lifecycle requested private assets');
+  result.ok=true;
+ }catch(error){
+  result.error=String(error);result.url=page.url();
+  result.failureState=await page.evaluate(()=>{const article=document.querySelector('[data-vn-article]'),dock=document.querySelector('[data-vn-game-reader]'),link=document.querySelector('[data-vn-return]'),rect=link?.getBoundingClientRect();return {mode:document.documentElement.dataset.vnMode,scrollY,articleContain:article?getComputedStyle(article).contain:null,dockPosition:dock?getComputedStyle(dock).position:null,dockRect:dock?.getBoundingClientRect().toJSON(),returnRect:rect?.toJSON(),returnHit:rect?document.elementFromPoint(rect.x+rect.width/2,rect.y+rect.height/2)?.outerHTML.slice(0,400):null,overlays:document.querySelectorAll('[data-vn-title-departure],dialog[open],[data-vn-log-open=true]').length};}).catch(()=>null);
+ }
+ finally{
+  result.elapsedMs=Date.now()-started;result.samples=samples;result.errors=errors;
+  const sorted=[...durations].sort((a,b)=>a-b);
+  result.navigationCycleMs={count:sorted.length,min:sorted[0],p50:sorted[Math.floor(sorted.length*.5)],p95:sorted[Math.min(sorted.length-1,Math.floor(sorted.length*.95))],max:sorted.at(-1)};
+  result.requestCounts={total:[...requests.values()].reduce((n,r)=>n+r.count,0),unique:requests.size,repeatedNonDocument:[...requests.values()].filter(r=>r.type!=='document'&&r.count>1).sort((a,b)=>b.count-a.count).slice(0,40)};
+  await audio?.dispose();await cdp.detach();await page.close();
+ }
+ return result;
+}
 try{
- for(const width of [390,1440]){
-  const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
+ for(const width of widths){
+  const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce',hasTouch:width===390});
   const errors=[],privateRequests=[],privateFailures=[];
   const isPrivate=url=>new URL(url).origin===origin&&/^\/__ginka_local_(title|ui|font|mascot)__\//.test(new URL(url).pathname);
   page.on('request',request=>{if(isPrivate(request.url()))privateRequests.push(request.url());});
@@ -17,14 +99,14 @@ try{
   page.on('requestfailed',request=>{if(isPrivate(request.url())&&request.failure()?.errorText!=='net::ERR_ABORTED')privateFailures.push(request.failure()?.errorText+' '+request.url());});
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
-  const result={width,mode:original?'original':'public',errors,privateRequests,privateFailures,ok:false};
+  const result={width,mode:original?'real-private':'public-noassets',touch:width===390,errors,privateRequests,privateFailures,ok:false};
   const visible=selector=>page.locator(selector).first().waitFor({state:'visible'});
   const go=async(path,selector)=>{await page.goto(base+path,{waitUntil:'domcontentloaded'});await visible(selector);};
   const back=async(selector)=>{result.step='return from '+new URL(page.url()).pathname;await page.locator(selector).click();await page.waitForURL(url=>url.pathname==='/');await visible('[data-vn-title]');};
   const shot=async name=>{
    result.lastScreenshot=name;result.url=page.url();
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Horizontal overflow: '+name);
-   await page.screenshot({path:'artifacts/vn/'+width+'-'+name+'.png'});
+   await page.screenshot({path:out+'/'+width+'-'+name+'.png'});
   };
   try{
    await go('/','[data-vn-title]');
@@ -53,8 +135,9 @@ try{
    await page.locator('[data-vn-start]').click();await visible('[data-vn-confirm][open]');
    await page.locator('[data-vn-confirm-no]').click();await page.locator('[data-vn-confirm]').waitFor({state:'hidden'});
    assert.equal(new URL(page.url()).pathname,'/','Cancel START must remain at title');
-   await page.locator('[data-vn-start]').click();await visible('[data-vn-confirm][open]');await page.locator('[data-vn-confirm-yes]').click();
-   await visible('[data-vn-chapter]');
+   if(width===390)assert.ok(await page.evaluate(()=>navigator.maxTouchPoints>0),'Touch context not active');
+   await startRun(page,{touch:width===390});
+   assert.equal(await page.locator('[data-vn-title-departure]').count(),0,'Reduced motion left title departure overlay');
    await shot('chapter');
    const links=await page.locator('[data-vn-post]').evaluateAll(nodes=>nodes.map(a=>a.getAttribute('href')));
    assert.ok(links.length>=1);
@@ -63,6 +146,12 @@ try{
    await visible('[data-vn-mark]');
    const dock=page.locator('.vn-game-buttons');
    await visible('[data-vn-game-reader]');
+   result.initialDock=await page.locator('[data-vn-game-reader]').evaluate(element=>{const rect=element.getBoundingClientRect();return {scrollY,position:getComputedStyle(element).position,inline:element.dataset.vnDockInline==='true',viewport:{width:innerWidth,height:innerHeight},rect:rect.toJSON(),articleContain:getComputedStyle(element.closest('[data-vn-article]')).contain};});
+   assert.ok(result.initialDock.scrollY<=1,'New article did not begin at the top');
+   if(!result.initialDock.inline){
+    assert.equal(result.initialDock.position,'fixed','Non-inline game dock must be viewport-fixed');
+    assert.ok(result.initialDock.rect.top>=-1&&result.initialDock.rect.bottom<=result.initialDock.viewport.height+1,'Fixed game dock was captured by article containment instead of viewport');
+   }
    if(!original){assert.equal(await page.locator('[data-ginka-mascot]').isVisible(),false);assert.equal(await dock.locator('[data-vn-game-action="vreplay"]').isDisabled(),true);assert.equal(await dock.locator('[data-vn-game-action="vsave"]').isDisabled(),true);}
    await dock.locator('[data-vn-game-action="qsave"]').click();
    assert.ok(await page.evaluate(()=>localStorage.getItem('ginka.vn.quick.v1')));
@@ -210,14 +299,17 @@ try{
    if(original)assert.ok(privateRequests.some(url=>url.includes('/__ginka_local_title__/')),'Original title art not requested');
    else assert.deepEqual(privateRequests,[],'Production preview requested private assets');
    result.ok=true;
-  }catch(error){result.url=page.url();result.error=String(error);await page.screenshot({path:'artifacts/vn/'+width+'-failure.png'}).catch(()=>{});}
+  }catch(error){result.url=page.url();result.error=String(error);await page.screenshot({path:out+'/'+width+'-failure.png'}).catch(()=>{});}
   finally{results.push(result);await page.close();}
  }
  const motionPage=await browser.newPage({viewport:{width:1280,height:720},reducedMotion:'no-preference'});
- try{await motionPage.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());await motionPage.goto(base+'/');await motionPage.locator('[data-vn-start]').click();await motionPage.locator('[data-vn-confirm][open]').waitFor({state:'visible'});await motionPage.locator('[data-vn-confirm-yes]').click();const overlay=motionPage.locator('[data-vn-title-departure]');await overlay.waitFor({state:'attached'});assert.equal(await overlay.evaluate(el=>el.getAnimations()[0]?.effect?.getTiming().duration),original?1000:900);await motionPage.keyboard.press('Escape');await motionPage.waitForURL(url=>url.pathname==='/archives/');await motionPage.locator('[data-vn-chapter]').waitFor();assert.equal(await overlay.count(),0);results.push({mode:'title-motion',ok:true});}catch(error){results.push({mode:'title-motion',ok:false,error:String(error),url:motionPage.url()});}finally{await motionPage.close();}
- const page=await browser.newPage({javaScriptEnabled:false,viewport:{width:390,height:900}});
- try{await page.goto(base+'/');await page.locator('[data-vn-start]').click();await page.locator('[data-vn-post]').first().click();await page.locator('.post-body').waitFor();results.push({mode:'no-js',ok:true});}
- catch(error){results.push({mode:'no-js',ok:false,error:String(error)});}finally{await page.close();}
-}finally{await browser.close();fs.writeFileSync('artifacts/vn/report.json',JSON.stringify(results,null,2));}
+ try{await motionPage.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());await motionPage.goto(base+'/');await startRun(motionPage,{waitForChapter:false});const overlay=motionPage.locator('[data-vn-title-departure]');await overlay.waitFor({state:'attached'});assert.equal(await overlay.evaluate(el=>el.getAnimations()[0]?.effect?.getTiming().duration),900);await motionPage.keyboard.press('Escape');await motionPage.waitForURL(url=>url.pathname==='/archives/');await motionPage.locator('[data-vn-chapter]').waitFor();assert.equal(await overlay.count(),0);results.push({mode:'title-motion',ok:true});}catch(error){results.push({mode:'title-motion',ok:false,error:String(error),url:motionPage.url()});}finally{await motionPage.close();}
+ for(const width of widths){
+  const page=await browser.newPage({javaScriptEnabled:false,viewport:{width,height:900}});
+  try{await page.goto(base+'/');await page.locator('[data-vn-start]').click();await page.locator('[data-vn-post]').first().click();await page.locator('.post-body').waitFor();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No-JS overflow');results.push({mode:original?'real-private-no-js':'public-noassets-no-js',width,ok:true});}
+  catch(error){results.push({mode:original?'real-private-no-js':'public-noassets-no-js',width,ok:false,error:String(error)});}finally{await page.close();}
+ }
+ if(cycles||soakMs)for(const width of widths)results.push(await profileLifecycle(width));
+}finally{await browser.close();fs.writeFileSync(out+'/report.json',JSON.stringify(results,null,2));}
 console.log(JSON.stringify(results,null,2));
 if(results.some(x=>!x.ok))process.exitCode=1;
