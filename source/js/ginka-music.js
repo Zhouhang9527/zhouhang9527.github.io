@@ -128,6 +128,18 @@
       if (state === 'error') unavailableText.textContent = '在线歌单暂时不可用';
       toggleBtn.disabled = state !== 'ready';
     }
+    const playbackStatus = document.createElement('p');
+    playbackStatus.className = 'music-unavailable';
+    playbackStatus.setAttribute('role', 'status');
+    playbackStatus.hidden = true;
+    musicRoot.querySelector('.journal-music-heading')?.after(playbackStatus);
+    function setPlaybackState(state, message = '') {
+      musicRoot.dataset.ginkaPlaybackState = state;
+      musicRoot.dataset.ginkaPlaybackMessage = message;
+      playbackStatus.hidden = !message;
+      playbackStatus.textContent = message;
+    }
+    setPlaybackState('paused');
     const log = (...args) => { if (DEBUG) console.log('[Music]', ...args); };
     const storageGet = (key) => {
       try { return window.localStorage ? localStorage.getItem(key) : null; } catch (_error) { return null; }
@@ -147,6 +159,7 @@
     let playbackWanted = false;
     let lyricMotionTimer = 0;
     let musicLoadSequence = 0;
+    let playbackRequestSequence = 0;
     let pendingSeekRestore = null;
 
     const setRefreshLoading = (loading) => {
@@ -341,7 +354,9 @@
     let currentPlayMode = 'list';
     let hasStartedPlayback = false;
     function getStoredNumber(key, fallback) {
-      const value = Number(storageGet(key));
+      const stored = storageGet(key);
+      if (stored === null || stored.trim() === '') return fallback;
+      const value = Number(stored);
       return Number.isFinite(value) ? value : fallback;
     }
   
@@ -499,6 +514,7 @@
 
       // The persistent element may receive metadata after its source was replaced.
       const loadSequence = ++musicLoadSequence;
+      setPlaybackState('paused');
       if (pendingSeekRestore) {
         audio.removeEventListener('loadedmetadata', pendingSeekRestore);
         pendingSeekRestore = null;
@@ -600,34 +616,50 @@
     }
   
     async function attemptPlay(reason) {
+      const request = ++playbackRequestSequence;
+      const load = musicLoadSequence;
+      const source = audio.src;
+      const current = () => request === playbackRequestSequence && load === musicLoadSequence && source === audio.src;
+      playbackWanted = true;
+      setPlaybackState('loading', '正在加载音频…');
       try {
         await audio.play();
-        playbackWanted = true;
+        // Navigation retains this element, but pause/track replacement invalidates
+        // any old promise. An obsolete success must not revive playback intent.
+        if (!current()) return false;
+        if (audio.paused) {
+          playbackWanted = false;
+          setPlaybackState('paused');
+          return false;
+        }
         hasStartedPlayback = true;
         ensureLyricLinesRendered();
         updatePlayIcon(true);
+        setPlaybackState('playing');
         storageSet(STORAGE.playing, 'true');
         log('播放成功:', reason);
         return true;
       } catch (error) {
+        if (!current()) return false;
         playbackWanted = false;
         updatePlayIcon(false);
         storageSet(STORAGE.playing, 'false');
         if (error && error.name === 'NotAllowedError') {
+          setPlaybackState('blocked', '请点击播放以允许音频播放');
           return false;
         }
-        if (musicTitle) {
-          musicTitle.textContent = musicList[currentMusicIndex] ? musicList[currentMusicIndex].title : '点击播放';
-        }
+        setPlaybackState('error', '音频暂时无法播放，请重试或切换曲目');
         log('播放失败:', reason, error && error.message ? error.message : error);
         return false;
       }
     }
   
     function pausePlayback(reason) {
+      ++playbackRequestSequence;
       playbackWanted = false;
       audio.pause();
       updatePlayIcon(false);
+      setPlaybackState('paused');
       storageSet(STORAGE.playing, 'false');
       log('暂停:', reason);
     }
@@ -962,17 +994,23 @@
       const failedTrack = getCurrentTrack();
       stopAutoGainSampler();
       updatePlayIcon(false);
+      setPlaybackState('error', '音频暂时无法播放，请重试或切换曲目');
       if (!failedTrack || !playbackWanted) return;
+      const request = ++playbackRequestSequence;
+      const load = musicLoadSequence;
+      const source = audio.src;
 
       if (currentSource === 'online') {
         const trackKey = `${failedTrack.source}:${failedTrack.id}`;
         if (onlineRetryForTrack !== trackKey) {
           onlineRetryForTrack = trackKey;
           setRefreshLoading(true);
+          setPlaybackState('loading', '正在重试音频…');
           const refreshed = await refreshOnlineTrackUrl(failedTrack);
+          const stillCurrent = request === playbackRequestSequence && load === musicLoadSequence && source === audio.src && playbackWanted && getCurrentTrack() === failedTrack;
+          if (!stillCurrent) return;
           setRefreshLoading(false);
-          const stillCurrent = currentSource === 'online' && getCurrentTrack() && getCurrentTrack().id === failedTrack.id;
-          if (refreshed && stillCurrent) {
+          if (refreshed) {
             failedTrack.src = refreshed;
             loadMusic(currentMusicIndex, { keepTime: false });
             setLoadingIcon();
@@ -986,7 +1024,8 @@
         const allFailed = onlineFailedTrackIds.size >= musicList.length;
         if (onlineFailureCount >= 3 || allFailed) {
           playbackWanted = false;
-          if (musicTitle) musicTitle.textContent = '在线音乐暂时不可用，请刷新歌单';
+          storageSet(STORAGE.playing, 'false');
+          setPlaybackState('error', '在线音频暂时不可用，请刷新歌单后重试');
           return;
         }
         nextMusic({ autoplay: true, ignoreMode: true, reason: 'online-error-skip' });
@@ -996,7 +1035,7 @@
       errorSkipCount += 1;
       if (errorSkipCount >= musicList.length) {
         playbackWanted = false;
-        if (musicTitle) musicTitle.textContent = '本地音频不可用';
+        setPlaybackState('error', '本地音频不可用');
         storageSet(STORAGE.playing, 'false');
         return;
       }
@@ -1193,7 +1232,10 @@
   
     audio.addEventListener('playing', () => {
       errorSkipCount = 0;
+      onlineFailureCount = 0;
+      onlineFailedTrackIds.clear();
       onlineRetryForTrack = '';
+      setPlaybackState('playing');
       setRefreshLoading(false);
     });
   
