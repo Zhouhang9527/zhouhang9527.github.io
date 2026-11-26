@@ -145,7 +145,7 @@ function harness({modules=['vn-ui','vn-reader-controls'],stored={},services={}}=
  const feedback=add(reader,'span',{'data-vn-game-feedback':''}),restored=[];
  const mascot=add(html,'div',{'data-ginka-mascot':'','data-mascot-source':'/fixture-manifest.json'});mascot.hidden=true;
  const launcher=add(mascot,'button',{'data-mascot-action':'open'}),character=add(mascot,'div',{'data-mascot-character':''});character.hidden=true;
- const portrait=add(character,'button',{class:'ginka-mascot-portrait','data-mascot-action':'next'});
+ const portrait=add(character,'button',{class:'ginka-mascot-portrait','data-mascot-action':'next'});portrait.clientWidth=80;portrait.clientHeight=160;
  for(const kind of ['base','blink','mouth']){const image=new FixtureImage();image.setAttribute(`data-mascot-${kind}`,'');image.hidden=kind!=='base';portrait.append(image);}
  const mascotWindow=add(mascot,'section',{'data-mascot-window':''});mascotWindow.hidden=true;
  add(mascotWindow,'span',{'data-mascot-speaker':''});const mascotText=add(mascotWindow,'p',{'data-mascot-text':''});
@@ -241,7 +241,7 @@ test('Reader AUTO uses persisted speed and applies live same-tab and storage cha
  const h=harness({stored:{[PLAYBACK_KEY]:JSON.stringify({version:1,autoScrollSpeed:180})}});
  h.click(h.auto);h.frame(100);h.frame(150);assert.equal(h.scrolls.at(-1)[1],9);
  h.storage(PLAYBACK_KEY,JSON.stringify({version:1,autoScrollSpeed:10}));h.frame(200);assert.equal(h.scrolls.at(-1)[1],.5);
- h.localStorage.setItem(PLAYBACK_KEY,JSON.stringify({version:1,autoScrollSpeed:100}));h.document.dispatchEvent(new FixtureEvent('vn:playback-change'));h.frame(250);assert.equal(h.scrolls.at(-1)[1],5);
+ h.localStorage.setItem(PLAYBACK_KEY,JSON.stringify({version:1,autoScrollSpeed:100}));h.document.dispatchEvent(new FixtureEvent('vn:playback-change',{detail:parsePlayback(h.localStorage.getItem(PLAYBACK_KEY))}));h.frame(250);assert.equal(h.scrolls.at(-1)[1],5);
  h.storage(PLAYBACK_KEY,null);h.frame(300);assert.equal(h.scrolls.at(-1)[1],2.25);
 });
 
@@ -276,7 +276,7 @@ test('same-tab radio and explicit mode link use the same Reader shutdown path',(
 });
 
 test('storage view changes relocate open Mascot dialogue without replacing its audio or adding listeners',async()=>{
- const h=harness({modules:['vn-ui','vn-reader-controls','vn-mascot']});await h.settle();h.click(h.launcher);h.frame(2000);await h.settle();
+ const h=harness({modules:['vn-ui','vn-reader-controls','vn-mascot']});await h.settle();h.click(h.launcher);h.frame(0);h.frame(2000);await h.settle();
  assert.equal(h.html.hasAttribute('data-vn-mascot-dialogue'),true);assert.equal(h.gameText.textContent,line.text);assert.equal(h.mascotWindow.hidden,true);
  const voiceListeners=h.audio.listenerCount('ended'),viewListeners=h.document.listenerCount('vn:view-change');
  for(let index=0;index<4;index++)h.pageLoad();
@@ -285,12 +285,12 @@ test('storage view changes relocate open Mascot dialogue without replacing its a
  assert.equal(h.document.querySelector('[data-mascot-audio]'),h.audio);assert.equal(h.audio.listenerCount('ended'),voiceListeners);assert.equal(h.document.listenerCount('vn:view-change'),viewListeners);assert.equal(h.document.listenerCount('change'),2,'only UI preferences and Mascot selectors need change listeners');
 });
 
-test('storage motion changes finish reveal, cancel motion, and resume one timer pair',async()=>{
+test('storage motion changes finish reveal, cancel motion, and resume only explicit frame timing',async()=>{
  const h=harness({modules:['vn-ui','vn-reader-controls','vn-mascot']});await h.settle();h.click(h.launcher);await h.settle();
- assert.equal(h.gameText.textContent,'');assert.ok(h.rafs.size>0);assert.equal(h.timers.size,2,'one blink and one verified frame timer');
+ assert.equal(h.gameText.textContent,'');assert.ok(h.rafs.size>0);assert.equal(h.timers.size,1,'only the explicit frame timer; no unverified automatic blink');
  h.storage(MOTION,'reduced');assert.equal(h.gameText.textContent,line.text);assert.equal(h.timers.size,0);h.frame(2000);assert.equal(h.gameText.textContent,line.text);
- h.storage(MOTION,'system');assert.equal(h.timers.size,2);for(let index=0;index<4;index++)h.pageLoad();assert.equal(h.timers.size,2);
- h.change(h.reducedRadio);assert.equal(h.timers.size,0);h.change(h.systemRadio);assert.equal(h.timers.size,2);
+ h.storage(MOTION,'system');assert.equal(h.timers.size,1);for(let index=0;index<4;index++)h.pageLoad();assert.equal(h.timers.size,1);
+ h.change(h.reducedRadio);assert.equal(h.timers.size,0);h.change(h.systemRadio);assert.equal(h.timers.size,1);
  h.mediaPreference.matches=true;h.mediaPreference.dispatchEvent(new FixtureEvent('change'));assert.equal(h.timers.size,0,'OS reduced motion still takes precedence');
 });
 
@@ -304,12 +304,12 @@ test('motion-only notification preserves reveal and reduced motion still advance
 
 test('view relocation completes the current line without stranding silent Mascot AUTO',async()=>{
  const h=harness({modules:['vn-ui','vn-reader-controls','vn-mascot']});await h.settle();h.click(h.launcher);await h.settle();h.click(h.auto);
- h.storage(MODE,'reader');assert.equal(h.mascotText.textContent,line.text);h.fireTimer(700);h.frame(2000);
+ h.storage(MODE,'reader');assert.equal(h.mascotText.textContent,line.text);h.fireTimer(700);h.frame(0);h.frame(2000);
  assert.equal(h.mascotText.textContent,nextLine.text);assert.equal(h.html.hasAttribute('data-vn-mascot-auto'),false);
 });
 
 test('storage clear simultaneously restores default view and motion in an open Mascot',async()=>{
  const h=harness({modules:['vn-ui','vn-reader-controls','vn-mascot'],stored:{[MODE]:'reader',[MOTION]:'reduced'}});await h.settle();h.click(h.launcher);await h.settle();
  assert.equal(h.mascotWindow.hidden,false);assert.equal(h.mascotText.textContent,line.text);assert.equal(h.timers.size,0);
- h.storage(null,null);assert.equal(h.html.dataset.vnMode,'game');assert.equal(h.html.dataset.vnMotion,'system');assert.equal(h.html.hasAttribute('data-vn-mascot-dialogue'),true);assert.equal(h.mascotWindow.hidden,true);assert.equal(h.gameText.textContent,line.text);assert.equal(h.timers.size,2);
+ h.storage(null,null);assert.equal(h.html.dataset.vnMode,'game');assert.equal(h.html.dataset.vnMotion,'system');assert.equal(h.html.hasAttribute('data-vn-mascot-dialogue'),true);assert.equal(h.mascotWindow.hidden,true);assert.equal(h.gameText.textContent,line.text);assert.equal(h.timers.size,1);
 });
