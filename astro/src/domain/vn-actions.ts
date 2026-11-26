@@ -63,7 +63,7 @@ function numeric(x:unknown):number|null{
 export function resolveSceneNumber(value:unknown,initial?:number):number|null{
  const absolute=numeric(value);if(absolute!==null)return absolute;
  if(typeof value!=='string'||initial===undefined||!Number.isFinite(initial))return null;
- if(value==='@')return initial;
+ if(value==='@')return initial;if(value==='-@')return -initial;
  const match=/^@([+\-*/])(\d+(?:\.\d+)?|\.\d+)$/.exec(value);if(!match)return null;
  const n=Number(match[2]);
  const result=match[1]==='+'?initial+n:match[1]==='-'?initial-n:match[1]==='*'?initial*n:initial/n;
@@ -150,7 +150,7 @@ export function parseSceneAction(raw:unknown):SceneActionResult{
       if(speed===null||speed<=0)issue(s+'.speed','expected positive finite speed');
       steps.push({handler:'wait',time:nonnegative(step.time,s+'.time'),speed:speed??1,nofast:bool(step.nofast,s+'.nofast')});continue;
      }
-     const numberValue=(v:unknown)=>numeric(v)!==null||typeof v==='string'&&(v==='@'||/^@[+\-*/](\d+(?:\.\d+)?|\.\d+)$/.test(v));
+     const numberValue=(v:unknown)=>numeric(v)!==null||typeof v==='string'&&(v==='@'||v==='-@'||/^@[+\-*/](\d+(?:\.\d+)?|\.\d+)$/.test(v));
      if(['SinAction','CosAction','RandomAction','SquareAction','TriangleAction','LoopMoveAction'].includes(String(step.handler))){
       const timing:SceneTiming={time:step.time==null?null:nonnegative(step.time,s+'.time'),delay:nonnegative(step.delay,s+'.delay',0),
        speed:step.speed==null?1:numeric(step.speed)??0,starttime:nonnegative(step.starttime,s+'.starttime',0),

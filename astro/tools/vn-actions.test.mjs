@@ -21,7 +21,7 @@ const dispatch=(q,raw)=>{const result=q.dispatch(raw);assert.equal(result.ok,tru
 const near=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-10,`${actual} != ${expected}`);
 
 test('bounded relative arithmetic accepts absolute values but never evaluates expressions',()=>{
- for(const [value,expected] of [[3,3],['-2.5',-2.5],['.5',.5],['@',8],['@+2',10],['@-3',5],['@*2',16],['@/4',2]])assert.equal(resolveSceneNumber(value,8),expected);
+ for(const [value,expected] of [[3,3],['-2.5',-2.5],['.5',.5],['@',8],['-@',-8],['@+2',10],['@-3',5],['@*2',16],['@/4',2]])assert.equal(resolveSceneNumber(value,8),expected);
  for(const value of ['@/0','@+Infinity','@+1+2','Math.random()','1e2','0x20',' ','#&this.x','@+(() => 1)()',true,null,{},Infinity,NaN])assert.equal(resolveSceneNumber(value,8),null);
  assert.equal(resolveSceneNumber('@+1'),null);
  assert.equal(resolveSceneNumber('@*2',Number.MAX_VALUE),null);
@@ -204,6 +204,14 @@ test('square and triangle project explicit on/off intervals and restore baseline
  q.advance(50);assert.equal(q.frame().objects.actor.properties.ypos,6);
  q.advance(50);assert.equal(x(q),30);assert.equal(q.frame().objects.actor.properties.ypos,0);
  q.advance(200);assert.equal(x(q),20);assert.equal(q.frame().active,false);
+});
+
+test('observed unary relative offset projects a triangle around zero without eval',()=>{
+ const q=scheduler();dispatch(q,env([['opacity',32],['opacity',[{handler:'TriangleAction',vibration:'@',offset:'-@',ontime:100,offtime:150,time:null,nowait:true}]]]));
+ assert.equal(q.frame().objects.actor.properties.opacity,0);q.advance(50);assert.equal(q.frame().objects.actor.properties.opacity,16);
+ q.advance(50);assert.equal(q.frame().objects.actor.properties.opacity,32);q.advance(75);assert.equal(q.frame().objects.actor.properties.opacity,16);
+ q.setReducedMotion(true);assert.equal(q.frame().objects.actor.properties.opacity,32);assert.equal(q.frame().active,false);
+ assert.equal(parseSceneAction(env([['opacity',[{handler:'TriangleAction',vibration:'@',offset:'-@;alert(1)',ontime:100,offtime:150}]]])).ok,false);
 });
 
 test('indexed random preview requires explicit host policy, bounds and stable sample intervals',()=>{
