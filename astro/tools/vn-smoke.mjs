@@ -117,6 +117,10 @@ try{
    await visible('[data-vn-no-extra][aria-disabled=true]');
    assert.equal(await page.locator('[data-vn-next-new]').isVisible(),false);
    assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-original'),String(original));
+   if(width===390){
+    result.titleTouchTargets=await page.locator('.vn-menu a:visible').evaluateAll(nodes=>nodes.map(element=>{const r=element.getBoundingClientRect();return {label:element.getAttribute('aria-label')||element.textContent.trim(),width:r.width,height:r.height};}));
+    assert.ok(result.titleTouchTargets.every(r=>r.width>=43.9&&r.height>=43.9),'Touch title targets must be at least 44x44');
+   }
    // Locking EXTRA on the title must not prevent direct access to public articles.
    await go('/afterstory/','[data-vn-afterstory-locked]');
    assert.equal(await page.locator('[data-vn-afterstory-content]').isVisible(),false);
@@ -151,6 +155,10 @@ try{
    if(!result.initialDock.inline){
     assert.equal(result.initialDock.position,'fixed','Non-inline game dock must be viewport-fixed');
     assert.ok(result.initialDock.rect.top>=-1&&result.initialDock.rect.bottom<=result.initialDock.viewport.height+1,'Fixed game dock was captured by article containment instead of viewport');
+   }
+   if(width===390){
+    result.dockTouchTargets=await dock.locator('button:visible:not([disabled])').evaluateAll(nodes=>nodes.map(element=>{const r=element.getBoundingClientRect();return {label:element.getAttribute('aria-label')||element.textContent.trim(),width:r.width,height:r.height};}));
+    assert.ok(result.dockTouchTargets.every(r=>r.width>=43.9&&r.height>=43.9),'Touch article dock targets must be at least 44x44');
    }
    if(!original){assert.equal(await page.locator('[data-ginka-mascot]').isVisible(),false);assert.equal(await dock.locator('[data-vn-game-action="vreplay"]').isDisabled(),true);assert.equal(await dock.locator('[data-vn-game-action="vsave"]').isDisabled(),true);}
    await dock.locator('[data-vn-game-action="qsave"]').click();
