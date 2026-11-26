@@ -18,7 +18,8 @@ try{
    await page.waitForFunction(()=>!document.querySelector('[data-vn-option-panel=program] [data-mascot-action=preview]').disabled);
    await page.locator('[data-vn-option-panel=program] [data-mascot-action=preview]').click();
    const lines=await page.evaluate(async()=>{const m=await (await fetch('/__ginka_local_mascot__/manifest.json')).json();return m.lines.filter(l=>l.phase==='main'&&m.poses[l.pose]?.phase==='main');});assert.ok(lines.length>2);
-   for(let i=0;i<2;i++){await page.locator('.ginka-mascot-window nav [data-mascot-action=next]').click();await page.waitForFunction(text=>document.querySelector('[data-mascot-text]').textContent===text,lines[i].text);}
+   await page.waitForFunction(text=>document.querySelector('[data-mascot-text]').textContent===text,lines[0].text);
+   for(let i=1;i<2;i++){await page.locator('.ginka-mascot-window nav [data-mascot-action=next]').click();await page.waitForFunction(text=>document.querySelector('[data-mascot-text]').textContent===text,lines[i].text);}
    const line=lines[2];await page.locator('.ginka-mascot-window nav [data-mascot-action=next]').click();
    await page.waitForFunction(text=>{const e=document.querySelector('[data-mascot-text]');return e&&e.textContent.length>0&&e.textContent.length<text.length;},line.text);
    // Keep the short real line actively revealing: send the native input event in
