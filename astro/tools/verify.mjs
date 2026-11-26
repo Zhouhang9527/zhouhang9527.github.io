@@ -44,6 +44,10 @@ assert.equal(vn.title.background.id,'torii');
 assert.equal(vn.title.states[0].minCompleted,0);
 assert.deepEqual(Object.keys(vn.title.frames).sort(),['data-003','data-004','data-005']);
 assert.equal(new Set(vn.title.states.map(s=>s.frame)).size,3);
+// The observed untouched title uses the complete eyes-open data-003 CG; after
+// reading begins the blog mapping advances to data-004, not an invented layer.
+assert.deepEqual([vn.title.states[0].frame,vn.title.states[0].present,vn.title.states[0].expression],['data-003',true,'eyes-open']);
+assert.equal(vn.title.states[1].frame,'data-004');
 for(const [i,state] of vn.title.states.entries()){
  assert.ok(!i||state.minCompleted>vn.title.states[i-1].minCompleted);
  assert.equal(state.present,typeof state.expression==='string');

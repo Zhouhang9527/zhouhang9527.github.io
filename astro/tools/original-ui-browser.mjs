@@ -54,7 +54,15 @@ try{
   };
   try{
    await page.goto(base+'/',{waitUntil:'domcontentloaded'});await visible('[data-vn-title][data-vn-original=true]');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'arrival');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-character-present'),'true');
+   await page.waitForFunction(()=>getComputedStyle(document.querySelector('[data-vn-art]')).backgroundImage.includes('data-003.png'));
    assert.equal(await page.locator('[data-vn-no-next]').isVisible(),false);
+   assert.equal(await page.locator('.vn-menu > :visible > span').count(),7,'Observed first title has no NEXT placeholder row');
+   if(width>=960){
+    await geometry('[data-vn-title]','[data-vn-no-save]',[62,284,166,38]);
+    await geometry('[data-vn-title]','[data-vn-start]',[62,328,166,38]);
+   }
    await shot('title');
    if(width===390)await page.locator('.vn-menu a[href="/settings/"]').tap();else await page.locator('.vn-menu a[href="/settings/"]').click();
    await visible('[data-vn-config]');

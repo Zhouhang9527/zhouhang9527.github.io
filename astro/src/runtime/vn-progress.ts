@@ -33,9 +33,13 @@ function renderTitle(root:Document=document) {
  const previous=read(),progress=unlockMain(previous,required),allowed=new Set(paths);
  if(progress!==previous)write(progress);
  const summary=readingStage(progress,required),count=summary.completed;
- const state=resolveTitleState(progress.mainCleared?required.length:count);
+ // The untouched blog landing models original hfclear=0/clear=0. Once a
+ // reading route has begun, keep the intermediate title frame on return; this
+ // is an observed blog mapping, not a claim that browser progress writes sf flags.
+ const started=progress.last!==null;
+ const state=resolveTitleState(progress.mainCleared?required.length:started?Math.max(1,count):count);
  title.dataset.vnReadingStage=summary.stage;
- title.dataset.vnMenuPhase=progress.mainCleared?'next':'first';
+ title.dataset.vnMenuPhase=progress.mainCleared?'next':started?'main':'first';
  title.dataset.vnStage=state.id;
  title.dataset.vnCharacterPresent=String(state.present);
  title.dataset.vnExpression=state.expression??'none';

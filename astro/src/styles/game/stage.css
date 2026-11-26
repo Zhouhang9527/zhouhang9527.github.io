@@ -528,7 +528,6 @@ html body .vn-stage .vn-gallery-grid .scene-day{display:block!important;opacity:
 @media(min-width:960px){
  .vn-title[data-vn-original=true] .vn-title-menu{left:var(--vn-x);top:var(--vn-y);width:var(--vn-w);overflow:visible}
  /* Observed title_first: CONTINUE is one PBD row lower; later rows retain their coordinates. */
- .vn-title[data-vn-title-menu-original=true][data-vn-menu-phase=first] .vn-menu > [data-vn-continue]{transform:translateY(var(--vn-menu-height));}
  .vn-title[data-vn-original=true] .vn-menu{gap:var(--vn-menu-gap)}
  html body .vn-title[data-vn-original=true] .vn-menu > :is(a,span){width:100%;height:var(--vn-menu-height);min-height:0;position:relative;padding:0}
  .vn-title[data-vn-title-menu-original=true] .vn-menu > :is(a,span)>span{width:100%;height:100%;background:var(--vn-normal-art) center/100% 100% no-repeat}
@@ -662,8 +661,14 @@ html[data-vn-motion=reduced] .ginka-mascot-portrait{animation:none}
 
 .vn-option-buttons select{max-width:100%;background:#d6eaf6;color:#142b46;border:1px solid #6ca5c6;padding:4px 8px}
 
-/* Video reference: locked NEXT has no visible label; keep its PBD row reserved. */
-.vn-title[data-vn-title-menu-original=true] [data-vn-no-next]{visibility:hidden}
+/* The observed first-title screen has no NEXT entry or empty row. Its seven
+   remaining controls are shifted down one measured PBD row, with CONTINUE at
+   the observed title_first position. Later title phases retain their own rows. */
+.vn-title[data-vn-title-menu-original=true][data-vn-menu-phase=first] [data-vn-no-next]{display:none!important}
+.vn-title[data-vn-title-menu-original=true][data-vn-menu-phase=main] [data-vn-no-next]{visibility:hidden}
+@media(min-width:960px){
+ .vn-title[data-vn-title-menu-original=true][data-vn-menu-phase=first] .vn-menu > :not([data-vn-no-next]){transform:translateY(var(--vn-menu-pitch))}
+}
 
 /* Explicit SAVE/LOAD slots use the same row art; no fabricated screenshots. */
 .vn-load [data-vn-manual-grid][hidden],.vn-load [data-vn-library][hidden]{display:none!important}
