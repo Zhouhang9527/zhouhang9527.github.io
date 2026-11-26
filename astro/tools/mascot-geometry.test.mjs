@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {computeMascotGeometry,projectMascotCamera,projectLinkedMascotOverlay,cameraDepthScale,transformPoint,transformRect,fullPageRasterMatrix,interpolateLevelOffset} from '../src/lib/mascot-geometry.ts';
+import {computeMascotGeometry,projectMascotCamera,projectLinkedMascotOverlay,measureMascotSourceZoom,selectMascotSourceResolution,cameraDepthScale,transformPoint,transformRect,fullPageRasterMatrix,interpolateLevelOffset} from '../src/lib/mascot-geometry.ts';
 
 const close=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-9,`${actual} != ${expected}`);
 const matrixClose=(actual,expected)=>actual.forEach((n,i)=>close(n,expected[i]));
@@ -185,4 +185,30 @@ test('linked bitmap never silently supports inherited matrices, clipping, unknow
  assert.throws(()=>projectLinkedMascotOverlay({...overlay,resolution:0}),RangeError);
  assert.throws(()=>projectLinkedMascotOverlay({...overlay,properties:{xpos:Infinity}}),RangeError);
  assert.equal(projectLinkedMascotOverlay({...overlay,camera:{...overlay.camera,camerazoom:0}}).visible,false);
+});
+
+test('source tier selection follows descending next-scale thresholds with exact boundaries',()=>{
+ const available=[100,50,250,200];
+ for(const [zoom,resolution] of [[0,50],[.25,50],[.5,50],[.51,100],[.99,100],[1,100],[1.01,200],[2,200],[2.01,250],[2.5,250],[7,250]])assert.equal(selectMascotSourceResolution(zoom,available),resolution);
+ assert.deepEqual(available,[100,50,250,200]);
+ assert.equal(selectMascotSourceResolution(3,[50,100,200]),200);
+ assert.equal(selectMascotSourceResolution(.1,[100]),100);
+});
+test('source zoom measures projected basis rows and truncates hundredths before tier selection',()=>{
+ assert.equal(measureMascotSourceZoom([.509,0,0,.509,0,0]),.5);
+ assert.equal(selectMascotSourceResolution(measureMascotSourceZoom([.509,0,0,.509,0,0]),[50,100]),50);
+ const skewed=[1,2,3,4,0,0];
+ assert.equal(measureMascotSourceZoom(skewed),Math.trunc(Math.sqrt(20)*100)/100);
+ assert.notEqual(measureMascotSourceZoom(skewed),Math.trunc(Math.sqrt(25)*100)/100);
+});
+test('camera exposes pre-raster matrix so depth two selects the original double-resolution tier, not raster four',()=>{
+ const g=projectMascotCamera({...projection,resolution:50,properties:{zpos:-40}});
+ assert.equal(g.matrix[0],4);assert.equal(g.logicalMatrix[0],2);
+ assert.equal(measureMascotSourceZoom(g.logicalMatrix),2);
+ assert.equal(selectMascotSourceResolution(measureMascotSourceZoom(g.logicalMatrix),[50,100,200,250]),200);
+});
+test('source tier selection never fabricates missing tiers or accepts unresolved numeric inputs',()=>{
+ for(const resolutions of [[],[0],[NaN],[50,50],[Infinity]])assert.throws(()=>selectMascotSourceResolution(1,resolutions),RangeError);
+ for(const zoom of [NaN,Infinity,-1])assert.throws(()=>selectMascotSourceResolution(zoom,[50,100]),RangeError);
+ assert.throws(()=>measureMascotSourceZoom([Number.MAX_VALUE,0,0,1,0,0]),RangeError);
 });

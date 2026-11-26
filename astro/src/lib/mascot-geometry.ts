@@ -129,6 +129,34 @@ export function interpolateLevelOffset(offsets:readonly Point[],levels:readonly 
  return {x:zero(finite(Math.trunc((before.x+(after.x-before.x)*weight)*100/order),'projected level x')),y:zero(finite(Math.trunc((before.y+(after.y-before.y)*weight)*100/order),'projected level y'))};
 }
 
+/**
+ * Measure the projected constant-depth plane before full-page raster conversion.
+ * Keep the source's projected-basis row norms and truncation to hundredths.
+ * Never pass the inverse-source-resolution raster matrix, rounded CSS or DPR.
+ */
+export function measureMascotSourceZoom(logicalMatrix:Matrix):number{
+ const origin=transformPoint(logicalMatrix,{x:0,y:0});
+ const x=transformPoint(logicalMatrix,{x:1,y:0}),y=transformPoint(logicalMatrix,{x:0,y:1});
+ const ax=x.x-origin.x,cx=y.x-origin.x,by=x.y-origin.y,dy=y.y-origin.y;
+ const zoom=Math.max(Math.sqrt(ax*ax+cx*cx),Math.sqrt(by*by+dy*dy));
+ return Math.trunc(finite(zoom*100,'source zoom'))/100;
+}
+
+/**
+ * Choose only from verified available source resolutions (%). The source list
+ * is descending: advance while zoom <= next scale, so exact boundaries select
+ * that tier, values above the largest retain it, and small values use the last.
+ * The numeric input is the source-measured zoom (or an explicitly verified
+ * ignore-zoom z-resolution/100), not a browser viewport/DPR heuristic.
+ */
+export function selectMascotSourceResolution(zoom:number,resolutions:readonly number[]):number{
+ finite(zoom,'source zoom');
+ if(zoom<0||resolutions.length<1||resolutions.length>16||resolutions.some(value=>!Number.isFinite(value)||value<=0)||new Set(resolutions).size!==resolutions.length)throw new RangeError('Invalid source resolution selection');
+ const ordered=[...resolutions].sort((a,b)=>b-a);
+ for(let i=0;i<ordered.length-1;i++)if(zoom>ordered[i+1]/100)return ordered[i];
+ return ordered[ordered.length-1];
+}
+
 /** Right multiplication, matching Canvas column-vector point transforms. */
 function multiply([a,b,c,d,e,f]:Matrix,[g,h,i,j,k,l]:Matrix):Matrix{
  return [a*g+c*h,b*g+d*h,a*i+c*j,b*i+d*j,a*k+c*l+e,b*k+d*l+f];
@@ -201,7 +229,7 @@ export function projectMascotCamera(input:MascotProjectionInput){
   m=multiply(m,translation(placement.x,placement.y));
  }
  const matrix=fullPageRasterMatrix(m,canvas,resolution);
- return {matrix,drawRect:transformRect(matrix,[0,0,canvas.width,canvas.height]),visible,opacity,depthScale:depth,levelOffset:offset};
+ return {matrix,logicalMatrix:normalized(m),drawRect:transformRect(matrix,[0,0,canvas.width,canvas.height]),visible,opacity,depthScale:depth,levelOffset:offset};
 }
 
 /**
