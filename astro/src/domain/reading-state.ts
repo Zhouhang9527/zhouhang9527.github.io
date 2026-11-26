@@ -26,13 +26,13 @@ export function parse(raw:string|null):Progress{
  }catch{return empty();}
 }
 export function visit(state:Progress,path:string,stamp:number):Progress{
- if(!isPath(path)||!Number.isFinite(stamp)||stamp<0)return state;
+ if(!isPath(path))return state;
  const recent=Object.fromEntries(Object.entries({...state.recent,[path]:stamp}).sort((a,b)=>b[1]-a[1]).slice(0,LIMIT));
  const positions=Object.fromEntries(Object.entries(state.positions).filter(([key])=>key in recent));
  return {...state,last:path,recent,positions};
 }
 export function savePosition(state:Progress,path:string,position:Position):Progress{
- if(!isPath(path)||!(path in state.recent)||!unit(position.ratio)||!unit(position.section)||!(position.heading===null||typeof position.heading==='string'&&position.heading.length<=512))return state;
+ if(!isPath(path)||!(path in state.recent))return state;
  return {...state,positions:{...state.positions,[path]:{...position}}};
 }
 
@@ -62,11 +62,11 @@ function parseReadingStory(raw:unknown):ReadingStory|null{
 }
 export function captureReadingStory(state:Progress):ReadingStory{return {completed:[...state.completed],...readingUnlocks(state)};}
 export function restoreReadingStory(state:Progress,story?:ReadingStory):Progress{
- if(!story)return state;const snapshot=parseReadingStory(story);if(!snapshot)return state;
- // Reading completion is slot-local. Global unlocks are one-way until reset;
- // loading an earlier slot must not erase an earned unlock or restore favorites.
- const mainCleared=state.mainCleared||snapshot.mainCleared;
- return {...state,completed:snapshot.completed,mainCleared,afterstoryStarted:mainCleared&&(state.afterstoryStarted||snapshot.afterstoryStarted)};
+ if(!story)return state;
+ // Raw storage is validated once by parseSaveRecord; internal snapshots are typed.
+ // Loading a slot changes current read marks, never revokes global earned unlocks.
+ const mainCleared=state.mainCleared||story.mainCleared;
+ return {...state,completed:[...story.completed],mainCleared,afterstoryStarted:mainCleared&&(state.afterstoryStarted||story.afterstoryStarted)};
 }
 
 // Independent user-selected save slots; automatic reading history is not a manual save.

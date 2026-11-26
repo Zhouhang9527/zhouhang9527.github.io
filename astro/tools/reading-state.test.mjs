@@ -20,11 +20,11 @@ test('bounded history and valid section positions',()=>{
  for(let i=0;i<LIMIT;i++)state=visit(state,'/2026/11/24/post-'+i+'/',i+2);
  assert.equal(Object.keys(state.recent).length,LIMIT);assert.equal(state.positions[path],undefined);
 });
-test('reject damaged position data and invalid visit stamps at the write boundary',()=>{
+test('raw storage rejects damaged positions and timestamps; typed position writes copy their input',()=>{
  const state=visit(empty(),path,1);
  assert.deepEqual(parse(JSON.stringify({...state,positions:{[path]:{ratio:2,heading:'x',section:0}}})).positions,{});
- for(const stamp of [NaN,Infinity,-1])assert.equal(visit(state,path,stamp),state);
- for(const p of [{...position,ratio:2},{...position,section:NaN},{...position,heading:'x'.repeat(513)}])assert.equal(savePosition(state,path,p),state);
+ for(const at of [NaN,Infinity,-1])assert.equal(parseSaveRecord({...record,at}),null);
+ for(const p of [{...position,ratio:2},{...position,section:NaN},{...position,heading:'x'.repeat(513)}])assert.equal(parseSaveRecord({...record,position:p}),null);
  const p={...position};const next=savePosition(state,path,p);p.ratio=0;assert.equal(next.positions[path].ratio,.4);
 });
 test('main clear is persistent, afterstory starts only after unlocking',()=>{

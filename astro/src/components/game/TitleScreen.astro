@@ -28,16 +28,16 @@ const coverStyle=localOriginal?`--vn-original-frame:url('${initialPrivateFrame}'
    <h1 id="vn-title-heading"><span>GINKA</span><span class="journal-visually-hidden">逆向工程与二进制安全</span></h1>
    <p class="vn-kicker">MM9527 / PERSONAL ARCHIVE</p>
    <nav class="vn-menu" aria-label="标题菜单">
-    <a data-vn-continue data-vn-resume href="/archives/" hidden><span style={menuStyle('CONTINUE')}>CONTINUE</span><small>继续阅读</small></a>
+    <a data-vn-continue data-vn-resume href="/archives/" aria-label="CONTINUE · 继续当前阅读路线" hidden><span style={menuStyle('CONTINUE')}>CONTINUE</span><small>继续阅读</small></a>
     <span class="vn-menu-disabled" data-vn-no-save aria-disabled="true"><span style={menuStyle('CONTINUE')}>CONTINUE</span><small>暂无阅读记录</small></span>
-    <a data-vn-next href="/afterstory/" hidden><span style={menuStyle('NEXT')}>NEXT</span><small>后日谈</small></a>
+    <a data-vn-next href="/afterstory/" aria-label="NEXT · 独立后日谈" hidden><span style={menuStyle('NEXT')}>NEXT</span><small>后日谈</small></a>
     <span class="vn-menu-disabled" data-vn-no-next aria-disabled="true" aria-hidden={menuOriginal?true:undefined}><span style={menuStyle('NEXT')}>NEXT</span><small>通关后解锁</small></span>
-    <a data-vn-start href="/archives/"><span style={menuStyle('START')}>START</span><small>NEW GAME · 重开当前阅读路线</small></a>
-    <a href="/library/"><span style={menuStyle('LOAD')}>LOAD</span><small>读取存档</small></a>
-    <a href="/settings/"><span style={menuStyle('SYSTEM')}>SYSTEM</span><small>系统设置</small></a>
-    <a data-vn-extra href="/gallery/" hidden><span style={menuStyle('EXTRA')}>EXTRA</span><small>鉴赏与索引</small></a><span class="vn-menu-disabled" data-vn-no-extra aria-disabled="true"><span style={menuStyle('EXTRA')}>EXTRA</span><small>通关后解锁</small></span>
-    <a href="/information/"><span style={menuStyle('INFORMATION')}>INFORMATION</span><small>关于本站</small></a>
-    <a href="#latest" data-vn-mode-set="reader"><span style={menuStyle('EXIT')}>EXIT</span><small>退出游戏模式</small></a>
+    <a data-vn-start href="/archives/" aria-label="START · NEW GAME · 重开当前阅读路线"><span style={menuStyle('START')}>START</span><small>NEW GAME · 重开当前阅读路线</small></a>
+    <a href="/library/" aria-label="LOAD · 读取独立存档"><span style={menuStyle('LOAD')}>LOAD</span><small>读取存档</small></a>
+    <a href="/settings/" aria-label="SYSTEM · 系统设置"><span style={menuStyle('SYSTEM')}>SYSTEM</span><small>系统设置</small></a>
+    <a data-vn-extra href="/gallery/" aria-label="EXTRA · 鉴赏与索引" hidden><span style={menuStyle('EXTRA')}>EXTRA</span><small>鉴赏与索引</small></a><span class="vn-menu-disabled" data-vn-no-extra aria-disabled="true"><span style={menuStyle('EXTRA')}>EXTRA</span><small>通关后解锁</small></span>
+    <a href="/information/" aria-label="INFORMATION · 关于本站"><span style={menuStyle('INFORMATION')}>INFORMATION</span><small>关于本站</small></a>
+    <a href="#latest" data-vn-mode-set="reader" aria-label="EXIT · 切换阅读模式"><span style={menuStyle('EXIT')}>EXIT</span><small>退出游戏模式</small></a>
    </nav>
    <span class="vn-next-new" data-vn-next-new hidden style={menuOriginal?"--vn-new-art:url(/__ginka_local_ui__/title-new.png)":undefined}>NEW</span>
    <p class="vn-save-status" data-vn-progress aria-live="polite">主线阅读 0 / {required.length}</p>
