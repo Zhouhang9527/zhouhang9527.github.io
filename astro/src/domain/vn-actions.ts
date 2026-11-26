@@ -129,9 +129,10 @@ export function parseSceneAction(raw:unknown):SceneActionResult{
      if(n===null||tuple.length===3&&numeric(tuple[2])!==0){issue(q,'only immediate finite numeric sets are supported');continue;}
      actions.push({property,value:n});continue;
     }
-    // The recovered nonzero array-tuple mode branch is incomplete. Accepting
-    // and discarding it would invent equivalence, so only default/0 is allowed.
-    if(tuple.length===3&&numeric(tuple[2])!==0){issue(q,'unsupported action tuple mode');continue;}
+    // Verified bytecode takes array values straight to addAction; tuple[2]
+    // is read only on the scalar setProperty path, never on this array path.
+    // Accept the observed 0/1 forms; scalar timing remains separately rejected.
+    if(tuple.length===3&&![0,1].includes(numeric(tuple[2])??-1)){issue(q,'unsupported action tuple mode');continue;}
     const steps:(SceneMove|SceneHold)[]=[];
     if(!value.length)issue(q,'empty action sequence');
     for(const [k,step] of value.entries()){

@@ -40,6 +40,16 @@ test('envupdate parses finite numeric projection and normalized parameters',()=>
  assert.equal(parseSceneAction(['envupdate','update',[],'wait',{list:[]}]).ok,true);
 });
 
+test('bytecode-verified array tuple 0/1 has identical action behavior, unlike scalar timing',()=>{
+ const frames=[];
+ for(const mode of [undefined,0,1]){
+  const q=scheduler(),tuple=['xpos',[move('@+20',100)]];if(mode!==undefined)tuple.push(mode);
+  dispatch(q,env([tuple]));q.advance(25);frames.push(q.frame());
+ }
+ assert.deepEqual(frames[0],frames[1]);assert.deepEqual(frames[1],frames[2]);
+ assert.equal(parseSceneAction(env([['xpos',10,1]])).ok,false);
+});
+
 test('property tracks run in parallel while each property sequence is serial',()=>{
  const q=scheduler();
  dispatch(q,env([['xpos',[move(60,100),move(100,100)]],['ypos',[move(80,200)]]]));
@@ -147,7 +157,7 @@ test('unsupported handlers, expressions, stop slots, metadata and wait modes fai
   env([null]),env([1]),env([['constructor',1]]),env([['xpos',[move('#&steal()')]]]),env([['xpos',[move('@+1+2')]]]),
   env([['xpos',[move(1,10,{complete:'evil()'})]]]),env([['xpos',[move(1,10,{accel:'function(t){return t}'})]]]),
   env([['xpos',[{handler:'RandomAction',time:10}]]]),env([['xpos',[[move(1),move(2)]]]]),env([['xpos',1,10]]),
-  env([['xpos',[move(1)],1]]),env([['xpos',[move(1,10,{speed:0})]]]),env([['xpos',[move(1,10,{speed:-1})]]]),env([['xpos',[move(1,-1)]]]),
+  env([['xpos',[move(1)],2]]),env([['xpos',1,1]]),env([['xpos',[move(1,10,{speed:0})]]]),env([['xpos',[move(1,10,{speed:-1})]]]),env([['xpos',[move(1,-1)]]]),
   env([['xpos',[move(1,10,{delay:Infinity})]]]),env([['xpos',[move(1,10,{nowait:'maybe'})]]]),
   ['envupdate','update',[],'trans',{time:10}],['envupdate','update',[{name:'actor',action:[],redraw:{}}]],
   ['envupdate','update',[['new','actor','bu']]],wait([null]),wait([{name:'actor',mode:1}]),wait([{name:'actor',mode:2}]),
