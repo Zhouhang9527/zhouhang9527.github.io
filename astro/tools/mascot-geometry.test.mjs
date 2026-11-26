@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {computeMascotGeometry,cameraDepthScale,transformPoint,transformRect,fullPageRasterMatrix,interpolateLevelOffset} from '../src/lib/mascot-geometry.ts';
+import {computeMascotGeometry,projectMascotCamera,cameraDepthScale,transformPoint,transformRect,fullPageRasterMatrix,interpolateLevelOffset} from '../src/lib/mascot-geometry.ts';
 
 const close=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-9,`${actual} != ${expected}`);
 const matrixClose=(actual,expected)=>actual.forEach((n,i)=>close(n,expected[i]));
@@ -103,6 +103,12 @@ test('geometry rejects nonfinite dimensions, anchors, transforms and unresolved 
  assert.throws(()=>interpolateLevelOffset([{x:0,y:0},{x:1,y:1}],[100,50],100),RangeError);
 });
 
+test('finite but overflowing inputs never escape as Infinity or NaN geometry',()=>{
+ assert.throws(()=>interpolateLevelOffset([{x:Number.MAX_VALUE,y:0}],[1],1),RangeError);
+ assert.throws(()=>transformRect([2,0,0,1,-Number.MAX_VALUE,0],[0,0,Number.MAX_VALUE,1]),RangeError);
+ assert.equal(cameraDepthScale({offsetZ:Number.MAX_VALUE,cameraZ:Number.MAX_VALUE}),null);
+});
+
 test('fractional viewports and many aspect ratios remain finite and inside default contain bounds',()=>{
  for(const width of [1,127,390,1440,1920])for(const height of [1,333,720,1080])for(const page of [{width:125,height:379},{width:401,height:203}]){
   const g=computeMascotGeometry({canvas:page,viewport:{width:width+.25,height:height+.5}});
@@ -111,4 +117,46 @@ test('fractional viewports and many aspect ratios remain finite and inside defau
   close(g.drawRect.y+g.drawRect.height,height+.5);
   close(g.drawRect.width/g.drawRect.height,page.width/page.height);
  }
+});
+
+const projection={canvas:{width:10,height:20},resolution:100,stage:{width:200,height:100},camera:{cameraoffsetz:-80,cameraoffsetzmax:800,camerarh:1},properties:{},rightHanded:true};
+test('raw numeric projection requires explicit calibration and uses the full-page center',()=>{
+ const g=projectMascotCamera(projection);
+ assert.deepEqual(g.matrix,[1,0,0,1,95,40]);
+ assert.equal(g.visible,true);assert.equal(g.opacity,1);assert.equal(g.depthScale,1);
+ assert.deepEqual(g.drawRect,{x:95,y:40,width:10,height:20});
+});
+test('raw camera and portrait y directions are distinct, not viewport delta aliases',()=>{
+ assert.deepEqual(projectMascotCamera({...projection,properties:{xpos:10,ypos:20}}).matrix,[1,0,0,1,105,20]);
+ assert.deepEqual(projectMascotCamera({...projection,camera:{...projection.camera,camerax:10,cameray:20}}).matrix,[1,0,0,1,85,60]);
+ assert.deepEqual(projectMascotCamera({...projection,rightHanded:false,properties:{ypos:20}}).matrix,[1,0,0,1,95,60]);
+});
+test('raw projection separates source resolution from camera depth and opacity',()=>{
+ const g=projectMascotCamera({...projection,resolution:200,properties:{zpos:-40,opacity:128,visvalue:50}});
+ assert.deepEqual(g.matrix,[1,0,0,1,95,40]);assert.equal(g.depthScale,2);
+ close(g.opacity,128*50/25500);
+ assert.deepEqual(projectMascotCamera({...projection,properties:{flipx:1}}).matrix,[-1,0,0,1,105,40]);
+});
+test('raw layer pivots and original level calibration do not become alpha crop anchors',()=>{
+ const input={...projection,properties:{xpos:10,ypos:20},levelOffsets:{levels:[50,100],offsets:[{x:2,y:-20},{x:8,y:-50}]}};
+ const g=projectMascotCamera(input);assert.deepEqual(g.levelOffset,{x:8,y:-50});
+ assert.deepEqual(g.matrix,[1,0,0,1,113,70]);
+ const rotated=projectMascotCamera({...projection,properties:{centerx:7,centery:9,rotate:90,zoomx:150,zoomy:75}});
+ // Rotation/scaling pivots share the logical property origin, not the page center.
+ const p=transformPoint(rotated.matrix,{x:7+5,y:10-9});close(p.x,107);close(p.y,41);
+});
+test('raw depth bounds and zero camera zoom are invisible without NaN matrices',()=>{
+ for(const properties of [{zpos:-80},{zpos:800},{zpos:-100}]){
+  const g=projectMascotCamera({...projection,properties});assert.equal(g.visible,false);assert.ok(g.matrix.every(Number.isFinite));
+  assert.equal(g.drawRect.width,0);assert.equal(g.drawRect.height,0);
+ }
+ assert.equal(projectMascotCamera({...projection,camera:{...projection.camera,camerazoom:0}}).visible,false);
+});
+test('raw projection refuses absent calibration, link/mask/class and nonnumeric properties',()=>{
+ for(const camera of [{},{...projection.camera,cameraoffsetz:80},{...projection.camera,camerarh:2},{...projection.camera,camerax:NaN},{...projection.camera,link:1}]){
+  assert.throws(()=>projectMascotCamera({...projection,camera}),RangeError);
+ }
+ for(const properties of [{link:1},{class:79},{leveloffset:'#1,2'},{xpos:'@+1'},{linkmask:1}])assert.throws(()=>projectMascotCamera({...projection,properties}),RangeError);
+ assert.throws(()=>projectMascotCamera({...projection,link:'parent'}),RangeError);
+ assert.throws(()=>projectMascotCamera({...projection,linkmask:1}),RangeError);
 });
