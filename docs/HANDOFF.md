@@ -6,7 +6,11 @@
 
 用户明确要求“提交然后继续”，本轮据此只进行本地 commit，不 push、不合并 PR、不切换已有分支、不部署或 purge。先逐文件核对上轮 delivery-index 与独立 H 回执，确认 7 份文档和 2/6 文件补丁未漂移，再把桌面标题 h1 两文件修正整合到当前 integrate/20261126-runtime；私有六文件扩展仅整合到私有候选，不进入公共仓库。原冻结 4383c83f/ca0e9b89、旧独立 worktree 和原 pack 保留。
 
-本文件所在的本地提交包含标题修正和文档收尾；精确 HEAD 用 `git rev-parse HEAD` 获取，后续复验按实际新提交记录，不把凌晨旧报告冒充新 SHA 结果。私有 CI 的博客固定 ref 在取得该真实提交后同步；未推送时远端 checkout 仍是未满足的前置条件。下一阶段继续在新隔离 worktree 做有原作证据的功能，不覆盖候选或现有存档格式。
+已形成的核心提交：博客 `73c4498b11fa37d41568df357cfe702f711e5e15`（父 4383c83f，9 文件）、私有资料 `0694a96eca9a7308772dc9ba86efd0aba8dc614b`（父 ca0e9b89，14 文件）；当时两正式候选均 clean、分支未切换，私有 CI 已固定上述真实博客 SHA。H 分别在新 detached `verify-public-73c4498-h` / `verify-private-0694a96-h` 对精确提交重新验证，不使用凌晨 dirty-tree 回执冒充新 SHA 结果。未 push，远端可取性/Actions 仍未执行；后续仅文档提交与运行时代码候选 SHA 必须分层标注。
+
+本轮新提交实际结果：public fresh npm ci、237 测试、typecheck 52 files 0/0/0、76 页 build / Pagefind 15、62 legacy routes / 递归隐私、full/runtime audit 0，真实私有三宽 first/main 与私有 dev 后 dist 门禁均通过；private 纯 40 / 新 graph 46 / Python 64 / LL 11、6009 selector / 1504 zoom、新 1991 关联 / 1988 原字节/header 元数据层（decode=0）、固定 ref 一致性通过。H 15:36:31（+08:00）封存两树各自 `artifacts/{public-73c4498-h,private-0694a96-h}/final-{public,private}-commit-receipt.json`，精确路径/时间/范围见 TESTING。只对本次实际执行的层级称通过，不重领 1988 完整解码或人工听音。
+
+后续隔离开发已实现并获独立组合验收：四个已证 sf（hfclear/clear/title_next/title_next_start）在既有 OriginalSceneHost 的 route.state.sf 上显式保存/恢复；独立研究 storage key，严格 0/1 记录，损坏/不可访问/配额失败不清空原状态或伪成功。真实刷新保持四旗标，tf/f/allseen、博客阅读/偏好和原作 .ksd 均不接触。白场仅实现 source-bound lay_white 的 event=67、不透明独立图层终态，复用既有 rasterMatrix/fillRect；未知滤色、半透明、多层叠放和 universal/map12 中间帧显式不可用。 这两项只进入私有研究运行时，公共站点实现不变。组合补丁 SHA-256 `a2888035971cd3afcbb2d6725c874ccf0da5dbed75fff3ea1a7e7b00c1d29613`；原始素材、旧包和已提交核心候选保留，独立回执见私有正式 HANDOFF。最终本地提交 SHA 由当前 HEAD 与本轮最终提交收据确认；此后公开文档提交不改变已验收 73c4498b 的运行时代码/lock，明确按范围复用，不伪造重跑成绩。
 
 下列现场、未提交描述与远端观测是 03:55 封存时的历史记录；当前授权与提交状态以本节及后续实际提交记录为准。
 

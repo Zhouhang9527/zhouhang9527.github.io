@@ -38,6 +38,8 @@
 - [x] QA-TITLE-01 原桌面 private main 的 HTML h1 与 CONTINUE 重叠已在独立 `title-fix-b` 最小修复，仅 CSS selector + 既有 browser 回归；H 的 `verify-title-h` 对相同两文件 patch 独立通过 237 测试/typecheck/build、真实私有三宽 first/main 与 public 保持对照。原 `4383c83f` 不含此修正；两文件 patch、hash 与 final-title-receipt 见 HANDOFF/TESTING，上轮封存时未提交；本轮 14:41 获用户本地 commit 授权后已整合进当前分支，未 push，精确新提交复验另记。
 - [x] EVIDENCE-01 私有 C/D/E 六文件组合在 `verify-private-h` 独立通过 graph 46/46、LL 回归 11/11、Python 总 64/64；全 1988 原声字节/header 核验与 frozen 45 完整解码分层记录。扩展仅私有审计/测试，不自动导入博客剧情状态机或解锁全部语音，原 flags 落盘/MAP/LOAD/全时序任务保持未完成。
 
+- [x] RESEARCH-03（仅私有研究子集）：已实现四个源 sf 的独立保存/恢复与 lay_white 不透明 event 终态，组合浏览器/状态回归经独立 H 验证。并非博客存档格式替换、全 flags 落盘、原生 .ksd、MAP/LOAD 全状态或完整环境色；上述完整任务仍未完成。
+
 ## 未干扰的并行成果
 
 - [x] PARALLEL-01 所有有效 A–H/F 结果已按 commit/evidence 审查并整合；原 dirty/active worktree 未清理、未 reset、未覆盖。

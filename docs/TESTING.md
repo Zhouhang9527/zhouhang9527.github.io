@@ -65,6 +65,15 @@ HTTP Host/Origin/Sec-Fetch/POST、Range 206/416、HEAD、路径包含/symlink �
 
 安全依赖已升级到经验证的 Astro 7.4.13；full/runtime audit 均为 0，未用 force/overrides。生产部署、分支合并和真实缓存 purge 均未执行。
 
+## 用户授权提交后的精确 SHA 复验（15:36 封存）
+
+两库核心提交分别为 public `73c4498b11fa37d41568df357cfe702f711e5e15`、private `0694a96eca9a7308772dc9ba86efd0aba8dc614b`；H 对它们分别新建 clean detached 验收树，不把凌晨补丁成绩搬到新提交。
+
+- `verify-public-73c4498-h`：15:10:11–15:10:53（+08:00）在原无 node_modules 的新树执行 fresh npm ci（仅缓存复用）、237/237 + purge mock、typecheck 52 files 0/0/0、build 76 页 / Pagefind 15、check 62 legacy / 递归隐私、full/runtime audit 各 0 与 authored/diff-check，全通过。15:20:16–15:20:35 真实私有三宽 first/main 通过，随后 private dev 后的 public dist 门禁再通过；未重复无关公有完整生命周期矩阵。回执 `artifacts/public-73c4498-h/final-public-commit-receipt.json`，SHA-256 `99bb9dd51d79cf8721dac54ec644cfa07f5a0bad121044f545885f9692828009`。
+- `verify-private-0694a96-h`：15:15:12–15:15:58 运行该提交自身 CLI，纯 40/40、实际新 graph 46/46、Python 64/64、LL 11/11、6009 selector / 1504 zoom、1991 关联 / 1988 唯一原字节/header 与 45 精选源绑定通过；metadata-only 明确 decode=0。workflow 真实 ref 为 public 完整 SHA，其 hash 为 `fdbd6a7e9bb9127e7f86369aa3be8880a56bb501b8c71b8a94ec6374c270058e`。回执 `artifacts/private-0694a96-h/final-private-commit-receipt.json`，SHA-256 `99501a06810a7cf564cc4c043086af3bf0f3c5135ebfac1044be7bcb01c59e93`。
+
+上述路径均在 `D:/ginka-work/20261127/` 对应新树内，15:36:31 封存；3 个自有 job 已收集、45173 服务停止，pack ad7e… / 根 lock be733… 未改。没有重复 1988 完整解码、人工听音或远端 Actions。后续若仅文档变化，可以注明源码/锁不变后复用对应结论，不假装新源码又做过全量验证。
+
 ## 桌面标题局部修正候选的独立复验
 
 原冻结提交的既有矩阵虽通过，Lead 看图仍定位到白色 HTML h1 与 main CONTINUE 的真实重叠。B 的像素证据先确认 943 像素落在 CONTINUE 内，再仅改 stage.css 的 desktop/private selector；已有 original-ui-browser 新增 first 与真实 START→文章→返回 main 的像素/ARIA 回归。作者测试红→绿，原冻结树与旧验收结果保持原样。
