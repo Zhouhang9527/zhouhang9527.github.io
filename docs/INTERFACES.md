@@ -30,7 +30,7 @@
 
 ## 私有本地预览
 
-根目录：`npm run dev:original -- "[PRIVATE_ASSETS_ROOT]"`。输入可为私有仓库或其 assets 目录，由工具检查已知资源后绑定 `127.0.0.1`，不复制原作资源。
+根目录：`npm run dev:original -- "[PRIVATE_ASSETS_ROOT]" [--port PORT]`。输入可为私有仓库或其 assets 目录；工具仅绑定 `127.0.0.1`，不复制原作资源。`--port` 仅是本地开发端口，拒绝非数字、0、超范围或额外主机参数。私有预览 UI 字体通过 `GINKA_UI_FONT` 显式选择，解析 SFNT OS/2 weight 并仅 local-server 提供；不会自动从多个候选中猜字体。
 
 | 环境变量 | 用途 |
 |---|---|
@@ -46,9 +46,11 @@
 
 ### 角色包
 
-现有 loader 校验 v1 完整帧和 v2 分层图的显式来源、角色/服装/姿势/阶段、canvas/baseRect、层序、裁切/混合及已验证可选眼嘴差分。每条 line 有 ID、精确文本、speaker、pose、phase、source/phaseSource/verified；voice 为已验证本地文件或明确 null。图/声必须在 pack 真实目录内，损坏或错位资源不伪造成功。v2 active 包的实际覆盖在私有文档维护，不把 catalog 可解析数量当已解锁或已播放数量。
+现有 loader 校验 v1 完整帧和 v2 分层图的显式来源、角色/服装/姿势/phase、canvas/baseRect、layer order、裁切/混合及已验证 tier 资源；可选 `tiers` 只由经过核验的原始分辨率表生成，未绑定 numeric source 的 line 不猜 zoom。已审查 line 含精确 `translations`（`ja`/`en`/`zh-CN`）时，缺失语种不补、null speaker 不补；字幕切换不替换原音/voice ID/history/动作。每条 line 的公共 HTTP 投影只保留白名单文本/选择/动作，不含 source/hash/storage 元数据。图/声/tier/overlay 必须在 pack 真实目录内并由 evidence asset 集完整覆盖；损坏或错位资源不伪造成功。已重建私有 pack 为 40 poses / 45 lines / 358 引用 blob / 160 tier compositions；这是当前 reviewed pack 覆盖，不等于原作全服装、全时序或所有句子的解锁情况。
 
 完整 schema 以 `local-mascot.mjs` 和其测试为可执行权威。私有 catalog/原作 scheduler/host 的研究契约仍在独立私有库，未通过正式接口接入前不得称其为博客运行时。
+
+角色包覆盖必须分层：同记录原始关联、去重 voice ID、唯一匹配资源/原字节校验、完整音频解码、reviewed 接入行数及实际演出验收分别报告。当前冻结仍为 45 条（三语各 45）、3 条 source-bound 数值片段，其余 42 条动作 unavailable；全量静态研究审计不得自动改 phase/unlock 或扩大首屏请求。旧 active 18/20 与新四档包不能在 CI 中互相冒充。
 
 ## 独立运维（不在构建时调用）
 

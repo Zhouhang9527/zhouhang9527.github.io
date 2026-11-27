@@ -336,7 +336,7 @@ body .post-body{font-size:var(--vn-reader-size,16px)}
  html:not([data-vn-mode=reader]) body:has([data-vn-title][data-vn-original=true]) :is(.journal-chapters,.journal-layout,.journal-island,footer.footer){display:none!important}
  html body .vn-title[data-vn-original=true]{width:min(100%,177.7778svh);height:auto;aspect-ratio:16/9;margin:auto;min-height:0}
  .vn-title[data-vn-original=true] .vn-title-menu{left:5.625%;top:34.7222%;width:26%;max-height:none;overflow:visible}
- .vn-title[data-vn-original=true] .vn-title-menu .vn-kicker,.vn-title[data-vn-original=true] .vn-save-status{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;margin:0}
+ .vn-title[data-vn-original=true] .vn-title-menu h1,.vn-title[data-vn-original=true] .vn-title-menu .vn-kicker,.vn-title[data-vn-original=true] .vn-save-status{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;margin:0}
  .vn-title[data-vn-original=true] .vn-menu{gap:0}
  html body .vn-title[data-vn-original=true] .vn-menu > :is(a,span){display:flex;justify-content:flex-start;min-height:0;height:3.4375cqw;width:max-content;max-width:100%;padding:0 0;line-height:1;letter-spacing:-.035em;background:none;border:0;outline-offset:0;color:#101820!important;font:400 1.71875cqw/1 Arial,sans-serif;text-shadow:0 0 2px #efffff}
  .vn-title[data-vn-original=true] .vn-menu > * small{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}

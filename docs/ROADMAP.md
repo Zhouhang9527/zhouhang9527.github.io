@@ -2,10 +2,10 @@
 
 任务只维护在 [TASKS](TASKS.md)。本文件描述阶段门槛，不复制打勾清单。
 
-1. **收敛可复现开发基线**：唯一正式模块、根 lockfile、公共素材 allowlist、旧内容/URL 保真、七份文档与 Agent 约束。以真实构建、误删检查和独立回归验收，不以文件减少量验收。
-2. **真实浏览器与集成**：标题/阅读/存档/设置/搜索、导航生命周期、音乐连续性、Giscus 的实际网络与登录/发表/编辑，宽度、键盘、无 JS、reduced motion。合成 fixture 不能代替真实原作。
-3. **原作证据驱动还原**：私有 PBD/TJS/PSB/视频链 → 已核验 UI 与角色/声音。先验证逐项来源、像素与时序；不为了“通用引擎”重建大套抽象。不把 research scheduler 直接换成正式 renderer。
-4. **安全与发布准备**：解决仍存在的依赖 advisories，评估必要的大版本迁移；审查完整 dist、性能与私有素材隔离。先明确生产分支的不同根历史与切换方案，不 force rewrite。
-5. **生产切换**：只有显式批准和对应验收后进行，当前清理不自动部署，也不把构建 artifact 当线上发布。
+1. **可复现开发基线（已完成候选验证）**：根 npm workspace/lockfile、Astro 7.4.13 + Node 22.23.4、旧内容/URL/fragment、dist 隐私与 audit 均在冻结候选上验证。生产 main 仍未切换。
+2. **运行时集成（已完成适用范围）**：TITLE、15 篇阅读进度、150 手动档/独立 quick、SYSTEM、BACKLOG、EXTRA、真实单 audio、三语字幕与搜索已有正式模块接入。public/private browser 区分执行；Giscus live identity 有 smoke，登录/发帖/编辑需用户会话，未冒称完成。
+3. **原作证据还原（部分已集成，继续）**：source-pinned numeric fragments、原 logical tier 选择、静态 linked emotion 与真实语音进入正式同 canvas/runtime。仍非完整 KAG；无证据时不播放伪动画、不造原作 flags。首 TITLE/SYSTEM 有真实原版对照，原版 MAP/LOAD 未运行验收。
+4. **安全与发布准备（构建准备完成，发布未批准）**：兼容升级后 full/runtime audit 均 0；私有资源 loopback、验证头/Range 与 dist 隔离通过。Chromium native working-set soak 有增长，不能声称零泄漏；公开构建与私有素材验收分开。
+5. **生产切换（未执行）**：main 与开发链不同根；本轮实测公开 PR #10 仍是旧 `d30e0f59` 的 open/draft，私有 #5 当前不可见，冻结博客 `4383c83f` 未远端可取。旧 CI 不证明新候选；获准推送后须重查精确 SHA 的 checkout/CI。本轮 14:41 已获本地 commit 授权；无 push、生产部署、分支历史重写或 CDN purge 操作。
 
-原作声音/图像/字体未获公共分发批准时始终只在 localhost 服务；公开内容阅读应保持可用。其他会话仍在开发的未提交候选保留原现场，经审查和实际测试后逐项集成，不能为了清理分支数量丢弃成果。
+私有原图/语音/字体继续只通过 localhost 提供；不公开发布未经许可的资源。真实原作完整时序、MAP/LOAD、flags 落盘、登录/评论操作、人工听感及长时 native 内存归因仍是明确后续范围。

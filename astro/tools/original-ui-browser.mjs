@@ -11,6 +11,7 @@ import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
 import manifest from '../config/vn-scenes.json' with {type:'json'};
 import {createSyntheticUI} from './synthetic-ui-fixture.mjs';
+import {decodePNG} from './png-atlas.mjs';
 const real=process.env.GINKA_TEST_ORIGINAL==='1';
 const port=process.env.GINKA_TEST_PORT||'4380';
 assert.ok(/^\d+$/.test(port)&&Number(port)>0&&Number(port)<=65535,'Invalid fixture test port');
@@ -46,6 +47,25 @@ try{
   const visible=selector=>page.locator(selector).first().waitFor({state:'visible'});
   const check=async(name,fn)=>{try{await fn();result.checks.push({name,ok:true});}catch(error){result.checks.push({name,ok:false,error:String(error)});}};
   const shot=async name=>{await page.screenshot({path:out+'/'+width+'-'+name+'.png'});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'horizontal overflow '+name);};
+  const titleHeading=async phase=>{
+   const heading=page.locator('#vn-title-heading');
+   assert.equal(await page.getByRole('heading',{level:1,name:/GINKA.*逆向工程与二进制安全/}).count(),1,'The title h1 must retain its accessible name');
+   await page.evaluate(()=>document.fonts.ready);
+   const style=await heading.evaluate(el=>{const s=getComputedStyle(el);return {position:s.position,width:s.width,height:s.height,overflow:s.overflow,clipPath:s.clipPath};});
+   const before=decodePNG(await page.screenshot());let hidden;
+   const previous=await heading.evaluate(el=>{const value=el.style.visibility;el.style.visibility='hidden';return value;});
+   try{hidden=decodePNG(await page.screenshot());}finally{await heading.evaluate((el,value)=>{if(value)el.style.visibility=value;else el.style.removeProperty('visibility');},previous);}
+   assert.equal(before.pixels.length,hidden.pixels.length);let changedChannels=0;
+   for(let i=0;i<before.pixels.length;i++)if(before.pixels[i]!==hidden.pixels[i])changedChannels++;
+   (result.titleHeadings??=[]).push({phase,style,changedChannels,accessibleNameRetained:true});
+   if(width>=960){
+    assert.deepEqual(style,{position:'absolute',width:'1px',height:'1px',overflow:'hidden',clipPath:'inset(50%)'},'Only the original desktop title h1 is visually clipped');
+    assert.equal(changedChannels,0,'The clipped h1 must paint no pixels, including over CONTINUE');
+   }else{
+    assert.equal(style.clipPath,'none','Mobile keeps its existing visible HTML heading');
+    assert.ok(changedChannels>0,'Mobile title h1 must still paint');
+   }
+  };
   const geometry=async(stage,selector,expected)=>{
    if(width<960)return;
    const actual=await page.locator(selector).evaluate((el,stage)=>{const r=el.getBoundingClientRect(),s=document.querySelector(stage).getBoundingClientRect(),scale=1280/s.width;return [(r.x-s.x)*scale,(r.y-s.y)*scale,r.width*scale,r.height*scale];},stage);
@@ -63,6 +83,7 @@ try{
     await geometry('[data-vn-title]','[data-vn-no-save]',[62,284,166,38]);
     await geometry('[data-vn-title]','[data-vn-start]',[62,328,166,38]);
    }
+   await check('first title heading pixels and accessible name',()=>titleHeading('first'));
    await shot('title');
    if(width===390)await page.locator('.vn-menu a[href="/settings/"]').tap();else await page.locator('.vn-menu a[href="/settings/"]').click();
    await visible('[data-vn-config]');
@@ -104,6 +125,18 @@ try{
    await page.locator('[data-vn-filter="quick"]').click();assert.equal(await page.locator('#vn-load-title').textContent(),'Q.LOAD');
    await shot('quick-load');
    await page.locator('.vn-load-return').click();await visible('[data-vn-title]');
+   // START and return before the gallery completion fixture: blog main title, not original flags.
+   await page.locator('[data-vn-start]').click();await visible('[data-vn-confirm][open]');
+   await page.locator('[data-vn-confirm-yes]').click();await visible('[data-vn-chapter]');
+   await page.locator('[data-vn-post]').first().click();await visible('.post-body');
+   await page.waitForFunction(()=>!!JSON.parse(localStorage.getItem('ginka.vn.progress.v1')||'{}').last);
+   await page.locator('[data-vn-return]').click();await visible('[data-vn-title][data-vn-menu-phase="main"]');
+   assert.equal(await page.locator('[data-vn-title]').getAttribute('data-vn-frame'),'first-encounter');
+   await page.waitForFunction(()=>getComputedStyle(document.querySelector('[data-vn-art]')).backgroundImage.includes('data-004.png'));
+   await geometry('[data-vn-title]','[data-vn-continue]',[62,240,166,38]);
+   await geometry('[data-vn-title]','[data-vn-start]',[62,328,166,38]);
+   await check('main title heading pixels and accessible name',()=>titleHeading('main'));
+   await shot('title-main');
    // Exercise the unlocked blog gallery, not a reconstructed original CG flag.
    // These geometry checks deliberately do not establish locked-route behavior.
    await page.evaluate(()=>{const title=document.querySelector('[data-vn-title]'),key='ginka.vn.progress.v1';const state=JSON.parse(localStorage.getItem(key)||'{}');state.version=1;state.completed=JSON.parse(title?.getAttribute('data-vn-mainline')||'[]');state.mainCleared=true;localStorage.setItem(key,JSON.stringify(state));});
